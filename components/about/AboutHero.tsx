@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import type { Locale } from "@/data/locale";
 
@@ -11,18 +11,16 @@ type HeadlineSegment = { text: string; highlight?: boolean };
 // which also isn't desktop-gated.
 const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
 
-// Slow, calm, cinematic entrance — opacity + very subtle y only, no
-// rotation/scale. Segments (not individual characters/words — there's no
-// exit animation anymore requiring that granularity) stagger in slowly;
-// the intro block fades in as one unit, starting shortly after the
-// headline so the two read as one composed entrance.
-const SEGMENT_DURATION = 1.3;
-const SEGMENT_STAGGER = 0.12;
-const SEGMENT_Y = 8;
-const INTRO_DELAY = 0.22;
+// The headline enters one editorial line at a time through a clipping mask.
+// yPercent keeps the travel proportional to the current responsive type size,
+// while the intro retains its quieter existing fade/translate treatment.
+const LINE_DURATION = 1.35;
+const LINE_STAGGER = 0.12;
+const LINE_Y_PERCENT = 92;
+const INTRO_DELAY = 0.42;
 const INTRO_DURATION = 1.4;
 const INTRO_Y = 8;
-const ENTRANCE_EASE = "power1.out";
+const ENTRANCE_EASE = "power3.out";
 
 export function AboutHero({
   locale,
@@ -57,19 +55,18 @@ export function AboutHero({
     const media = gsap.matchMedia();
     const context = gsap.context(() => {
       media.add(MOTION_QUERY, () => {
-        const segmentEls = Array.from(h1.querySelectorAll<HTMLElement>(".hero-segment"));
-        if (!segmentEls.length) return;
+        const lineEls = Array.from(h1.querySelectorAll<HTMLElement>(".hero-line-inner"));
+        if (!lineEls.length) return;
 
-        gsap.set(segmentEls, { opacity: 0, y: SEGMENT_Y });
+        gsap.set(lineEls, { yPercent: LINE_Y_PERCENT });
         gsap.set(intro, { opacity: 0, y: INTRO_Y });
 
         const timeline = gsap.timeline();
-        segmentEls.forEach((el, index) => {
-          timeline.to(
-            el,
-            { opacity: 1, y: 0, duration: SEGMENT_DURATION, ease: ENTRANCE_EASE },
-            index * SEGMENT_STAGGER,
-          );
+        timeline.to(lineEls, {
+          yPercent: 0,
+          duration: LINE_DURATION,
+          stagger: LINE_STAGGER,
+          ease: ENTRANCE_EASE,
         });
         timeline.to(
           intro,
@@ -79,7 +76,7 @@ export function AboutHero({
 
         return () => {
           timeline.kill();
-          gsap.set(segmentEls, { clearProps: "all" });
+          gsap.set(lineEls, { clearProps: "all" });
           gsap.set(intro, { clearProps: "all" });
         };
       });
@@ -113,20 +110,21 @@ export function AboutHero({
                 spans below are presentation-only so screen readers never
                 encounter fragmented text or duplicated announcements. */}
             <span className="sr-only">{plainText}</span>
-            <span aria-hidden="true">
+            <span aria-hidden="true" className="block">
               {headlineLines.map((line, lineIndex) => (
-                <Fragment key={lineIndex}>
-                  {lineIndex > 0 && <br />}
-                  {line.map((segment, segmentIndex) => (
-                    <span
-                      key={segmentIndex}
-                      className={`hero-segment inline-block ${segment.highlight ? "text-accent-yellow" : ""}`}
-                      style={segment.highlight ? { whiteSpace: "nowrap" } : undefined}
-                    >
-                      {segment.text}
-                    </span>
-                  ))}
-                </Fragment>
+                <span key={lineIndex} className="block overflow-hidden">
+                  <span className="hero-line-inner block will-change-transform">
+                    {line.map((segment, segmentIndex) => (
+                      <span
+                        key={segmentIndex}
+                        className={`inline-block ${segment.highlight ? "text-accent-yellow" : ""}`}
+                        style={segment.highlight ? { whiteSpace: "nowrap" } : undefined}
+                      >
+                        {segment.text}
+                      </span>
+                    ))}
+                  </span>
+                </span>
               ))}
             </span>
           </h1>

@@ -26,7 +26,7 @@ export default function AboutPage() {
         <AboutSections locale="zh" />
       </main>
 
-      <SiteFooter />
+      <SiteFooter locale="zh" />
     </div>
   );
 }

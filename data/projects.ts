@@ -34,7 +34,13 @@ export type ProjectCaseStudy = {
 };
 
 export type ProjectStageBackground = "dark" | "light";
-export type ProjectStageLayout = "text-top" | "text-bottom" | "text-middle" | "media-left";
+/** Matches the connected Lovable "VER B" project's exact ProjectScene
+ * layout taxonomy (src/data/projects.ts `layout` field) — top-left and
+ * bottom-left keep text/media as a 5/7 split with text top- or
+ * bottom-anchored; middle-left/middle-right vertically center both
+ * columns, with middle-right swapping which side the media sits on. */
+export type ProjectStageLayout = "top-left" | "bottom-left" | "middle-left" | "middle-right";
+export type ProjectAccent = "acid" | "lavender";
 
 export type Project = {
   id: string;
@@ -52,12 +58,17 @@ export type Project = {
    * direction: presentation contrast between project scenes, not a
    * user-facing theme toggle. */
   stageBackground: ProjectStageBackground;
-  /** Per-project spatial composition inside the shared pinned stage: where
-   * the text column sits (top/bottom/middle) and, for the closing project,
-   * a full column swap (media takes the left/wide side, text moves right) —
-   * so all four states share one system but aren't visual copies of a
-   * single template. */
+  /** Per-project spatial composition inside the shared pinned stage — one
+   * system, four distinct states (ported from Lovable VER B). */
   stageLayout: ProjectStageLayout;
+  /** Per-project spotlight accent, ported from VER B's alternating
+   * acid/lavender assignment (01 acid, 02 lavender, 03 acid, 04 lavender). */
+  accent: ProjectAccent;
+  /** Prototype-stage placeholder year, shown next to the title in the
+   * Selected Work stage — not a claimed delivery date. */
+  year: string;
+  /** Short bilingual category label shown beside the project index number. */
+  category: { zh: string; en: string };
   caseStudy: ProjectCaseStudy;
   caseStudyEn?: ProjectCaseStudy;
 };
@@ -105,7 +116,10 @@ export const projects: Project[] = [
     slug: "complex-system",
     number: "01",
     stageBackground: "dark",
-    stageLayout: "text-top",
+    stageLayout: "top-left",
+    accent: "acid",
+    year: "2024",
+    category: { zh: "複雜系統", en: "Complex System" },
     title: "Complex System",
     chineseTitle: "媒合銷售平台後台系統",
     tags: ["UI/UX Design", "Complex System", "B2B Platform", "Workflow"],
@@ -365,7 +379,10 @@ export const projects: Project[] = [
     slug: "corporate-website",
     number: "02",
     stageBackground: "light",
-    stageLayout: "text-bottom",
+    stageLayout: "bottom-left",
+    accent: "lavender",
+    year: "2025",
+    category: { zh: "企業網站", en: "Corporate Website" },
     title: "Corporate Website",
     chineseTitle: "企業品牌形象網站",
     tags: ["Web Design", "UI/UX", "Responsive", "Brand"],
@@ -394,7 +411,10 @@ export const projects: Project[] = [
     slug: "iot-system",
     number: "03",
     stageBackground: "dark",
-    stageLayout: "text-middle",
+    stageLayout: "middle-left",
+    accent: "acid",
+    year: "2025",
+    category: { zh: "物聯網系統", en: "IoT System" },
     title: "IoT System",
     chineseTitle: "IoT 系統與數據儀表板",
     tags: ["IoT", "Dashboard", "System UX", "Data"],
@@ -423,7 +443,10 @@ export const projects: Project[] = [
     slug: "consumer-product",
     number: "04",
     stageBackground: "light",
-    stageLayout: "media-left",
+    stageLayout: "middle-right",
+    accent: "lavender",
+    year: "2026",
+    category: { zh: "消費者產品", en: "Consumer Product" },
     title: "Consumer Product",
     chineseTitle: "行動產品與使用者體驗",
     tags: ["Mobile", "UI/UX", "Interaction", "User Flow"],

@@ -26,7 +26,7 @@ export default function Home() {
         <Hero locale="zh" />
         <SelectedWork locale="zh" />
       </main>
-      <SiteFooter />
+      <SiteFooter locale="zh" />
     </div>
   );
 }

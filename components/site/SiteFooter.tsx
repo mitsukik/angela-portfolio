@@ -4,13 +4,28 @@ import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { CONTACT_EMAIL } from "@/data/contact";
+import type { Locale } from "@/data/locale";
 
 const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
 
-export function SiteFooter() {
+const CONTACT_LINKS = (locale: Locale) => [
+  { label: "Email", value: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` },
+  { label: "LinkedIn", value: "/in/angela-yu", href: "https://www.linkedin.com/in/angela-yu" },
+  { label: "Resume", value: locale === "zh" ? "PDF — 準備中" : "PDF — coming soon", href: "#contact" },
+];
+
+/**
+ * Closing / Contact scene, restyled to match the connected Lovable "VER B"
+ * project's Closing.tsx (display-xl "Let's build / the system.", label-mono
+ * contact rows) — kept in Home per Angela's explicit standing decision,
+ * since VER B's own live app currently drops this scene in favor of a
+ * minimal footer only (see round-2 plan notes); this preserves the richer
+ * scene using VER B's own Closing.tsx as the style/content reference.
+ */
+export function SiteFooter({ locale = "zh" }: { locale?: Locale }) {
   const closingRef = useRef<HTMLDivElement | null>(null);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
-  const detailsRef = useRef<HTMLDivElement | null>(null);
+  const detailsRef = useRef<HTMLUListElement | null>(null);
 
   useLayoutEffect(() => {
     const closing = closingRef.current;
@@ -23,9 +38,9 @@ export function SiteFooter() {
     const context = gsap.context(() => {
       media.add(MOTION_QUERY, () => {
         // Closing resolves in two beats, not one flat fade — the large
-        // statement settles first (the "dark closing scene arrives" beat),
-        // then contact details settle a moment after, echoing the same
-        // label -> body sequencing used on Case Study section entrances.
+        // statement settles first, then contact details settle a moment
+        // after, echoing the same label -> body sequencing used on Case
+        // Study section entrances.
         gsap.set(heading, { autoAlpha: 0, y: 26 });
         gsap.set(details, { autoAlpha: 0, y: 16 });
         const trigger = ScrollTrigger.create({
@@ -53,43 +68,44 @@ export function SiteFooter() {
   }, []);
 
   return (
-    <footer id="contact" className="relative border-t border-primary/12 bg-background pt-[30px]">
-      {/* AmbientField disabled per Angela's review — see AboutHero.tsx for
-          the same note. */}
-      <div className="relative mx-auto max-w-[1600px] px-6 py-16 sm:px-8 lg:px-10 lg:py-20">
-        <div ref={closingRef} className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <h2
-              ref={headingRef}
-              className="text-[2.9rem] font-medium leading-[0.95] tracking-[-0.01em] text-primary sm:text-[4rem] lg:text-[4.6rem]"
-            >
-              LET&apos;S BUILD
-              <br />
-              THE <span className="text-accent-yellow">SYSTEM</span>.
+    <footer id="contact" className="scene-dark relative">
+      <div ref={closingRef} className="mx-auto flex min-h-[100svh] max-w-[1600px] flex-col justify-between px-5 py-16 md:px-10 md:py-20">
+        <p className="label-mono scene-dim-text">{locale === "zh" ? "結尾 / 聯絡" : "Closing / Contact"}</p>
+
+        <div className="grid gap-12 md:grid-cols-12">
+          <div className="md:col-span-7">
+            <h2 ref={headingRef} className="display-xl">
+              <span className="block">Let&apos;s build</span>
+              <span className="block scene-dim-text">the system.</span>
             </h2>
-            <div ref={detailsRef}>
-              <div className="mt-6 space-y-2 text-[18px] text-primary/60 sm:text-base">
-                <p>Have a project or opportunity?</p>
-                <p>Let&apos;s talk.</p>
-              </div>
-              <a href={`mailto:${CONTACT_EMAIL}`} className="link-nav mt-8 inline-flex items-center text-[15px] uppercase tracking-[0.12em] text-primary">
-                {CONTACT_EMAIL}
-              </a>
-            </div>
+            <p className="body-tc mt-8 max-w-[42ch]">
+              {locale === "zh"
+                ? "正在尋找能一起處理複雜問題的團隊。如果你的產品需要有人把混亂的流程整理成清楚的體驗，歡迎聊聊。"
+                : "Looking for a team that tackles complex problems together. If your product needs someone to turn messy workflows into a clear experience, let's talk."}
+            </p>
           </div>
+
+          <ul ref={detailsRef} className="space-y-0 md:col-span-5 md:self-end">
+            {CONTACT_LINKS(locale).map((link) => (
+              <li key={link.label}>
+                <a href={link.href} className="group flex items-baseline justify-between gap-6 border-t scene-rule py-5 transition-colors hover:text-acid focus-visible:text-acid">
+                  <span className="label-mono">{link.label}</span>
+                  <span className="text-[15px] tracking-tight">
+                    {link.value}
+                    <span aria-hidden className="ml-3 inline-block transition-transform group-hover:translate-x-1">→</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <div className="mt-14 h-px w-full bg-primary/12" />
-        <div className="mt-6 flex flex-col gap-4 text-[14px] uppercase tracking-[0.18em] text-primary/60 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-6">
-            <span>ANGELA YU © 2026</span>
-          </div>
-          <span className="text-left sm:text-right">
-            <a href="#top" className="link-cta self-start gap-2 text-[14px] uppercase tracking-[0.2em] text-primary lg:self-end">
-              <span className="link-cta-label">BACK TO TOP</span>
-              <span aria-hidden="true" className="link-cta-marker-up">↑</span>
-            </a>
-          </span>
+        <div className="flex flex-wrap items-center justify-between gap-4 border-t scene-rule pt-5">
+          <p className="label-mono scene-dim-text">{locale === "zh" ? "ANGELA YU — 資深產品設計師" : "Angela Yu — Senior Product Designer"}</p>
+          <a href="#top" className="group label-mono scene-dim-text inline-flex items-center gap-2 transition-colors hover:text-acid focus-visible:text-acid">
+            <span>{locale === "zh" ? "回到頂端" : "Back to top"}</span>
+            <span aria-hidden className="transition-transform group-hover:-translate-y-1">↑</span>
+          </a>
         </div>
       </div>
     </footer>

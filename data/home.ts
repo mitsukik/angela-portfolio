@@ -1,53 +1,43 @@
 import type { Locale } from "./locale";
 
-type HeroSegment = { text: string; highlight?: boolean; noBreak?: boolean };
+type HeroSegment = { text: string; noBreak?: boolean };
 
 type HeroContent = {
-  eyebrow: { primary: string; secondary: string };
-  /** Big identity typography — "ANGELA" / "YU", not a headline sentence.
-   * Kept as two lines so each can be revealed/compressed independently
-   * during the Hero -> Work handoff. */
+  /** Kicker line above the identity title — one line, matches the exact
+   * copy in the connected Lovable "VER B" source of truth. */
+  kicker: string;
+  /** Big identity typography — "ANGELA" / "YU", not a headline sentence. */
   identityLines: [string, string];
-  /** Single-sentence positioning statement. Segmented so specific runs can
-   * carry an accent color (highlight) and/or be locked from ever breaking
-   * across lines (noBreak) — e.g. "體驗" must stay one visual unit. */
+  /** Single-sentence positioning statement. Segmented so a specific run
+   * (體驗/experiences) can be locked from ever breaking across lines —
+   * VER B does not color-highlight any words within this sentence. */
   statement: HeroSegment[];
   supportLines: string[];
 };
 
 export const heroContent: Record<Locale, HeroContent> = {
   zh: {
-    eyebrow: { primary: "Product Designer", secondary: "Based In Taiwan" },
+    kicker: "資深產品設計師 — 複雜系統 / B2B / 企業產品",
     identityLines: ["ANGELA", "YU"],
     statement: [
-      { text: "我把" },
-      { text: "複雜", highlight: true },
-      { text: "的系統，轉譯成清晰、可延展、" },
-      { text: "直覺", highlight: true },
-      { text: "的產品" },
+      { text: "我把複雜的系統，轉譯成清晰、可延展、直覺的產品" },
       { text: "體驗", noBreak: true },
       { text: "。" },
     ],
     supportLines: [
-      "從不確定到產品上線，我與團隊一起完成",
-      "策略、UX 設計與研究的完整合作。",
+      "從資訊架構到互動細節，讓龐大的流程在畫面上有秩序，也在使用時有節奏。",
     ],
   },
   en: {
-    eyebrow: { primary: "Product Designer", secondary: "Based In Taiwan" },
+    kicker: "Senior Product Designer — Complex Systems / B2B / Enterprise",
     identityLines: ["ANGELA", "YU"],
     statement: [
-      { text: "I turn " },
-      { text: "complex", highlight: true },
-      { text: " systems into clear, scalable, " },
-      { text: "intuitive", highlight: true },
-      { text: " product " },
+      { text: "I translate complex systems into clear, scalable, and intuitive product " },
       { text: "experiences", noBreak: true },
       { text: "." },
     ],
     supportLines: [
-      "From ambiguity to launch, I collaborate with teams",
-      "across strategy, UX design, and research.",
+      "From information architecture to interaction detail, I give complex workflows clarity and rhythm.",
     ],
   },
 };

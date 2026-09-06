@@ -26,7 +26,7 @@ export default function HomeEn() {
         <Hero locale="en" />
         <SelectedWork locale="en" />
       </main>
-      <SiteFooter />
+      <SiteFooter locale="en" />
     </div>
   );
 }

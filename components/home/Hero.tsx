@@ -1,182 +1,111 @@
 "use client";
 
-import { Fragment, useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { heroContent } from "@/data/home";
 import type { Locale } from "@/data/locale";
 import { getLenisInstance } from "@/components/site/lenisInstance";
 
-// Not desktop-gated — matches the site's existing convention for simple,
-// cheap entrance/scroll-linked motion (see AboutHero.tsx). Only reduced
-// motion turns the assembly + scroll response off.
+// clamp/mapRange/easeOut ported from the connected Lovable "VER B" project's
+// src/lib/scroll.ts — the exact scroll-response math used there, so the
+// Hero's scroll feel matches rather than approximates it.
+const clamp = (v: number, min = 0, max = 1) => Math.min(max, Math.max(min, v));
+const easeOut = (t: number) => 1 - Math.pow(1 - clamp(t), 3);
+
 const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
-// The spatial frame's pointer-follow tilt is a mouse/trackpad-only
-// refinement (touch has no pointer position to warp toward) — same gate
-// ProjectVisual.tsx's depthOnHover already uses.
 const POINTER_QUERY = "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
 
 export function Hero({ locale }: { locale: Locale }) {
   const content = heroContent[locale];
   const lang = locale === "zh" ? "zh-Hant" : "en";
-  const lineJoiner = locale === "zh" ? "" : " ";
-  const plainStatement = content.statement.map((segment) => segment.text).join("");
-  const plainIdentity = content.identityLines.join(lineJoiner === "" ? " " : lineJoiner);
 
   const sectionRef = useRef<HTMLElement | null>(null);
-  const gridLinesRef = useRef<HTMLDivElement | null>(null);
-  const identityRef = useRef<HTMLHeadingElement | null>(null);
-  const eyebrowRef = useRef<HTMLDivElement | null>(null);
-  const statementRef = useRef<HTMLParagraphElement | null>(null);
-  const supportRef = useRef<HTMLParagraphElement | null>(null);
-  const scrollControlRef = useRef<HTMLButtonElement | null>(null);
-  const spatialZoneRef = useRef<HTMLDivElement | null>(null);
+  const kickerRef = useRef<HTMLParagraphElement | null>(null);
+  const titleRef = useRef<HTMLHeadingElement | null>(null);
+  const copyRef = useRef<HTMLParagraphElement | null>(null);
+  const ctaRef = useRef<HTMLDivElement | null>(null);
+  const planeRef = useRef<HTMLDivElement | null>(null);
+  const planeLineRef = useRef<HTMLSpanElement | null>(null);
+  const handoffRef = useRef<HTMLDivElement | null>(null);
+  // Read by the pointer handler to damp rotation out as scroll progresses
+  // (Lovable's `(1 - p)` multiplier) — a ref, not state, since it's written
+  // every scroll frame and must never trigger a re-render.
+  const scrollDampRef = useRef(1);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
-    const gridLines = gridLinesRef.current;
-    const identity = identityRef.current;
-    const eyebrow = eyebrowRef.current;
-    const statement = statementRef.current;
-    const support = supportRef.current;
-    const scrollControl = scrollControlRef.current;
-    const spatialZone = spatialZoneRef.current;
-    if (!section || !identity || !eyebrow || !statement || !support || !scrollControl) return;
+    const kicker = kickerRef.current;
+    const title = titleRef.current;
+    const copy = copyRef.current;
+    const cta = ctaRef.current;
+    const plane = planeRef.current;
+    const planeLine = planeLineRef.current;
+    const handoff = handoffRef.current;
+    if (!section || !kicker || !title || !copy || !cta || !plane || !planeLine || !handoff) return;
 
     gsap.registerPlugin(ScrollTrigger);
+    gsap.set(plane, { transformPerspective: 900 });
+
     const media = gsap.matchMedia();
     const context = gsap.context(() => {
-      // Opening sequence: structural grid lines establish -> identity
-      // (ANGELA / YU) mask-reveals line by line -> statement resolves ->
-      // support copy + SCROLL settle -> spatial zone activates last, so it
-      // reads as arriving into a space the rest of the scene just built.
+      // Scroll response: p runs 0..1 across the track's own scrollable
+      // distance (track height minus one viewport) — same source-of-truth
+      // formula as Lovable's useTrackProgress/Hero p state, driven here via
+      // ScrollTrigger instead of a raw scroll listener so it shares the
+      // site's existing Lenis-synced GSAP pipeline. All transform writes
+      // use GSAP's own x/y/scale/rotationX/rotationY properties (never a
+      // hand-written `transform` string) so this pass and the pointer
+      // handler below compose into one transform instead of overwriting
+      // each other.
       media.add(MOTION_QUERY, () => {
-        const lineEls = Array.from(identity.querySelectorAll<HTMLElement>(".hero-line-inner"));
-        const accentEls = Array.from(identity.querySelectorAll<HTMLElement>(".hero-accent"));
-        const statementLineEls = Array.from(statement.querySelectorAll<HTMLElement>(".hero-line-inner"));
-        const statementAccentEls = Array.from(statement.querySelectorAll<HTMLElement>(".hero-accent"));
-        const gridLineEls = gridLines ? Array.from(gridLines.children) as HTMLElement[] : [];
-        if (!lineEls.length || !statementLineEls.length) return;
-
-        gsap.set(gridLineEls, { scaleX: 0, scaleY: 0, opacity: 0 });
-        gsap.set(lineEls, { yPercent: 100 });
-        gsap.set(statementLineEls, { yPercent: 100 });
-        gsap.set(eyebrow, { autoAlpha: 0, y: 12 });
-        gsap.set(support, { autoAlpha: 0, y: 12 });
-        gsap.set(scrollControl, { autoAlpha: 0, y: 8 });
-        if (spatialZone) gsap.set(spatialZone, { autoAlpha: 0, scale: 0.94 });
-
-        const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
-        timeline
-          .to(gridLineEls, { opacity: 1, duration: 0.01 })
-          .to(gridLineEls[0] ?? [], { scaleX: 1, duration: 0.5, ease: "power2.out" }, "<")
-          .to(gridLineEls[1] ?? [], { scaleY: 1, duration: 0.5, ease: "power2.out" }, "<0.05")
-          .to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.4 }, "-=0.2")
-          .to(lineEls, { yPercent: 0, duration: 0.62, stagger: 0.1 }, "-=0.14")
-          .to(accentEls, { scale: 1.05, duration: 0.16, ease: "power1.out" }, "-=0.2")
-          .to(accentEls, { scale: 1, duration: 0.24, ease: "power2.out" })
-          .to(statementLineEls, { yPercent: 0, duration: 0.55, stagger: 0.05 }, "-=0.3")
-          .to(statementAccentEls, { scale: 1.04, duration: 0.14 }, "-=0.2")
-          .to(statementAccentEls, { scale: 1, duration: 0.2 })
-          .to(support, { autoAlpha: 1, y: 0, duration: 0.45 }, "-=0.35")
-          .to(scrollControl, { autoAlpha: 1, y: 0, duration: 0.35 }, "-=0.18");
-
-        if (spatialZone) {
-          timeline.to(spatialZone, { autoAlpha: 1, scale: 1, duration: 0.7, ease: "power2.out" }, "-=0.5");
-        }
-
-        return () => {
-          timeline.kill();
-          gsap.set(
-            [lineEls, statementLineEls, eyebrow, support, scrollControl, accentEls, statementAccentEls, gridLineEls, spatialZone].filter(Boolean),
-            { clearProps: "all" },
-          );
-        };
-      });
-
-      // Idle spatial life: a slow, barely-perceptible perspective sway on
-      // the reserved zone so it never reads as a static, unfinished box —
-      // independent of pointer input.
-      media.add(MOTION_QUERY, () => {
-        if (!spatialZone) return;
-        const idle = gsap.to(spatialZone, {
-          "--hero-idle-ry": "2.4deg",
-          "--hero-idle-rx": "-1.1deg",
-          duration: 5.5,
-          ease: "sine.inOut",
-          yoyo: true,
-          repeat: -1,
+        const trigger = ScrollTrigger.create({
+          trigger: section,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: true,
+          onUpdate: (self) => {
+            const p = self.progress;
+            scrollDampRef.current = 1 - p;
+            gsap.set(title, { x: `${p * 3}vw`, y: `${-p * 12}vh`, scale: 1 - p * 0.28 });
+            gsap.set(kicker, { opacity: 1 - p * 2.4 });
+            gsap.set(copy, { opacity: 1 - p * 2.1, y: -p * 28 });
+            gsap.set(cta, { opacity: 1 - p * 2.2 });
+            gsap.set(plane, {
+              x: `${-p * 16}vw`,
+              y: `${p * 20}vh`,
+              scale: 1 + p * 0.5,
+              opacity: 0.65 + easeOut(p) * 0.35,
+            });
+            gsap.set(planeLine, { width: `${20 + p * 80}%` });
+            gsap.set(handoff, { opacity: clamp((p - 0.58) * 3) });
+          },
         });
+
         return () => {
-          idle.kill();
-          gsap.set(spatialZone, { clearProps: "--hero-idle-rx,--hero-idle-ry" });
+          trigger.kill();
+          gsap.set([title, kicker, copy, cta, plane, planeLine, handoff], { clearProps: "all" });
         };
       });
 
-      // Pointer response: restrained X/Y tilt toward the cursor, scoped to
-      // the whole hero so the zone reacts even when the pointer isn't
-      // directly over it (an ambient presence, not a hover trick).
+      // Pointer response on the spatial plane — restrained perspective
+      // tilt, damped out as scroll progresses via scrollDampRef, matching
+      // Lovable's `(1 - p)` multiplier on the pointer-driven rotation.
       media.add(POINTER_QUERY, () => {
-        if (!spatialZone) return;
         const handleMove = (event: PointerEvent) => {
           const rect = section.getBoundingClientRect();
-          const px = (event.clientX - rect.left) / rect.width - 0.5;
-          const py = (event.clientY - rect.top) / rect.height - 0.5;
-          spatialZone.style.setProperty("--hero-pointer-ry", `${(px * 6).toFixed(2)}deg`);
-          spatialZone.style.setProperty("--hero-pointer-rx", `${(-py * 6).toFixed(2)}deg`);
+          const x = clamp((event.clientX - rect.left) / rect.width) - 0.5;
+          const y = clamp((event.clientY - rect.top) / window.innerHeight) - 0.5;
+          const damp = scrollDampRef.current;
+          gsap.set(plane, { rotationX: y * -5 * damp, rotationY: x * 7 * damp });
         };
-        const handleLeave = () => {
-          spatialZone.style.setProperty("--hero-pointer-rx", "0deg");
-          spatialZone.style.setProperty("--hero-pointer-ry", "0deg");
-        };
+        const handleLeave = () => gsap.set(plane, { rotationX: 0, rotationY: 0 });
         section.addEventListener("pointermove", handleMove);
         section.addEventListener("pointerleave", handleLeave);
         return () => {
           section.removeEventListener("pointermove", handleMove);
           section.removeEventListener("pointerleave", handleLeave);
-          spatialZone.style.removeProperty("--hero-pointer-rx");
-          spatialZone.style.removeProperty("--hero-pointer-ry");
-        };
-      });
-
-      // Scroll response: as the user leaves Hero, identity + statement
-      // compress and recede while the spatial zone gains scale and drifts
-      // toward center — the zone gaining compositional weight as identity
-      // recedes is the Hero -> Work handoff's visual logic, resolved fully
-      // by the time Selected Work's own stage takes over. Restrained, no
-      // parallax beyond a few px on text, readability untouched throughout.
-      media.add(MOTION_QUERY, () => {
-        const responseTimeline = gsap.timeline({ paused: true });
-        responseTimeline
-          .to(identity, { y: -30, scale: 0.92, transformOrigin: "left bottom", duration: 1, ease: "none" }, 0)
-          .to(eyebrow, { y: -14, autoAlpha: 0.3, duration: 1, ease: "none" }, 0)
-          .to(statement, { y: -30, autoAlpha: 0.25, duration: 1, ease: "none" }, 0)
-          .to(support, { y: -40, autoAlpha: 0, duration: 0.7, ease: "none" }, 0)
-          .to(scrollControl, { autoAlpha: 0, y: 10, duration: 0.25, ease: "none" }, 0);
-
-        if (spatialZone) {
-          responseTimeline.to(
-            spatialZone,
-            { scale: 1.16, y: 24, x: -12, duration: 1, ease: "none" },
-            0,
-          );
-        }
-
-        const trigger = ScrollTrigger.create({
-          trigger: section,
-          start: "top top",
-          end: "bottom top",
-          scrub: 0.3,
-          animation: responseTimeline,
-        });
-
-        return () => {
-          trigger.kill();
-          responseTimeline.kill();
-          gsap.set(
-            [identity, eyebrow, statement, support, scrollControl, spatialZone].filter(Boolean),
-            { clearProps: "transform,opacity,visibility" },
-          );
+          gsap.set(plane, { clearProps: "rotationX,rotationY" });
         };
       });
     }, section);
@@ -187,7 +116,7 @@ export function Hero({ locale }: { locale: Locale }) {
     };
   }, [locale]);
 
-  const handleScrollClick = () => {
+  const handleWorkClick = () => {
     const target = document.getElementById("selected-work");
     if (!target) return;
     const lenis = getLenisInstance();
@@ -199,118 +128,99 @@ export function Hero({ locale }: { locale: Locale }) {
   };
 
   return (
-    <div className="relative motion-safe:pb-[10vh]">
-      <section
-        ref={sectionRef}
-        className="hero-scene relative mx-auto flex min-h-[calc(100vh-72px)] max-w-[1600px] items-end justify-between gap-10 overflow-hidden px-6 pb-10 pt-16 sm:px-8 lg:px-10 lg:pb-28 motion-safe:sticky motion-safe:top-0"
-      >
-        {/* Structural grid lines — the opening scene's first assembled
-            element, establishing the frame before typography arrives. */}
-        <div ref={gridLinesRef} aria-hidden="true" className="hero-grid-lines pointer-events-none absolute inset-6 sm:inset-8 lg:inset-10">
-          <span className="hero-grid-line-h absolute left-0 right-0 top-1/2 h-px bg-primary/10" />
-          <span className="hero-grid-line-v absolute bottom-0 top-0 left-[62%] hidden w-px bg-primary/10 lg:block" />
+    <section
+      ref={sectionRef}
+      className="hero-track relative h-[170svh] bg-paper text-ink"
+      aria-label={locale === "zh" ? "開場：Angela Yu 定位" : "Opening: Angela Yu positioning"}
+    >
+      <div className="sticky top-0 h-[100svh] overflow-hidden motion-safe:sticky motion-safe:top-0">
+        <div aria-hidden className="hero-grid absolute inset-0 grid grid-cols-4 md:grid-cols-12">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div
+              key={i}
+              className={`hero-grid-line border-l border-hairline ${i > 3 ? "hidden md:block" : ""}`}
+              style={{ animationDelay: `${i * 35}ms` }}
+            />
+          ))}
         </div>
 
-        <div className="max-w-[720px] pb-24 sm:pb-4 md:pb-24 lg:pb-8">
-          <div
-            ref={eyebrowRef}
-            className="mb-6 flex flex-wrap items-center gap-2 text-[16px] uppercase tracking-[0.18em] sm:text-[16px]"
-          >
-            <span className="text-accent-lavender">{content.eyebrow.primary}</span>
-            <span className="text-primary/40">|</span>
-            <span className="text-accent-yellow">{content.eyebrow.secondary}</span>
-          </div>
+        <div className="relative mx-auto grid h-full max-w-[1600px] grid-cols-1 items-end gap-6 px-5 pb-10 md:grid-cols-12 md:gap-10 md:px-10 md:pb-12">
+          <div className="relative z-10 md:col-span-7 md:pb-6">
+            <p ref={kickerRef} className="hero-kicker label-mono text-ink/50">
+              {content.kicker}
+            </p>
 
-          <h1
-            ref={identityRef}
-            className="hero-identity w-fit text-[3.4rem] font-[500] leading-[0.86] tracking-[-0.02em] text-primary sm:text-[5rem] md:text-[6.2rem] lg:text-[7.4rem]"
-          >
-            <span className="sr-only">{plainIdentity}</span>
-            <span aria-hidden="true" className="block">
-              {content.identityLines.map((line, lineIndex) => (
-                <span key={lineIndex} className="block overflow-hidden">
-                  <span className="hero-line-inner block will-change-transform">
-                    {lineIndex === 1 ? (
-                      <span className="hero-accent inline-block text-accent-yellow">{line}</span>
-                    ) : (
-                      line
-                    )}
-                  </span>
+            <h1 ref={titleRef} className="hero-title display-xl mt-5 uppercase">
+              <span className="hero-title-mask block">
+                <span className="hero-title-word block">{content.identityLines[0]}</span>
+              </span>
+              <span className="hero-title-mask block">
+                <span className="hero-title-word hero-title-word-second block text-lavender">
+                  {content.identityLines[1]}
+                  <span className="ml-4 inline-block h-[0.14em] w-[0.55em] translate-y-[-0.28em] bg-acid align-middle" />
                 </span>
-              ))}
-            </span>
-          </h1>
+              </span>
+            </h1>
 
-          <p
-            ref={statementRef}
-            lang={lang}
-            className="hero-statement mt-8 w-[min(100%,620px)] overflow-hidden text-[1.3rem] font-[450] leading-[1.5] tracking-[-0.01em] text-primary sm:text-[1.55rem] lg:text-[1.7rem]"
-          >
-            {/* Single accessible reading; the masked span below is
-                presentation-only so screen readers never see fragments. */}
-            <span className="sr-only">{plainStatement}</span>
-            <span aria-hidden="true" className="hero-line-inner block will-change-transform">
+            <p ref={copyRef} lang={lang} className="hero-copy body-tc mt-7 max-w-[48ch]">
               {content.statement.map((segment, index) =>
-                segment.highlight ? (
-                  <span key={index} className="hero-accent inline-block text-accent-yellow">
-                    {segment.text}
-                  </span>
-                ) : segment.noBreak ? (
-                  <span key={index} className="inline-block whitespace-nowrap">
+                segment.noBreak ? (
+                  <span key={index} className="whitespace-nowrap">
                     {segment.text}
                   </span>
                 ) : (
-                  <Fragment key={index}>{segment.text}</Fragment>
+                  <span key={index}>{segment.text}</span>
                 ),
               )}
-            </span>
-          </p>
+              <span className="mt-1 block text-ink/50">
+                {content.supportLines.join("")}
+              </span>
+            </p>
 
-          <p
-            ref={supportRef}
-            lang={lang}
-            className="mt-8 max-w-[560px] text-[16px] leading-7 text-primary/70 sm:text-[18px] md:text-[19px] lg:text-[20px]"
-          >
-            {content.supportLines.map((line, lineIndex) => (
-              <Fragment key={lineIndex}>
-                {lineIndex > 0 && <br className="hidden sm:block" />}
-                {line}
-              </Fragment>
-            ))}
-          </p>
-        </div>
+            <div ref={ctaRef} className="hero-cta mt-8 flex flex-wrap items-center gap-x-8 gap-y-3">
+              <button
+                type="button"
+                onClick={handleWorkClick}
+                className="case-link label-mono group inline-flex items-center gap-3 border-b border-ink py-3"
+              >
+                {locale === "zh" ? "精選作品" : "Selected Work"}
+                <span aria-hidden className="transition-transform group-hover:translate-y-1">↓</span>
+              </button>
+              <p className="label-mono text-ink/50">
+                {locale === "zh" ? "SCROLL TO ADVANCE" : "Scroll to advance"}
+              </p>
+            </div>
+          </div>
 
-        {/* Reserved spatial zone — a plain structural frame, not a filled
-            object. The future 3D/cube hero object stays on hold; this is
-            the compositional placeholder that will hand off into it. */}
-        <div
-          ref={spatialZoneRef}
-          aria-hidden="true"
-          className="hero-spatial-zone relative hidden shrink-0 lg:block"
-          style={{ width: "34vw", maxWidth: 420, height: "min(46vh, 460px)" }}
-        >
-          <div className="hero-spatial-frame absolute inset-0">
-            <span className="hero-spatial-corner hero-spatial-corner-tl" />
-            <span className="hero-spatial-corner hero-spatial-corner-br" />
-            <span className="hero-spatial-shelf" style={{ top: "32%", transform: "translateZ(-40px)" }} />
-            <span className="hero-spatial-shelf" style={{ top: "62%", transform: "translateZ(-80px)", opacity: 0.5 }} />
+          <div className="hero-plane-wrap absolute inset-x-5 top-24 h-[36vh] md:relative md:inset-auto md:col-span-5 md:h-auto md:pb-6">
+            <div
+              ref={planeRef}
+              aria-hidden
+              className="hero-plane relative h-full w-full md:ml-auto md:aspect-[4/5] md:max-w-[520px]"
+            >
+              <div className="absolute inset-0 border border-ink/30" />
+              {Array.from({ length: 7 }).map((_, i) => (
+                <span key={`h-${i}`} className="absolute inset-x-0 h-px bg-ink/15" style={{ top: `${(i + 1) * 12.5}%` }} />
+              ))}
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span key={`v-${i}`} className="absolute inset-y-0 w-px bg-ink/15" style={{ left: `${(i + 1) * 16.66}%` }} />
+              ))}
+              <span ref={planeLineRef} className="absolute left-0 top-0 h-px bg-acid" style={{ width: "20%" }} />
+              <span className="absolute bottom-4 right-4 label-mono text-ink/50">
+                {locale === "zh" ? "空間場域 · 01" : "Spatial field · 01"}
+              </span>
+            </div>
           </div>
         </div>
 
-        <button
-          ref={scrollControlRef}
-          type="button"
-          onClick={handleScrollClick}
-          aria-label="Scroll to Selected Work"
-          className="hero-scroll-control absolute bottom-6 left-1/2 right-auto flex -translate-x-1/2 flex-col items-center gap-2 text-[12px] uppercase tracking-[0.22em] text-accent-yellow sm:bottom-8 sm:left-auto sm:right-8 sm:translate-x-0 lg:right-10 lg:bottom-10"
+        <div
+          ref={handoffRef}
+          className="hero-handoff absolute inset-x-5 bottom-6 flex items-center justify-between border-t border-hairline pt-3 opacity-0 md:inset-x-10"
         >
-          <span className="hero-scroll-label">SCROLL</span>
-          <span aria-hidden="true" className="hero-scroll-line" />
-          <span aria-hidden="true" className="hero-scroll-arrow text-base leading-none">
-            ↓
-          </span>
-        </button>
-      </section>
-    </div>
+          <span className="label-mono">{locale === "zh" ? "精選作品" : "Selected Work"}</span>
+          <span className="label-mono text-ink/50">01 / 04</span>
+        </div>
+      </div>
+    </section>
   );
 }

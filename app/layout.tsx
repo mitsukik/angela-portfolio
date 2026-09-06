@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Noto_Sans_TC } from "next/font/google";
+import { Archivo, Geist, Geist_Mono, IBM_Plex_Mono, Noto_Sans_TC } from "next/font/google";
 import Script from "next/script";
 import { RouteTransition } from "@/components/site/RouteTransition";
 import { SmoothScroll } from "@/components/site/SmoothScroll";
@@ -27,6 +27,21 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// V3 (VER B port): display/label typefaces matched to the Lovable source
+// of truth's --font-display / --font-mono. Additive — Geist stays the
+// existing body font for pages not in scope this pass (About/Case Study).
+const archivo = Archivo({
+  variable: "--font-archivo",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  variable: "--font-ibm-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+});
+
 const notoSansTC = Noto_Sans_TC({
   variable: "--font-noto-sans-tc",
   weight: ["400", "500"],
@@ -47,7 +62,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${notoSansTC.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${notoSansTC.variable} ${archivo.variable} ${ibmPlexMono.variable} h-full antialiased`}
       // The beforeInteractive script above legitimately mutates this
       // element's attributes (data-about-hero-motion) before hydration on
       // /about routes — React has no way to know that's expected, so

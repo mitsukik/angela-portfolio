@@ -26,7 +26,7 @@ export default function AboutPageEn() {
         <AboutSections locale="en" />
       </main>
 
-      <SiteFooter />
+      <SiteFooter locale="en" />
     </div>
   );
 }

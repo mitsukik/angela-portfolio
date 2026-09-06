@@ -1,155 +1,94 @@
 "use client";
 
+import { useRef } from "react";
 import type { Locale } from "@/data/locale";
 import { projects } from "@/data/projects";
-import { ProjectVisual } from "@/components/site/ProjectVisual";
-import { ProjectDetails } from "./ProjectDetails";
-import { useSelectedWorkSequence } from "./useSelectedWorkSequence";
-import "./SelectedWork.css";
+import { clamp, useMedia } from "./motion";
+import { useWorkStageProgress } from "./useWorkStageProgress";
+import { ProjectScene } from "./ProjectScene";
+
+// Scene units across the track — 4 projects + a 0.35 tail so the last
+// project gets a readable hold window before the pin releases. Ported
+// from the connected Lovable "VER B" project's WorkStage.tsx.
+const SPAN = 4.35;
 
 export function SelectedWork({ locale }: { locale: Locale }) {
-  const {
-    sequenceRef,
-    stageRef,
-    rowRef,
-    imageRefs,
-    textRefs,
-    stepRefs,
-    activeProject,
-    projectAnnouncement,
-    selectProject,
-  } = useSelectedWorkSequence(projects);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const p = useWorkStageProgress(trackRef);
+  const still = useMedia("(prefers-reduced-motion: reduce)");
+  const compact = useMedia("(max-width: 767px)");
+
+  const sceneP = p * SPAN;
+  const current = clamp(Math.floor(sceneP + 0.25), 0, projects.length - 1);
+  const active = projects[current];
+  const stageTone = active.stageBackground;
+
+  const goTo = (index: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const distance = el.offsetHeight - window.innerHeight;
+    const top = el.offsetTop + ((index + 0.35) / SPAN) * distance;
+    window.scrollTo({ top, behavior: still ? "auto" : "smooth" });
+  };
 
   return (
-    <section
-      ref={sequenceRef}
-      id="selected-work"
-      aria-labelledby="selected-work-heading"
-      className="selected-work-sequence relative z-10 border-t border-primary/12 bg-background pb-[80px]"
-    >
+    <section id="selected-work" aria-label={locale === "zh" ? "Selected Work 作品簡報" : "Selected Work presentation"}>
       <div
-        ref={stageRef}
-        data-stage-theme={projects[0].stageBackground}
-        className="selected-work-sticky relative mx-auto max-w-[1600px] px-6 py-16 sm:px-8 lg:px-10 lg:py-20"
+        ref={trackRef}
+        style={{ height: compact ? `${projects.length * 100 + 40}svh` : `${projects.length * 130 + 55}vh` }}
       >
-        {/* AmbientField disabled per Angela's review — see AboutHero.tsx
-            for the same note. */}
-        <h2 id="selected-work-heading" className="mb-10 text-[12px] font-medium uppercase tracking-[0.22em] text-primary sm:text-[12px]">
-          SELECTED WORK
-        </h2>
+        <div className={`sticky top-0 h-[100svh] overflow-hidden ${stageTone === "dark" ? "scene-dark" : "scene-light"}`}>
+          {projects.map((project, i) => (
+            <ProjectScene key={project.id} project={project} locale={locale} f={sceneP - i} still={still} compact={compact} />
+          ))}
 
-        <p aria-live="polite" aria-atomic="true" className="sr-only">
-          {projectAnnouncement}
-        </p>
-
-        <div className="border-t border-primary/12 pt-8 lg:pt-10">
+          {/* stage chrome */}
           <div
-            ref={rowRef}
-            data-project-layout={projects[0].stageLayout === "media-left" ? "reversed" : "default"}
-            data-project-vertical={
-              projects[0].stageLayout === "text-top"
-                ? "top"
-                : projects[0].stageLayout === "text-bottom"
-                  ? "bottom"
-                  : "middle"
-            }
-            className="selected-work-row flex flex-col gap-8 lg:grid lg:grid-cols-[minmax(0,38fr)_minmax(0,62fr)] lg:gap-10"
+            className={`pointer-events-none absolute inset-x-0 top-0 z-20 px-5 pt-20 md:px-10 md:pt-24 ${
+              stageTone === "dark" ? "scene-dark" : "scene-light"
+            } bg-transparent`}
           >
-            <div className="project-text-slot w-full">
-              <ProjectDetails
-                project={projects[0]}
-                locale={locale}
-                hidden
-                className="project-text-reference"
-              />
-              {projects.map((project, index) => {
-                const isActive = project.id === activeProject.id;
-
-                return (
-                  <ProjectDetails
-                    key={project.id}
-                    panelRef={(panel) => {
-                      textRefs.current[index] = panel;
-                    }}
-                    project={project}
-                    locale={locale}
-                    hidden={!isActive}
-                    className={`project-text-panel ${
-                      isActive
-                        ? "project-text-panel-active project-text-transition"
-                        : "project-text-panel-inactive"
-                    }`}
-                  />
-                );
-              })}
-            </div>
-
-            <div className="project-media-slot w-full">
-              <div className="media-hover-frame relative flex min-h-[340px] overflow-hidden border border-primary/12 bg-surface sm:min-h-[430px] lg:min-h-[520px]">
-                {projects.map((project, index) => {
-                  const isActive = project.id === activeProject.id;
-
-                  return (
-                    <ProjectVisual
-                      key={project.id}
-                      ref={(panel) => {
-                        imageRefs.current[index] = panel;
-                      }}
-                      project={project}
-                      priority={index === 0}
-                      aria-hidden={!isActive}
-                      scanOnRowHover
-                      sizes="(max-width: 1024px) 100vw, 62vw"
-                      className={`project-image-layer absolute inset-0 ${
-                        isActive
-                          ? "project-image-layer-active"
-                          : "project-image-layer-inactive"
-                      }`}
-                    />
-                  );
-                })}
+            <div className="flex items-center justify-between border-b scene-rule pb-3">
+              <p className="label-mono scene-text">{locale === "zh" ? "精選作品" : "Selected Work"}</p>
+              <div className="h-[1.1rem] overflow-hidden label-mono scene-dim-text" aria-label={`${active.number} / 04`}>
+                <div className="transition-transform duration-500" style={{ transform: `translateY(-${current * 1.1}rem)` }}>
+                  {projects.map((project) => (
+                    <span key={project.id} className="block h-[1.1rem]">
+                      {project.number} / 0{projects.length}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-10 flex items-center justify-center gap-6 pt-6 text-[16px] uppercase tracking-[0.18em] text-primary/40 sm:justify-start sm:gap-8">
-            <span
-              key={activeProject.number}
-              aria-hidden="true"
-              className="selected-work-progress inline-flex items-baseline gap-1 text-primary"
-            >
-              <span className="text-accent-yellow">{activeProject.number}</span>
-              <span className="text-primary/40">/ 04</span>
-            </span>
-            <span aria-hidden="true" className="h-4 w-px bg-primary/15" />
-            {projects.map((project, index) => (
-              <button
-                key={project.id}
-                type="button"
-                aria-label={`View ${project.title}`}
-                aria-pressed={project.id === activeProject.id}
-                onClick={() => selectProject(project, index)}
-                className={`project-selector -mx-3 inline-flex min-h-11 min-w-11 items-center justify-center ${
-                  project.id === activeProject.id ? "text-accent-yellow" : "text-primary/50"
-                }`}
-              >
-                {project.number}
-              </button>
-            ))}
-          </div>
+          <nav
+            aria-label={locale === "zh" ? "作品進度" : "Work progress"}
+            className={`absolute inset-x-0 bottom-0 z-20 px-5 pb-6 md:px-10 md:pb-8 ${
+              stageTone === "dark" ? "scene-dark" : "scene-light"
+            } bg-transparent`}
+          >
+            <ol className="flex items-end gap-2 md:gap-4">
+              {projects.map((project, i) => {
+                const local = clamp(sceneP - i);
+                const isActive = i === current;
+                return (
+                  <li key={project.id} className="flex-1">
+                    <button type="button" onClick={() => goTo(i)} aria-current={isActive ? "step" : undefined} className="group block w-full text-left">
+                      <span className="relative block h-px w-full scene-rule border-t">
+                        <span className="absolute inset-y-0 left-0 -top-px block h-[2px] bg-current transition-none" style={{ width: `${local * 100}%` }} />
+                      </span>
+                      <span className={`label-mono mt-2 block transition-opacity ${isActive ? "scene-text" : "scene-dim-text opacity-60 group-hover:opacity-100"}`}>
+                        {project.number}
+                        <span className="ml-2 hidden md:inline">{project.title}</span>
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+          </nav>
         </div>
-      </div>
-      <div className="selected-work-steps" aria-hidden="true">
-        {projects.map((project, index) => (
-          <div
-            key={project.id}
-            ref={(step) => {
-              stepRefs.current[index] = step;
-            }}
-            data-project-index={index}
-            className="selected-work-step"
-          />
-        ))}
       </div>
     </section>
   );

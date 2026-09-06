@@ -10,6 +10,21 @@
   --motion-duration-discrete: 320ms;
   --motion-duration-entrance: 560ms;
   --motion-ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /*
+   * V3 (VER B port) tokens — exact oklch values from the connected Lovable
+   * "Angela Portfolio — VER B" project's src/styles.css, the visual source
+   * of truth for the Home/Nav/Closing scrollytelling pass. Kept as
+   * separate named tokens rather than overwriting --background/--foreground
+   * above: those still drive About/Case Study and the rest of the site,
+   * which are not in scope for this pass and must stay on the existing
+   * approved dark palette.
+   */
+  --ink: oklch(0.16 0.008 265);
+  --paper: oklch(0.968 0.012 95);
+  --acid: oklch(0.93 0.19 116);
+  --lavender: oklch(0.78 0.11 300);
+  --hairline: oklch(0.16 0.008 265 / 18%);
 }
 
 @theme inline {
@@ -21,6 +36,14 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --ease-editorial: var(--motion-ease-editorial);
+
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-acid: var(--acid);
+  --color-lavender: var(--lavender);
+  --color-hairline: var(--hairline);
+  --font-display: var(--font-archivo), "Noto Sans TC", system-ui, sans-serif;
+  --font-label: var(--font-ibm-plex-mono), ui-monospace, monospace;
 }
 
 /*
@@ -956,155 +979,218 @@ body {
 
 /*
  * ============================================================
- * Hero structural grid lines + reserved spatial zone
+ * VER B port — Hero entrance, nav-line/case-link, language switch,
+ * mobile menu
  * ============================================================
- * V3: the Hero's right-side zone is a plain structural frame (border +
- * a couple of receded "shelf" lines under perspective), not a filled
- * object — the future 3D/cube hero object stays on hold. Idle drift and
- * pointer tilt are driven by CSS custom properties so GSAP (idle, tweened
- * continuously) and a raw pointermove listener (immediate) can both
- * contribute to the same combined transform without fighting each other.
+ * Ported verbatim (values, timings, easing) from the connected Lovable
+ * project's src/styles.css — this is the visual/interaction source of
+ * truth for V3, not a reinterpretation. Superseded here: the earlier
+ * hero-spatial-*/lang-switch/mobile-nav-list rules from the first V3
+ * pass, now replaced by this port.
  */
-.hero-grid-line-h {
-  transform-origin: left center;
+@keyframes grid-establish {
+  from { transform: scaleY(0); opacity: 0; }
+  to { transform: scaleY(1); opacity: 1; }
 }
 
-.hero-grid-line-v {
-  transform-origin: center top;
+@keyframes title-reveal {
+  from { transform: translateY(112%); }
+  to { transform: translateY(0); }
 }
 
-.hero-spatial-zone {
-  perspective: 1400px;
+@keyframes detail-resolve {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.hero-spatial-frame {
-  transform-style: preserve-3d;
-  border: 1px solid color-mix(in oklab, var(--foreground) 14%, transparent);
-  transform: rotateX(calc(var(--hero-idle-rx, 0deg) + var(--hero-pointer-rx, 0deg)))
-    rotateY(calc(var(--hero-idle-ry, 0deg) + var(--hero-pointer-ry, 0deg)));
+@keyframes plane-enter {
+  from { opacity: 0; clip-path: inset(45% 45% 45% 45%); }
+  to { opacity: 1; clip-path: inset(0); }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .hero-spatial-frame {
-    transition: transform 250ms ease-out;
-  }
+.hero-grid-line {
+  transform-origin: top;
+  animation: grid-establish 700ms cubic-bezier(.2,.8,.2,1) both;
 }
 
-.hero-spatial-corner {
+.hero-title-mask { overflow: hidden; }
+.hero-title-word { animation: title-reveal 800ms cubic-bezier(.16,1,.3,1) 180ms both; }
+.hero-title-word-second { animation-delay: 280ms; }
+.hero-kicker { animation: detail-resolve 500ms ease-out 420ms both; }
+.hero-copy { animation: detail-resolve 600ms ease-out 520ms both; }
+.hero-cta { animation: detail-resolve 600ms ease-out 620ms both; }
+.hero-plane { animation: plane-enter 900ms cubic-bezier(.16,1,.3,1) 360ms both; transition: transform 120ms ease-out; }
+
+.nav-line,
+.case-link {
+  position: relative;
+}
+
+.nav-line::after,
+.case-link::after {
+  content: "";
   position: absolute;
-  width: 22px;
-  height: 22px;
-}
-
-.hero-spatial-corner-tl {
-  top: -1px;
-  left: -1px;
-  border-top: 1px solid var(--accent-yellow);
-  border-left: 1px solid var(--accent-yellow);
-}
-
-.hero-spatial-corner-br {
-  bottom: -1px;
-  right: -1px;
-  border-bottom: 1px solid var(--accent-yellow);
-  border-right: 1px solid var(--accent-yellow);
-}
-
-.hero-spatial-shelf {
-  position: absolute;
-  left: 8%;
-  right: 8%;
+  inset-inline: 0;
+  bottom: 0;
   height: 1px;
-  background: color-mix(in oklab, var(--foreground) 22%, transparent);
-  opacity: 0.8;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 300ms ease;
 }
 
-/*
- * ============================================================
- * Language switch (nav)
- * ============================================================
- * A real two-position switch — both labels always present, one thumb
- * slides behind whichever is active — not two adjacent links. Still
- * backed by <Link>/<span>, so it degrades to a plain SSR'd link with no
- * JS required.
- */
-.lang-switch {
+.nav-line:hover::after,
+.nav-line[data-status="active"]::after,
+.case-link:hover::after,
+.case-link:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.work-index-link .case-link::after { transform-origin: left; }
+
+.language-switch {
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  height: 1.75rem;
-  padding: 0 2px;
-  border: 1px solid color-mix(in oklab, var(--foreground) 18%, transparent);
-  border-radius: 999px;
-}
-
-.lang-switch-thumb {
-  position: absolute;
-  top: 2px;
-  bottom: 2px;
-  left: 2px;
-  width: calc(50% - 2px);
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--foreground) 12%, transparent);
-}
-
-.lang-switch[data-active="en"] .lang-switch-thumb {
-  transform: translateX(100%);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .lang-switch-thumb {
-    transition: transform var(--motion-duration-discrete) var(--motion-ease-editorial);
-  }
-
-  .lang-switch-option {
-    transition: color var(--motion-duration-micro) var(--motion-ease-editorial);
-  }
-}
-
-.lang-switch-option {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  min-height: 1.75rem;
-  min-width: 1.75rem;
-  align-items: center;
-  justify-content: center;
-  padding: 0 0.6rem;
-  color: color-mix(in oklab, var(--foreground) 55%, transparent);
-}
-
-.lang-switch-option-active {
+  display: grid;
+  grid-template-columns: repeat(2, 2.65rem);
+  border: 1px solid var(--hairline);
   color: var(--foreground);
 }
 
-a.lang-switch-option:is(:hover, :focus-visible) {
-  color: var(--accent-yellow);
+.language-switch-inverse {
+  border-color: oklch(1 0 0 / 30%);
+  color: var(--paper);
+}
+
+.language-switch-thumb {
+  position: absolute;
+  inset: 2px auto 2px 2px;
+  width: calc(50% - 2px);
+  background: var(--acid);
+  transition: transform 360ms cubic-bezier(.2,.8,.2,1);
+}
+
+.language-switch-option {
+  position: relative;
+  z-index: 1;
+  height: 1.8rem;
+  min-width: 0;
+  border-radius: 0;
+  padding: 0;
+  color: inherit;
+  font-family: var(--font-label);
+  font-size: .7rem;
+  letter-spacing: 0;
+}
+
+.language-switch-option[aria-pressed="true"] { color: var(--ink); }
+.language-switch-option:hover { background: transparent; color: inherit; transform: translateY(-2px); }
+.language-switch-option[aria-pressed="true"]:hover { color: var(--ink); }
+
+.menu-line {
+  position: absolute;
+  width: 1.35rem;
+  height: 1px;
+  background: currentColor;
+  transition: transform 400ms cubic-bezier(.16,1,.3,1);
+}
+
+.mobile-menu {
+  position: fixed;
+  inset: 4rem 0 0;
+  height: calc(100svh - 4rem);
+  background: var(--ink);
+  color: var(--paper);
+  clip-path: inset(0 0 100% 0);
+  visibility: hidden;
+  transition: clip-path 480ms cubic-bezier(.76,0,.24,1), visibility 480ms;
+}
+
+.mobile-menu-open { clip-path: inset(0); visibility: visible; }
+.mobile-menu-link,
+.mobile-menu-meta { opacity: 0; transform: translateY(18px); transition: opacity 360ms ease, transform 480ms cubic-bezier(.16,1,.3,1); }
+.mobile-menu-open .mobile-menu-link,
+.mobile-menu-open .mobile-menu-meta { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 767px) {
+  .hero-title { font-size: clamp(3.6rem, 19vw, 6rem); }
+  .hero-plane-wrap { opacity: .58; }
+  .hero-copy { max-width: 34ch; }
 }
 
 /*
- * Mobile menu item stagger — the panel itself still animates as one block
- * (transform/opacity, see SiteHeader.tsx), but its direct children fade/
- * lift in with a short per-item delay on OPEN only; closing has no delay
- * so the menu still dismisses as one quick, responsive motion rather than
- * a slow staggered exit.
+ * ============================================================
+ * VER B ported utilities (Home / Nav / Closing scope only)
+ * ============================================================
+ * Ported verbatim from the connected Lovable project's src/styles.css so
+ * the ported components (Hero, WorkStage/ProjectScene, Closing, nav) can
+ * reuse its exact class vocabulary. scene-dark/scene-light are the
+ * per-project-scene art direction (NOT a site theme) — independent of
+ * --background/--foreground, which the rest of the site still uses.
  */
-@media (prefers-reduced-motion: no-preference) {
-  .mobile-nav-list > * {
-    opacity: 0;
-    transform: translateY(-8px);
-    transition: transform 380ms var(--motion-ease-editorial), opacity 380ms var(--motion-ease-editorial);
-  }
+.scene-dark {
+  --scene-bg: var(--ink);
+  --scene-fg: var(--paper);
+  --scene-dim: oklch(0.72 0.01 265);
+  --scene-line: oklch(1 0 0 / 18%);
+  background-color: var(--scene-bg);
+  color: var(--scene-fg);
+}
 
-  #mobile-navigation[data-open="true"] .mobile-nav-list > * {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.scene-light {
+  --scene-bg: var(--paper);
+  --scene-fg: var(--ink);
+  --scene-dim: oklch(0.45 0.012 265);
+  --scene-line: oklch(0.16 0.008 265 / 16%);
+  background-color: var(--scene-bg);
+  color: var(--scene-fg);
+}
 
-  #mobile-navigation[data-open="true"] .mobile-nav-list > *:nth-child(1) { transition-delay: 60ms; }
-  #mobile-navigation[data-open="true"] .mobile-nav-list > *:nth-child(2) { transition-delay: 110ms; }
-  #mobile-navigation[data-open="true"] .mobile-nav-list > *:nth-child(3) { transition-delay: 160ms; }
-  #mobile-navigation[data-open="true"] .mobile-nav-list > *:nth-child(4) { transition-delay: 210ms; }
+.scene-text {
+  color: var(--scene-fg, var(--foreground));
+}
+
+.scene-dim-text {
+  color: var(--scene-dim, oklch(0.5 0.01 265));
+}
+
+.scene-rule {
+  border-color: var(--scene-line, var(--hairline));
+}
+
+.label-mono {
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.display-xl {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 0.88;
+  font-size: clamp(2.75rem, 9vw, 8.5rem);
+}
+
+.display-l {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 0.94;
+  font-size: clamp(2rem, 5.2vw, 4.5rem);
+}
+
+.body-tc {
+  font-family: var(--font-noto-sans-tc), var(--font-display);
+  font-size: clamp(0.9375rem, 1.05vw, 1.0625rem);
+  line-height: 1.85;
+  letter-spacing: 0.02em;
+}
+
+.edge-frame {
+  border: 1px solid var(--scene-line, var(--hairline));
 }
 
 } /* end @layer components */

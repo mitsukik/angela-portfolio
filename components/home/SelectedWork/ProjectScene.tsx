@@ -102,8 +102,15 @@ export function ProjectScene({ project, locale, f, still, compact }: Props) {
         {summary}
       </p>
       {role && <p className="label-mono scene-dim-text">{role}</p>}
-      <Link href={`/work/${project.slug}`} className="case-link group inline-flex items-center gap-3 pb-2 label-mono">
-        {locale === "zh" ? "查看案例" : "View case study"}
+      {/* Same bordered-CTA grammar as Hero's "Selected Work ↓" and the
+          Closing contact rows — visible at rest (not only on hover/whole-
+          card click), so it reads unambiguously as this scene's entry
+          point into the Case Study rather than blending into body copy. */}
+      <Link
+        href={`/work/${project.slug}`}
+        className="case-link group inline-flex items-center gap-3 border-b border-current/50 pb-2 label-mono"
+      >
+        {locale === "zh" ? "查看案例" : "VIEW CASE STUDY"}
         <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">→</span>
       </Link>
     </div>
@@ -122,6 +129,19 @@ export function ProjectScene({ project, locale, f, still, compact }: Props) {
     </div>
   );
 
+  // V3.1 locked layout: one parameterized 50/50 grid instead of four
+  // hand-coded variants, so media reads at a consistent size across all
+  // four projects. stageColumn controls the ->/<- column rhythm across
+  // 01-04 (text-left, media-left, text-left, media-left); stageVertical
+  // is each project's own choreography and doesn't affect that rhythm.
+  const textFirst = project.stageColumn === "text-left";
+  const verticalClass =
+    project.stageVertical === "top"
+      ? "md:justify-start"
+      : project.stageVertical === "bottom"
+        ? "md:justify-end"
+        : "md:justify-center md:self-center";
+
   return (
     <article
       className={`absolute inset-0 ${tone}`}
@@ -129,60 +149,26 @@ export function ProjectScene({ project, locale, f, still, compact }: Props) {
       aria-hidden={!live || opacity < 0.4}
     >
       <div className="mx-auto flex h-full max-w-[1600px] flex-col overflow-hidden px-5 pb-36 pt-28 md:px-10 md:pb-32 md:pt-32">
-        {project.stageLayout === "top-left" && (
-          <div className="grid h-full min-h-0 grid-cols-1 gap-6 md:grid-cols-12 md:gap-10">
-            <div className="flex min-h-0 flex-col md:col-span-5">
-              {Head}
-              <div className="mt-6 space-y-6">
-                {Body}
-                {Meta}
-              </div>
-            </div>
-            <div className="relative hidden min-h-0 md:col-span-7 md:block md:h-full">{Media}</div>
-            <div className="relative h-[32vh] md:hidden">{Media}</div>
-          </div>
-        )}
-
-        {project.stageLayout === "bottom-left" && (
-          <div className="grid h-full min-h-0 grid-cols-1 gap-6 md:grid-cols-12 md:gap-10">
-            <div className="order-1 flex min-h-0 flex-col justify-end md:col-span-5">
-              <div>
-                {Head}
-                <div className="mt-6 space-y-6">
-                  {Body}
-                  {Meta}
-                </div>
-              </div>
-            </div>
-            <div className="relative order-2 h-[32vh] md:col-span-7 md:h-full">{Media}</div>
-          </div>
-        )}
-
-        {project.stageLayout === "middle-left" && (
-          <div className="grid h-full min-h-0 grid-cols-1 gap-6 md:grid-cols-12 md:gap-10">
-            <div className="md:col-span-5 md:col-start-1 md:self-center">
-              {Head}
-              <div className="mt-6 space-y-6">
-                {Body}
-                {Meta}
-              </div>
-            </div>
-            <div className="relative h-[34vh] md:col-span-6 md:col-start-7 md:h-[62vh] md:self-center">{Media}</div>
-          </div>
-        )}
-
-        {project.stageLayout === "middle-right" && (
-          <div className="grid h-full min-h-0 grid-cols-1 gap-6 md:grid-cols-12 md:gap-10">
-            <div className="relative order-2 h-[32vh] md:order-1 md:col-span-6 md:h-[62vh] md:self-center">{Media}</div>
-            <div className="order-1 md:order-2 md:col-span-5 md:col-start-8 md:self-center">
-              {Head}
-              <div className="mt-6 space-y-6">
-                {Body}
-                {Meta}
-              </div>
+        <div className="grid h-full min-h-0 grid-cols-1 gap-6 md:grid-cols-12 md:gap-10">
+          <div
+            className={`flex min-h-0 flex-col justify-center gap-6 md:col-span-6 ${
+              textFirst ? "order-1 md:col-start-1" : "order-2 md:col-start-7"
+            } ${verticalClass}`}
+          >
+            {Head}
+            <div className="space-y-6">
+              {Body}
+              {Meta}
             </div>
           </div>
-        )}
+          <div
+            className={`relative h-[32vh] md:col-span-6 md:h-full ${
+              textFirst ? "order-2 md:col-start-7" : "order-1 md:col-start-1"
+            } ${project.stageVertical === "middle" ? "md:h-[62vh] md:self-center" : ""}`}
+          >
+            {Media}
+          </div>
+        </div>
       </div>
     </article>
   );

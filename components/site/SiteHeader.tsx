@@ -64,14 +64,14 @@ export function SiteHeader({ locale, page }: { locale: Locale; page: Page }) {
     <div className={`language-switch ${inverse ? "language-switch-inverse" : ""}`} role="group" aria-label="語言 / Language">
       <span aria-hidden className="language-switch-thumb" style={{ transform: `translateX(${locale === "en" ? "100%" : "0"})` }} />
       {locale === "zh" ? (
-        <span lang="zh-Hant" className="language-switch-option" aria-pressed="true">中</span>
+        <span lang="zh-Hant" className="language-switch-option" data-active="true" aria-current="true">中</span>
       ) : (
-        <Link href={switchHref} lang="zh-Hant" className="language-switch-option" aria-pressed="false">中</Link>
+        <Link href={switchHref} lang="zh-Hant" className="language-switch-option">中</Link>
       )}
       {locale === "en" ? (
-        <span className="language-switch-option" aria-pressed="true">EN</span>
+        <span className="language-switch-option" data-active="true" aria-current="true">EN</span>
       ) : (
-        <Link href={switchHref} className="language-switch-option" aria-pressed="false">EN</Link>
+        <Link href={switchHref} className="language-switch-option">EN</Link>
       )}
     </div>
   );
@@ -83,12 +83,12 @@ export function SiteHeader({ locale, page }: { locale: Locale; page: Page }) {
 
   return (
     <header className="sticky top-0 z-50 bg-ink text-paper">
-      <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-5 md:h-20 md:px-10">
+      <div className="mx-auto flex h-16 max-w-[1520px] items-center justify-between px-6 md:h-20 md:px-10 lg:px-14">
         <Link href={homeHref} className="group label-mono relative py-3 text-paper">
           ANGELA YU
         </Link>
 
-        <nav aria-label={locale === "zh" ? "主要導覽" : "Primary navigation"} className="hidden items-center gap-8 md:flex">
+        <nav aria-label={locale === "zh" ? "主要導覽" : "Primary navigation"} className="hidden items-center gap-10 md:flex">
           {navItems.map((item) =>
             item.onClick ? (
               <button key={item.href} type="button" onClick={item.onClick} className="nav-line label-mono py-3 text-paper/70">

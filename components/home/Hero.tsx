@@ -27,7 +27,6 @@ export function Hero({ locale }: { locale: Locale }) {
   const ctaRef = useRef<HTMLDivElement | null>(null);
   const planeRef = useRef<HTMLDivElement | null>(null);
   const planeLineRef = useRef<HTMLSpanElement | null>(null);
-  const handoffRef = useRef<HTMLDivElement | null>(null);
   // Read by the pointer handler to damp rotation out as scroll progresses
   // (Lovable's `(1 - p)` multiplier) — a ref, not state, since it's written
   // every scroll frame and must never trigger a re-render.
@@ -41,8 +40,7 @@ export function Hero({ locale }: { locale: Locale }) {
     const cta = ctaRef.current;
     const plane = planeRef.current;
     const planeLine = planeLineRef.current;
-    const handoff = handoffRef.current;
-    if (!section || !kicker || !title || !copy || !cta || !plane || !planeLine || !handoff) return;
+    if (!section || !kicker || !title || !copy || !cta || !plane || !planeLine) return;
 
     gsap.registerPlugin(ScrollTrigger);
     gsap.set(plane, { transformPerspective: 900 });
@@ -78,13 +76,12 @@ export function Hero({ locale }: { locale: Locale }) {
               opacity: 0.65 + easeOut(p) * 0.35,
             });
             gsap.set(planeLine, { width: `${20 + p * 80}%` });
-            gsap.set(handoff, { opacity: clamp((p - 0.58) * 3) });
           },
         });
 
         return () => {
           trigger.kill();
-          gsap.set([title, kicker, copy, cta, plane, planeLine, handoff], { clearProps: "all" });
+          gsap.set([title, kicker, copy, cta, plane, planeLine], { clearProps: "all" });
         };
       });
 
@@ -211,14 +208,6 @@ export function Hero({ locale }: { locale: Locale }) {
               </span>
             </div>
           </div>
-        </div>
-
-        <div
-          ref={handoffRef}
-          className="hero-handoff absolute inset-x-5 bottom-6 flex items-center justify-between border-t border-hairline pt-3 opacity-0 md:inset-x-10"
-        >
-          <span className="label-mono">{locale === "zh" ? "精選作品" : "Selected Work"}</span>
-          <span className="label-mono text-ink/50">01 / 04</span>
         </div>
       </div>
     </section>

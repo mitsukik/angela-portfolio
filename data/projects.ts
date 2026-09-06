@@ -34,12 +34,15 @@ export type ProjectCaseStudy = {
 };
 
 export type ProjectStageBackground = "dark" | "light";
-/** Matches the connected Lovable "VER B" project's exact ProjectScene
- * layout taxonomy (src/data/projects.ts `layout` field) — top-left and
- * bottom-left keep text/media as a 5/7 split with text top- or
- * bottom-anchored; middle-left/middle-right vertically center both
- * columns, with middle-right swapping which side the media sits on. */
-export type ProjectStageLayout = "top-left" | "bottom-left" | "middle-left" | "middle-right";
+/** Locked V3.1 alternating layout: which side the media column sits on
+ * (text-left = text col then media col; media-left = reversed) — 01/03
+ * text-left, 02/04 media-left, giving the required -> <- -> <- rhythm.
+ * All four use the same 50/50 column split so media reads as a
+ * consistent size across every project. */
+export type ProjectStageColumn = "text-left" | "media-left";
+/** Vertical anchor of both columns within the stage — each project keeps
+ * its own choreography without changing the locked column rhythm above. */
+export type ProjectStageVertical = "top" | "middle" | "bottom";
 export type ProjectAccent = "acid" | "lavender";
 
 export type Project = {
@@ -59,8 +62,9 @@ export type Project = {
    * user-facing theme toggle. */
   stageBackground: ProjectStageBackground;
   /** Per-project spatial composition inside the shared pinned stage — one
-   * system, four distinct states (ported from Lovable VER B). */
-  stageLayout: ProjectStageLayout;
+   * system, four distinct states, locked alternating column rhythm. */
+  stageColumn: ProjectStageColumn;
+  stageVertical: ProjectStageVertical;
   /** Per-project spotlight accent, ported from VER B's alternating
    * acid/lavender assignment (01 acid, 02 lavender, 03 acid, 04 lavender). */
   accent: ProjectAccent;
@@ -116,7 +120,8 @@ export const projects: Project[] = [
     slug: "complex-system",
     number: "01",
     stageBackground: "dark",
-    stageLayout: "top-left",
+    stageColumn: "text-left",
+    stageVertical: "top",
     accent: "acid",
     year: "2024",
     category: { zh: "複雜系統", en: "Complex System" },
@@ -379,7 +384,8 @@ export const projects: Project[] = [
     slug: "corporate-website",
     number: "02",
     stageBackground: "light",
-    stageLayout: "bottom-left",
+    stageColumn: "media-left",
+    stageVertical: "bottom",
     accent: "lavender",
     year: "2025",
     category: { zh: "企業網站", en: "Corporate Website" },
@@ -411,7 +417,8 @@ export const projects: Project[] = [
     slug: "iot-system",
     number: "03",
     stageBackground: "dark",
-    stageLayout: "middle-left",
+    stageColumn: "text-left",
+    stageVertical: "middle",
     accent: "acid",
     year: "2025",
     category: { zh: "物聯網系統", en: "IoT System" },
@@ -443,7 +450,8 @@ export const projects: Project[] = [
     slug: "consumer-product",
     number: "04",
     stageBackground: "light",
-    stageLayout: "middle-right",
+    stageColumn: "media-left",
+    stageVertical: "middle",
     accent: "lavender",
     year: "2026",
     category: { zh: "消費者產品", en: "Consumer Product" },

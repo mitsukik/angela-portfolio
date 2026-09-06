@@ -1073,6 +1073,15 @@ body {
 .language-switch-option {
   position: relative;
   z-index: 1;
+  /* display:inline-flex + centering is what actually vertically centers
+     both labels — without it this is a plain inline element, height has
+     no effect on inline boxes, and "中" (whose CJK line-box metrics differ
+     from "EN"'s Latin ones at the same font-size) renders top-aligned/
+     clipped relative to "EN" rather than sharing its center line. This is
+     the fix for the reported broken/misaligned switch. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   height: 1.8rem;
   min-width: 0;
   border-radius: 0;
@@ -1081,11 +1090,19 @@ body {
   font-family: var(--font-label);
   font-size: .7rem;
   letter-spacing: 0;
+  line-height: 1;
+  text-decoration: none;
 }
 
-.language-switch-option[aria-pressed="true"] { color: var(--ink); }
+.language-switch-option[data-active="true"] { color: var(--ink); }
 .language-switch-option:hover { background: transparent; color: inherit; transform: translateY(-2px); }
-.language-switch-option[aria-pressed="true"]:hover { color: var(--ink); }
+.language-switch-option[data-active="true"]:hover { color: var(--ink); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .language-switch-option {
+    transition: transform var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+}
 
 .menu-line {
   position: absolute;
@@ -1191,6 +1208,45 @@ body {
 
 .edge-frame {
   border: 1px solid var(--scene-line, var(--hairline));
+}
+
+/*
+ * ============================================================
+ * Closing contact-row hover — moving surface, not color-only
+ * ============================================================
+ * Interaction principle taken from re-presentation.jp's service-row
+ * hover (surface enters -> text/value/arrow state changes -> reverses on
+ * leave), adapted into this dark system with a paper surface instead of
+ * copying its black block treatment (Closing is already dark). Pure CSS:
+ * a scaleX(0) surface anchored left, text colors flip once it's behind
+ * them, both driven by the same :hover/:focus-visible transition so they
+ * stay in lockstep and reverse cleanly on leave.
+ */
+.contact-row-surface {
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.contact-row-text {
+  position: relative;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .contact-row-surface {
+    transition: transform 420ms cubic-bezier(.76, 0, .24, 1);
+  }
+
+  .contact-row-text {
+    transition: color 260ms ease;
+  }
+}
+
+.contact-row:is(:hover, :focus-visible) .contact-row-surface {
+  transform: scaleX(1);
+}
+
+.contact-row:is(:hover, :focus-visible) .contact-row-text {
+  color: var(--ink);
 }
 
 } /* end @layer components */

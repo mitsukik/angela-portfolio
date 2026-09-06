@@ -5,8 +5,8 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 
 export const metadata: Metadata = {
-  title: "Angela Yu | 產品設計師",
-  description: "常駐台灣的產品設計師 Angela Yu 的作品集首頁。",
+  title: "Angela Yu | Product Designer",
+  description: "Minimal product designer portfolio landing page.",
   alternates: {
     languages: {
       "zh-Hant": "/",
@@ -15,16 +15,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
+export default function HomeEn() {
   return (
     <div id="top" className="min-h-screen bg-background text-primary">
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
-      <SiteHeader locale="zh" page="home" />
+      <SiteHeader locale="en" page="home" />
       <main id="main-content" tabIndex={-1}>
-        <Hero locale="zh" />
-        <SelectedWork locale="zh" />
+        <Hero locale="en" />
+        <SelectedWork locale="en" />
       </main>
       <SiteFooter />
     </div>

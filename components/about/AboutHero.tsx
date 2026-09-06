@@ -12,14 +12,14 @@ type HeadlineSegment = { text: string; highlight?: boolean };
 const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
 
 // The headline enters one editorial line at a time through a clipping mask.
-// yPercent keeps the travel proportional to the current responsive type size,
-// while the intro retains its quieter existing fade/translate treatment.
-const LINE_DURATION = 1.35;
+// yPercent keeps the travel proportional to the current responsive type size.
+const LINE_DURATION = 0.75;
 const LINE_STAGGER = 0.12;
 const LINE_Y_PERCENT = 92;
-const INTRO_DELAY = 0.42;
-const INTRO_DURATION = 1.4;
-const INTRO_Y = 8;
+const INTRO_START = "-=0.3";
+const INTRO_DURATION = 0.65;
+const INTRO_STAGGER = 0.08;
+const INTRO_Y_PERCENT = 35;
 const ENTRANCE_EASE = "power3.out";
 
 export function AboutHero({
@@ -56,10 +56,14 @@ export function AboutHero({
     const context = gsap.context(() => {
       media.add(MOTION_QUERY, () => {
         const lineEls = Array.from(h1.querySelectorAll<HTMLElement>(".hero-line-inner"));
-        if (!lineEls.length) return;
+        const introEls = Array.from(
+          intro.querySelectorAll<HTMLElement>(".about-intro-inner"),
+        );
+        if (!lineEls.length || !introEls.length) return;
 
         gsap.set(lineEls, { yPercent: LINE_Y_PERCENT });
-        gsap.set(intro, { opacity: 0, y: INTRO_Y });
+        gsap.set(introEls, { yPercent: INTRO_Y_PERCENT });
+        document.documentElement.removeAttribute("data-about-hero-motion");
 
         const timeline = gsap.timeline();
         timeline.to(lineEls, {
@@ -69,15 +73,20 @@ export function AboutHero({
           ease: ENTRANCE_EASE,
         });
         timeline.to(
-          intro,
-          { opacity: 1, y: 0, duration: INTRO_DURATION, ease: ENTRANCE_EASE },
-          INTRO_DELAY,
+          introEls,
+          {
+            yPercent: 0,
+            duration: INTRO_DURATION,
+            stagger: INTRO_STAGGER,
+            ease: ENTRANCE_EASE,
+          },
+          INTRO_START,
         );
 
         return () => {
           timeline.kill();
           gsap.set(lineEls, { clearProps: "all" });
-          gsap.set(intro, { clearProps: "all" });
+          gsap.set(introEls, { clearProps: "all" });
         };
       });
     }, section);
@@ -85,21 +94,40 @@ export function AboutHero({
     return () => {
       media.revert();
       context.revert();
+      document.documentElement.removeAttribute("data-about-hero-motion");
     };
   }, [headlineLines]);
 
   return (
-    // Extra bottom padding gives the sticky Hero below a bounded "stuck"
-    // distance before it naturally releases — see the section comment.
-    // Kept deliberately short (not the ~50vh this used to be): enough
-    // scroll for the next section to visibly rise and cover the Hero, but
-    // not so much that it reads as an empty dead zone before What I Do
-    // arrives.
-    <div className="relative motion-safe:pb-[20vh]">
+    <>
+      {/* The FOUC-prevention script that used to live here (setting
+          data-about-hero-motion="pending" before paint) now lives in
+          app/layout.tsx as a next/script strategy="beforeInteractive" —
+          rendering a raw <script> tag through JSX only actually executes
+          during the server's initial HTML response; on every subsequent
+          client-side render (including this component simply re-rendering)
+          React logs "Encountered a script tag while rendering React
+          component" because script elements inserted via client rendering
+          are inert. beforeInteractive is Next's supported mechanism for a
+          script that must run before hydration, and it's required to live
+          in the root layout rather than a nested component. See the
+          layout for the pathname check that scopes it to /about routes. */}
+      {/* Extra bottom padding gives the sticky Hero below a bounded "stuck"
+          distance before it naturally releases — see the section comment.
+          Kept deliberately short (not the ~50vh this used to be): enough
+          scroll for the next section to visibly rise and cover the Hero, but
+          not so much that it reads as an empty dead zone before What I Do
+          arrives. */}
+      <div className="about-hero relative motion-safe:pb-[20vh]">
       <section
         ref={sectionRef}
-        className="mx-auto max-w-[1600px] px-6 pb-20 pt-20 sm:px-8 sm:pb-24 sm:pt-24 md:pb-28 md:pt-28 lg:px-10 lg:pb-36 lg:pt-36 motion-safe:sticky motion-safe:top-0"
+        className="relative mx-auto max-w-[1600px] px-6 pb-20 pt-20 sm:px-8 sm:pb-24 sm:pt-24 md:pb-28 md:pt-28 lg:px-10 lg:pb-36 lg:pt-36 motion-safe:sticky motion-safe:top-0"
       >
+        {/* AmbientField disabled here per Angela's review (read as cheap
+            decorative noise rather than adding presence) — the component
+            itself is kept for a future dedicated art-direction pass, not
+            deleted. Removing it also eliminates one source of concurrent
+            compositor work during this section's entrance animation. */}
         <div className="lg:grid lg:grid-cols-[minmax(0,68fr)_minmax(280px,32fr)] lg:items-end lg:gap-12">
           <h1
             ref={h1Ref}
@@ -130,17 +158,22 @@ export function AboutHero({
           </h1>
           <div ref={introRef} className="mt-10 max-w-[34rem] lg:mb-1 lg:mt-0">
             {introParagraphs.map((paragraph, index) => (
-              <p
+              <div
                 key={index}
-                lang={lang}
-                className={`${introClassName} ${index > 0 ? "mt-4" : ""}`}
+                className={`overflow-hidden ${index > 0 ? "mt-4" : ""}`}
               >
-                {paragraph}
-              </p>
+                <p
+                  lang={lang}
+                  className={`about-intro-inner will-change-transform ${introClassName}`}
+                >
+                  {paragraph}
+                </p>
+              </div>
             ))}
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }

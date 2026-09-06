@@ -1,0 +1,77 @@
+{
+  "projectId": "14605730899412507036",
+  "projectName": "projects/14605730899412507036",
+  "title": "Angela Yu Portfolio — Home V2.1 Refinement",
+  "designSystem": {
+    "assetId": "9846560525544421961",
+    "name": "assets/9846560525544421961",
+    "displayName": "Angela Yu Portfolio — Home V2.1 Refinement",
+    "version": 3,
+    "summary": "colorVariant switched DARK/FIDELITY (was TONAL_SPOT) to try to preserve exact accent hex; Acid Yellow #E7F34B primary + Pale Lavender #B9A7FF secondary; Space Grotesk (headline) + Inter (body) + Public Sans (label, auto-added by Stitch); sharp corners (ROUND_FOUR); no shadows/gradients/glassmorphism except frosted nav. Stitch auto-expanded designMd with its own styleGuidelines block on this pass — current full content should be pulled via list_design_systems/get_project before the next edit round.",
+    "note": "Even with FIDELITY variant, rendered accent still visually reads as a yellow-green/chartreuse rather than an unambiguous warm yellow — #E7F34B is itself numerically a yellow-green (R231 G243 B75), so this may be substantially correct; exact-hex fidelity was NOT pixel-verified (no image tooling available this session) and should be color-picked by Angela directly."
+  },
+  "sourceDesignMd": ".stitch/DESIGN.md",
+  "enhancedPrompts": "/private/tmp/claude-501/-Users-angela-angela-portfolio/b2778ade-64a9-4e10-b02a-52d52ca05b44/scratchpad/home-v2-stitch-prompts.md",
+  "screens": [
+    {
+      "sceneLabel": "Scene 01 — Opening / Identity",
+      "screenId": "4c859a6cc0dc413893ee573f7fc96a9d",
+      "title": "Angela Yu — Opening Scene (V2)",
+      "localScreenshot": ".stitch/designs/01-opening-identity.png",
+      "status": "UNVERIFIED EDIT — accent-color correction was applied by Stitch's agent as a live DOM patch (reported success), but get_screen still returns the byte-identical pre-edit screenshot/HTML (confirmed via hash-identical file IDs and grep for E7F34B = 0 matches). The fix may exist only in Stitch's live canvas session, not in the exportable artifact."
+    },
+    {
+      "sceneLabel": "Scene 02 — Hero → Work Stage Handoff (NEW purpose this pass)",
+      "screenId": null,
+      "title": null,
+      "localScreenshot": null,
+      "status": "FAILED — 6 cumulative generation attempts across two sessions have all timed out with no screen ID returned. Not retried further this pass; needs a dedicated follow-up attempt, possibly at lower prompt complexity or via stitch-loop once approved."
+    },
+    {
+      "sceneLabel": "Scene 03 — Work Stage: Project 01 Complex System (dark) — REFINED",
+      "screenId": "db2155cf51c54faeb7c29f5c7cc945c0",
+      "previousScreenId": "78ef3ab5198c410892e86fd59166b700",
+      "title": "Angela Yu — Project 01: B2B Platform (Refined Accent)",
+      "localScreenshot": ".stitch/designs/03b-project01-refined.png",
+      "status": "refined — accent correction pass + added '01 / 04' progress indicator for shared grammar with IoT scene"
+    },
+    {
+      "sceneLabel": "Scene 04 — Work Stage: Project 02 Corporate Website (light register) — REFINED",
+      "screenId": "73ab726297fe4b00821c5b48cc83beff",
+      "previousScreenId": "31175a97b4b54529b0a76dc377603454",
+      "title": "Angela Yu — Project 02: Corporate Website (Refined Accent)",
+      "localScreenshot": ".stitch/designs/04b-project02-refined.png",
+      "status": "refined — accent correction pass + added '02 / 04' progress indicator"
+    },
+    {
+      "sceneLabel": "Scene 05 — Work Stage: Project 03 IoT System (cleanliness baseline) — accent touch-up only",
+      "screenId": "41ca0e92b2b341eb9cd3196e61432d77",
+      "title": "Angela Yu — Project 03: IoT System (Quiet State)",
+      "localScreenshot": ".stitch/designs/05-project03-iot-system.png",
+      "status": "UNVERIFIED EDIT — same in-place DOM-patch limitation as Scene 01: agent reported the 'Seamless integration' highlight was corrected to #E7F34B, but get_screen returns the byte-identical pre-edit screenshot/HTML. Composition was intentionally otherwise left untouched as the quality baseline."
+    },
+    {
+      "sceneLabel": "Scene 06 — Work Stage: Project 04 Consumer Product — SUBSTANTIALLY REDESIGNED",
+      "screenId": "016d5ed30b1c4d69ac1c6d94364eaf0f",
+      "previousScreenId": "0ffccc05d8ad46228076045d75d47c6d",
+      "title": "Angela Yu — Project 04: Consumer Product (Full-Viewport)",
+      "localScreenshot": ".stitch/designs/06b-project04-redesigned.png",
+      "status": "redesigned per explicit direction — product photo now full-bleed/foreground-dominant instead of small centered card, added '04' background watermark numeral and '04 / 04' progress indicator, accent correction pass applied"
+    },
+    {
+      "sceneLabel": "Scene 07 — Closing / Contact — REFINED",
+      "screenId": "f5cf3463ec234ece8edc3961fafdfba4",
+      "previousScreenId": "5268c8b511734491a5d236fc4922be93",
+      "title": "Angela Yu — Closing Scene (Final) — Refined Accent V2",
+      "localScreenshot": ".stitch/designs/07b-closing-refined.png",
+      "status": "refined — EMAIL ME CTA accent correction pass"
+    }
+  ],
+  "knownGaps": [
+    "Scene 02 (Hero→Work Handoff) has failed 6 times cumulatively and does not exist in any form — the Opening→Work transition currently has no visual representation.",
+    "Scene 01 and Scene 05 accent fixes are UNVERIFIED in exportable form — Stitch's agent applied them as live DOM patches, not full regenerations, and get_screen returns pre-edit artifacts for both. Treat as not-yet-confirmed until checked directly in the Stitch project UI.",
+    "Accent hex fidelity in general could not be pixel-verified this session (no image-processing tool available in the sandbox) — visual read suggests improvement over the prior muddy tone, but Angela should color-pick directly to confirm exact #E7F34B.",
+    "Noto Sans TC and Geist Sans remain unavailable in Stitch; Space Grotesk/Inter/Public Sans stand-ins unchanged from V2.",
+    "Static-screen tool: pinned-scroll/scrub choreography remains implied compositionally only, per instruction not to implement GSAP this pass."
+  ]
+}

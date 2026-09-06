@@ -1,26 +1,957 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #111111;
+  --foreground: #f2f0ec;
+  --surface: #171717;
+  --accent-lavender: #b9a7ff;
+  --accent-yellow: #e7f34b;
+  --motion-duration-micro: 200ms;
+  --motion-duration-discrete: 320ms;
+  --motion-duration-entrance: 560ms;
+  --motion-ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-primary: var(--foreground);
+  --color-accent-lavender: var(--accent-lavender);
+  --color-accent-yellow: var(--accent-yellow);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --ease-editorial: var(--motion-ease-editorial);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/*
+ * Site-wide subtle divider rule: the "primary" text color at 12% opacity
+ * (border-primary/12). Tailwind's opacity modifier works on any theme
+ * color, so this stays a usage convention rather than its own token.
+ */
+
+html {
+  background: var(--background);
 }
 
 body {
+  margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), sans-serif;
+  /* Guards the .case-takeover full-bleed break-out (100vw) from ever
+     introducing a horizontal scrollbar. */
+  overflow-x: hidden;
 }
+
+/*
+ * Language-aware font assignment.
+ * Every Chinese string in the codebase already carries lang="zh-Hant",
+ * so this cascades automatically with no JSX changes: Chinese glyphs render
+ * in Noto Sans TC, and anything Noto Sans TC has no glyph for (nothing,
+ * since it ships full Latin coverage) would otherwise fall through to
+ * Geist. Latin/numeric runs inside Chinese copy are kept in Geist
+ * explicitly via the <MixedText> component instead (see
+ * components/site/MixedText.tsx) — Noto Sans TC's own Latin glyphs are
+ * always present in the font Google serves, so unicode-range alone
+ * can't be used to force fallback for embedded Latin text.
+ */
+:lang(zh-Hant) {
+  font-family: var(--font-noto-sans-tc), var(--font-geist-sans), sans-serif;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-about-hero-motion="pending"] .about-hero .hero-line-inner {
+    transform: translateY(92%);
+  }
+
+  html[data-about-hero-motion="pending"] .about-hero .about-intro-inner {
+    transform: translateY(35%);
+  }
+}
+
+:where(a, button):focus-visible {
+  outline: 2px solid var(--accent-yellow);
+  outline-offset: 4px;
+}
+
+/*
+ * ============================================================
+ * Semantic typography system — Phase 1
+ * ============================================================
+ * Six shared tiers (Display, Heading XL, Heading, Body Large, Body,
+ * Meta/Label), each carrying independent values per script rather than
+ * one script's values reused for the other.
+ *
+ * Values below are extracted from CURRENT approved usage — sizes and
+ * line-heights are NOT being redesigned in this phase. Where a tier has
+ * more than one current instance and they diverge, the most representative
+ * instance is used as the token value and the divergent instance is noted
+ * in a comment, left untouched in its own file.
+ *
+ * Only .type-meta-zh is adopted into markup in Phase 1 (it corrects an
+ * accidental bug — Chinese text inheriting English tracking/uppercase).
+ * The rest are established and documented, ready to adopt once Phase 2
+ * (optical size/line-height tuning) is approved, so the font-family change
+ * stays the one isolated, evaluable variable for now.
+ */
+
+/* ---- Display ---- */
+.type-display {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-weight: 500;
+  font-size: 3.2rem;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+}
+@media (min-width: 40rem) {
+  .type-display { font-size: 5.2rem; }
+}
+@media (min-width: 64rem) {
+  .type-display { font-size: 5.5rem; }
+}
+@media (min-width: 80rem) {
+  .type-display { font-size: 7rem; }
+}
+/* Source: About page h1. Case Study h1 uses a close but distinct
+   3rem/5rem base/sm step (same 5.5rem/7rem at lg/xl) — not unified. */
+
+.type-display-zh {
+  font-family: var(--font-noto-sans-tc), var(--font-geist-sans), sans-serif;
+  font-weight: 500;
+  font-size: 2.45rem;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+@media (min-width: 40rem) {
+  .type-display-zh { font-size: 3.5rem; }
+}
+@media (min-width: 48rem) {
+  .type-display-zh { font-size: 4.5rem; }
+}
+@media (min-width: 64rem) {
+  .type-display-zh { font-size: 5.7rem; }
+}
+/* Source: Hero h1. Already uses looser leading and gentler tracking than
+   the English Display tier — someone already intuited CJK shouldn't take
+   Latin display tracking; this tier codifies that. */
+
+/* ---- Heading XL ---- */
+.type-heading-xl {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-weight: 500;
+  font-size: 2.7rem;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+}
+/* Source: Footer "LET'S WORK TOGETHER" h2 (fixed size, no responsive step).
+   The "next project" link on Case Study pages is a second Heading XL-ish
+   usage (2rem/3.5rem/5rem, tracking -0.025em) that diverges — not unified.
+   No current Chinese instance at this tier; no -zh variant defined yet. */
+
+/* ---- Heading ---- */
+.type-heading {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-weight: 500;
+  font-size: 1.65rem;
+  line-height: normal;
+  letter-spacing: -0.02em;
+}
+@media (min-width: 40rem) {
+  .type-heading { font-size: 1.9rem; }
+}
+/* Source: About "What I Do" / "How I Work" h3s. About's "Experience" h3
+   (1.7rem/2rem) and Case Study's decision h3s (1.6rem/2rem) are close
+   variants — not unified. No current Chinese instance at this tier. */
+
+/* ---- Body Large ---- */
+.type-body-lg {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-weight: 400;
+  font-size: 1.35rem;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+}
+@media (min-width: 40rem) {
+  .type-body-lg { font-size: 1.6rem; }
+}
+/* Source: Case Study section body copy. */
+
+.type-body-lg-zh {
+  font-family: var(--font-noto-sans-tc), var(--font-geist-sans), sans-serif;
+  font-weight: 400;
+  font-size: 1.1rem;
+  line-height: 1.75rem;
+  letter-spacing: 0.12em;
+}
+/* Source: Selected Work chineseTitle. Case Study's chineseTitle is a
+   divergent second instance (1.2rem/1.45rem, tracking 0.08em) — not
+   unified. Both already use positive tracking, never negative. */
+
+/* ---- Body ---- */
+.type-body {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 2rem;
+  letter-spacing: normal;
+}
+@media (min-width: 40rem) {
+  .type-body { font-size: 18px; }
+}
+/* Source: About intro paragraph. */
+
+.type-body-zh {
+  font-family: var(--font-noto-sans-tc), var(--font-geist-sans), sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.75rem;
+  letter-spacing: normal;
+}
+@media (min-width: 40rem) {
+  .type-body-zh { font-size: 18px; }
+}
+@media (min-width: 48rem) {
+  .type-body-zh { font-size: 19px; }
+}
+@media (min-width: 64rem) {
+  .type-body-zh { font-size: 20px; }
+}
+/* Source: Hero support paragraph. Project descriptions use the same
+   pattern at a fixed 16px (no responsive scaling defined there). */
+
+/* ---- Meta / Label ---- */
+.type-meta {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+/* Source: nav / tag / eyebrow pattern, the majority tracking value across
+   the site. Section-heading labels use a close but distinct 0.2em/0.22em
+   — not unified. */
+
+.type-meta-zh {
+  /* .type-meta's 12px is below the 14px minimum for readable Chinese UI
+     text — this "中" language-toggle control is the only current usage. */
+  font-size: 14px;
+  letter-spacing: normal;
+  text-transform: none;
+}
+/* Adopted in Phase 1: corrects Chinese UI labels (e.g. the "中文" language
+   toggle) that were inheriting the English Meta tier's uppercase transform
+   and 0.18em tracking — meaningless/harmful on CJK glyphs. Font-family is
+   already handled by the global :lang(zh-Hant) rule above. */
+
+/* ---- Editorial step hierarchy ---- */
+.type-step-title {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 1.65rem;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: -0.02em;
+}
+
+.type-step-title:lang(zh-Hant),
+.type-step-body:lang(zh-Hant) {
+  font-family: var(--font-noto-sans-tc), var(--font-geist-sans), sans-serif;
+}
+
+@media (min-width: 40rem) {
+  .type-step-title {
+    font-size: 1.9rem;
+  }
+}
+
+.type-step-body {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.75rem;
+  letter-spacing: normal;
+}
+
+.type-step-number {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 0.18em;
+}
+
+.skip-link {
+  position: fixed;
+  top: 1rem;
+  left: 1.5rem;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transform: translateY(calc(-100% - 2rem));
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+
+#selected-work,
+#contact {
+  scroll-margin-top: 5rem;
+}
+
+@media (min-width: 64rem) {
+  #selected-work,
+  #contact {
+    scroll-margin-top: 7rem;
+  }
+}
+
+/*
+ * Everything below is wrapped in Tailwind's "components" layer so any
+ * Tailwind utility class applied alongside these (e.g. flex/justify-*
+ * overriding .link-cta's default inline-flex on the Next Project link)
+ * always wins on equal specificity, regardless of source order — the
+ * whole reason Tailwind v4's layer system exists.
+ */
+@layer components {
+
+/*
+ * ============================================================
+ * Global interaction language — nav / destination CTA / media
+ * ============================================================
+ * Two restrained, reusable hover/focus families replace the previous
+ * color-only links and the several near-duplicate arrow rules that used
+ * to live next to each component (.next-project-link, .project-case-link,
+ * etc). Applied consistently across header nav, footer, About's contact
+ * CTA, and every Case Study exit link.
+ *
+ *   .link-nav — secondary/navigation text: an underline draws in on
+ *     hover/focus and retracts back out on leave. Calm and repeatable —
+ *     for links a visitor will hover many times (nav, footer).
+ *   .link-cta — destination links: underline draw + a marker (usually an
+ *     arrow) traveling together, communicating "this leads somewhere"
+ *     rather than just "this is interactive." Reserved for links that
+ *     actually navigate somewhere meaningful.
+ *
+ * Both degrade to an instant color change under reduced motion and both
+ * define a real :active press state so touch input gets feedback a
+ * hover-only design would never give it.
+ */
+
+.link-nav {
+  position: relative;
+}
+
+.link-nav::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.link-nav:is(:hover, :focus-visible)::after,
+.link-nav[data-active="true"]::after {
+  transform: scaleX(1);
+}
+
+.link-nav[data-active="true"] {
+  color: var(--accent-yellow);
+}
+
+/* The actual text-color response — this was the missing piece: the
+   transition property below was declared but no rule ever set the
+   target color for normal (non-reduced) motion, so hover only ever drew
+   an underline and never visibly changed the text itself. */
+.link-nav:is(:hover, :focus-visible) {
+  color: var(--accent-yellow);
+}
+
+.link-nav:active {
+  opacity: 0.7;
+}
+
+.link-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  /* Establishes its own stacking context so a -z-10 descendant (the Next
+     Project link's hover media layer) is contained and compared here,
+     rather than escaping to an ancestor context and painting behind the
+     page's own opaque background. */
+  isolation: isolate;
+}
+
+.link-cta::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* Flush to the box edge (not the usual -2/-3px gap) so it survives
+     .link-cta usages that also need overflow-hidden (e.g. the Next
+     Project link's hover media layer) without getting clipped. */
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.link-cta:is(:hover, :focus-visible)::after {
+  transform: scaleX(1);
+}
+
+.link-cta-label {
+  opacity: 0.82;
+}
+
+.link-cta:is(:hover, :focus-visible) .link-cta-label {
+  opacity: 1;
+}
+
+/* Default: the CTA's resting color is a neutral/white tone (footer's
+   "back to top", the Next Project title). Setting color on the whole
+   .link-cta anchor (not just the label span) lets it cascade to any
+   marker glyph that doesn't set its own explicit color, so the arrow
+   shifts together with the label rather than needing its own rule. This
+   was the same missing-rule bug as .link-nav above — opacity alone on
+   the label was too weak a signal on its own. */
+.link-cta:is(:hover, :focus-visible) {
+  color: var(--accent-yellow);
+}
+
+/* Inverse modifier: for CTAs whose RESTING color is already accent-yellow
+   ("VIEW CASE STUDY", "GET IN TOUCH") — hovering to the same yellow would
+   be invisible, so these shift toward white instead. Add this class
+   alongside .link-cta on that link. */
+.link-cta-inverse:is(:hover, :focus-visible) {
+  color: var(--foreground);
+}
+
+.link-cta-marker {
+  display: inline-block;
+}
+
+.link-cta:is(:hover, :focus-visible) .link-cta-marker-right {
+  transform: translateX(8px);
+}
+
+.link-cta:active .link-cta-marker-right {
+  transform: translateX(4px) scale(0.92);
+}
+
+/* Vertical variant — for markers like the footer's "back to top" arrow,
+   where horizontal travel would point the wrong way. */
+.link-cta:is(:hover, :focus-visible) .link-cta-marker-up {
+  transform: translateY(-6px);
+}
+
+.link-cta:active .link-cta-marker-up {
+  transform: translateY(-3px) scale(0.92);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .link-nav::after,
+  .link-cta::after {
+    transition: transform var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+
+  .link-nav,
+  .link-cta,
+  .link-cta-label {
+    transition: color var(--motion-duration-micro) var(--motion-ease-editorial),
+      opacity var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+
+  .link-cta-marker-right,
+  .link-cta-marker-up {
+    transition: transform var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-nav:is(:hover, :focus-visible),
+  .link-cta:is(:hover, :focus-visible) {
+    color: var(--accent-yellow);
+  }
+}
+
+/*
+ * Media hover response — project imagery gains a very small crop/scale
+ * shift when its containing link/frame is hovered or focused. Never
+ * triggers on its own; always a destination cue, not decoration.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .media-hover-target {
+    transition: transform 600ms var(--motion-ease-editorial);
+  }
+
+  .media-hover-frame:is(:hover, :focus-within) .media-hover-target {
+    transform: scale(1.035);
+  }
+}
+
+/*
+ * ============================================================
+ * Selected Work — coordinated project discovery
+ * ============================================================
+ * ".selected-work-row" wraps a project's entire text + media column so
+ * hovering or focusing ANYWHERE in the project — not just the image —
+ * drives one coordinated response: the media scales and runs a single
+ * scan-line sweep, its number emphasizes, and the CTA arrow nudges
+ * forward even without directly hovering the CTA itself. This is what
+ * makes "the project" read as one destination rather than an image with
+ * an unrelated caption next to it.
+ */
+
+/*
+ * Depth zoom + restrained perspective warp — mouse/trackpad only. Touch
+ * gets a plain press-scale via :active instead of a faked hover (touch
+ * has no pointer position to warp toward). A distinct, more cinematic
+ * treatment than the scan sweep, reserved for one hero-weight image per
+ * context (see ProjectVisual.tsx's depthOnHover prop).
+ */
+.depth-hover {
+  transform: perspective(900px) rotateX(0deg) rotateY(0deg) scale(1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .depth-hover {
+    transition: transform 500ms var(--motion-ease-editorial);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .depth-hover:is(:hover, :focus-within) {
+    transform: perspective(900px) rotateX(var(--depth-rx, 0deg)) rotateY(var(--depth-ry, 0deg))
+      scale(1.045);
+  }
+}
+
+.depth-hover:active {
+  transform: perspective(900px) scale(0.985);
+}
+
+.scan-line {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 42%,
+    color-mix(in oklab, var(--foreground) 30%, transparent) 50%,
+    transparent 58%
+  );
+  transform: translateX(-130%);
+  opacity: 0;
+}
+
+.project-visual-number {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .selected-work-row:is(:hover, :focus-within) .media-hover-target {
+    transform: scale(1.05);
+  }
+
+  .selected-work-row:is(:hover, :focus-within) .scan-line {
+    animation: scan-sweep 900ms ease-out;
+  }
+
+  .project-visual-number,
+  .selected-work-row .link-cta-marker-right {
+    transition: transform var(--motion-duration-discrete) var(--motion-ease-editorial);
+  }
+
+  .selected-work-row:is(:hover, :focus-within) .project-visual-number {
+    transform: scale(1.12);
+  }
+
+  /* :where() keeps this at effectively zero specificity so a direct hover
+     on the CTA itself (.link-cta:hover, defined earlier) always wins its
+     own larger 8px travel instead of this row-level nudge overriding it. */
+  .selected-work-row:where(:hover, :focus-within) .link-cta-marker-right {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes scan-sweep {
+  0% {
+    transform: translateX(-130%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.85;
+  }
+  82% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateX(130%);
+    opacity: 0;
+  }
+}
+
+/*
+ * ============================================================
+ * Route transition curtain
+ * ============================================================
+ * One reused cover/reveal motion for the first page arrival and every
+ * internal navigation afterward, so the site reads as a single continuous
+ * piece rather than pages that happen to share CSS. See
+ * components/site/RouteTransition.tsx. The component itself no-ops under
+ * reduced motion, so this never needs its own reduced-motion guard.
+ */
+.route-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  /* Deliberately NOT var(--background) — a curtain the exact color of the
+     page it's covering is motion with zero visible contrast, which is
+     why V1's transition was reported as imperceptible even though it was
+     animating correctly. --surface reads as a distinct "surface" passing
+     over the page rather than a same-color no-op. */
+  background: var(--surface);
+  pointer-events: none;
+  /* Resting state — always mounted (see RouteTransition.tsx), collapsed
+     to nothing until a phase class is applied via classList. */
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+.route-curtain-hold {
+  transform: scaleY(1);
+  transform-origin: bottom;
+}
+
+.route-curtain-cover {
+  transform-origin: bottom;
+  animation: route-curtain-cover 260ms var(--motion-ease-editorial) forwards;
+}
+
+.route-curtain-reveal {
+  transform-origin: top;
+  animation: route-curtain-reveal 340ms var(--motion-ease-editorial) forwards;
+}
+
+@keyframes route-curtain-cover {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes route-curtain-reveal {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+
+/*
+ * A brief wordmark flash, independent of the curtain panel's own scaleY
+ * transform (a separate fixed layer, not a child of the scaling panel —
+ * a child would visually stretch/squash with the parent's transform).
+ * Self-contained fade in/out so it doesn't need to be precisely
+ * synchronized with the curtain's exact phase timings.
+ */
+.route-curtain-mark {
+  position: fixed;
+  inset: 0;
+  z-index: 201;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--foreground);
+  opacity: 0;
+}
+
+.route-curtain-mark-visible {
+  animation: route-curtain-mark-flash 560ms ease-out forwards;
+}
+
+@keyframes route-curtain-mark-flash {
+  0% { opacity: 0; }
+  35% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/*
+ * ============================================================
+ * Case Study visual system — reusable modules
+ * ============================================================
+ * These read from data that already exists (supportingLine flow strings,
+ * a decision's "principle" line, points lists) rather than new content
+ * fields, so they work today for Complex System's real content and
+ * degrade to plain text/lists for projects still on placeholder data.
+ * See components/case-study/CaseStudyTemplate.tsx.
+ */
+.flow-diagram {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0;
+}
+
+.flow-diagram-stage {
+  border: 1px solid color-mix(in oklab, var(--foreground) 12%, transparent);
+  background: var(--surface);
+  padding: 0.55rem 0.9rem;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: color-mix(in oklab, var(--foreground) 85%, transparent);
+  white-space: nowrap;
+}
+
+.flow-diagram-arrow {
+  color: var(--accent-lavender);
+  padding: 0 0.5rem;
+  font-size: 13px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .flow-diagram-stage {
+    transition: border-color var(--motion-duration-micro) var(--motion-ease-editorial),
+      transform var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+
+  .flow-diagram-stage:hover {
+    border-color: var(--accent-lavender);
+    transform: translateY(-2px);
+  }
+}
+
+/*
+ * Case Study block chips (Role's "Product Architecture / System Thinking /
+ * ..." list, and any other points list) — whole-block color-fill on
+ * hover/focus rather than a border tweak, per Angela's explicit callout
+ * that these looked like controls but behaved like dead boxes. One
+ * coherent fill color (acid-yellow) across every chip, not a different
+ * color per item.
+ */
+.case-point-chip {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid color-mix(in oklab, var(--foreground) 12%, transparent);
+  background: var(--surface);
+  padding: 0.75rem 1rem;
+  color: color-mix(in oklab, var(--foreground) 70%, transparent);
+}
+
+.case-point-chip-marker {
+  opacity: 0;
+  transform: translateX(-4px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .case-point-chip {
+    transition: background-color var(--motion-duration-discrete) var(--motion-ease-editorial),
+      color var(--motion-duration-discrete) var(--motion-ease-editorial),
+      border-color var(--motion-duration-discrete) var(--motion-ease-editorial),
+      transform var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+
+  .case-point-chip-marker {
+    transition: opacity var(--motion-duration-micro) var(--motion-ease-editorial),
+      transform var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+
+  .case-point-chip:active {
+    transform: scale(0.98);
+  }
+}
+
+.case-point-chip:is(:hover, :focus-visible) {
+  background: var(--accent-yellow);
+  border-color: transparent;
+  color: #111111;
+  /* The full acid-yellow fill IS the focus indicator here — clearer than
+     a thin ring, and a same-color ring on top of a same-color fill would
+     be invisible anyway. */
+  outline: none;
+}
+
+.case-point-chip:is(:hover, :focus-visible) .case-point-chip-marker {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.case-pull-quote {
+  border-left: 2px solid var(--accent-lavender);
+  padding-left: 1.25rem;
+  color: var(--accent-lavender);
+  font-size: 1.1rem;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+.case-breathing-space p {
+  max-width: 44rem;
+  font-size: clamp(1.4rem, 3.2vw, 2.4rem);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+}
+
+.case-takeover {
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  width: 100vw;
+}
+
+.case-temp-tag {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1;
+  border: 1px solid color-mix(in oklab, var(--foreground) 24%, transparent);
+  background: color-mix(in oklab, var(--background) 70%, transparent);
+  padding: 0.35rem 0.65rem;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--foreground) 70%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+/*
+ * ============================================================
+ * Ambient background field
+ * ============================================================
+ * Pure CSS drift — no RAF loop, no JS animation cost. Fragments render at
+ * their base position/rotation unconditionally (a static decorative layer
+ * even under reduced motion or if this rule set were ever unavailable);
+ * only the drift keyframe is gated behind motion preference.
+ */
+.ambient-fragment {
+  position: absolute;
+  opacity: var(--ambient-opacity, 0.08);
+  transform: rotate(var(--ambient-rotate, 0deg));
+  will-change: transform;
+}
+
+.ambient-fragment-square {
+  background: currentColor;
+}
+
+.ambient-fragment-dot {
+  background: currentColor;
+  border-radius: 9999px;
+}
+
+.ambient-fragment-line {
+  background: currentColor;
+}
+
+.ambient-fragment-arc {
+  border: 1px solid currentColor;
+  border-radius: 9999px;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  background: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ambient-fragment {
+    animation: ambient-drift var(--ambient-duration, 24s) ease-in-out infinite alternate;
+    animation-delay: var(--ambient-delay, 0s);
+  }
+}
+
+@keyframes ambient-drift {
+  from {
+    transform: rotate(var(--ambient-rotate, 0deg)) translate(0, 0);
+    opacity: var(--ambient-opacity, 0.08);
+  }
+  to {
+    transform: rotate(var(--ambient-rotate, 0deg))
+      translate(var(--ambient-dx, 12px), var(--ambient-dy, -16px));
+    opacity: calc(var(--ambient-opacity, 0.08) * 0.45);
+  }
+}
+
+@media (max-width: 47.999rem) {
+  /* Mobile: fewer visible fragments and calmer motion rather than
+     stripping ambience entirely — density is already lower per call site,
+     this trims the animation range further on top of that. */
+  .ambient-fragment {
+    animation-duration: calc(var(--ambient-duration, 24s) * 1.4) !important;
+  }
+}
+
+/*
+ * ============================================================
+ * Hero SCROLL control
+ * ============================================================
+ * A real button, not decoration: hover/focus extends a line and nudges
+ * the arrow, :active gives touch/click press feedback, and the label
+ * dims slightly so the whole control reads as one responding unit.
+ */
+.hero-scroll-control {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin: -0.5rem;
+}
+
+.hero-scroll-line {
+  width: 1px;
+  height: 14px;
+  background: currentColor;
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-scroll-line,
+  .hero-scroll-arrow,
+  .hero-scroll-label {
+    transition: transform var(--motion-duration-micro) var(--motion-ease-editorial),
+      opacity var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+
+  .hero-scroll-control:is(:hover, :focus-visible) .hero-scroll-line {
+    transform: scaleY(1);
+  }
+
+  .hero-scroll-control:is(:hover, :focus-visible) .hero-scroll-arrow {
+    transform: translateY(4px);
+  }
+
+  .hero-scroll-control:is(:hover, :focus-visible) .hero-scroll-label {
+    opacity: 0.68;
+  }
+
+  .hero-scroll-control:active .hero-scroll-arrow {
+    transform: translateY(2px) scale(0.94);
+  }
+}
+
+} /* end @layer components */

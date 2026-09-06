@@ -1,31 +1,31 @@
 import type { Metadata } from "next";
-import { Hero } from "@/components/home/Hero";
-import { SelectedWork } from "@/components/home/SelectedWork/SelectedWork";
+import { AboutSections } from "@/components/about/AboutSections";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 
 export const metadata: Metadata = {
-  title: "Angela Yu | 產品設計師",
-  description: "常駐台灣的產品設計師 Angela Yu 的作品集首頁。",
+  title: "關於 | Angela Yu",
+  description: "關於 Angela Yu，一位常駐台灣的產品設計師。",
   alternates: {
     languages: {
-      "zh-Hant": "/",
-      en: "/en",
+      "zh-Hant": "/about",
+      en: "/en/about",
     },
   },
 };
 
-export default function Home() {
+export default function AboutPage() {
   return (
     <div id="top" className="min-h-screen bg-background text-primary">
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
-      <SiteHeader locale="zh" page="home" />
+      <SiteHeader locale="zh" page="about" />
+
       <main id="main-content" tabIndex={-1}>
-        <Hero locale="zh" />
-        <SelectedWork locale="zh" />
+        <AboutSections locale="zh" />
       </main>
+
       <SiteFooter />
     </div>
   );

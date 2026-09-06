@@ -33,6 +33,9 @@ export type ProjectCaseStudy = {
   backToSelectedWorkLabel?: string;
 };
 
+export type ProjectStageBackground = "dark" | "light";
+export type ProjectStageLayout = "text-top" | "text-bottom" | "text-middle" | "media-left";
+
 export type Project = {
   id: string;
   slug: string;
@@ -44,6 +47,17 @@ export type Project = {
   descriptionEn: string[];
   image: string;
   alt: string;
+  /** Selected Work pinned-stage presentation state — alternating black/white
+   * registers (01 dark, 02 light, 03 dark, 04 light) per Angela's V3
+   * direction: presentation contrast between project scenes, not a
+   * user-facing theme toggle. */
+  stageBackground: ProjectStageBackground;
+  /** Per-project spatial composition inside the shared pinned stage: where
+   * the text column sits (top/bottom/middle) and, for the closing project,
+   * a full column swap (media takes the left/wide side, text moves right) —
+   * so all four states share one system but aren't visual copies of a
+   * single template. */
+  stageLayout: ProjectStageLayout;
   caseStudy: ProjectCaseStudy;
   caseStudyEn?: ProjectCaseStudy;
 };
@@ -90,6 +104,8 @@ export const projects: Project[] = [
     id: "01",
     slug: "complex-system",
     number: "01",
+    stageBackground: "dark",
+    stageLayout: "text-top",
     title: "Complex System",
     chineseTitle: "媒合銷售平台後台系統",
     tags: ["UI/UX Design", "Complex System", "B2B Platform", "Workflow"],
@@ -348,6 +364,8 @@ export const projects: Project[] = [
     id: "02",
     slug: "corporate-website",
     number: "02",
+    stageBackground: "light",
+    stageLayout: "text-bottom",
     title: "Corporate Website",
     chineseTitle: "企業品牌形象網站",
     tags: ["Web Design", "UI/UX", "Responsive", "Brand"],
@@ -375,6 +393,8 @@ export const projects: Project[] = [
     id: "03",
     slug: "iot-system",
     number: "03",
+    stageBackground: "dark",
+    stageLayout: "text-middle",
     title: "IoT System",
     chineseTitle: "IoT 系統與數據儀表板",
     tags: ["IoT", "Dashboard", "System UX", "Data"],
@@ -402,6 +422,8 @@ export const projects: Project[] = [
     id: "04",
     slug: "consumer-product",
     number: "04",
+    stageBackground: "light",
+    stageLayout: "media-left",
     title: "Consumer Product",
     chineseTitle: "行動產品與使用者體驗",
     tags: ["Mobile", "UI/UX", "Interaction", "User Flow"],

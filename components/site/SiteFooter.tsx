@@ -9,26 +9,39 @@ const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
 
 export function SiteFooter() {
   const closingRef = useRef<HTMLDivElement | null>(null);
+  const headingRef = useRef<HTMLHeadingElement | null>(null);
+  const detailsRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
     const closing = closingRef.current;
-    if (!closing) return;
+    const heading = headingRef.current;
+    const details = detailsRef.current;
+    if (!closing || !heading || !details) return;
 
     gsap.registerPlugin(ScrollTrigger);
     const media = gsap.matchMedia();
     const context = gsap.context(() => {
       media.add(MOTION_QUERY, () => {
-        gsap.set(closing, { autoAlpha: 0, y: 18 });
+        // Closing resolves in two beats, not one flat fade — the large
+        // statement settles first (the "dark closing scene arrives" beat),
+        // then contact details settle a moment after, echoing the same
+        // label -> body sequencing used on Case Study section entrances.
+        gsap.set(heading, { autoAlpha: 0, y: 26 });
+        gsap.set(details, { autoAlpha: 0, y: 16 });
         const trigger = ScrollTrigger.create({
           trigger: closing,
-          start: "top 90%",
+          start: "top 88%",
           once: true,
-          onEnter: () =>
-            gsap.to(closing, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }),
+          onEnter: () => {
+            const timeline = gsap.timeline();
+            timeline
+              .to(heading, { autoAlpha: 1, y: 0, duration: 0.65, ease: "power2.out" })
+              .to(details, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, "-=0.3");
+          },
         });
         return () => {
           trigger.kill();
-          gsap.set(closing, { clearProps: "opacity,visibility,transform" });
+          gsap.set([heading, details], { clearProps: "opacity,visibility,transform" });
         };
       });
     }, closing);
@@ -46,16 +59,23 @@ export function SiteFooter() {
       <div className="relative mx-auto max-w-[1600px] px-6 py-16 sm:px-8 lg:px-10 lg:py-20">
         <div ref={closingRef} className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="text-[2.7rem] font-medium leading-[0.95] tracking-[-0.01em] text-primary sm:text-[2.7rem] lg:text-[2.7rem]">
-              LET&apos;S WORK <span className="text-accent-yellow">TOGETHER</span>.
+            <h2
+              ref={headingRef}
+              className="text-[2.9rem] font-medium leading-[0.95] tracking-[-0.01em] text-primary sm:text-[4rem] lg:text-[4.6rem]"
+            >
+              LET&apos;S BUILD
+              <br />
+              THE <span className="text-accent-yellow">SYSTEM</span>.
             </h2>
-            <div className="mt-6 space-y-2 text-[18px] text-primary/60 sm:text-base">
-              <p>Have a project or opportunity?</p>
-              <p>Let&apos;s talk.</p>
+            <div ref={detailsRef}>
+              <div className="mt-6 space-y-2 text-[18px] text-primary/60 sm:text-base">
+                <p>Have a project or opportunity?</p>
+                <p>Let&apos;s talk.</p>
+              </div>
+              <a href={`mailto:${CONTACT_EMAIL}`} className="link-nav mt-8 inline-flex items-center text-[15px] uppercase tracking-[0.12em] text-primary">
+                {CONTACT_EMAIL}
+              </a>
             </div>
-            <a href={`mailto:${CONTACT_EMAIL}`} className="link-nav mt-8 inline-flex items-center text-[15px] uppercase tracking-[0.12em] text-primary">
-              {CONTACT_EMAIL}
-            </a>
           </div>
         </div>
 

@@ -2,6 +2,113 @@
   display: none;
 }
 
+/*
+ * ============================================================
+ * Per-project stage register (V3)
+ * ============================================================
+ * The pinned stage alternates a dark/light background per project (01
+ * dark, 02 light, 03 dark, 04 light) — presentation contrast between
+ * project SCENES, not a user-facing theme toggle. Implemented by
+ * redefining the site's own background/foreground/surface/accent custom
+ * properties locally on the stage element: every existing Tailwind
+ * utility already reads these vars, so text-primary, bg-surface,
+ * border-primary/* etc. all flip correctly with zero markup duplication.
+ * data-stage-theme is written directly (dataset, not React state) by
+ * useSelectedWorkSequence.ts, in the same tick as the scrub-driven
+ * text/image sync.
+ */
+.selected-work-sticky {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.selected-work-sticky[data-stage-theme="light"] {
+  --background: #f2f0ec;
+  --foreground: #111111;
+  --surface: #ffffff;
+  /* E7F34B on a light-yellow-adjacent ground is close to invisible —
+     the spotlight role is filled by a deepened, still-recognizably-yellow
+     tone so it stays legible without introducing a new hue. */
+  --accent-yellow: #6b5a00;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .selected-work-sticky,
+  .selected-work-sticky :where(*):not(.project-image-layer, .project-image-layer *) {
+    transition: color 420ms var(--motion-ease-editorial),
+      background-color 420ms var(--motion-ease-editorial),
+      border-color 420ms var(--motion-ease-editorial);
+  }
+}
+
+/*
+ * ============================================================
+ * Per-project spatial composition (V3)
+ * ============================================================
+ * Same two-column grid for every project (one shared system) — only the
+ * column ORDER and the row's cross-axis alignment change per project, via
+ * CSS `order` and `align-items` so no DOM reordering is needed. Driven by
+ * data-project-layout / data-project-vertical on .selected-work-row,
+ * written by useSelectedWorkSequence.ts alongside the stage theme above.
+ */
+@media (min-width: 64rem) {
+  .selected-work-row {
+    align-items: center;
+  }
+
+  .selected-work-row[data-project-vertical="top"] {
+    align-items: start;
+  }
+
+  .selected-work-row[data-project-vertical="bottom"] {
+    align-items: end;
+  }
+
+  .project-text-slot {
+    order: 1;
+  }
+
+  .project-media-slot {
+    order: 2;
+  }
+
+  .selected-work-row[data-project-layout="reversed"] .project-text-slot {
+    order: 2;
+  }
+
+  .selected-work-row[data-project-layout="reversed"] .project-media-slot {
+    order: 1;
+  }
+}
+
+@media (min-width: 64rem) and (prefers-reduced-motion: no-preference) {
+  .selected-work-row {
+    transition: align-items 420ms var(--motion-ease-editorial);
+  }
+}
+
+/*
+ * Progress indicator — "0X / 04", re-keyed (React key={activeProject.number})
+ * so each change is a real DOM remount and this entrance animation replays
+ * every time, giving a masked in/out rather than an abrupt text swap.
+ */
+.selected-work-progress {
+  display: inline-flex;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .selected-work-progress {
+    animation: selected-work-progress-in var(--motion-duration-discrete) var(--motion-ease-editorial) both;
+  }
+}
+
+@keyframes selected-work-progress-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
 .project-text-reference,
 .project-text-panel-inactive {
   display: none;

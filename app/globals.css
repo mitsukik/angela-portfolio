@@ -954,4 +954,157 @@ body {
   }
 }
 
+/*
+ * ============================================================
+ * Hero structural grid lines + reserved spatial zone
+ * ============================================================
+ * V3: the Hero's right-side zone is a plain structural frame (border +
+ * a couple of receded "shelf" lines under perspective), not a filled
+ * object — the future 3D/cube hero object stays on hold. Idle drift and
+ * pointer tilt are driven by CSS custom properties so GSAP (idle, tweened
+ * continuously) and a raw pointermove listener (immediate) can both
+ * contribute to the same combined transform without fighting each other.
+ */
+.hero-grid-line-h {
+  transform-origin: left center;
+}
+
+.hero-grid-line-v {
+  transform-origin: center top;
+}
+
+.hero-spatial-zone {
+  perspective: 1400px;
+}
+
+.hero-spatial-frame {
+  transform-style: preserve-3d;
+  border: 1px solid color-mix(in oklab, var(--foreground) 14%, transparent);
+  transform: rotateX(calc(var(--hero-idle-rx, 0deg) + var(--hero-pointer-rx, 0deg)))
+    rotateY(calc(var(--hero-idle-ry, 0deg) + var(--hero-pointer-ry, 0deg)));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-spatial-frame {
+    transition: transform 250ms ease-out;
+  }
+}
+
+.hero-spatial-corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+}
+
+.hero-spatial-corner-tl {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid var(--accent-yellow);
+  border-left: 1px solid var(--accent-yellow);
+}
+
+.hero-spatial-corner-br {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1px solid var(--accent-yellow);
+  border-right: 1px solid var(--accent-yellow);
+}
+
+.hero-spatial-shelf {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+  background: color-mix(in oklab, var(--foreground) 22%, transparent);
+  opacity: 0.8;
+}
+
+/*
+ * ============================================================
+ * Language switch (nav)
+ * ============================================================
+ * A real two-position switch — both labels always present, one thumb
+ * slides behind whichever is active — not two adjacent links. Still
+ * backed by <Link>/<span>, so it degrades to a plain SSR'd link with no
+ * JS required.
+ */
+.lang-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 1.75rem;
+  padding: 0 2px;
+  border: 1px solid color-mix(in oklab, var(--foreground) 18%, transparent);
+  border-radius: 999px;
+}
+
+.lang-switch-thumb {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: calc(50% - 2px);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--foreground) 12%, transparent);
+}
+
+.lang-switch[data-active="en"] .lang-switch-thumb {
+  transform: translateX(100%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lang-switch-thumb {
+    transition: transform var(--motion-duration-discrete) var(--motion-ease-editorial);
+  }
+
+  .lang-switch-option {
+    transition: color var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+}
+
+.lang-switch-option {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  min-height: 1.75rem;
+  min-width: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.6rem;
+  color: color-mix(in oklab, var(--foreground) 55%, transparent);
+}
+
+.lang-switch-option-active {
+  color: var(--foreground);
+}
+
+a.lang-switch-option:is(:hover, :focus-visible) {
+  color: var(--accent-yellow);
+}
+
+/*
+ * Mobile menu item stagger — the panel itself still animates as one block
+ * (transform/opacity, see SiteHeader.tsx), but its direct children fade/
+ * lift in with a short per-item delay on OPEN only; closing has no delay
+ * so the menu still dismisses as one quick, responsive motion rather than
+ * a slow staggered exit.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .mobile-nav-list > * {
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: transform 380ms var(--motion-ease-editorial), opacity 380ms var(--motion-ease-editorial);
+  }
+
+  #mobile-navigation[data-open="true"] .mobile-nav-list > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  #mobile-navigation[data-open="true"] .mobile-nav-list > *:nth-child(1) { transition-delay: 60ms; }
+  #mobile-navigation[data-open="true"] .mobile-nav-list > *:nth-child(2) { transition-delay: 110ms; }
+  #mobile-navigation[data-open="true"] .mobile-nav-list > *:nth-child(3) { transition-delay: 160ms; }
+  #mobile-navigation[data-open="true"] .mobile-nav-list > *:nth-child(4) { transition-delay: 210ms; }
+}
+
 } /* end @layer components */

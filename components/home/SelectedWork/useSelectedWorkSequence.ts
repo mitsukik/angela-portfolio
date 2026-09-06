@@ -13,6 +13,13 @@ export function useSelectedWorkSequence(projects: Project[]) {
   const [projectAnnouncement, setProjectAnnouncement] = useState("");
   const activeProjectRef = useRef<Project>(projects[0]);
   const sequenceRef = useRef<HTMLElement | null>(null);
+  // The pinned stage surface (background/text-color register) and the
+  // text+media row (per-project spatial composition) are mutated directly
+  // via dataset — same immediate-DOM-sync convention as the rest of this
+  // hook — so the register/layout flips land in the exact same tick as the
+  // scrub-driven text/image sync below, not a React-render tick behind it.
+  const stageRef = useRef<HTMLDivElement | null>(null);
+  const rowRef = useRef<HTMLDivElement | null>(null);
   // ProjectVisual forwards its ref to its wrapping <div>, not the <img>
   // inside it — GSAP only ever applies transform/opacity/zIndex here, all
   // of which work identically on any element.
@@ -20,16 +27,42 @@ export function useSelectedWorkSequence(projects: Project[]) {
   const textRefs = useRef<Array<HTMLDivElement | null>>([]);
   const stepRefs = useRef<Array<HTMLDivElement | null>>([]);
 
-  const updateActiveProject = useCallback((project: Project) => {
-    if (activeProjectRef.current.id === project.id) return;
-
-    activeProjectRef.current = project;
-    setActiveProject(project);
+  const applyStageState = useCallback((project: Project) => {
+    if (stageRef.current) {
+      stageRef.current.dataset.stageTheme = project.stageBackground;
+    }
+    if (rowRef.current) {
+      rowRef.current.dataset.projectLayout =
+        project.stageLayout === "media-left" ? "reversed" : "default";
+      rowRef.current.dataset.projectVertical =
+        project.stageLayout === "text-top"
+          ? "top"
+          : project.stageLayout === "text-bottom"
+            ? "bottom"
+            : "middle";
+    }
   }, []);
+
+  const updateActiveProject = useCallback(
+    (project: Project) => {
+      if (activeProjectRef.current.id === project.id) return;
+
+      activeProjectRef.current = project;
+      applyStageState(project);
+      setActiveProject(project);
+    },
+    [applyStageState],
+  );
 
   useLayoutEffect(() => {
     const sequence = sequenceRef.current;
     if (!sequence) return;
+
+    // Explicit sync on mount (and on every Strict Mode re-run) rather than
+    // relying solely on SelectedWork.tsx's server-rendered default
+    // attributes — keeps this hook the single source of truth once it's
+    // alive, matching the rest of its own DOM-authoritative approach below.
+    applyStageState(activeProjectRef.current);
 
     gsap.registerPlugin(ScrollTrigger);
 
@@ -139,17 +172,40 @@ export function useSelectedWorkSequence(projects: Project[]) {
           const outgoingText = textParts[index];
           const incomingText = textParts[index + 1];
 
+          // Per-boundary motion grammar — one shared mechanism (a single
+          // scrubbed slide + scale on the image layer), three distinct
+          // expressions, rather than one identical tween repeated three
+          // times: 01->02 and 02->03 stay vertical (02's outgoing scale
+          // dips further, reading as "receding" rather than just sliding
+          // away); 03->04 switches to a lateral slide — 03 exits right,
+          // 04 enters from the left — matching the project grid's own
+          // "04 = final reversal" composition (media moves to the left
+          // column for that project's resolved state). Both axes are
+          // always stated explicitly (never just the one this boundary
+          // cares about) so a layer switching axis between transitions —
+          // 04's image is vertical going nowhere-yet at setup, then
+          // lateral here — never inherits a stale offset on the axis it
+          // isn't animating this time.
+          const isLateral = index === 2;
+          const outgoingRecedeScale = index === 1 ? 0.94 : 1;
+
           timeline
             .set(imageLayers[index + 1], { zIndex: index + 2 }, index)
             .to(
               imageLayers[index],
-              { yPercent: -100, opacity: 0.7, scale: 1 },
+              isLateral
+                ? { xPercent: 100, yPercent: 0, opacity: 0.7, scale: outgoingRecedeScale }
+                : { yPercent: -100, xPercent: 0, opacity: 0.7, scale: outgoingRecedeScale },
               index,
             )
             .fromTo(
               imageLayers[index + 1],
-              { yPercent: 100, opacity: 0.7, scale: 1.01 },
-              { yPercent: 0, opacity: 1, scale: 1 },
+              isLateral
+                ? { xPercent: -100, yPercent: 0, opacity: 0.7, scale: 1.01 }
+                : { yPercent: 100, xPercent: 0, opacity: 0.7, scale: 1.01 },
+              isLateral
+                ? { xPercent: 0, yPercent: 0, opacity: 1, scale: 1 }
+                : { yPercent: 0, xPercent: 0, opacity: 1, scale: 1 },
               index,
             )
             .to(
@@ -249,7 +305,7 @@ export function useSelectedWorkSequence(projects: Project[]) {
       media.revert();
       context.revert();
     };
-  }, [projects, updateActiveProject]);
+  }, [projects, updateActiveProject, applyStageState]);
 
   const selectProject = useCallback(
     (project: Project, index: number) => {
@@ -278,6 +334,8 @@ export function useSelectedWorkSequence(projects: Project[]) {
 
   return {
     sequenceRef,
+    stageRef,
+    rowRef,
     imageRefs,
     textRefs,
     stepRefs,

@@ -230,3 +230,64 @@ This calibration does not invalidate or redesign those decisions.
 - Keep responsive behavior intact.
 - Explain significant structural changes before implementing them.
 - Do not add dependencies unless they are genuinely necessary.
+
+## Skill Routing
+
+This section governs which tool handles which kind of work. It supplements, and does not override, the Design Direction and Preference Boundaries above.
+
+### Design authority for this project
+
+`design-director/SKILL.md` is the standing design authority for this Portfolio — discover, Angela reacts, refine, Angela approves, implement, critique, polish, lock.
+
+**Design-director is required only when a task needs a NEW visual/design decision.** If the visual direction is already approved and the task is straightforward implementation, use the appropriate implementation skill directly — do not restart the Discover → React → Refine → Approve loop. This includes:
+- implementing an already-defined component
+- wiring an existing pattern
+- responsive adaptation of an approved design
+- React refactoring
+- performance work
+- implementing approved motion
+
+Design-director exists for design governance, not to add approval overhead to every coding task.
+
+The generic stack skills below are **tools design-director may reach for during Discover or Fresh Critic**, never independent competing directors:
+
+- `design-taste-frontend` — generates aligned or boundary-expanding portfolio/landing page directions to react to
+- `frontend-design` — generates options for a single component/element treatment
+- `bencium-impact-designer` — generates a bold/high-risk option specifically when Angela wants one (the "boundary-expanding direction" Discover mentions)
+- `ui-ux-pro-max` — reference and recommendation layer; never has final visual authority. May recommend palettes, typography pairings, layout patterns, UX patterns, interaction guidance, motion rules, and accessibility/design references — but these recommendations do not override project preferences, design-director governance, or Angela's approval.
+
+**Never auto-stack** more than one of `design-taste-frontend` / `frontend-design` / `bencium-impact-designer` as simultaneous "primary" for the same option — design-director requests them one at a time, by name, for a specific purpose in its Discover step.
+
+`impeccable` may be discoverable in multiple environments, but this Portfolio routes the pre-launch impeccable pass to Claude only (see CLAUDE.md) — a whole-site, cross-page coherence pass used once near pre-launch, not a per-task director.
+
+### Other axes (may run alongside design authority, not instead of it)
+
+- **React architecture** (`composition-patterns`) and **React performance** (`react-best-practices`) operate on a different axis than visual direction — they may run alongside whatever design-director has approved, never in place of it.
+- **Motion judgment** (`animate`, `emil-design-eng`) must honor the Motion policy above (selective, purposeful, quiet sections balance loud ones, simpler on mobile, respects reduced-motion) before any GSAP implementation begins.
+- **GSAP implementation** (`gsap-react`, `gsap-scrolltrigger`) and **GSAP performance** (`gsap-performance`) follow motion judgment; they don't set the motion decision themselves.
+- **Audit and accessibility skills** (`improve-ui`, `web-design-guidelines`, accessibility tooling, typography) each evaluate a different quality axis. Do not run them simultaneously as one blended audit. They may and often should run sequentially — for example: improve-ui → accessibility → web-design-guidelines → typography — because each checks something the others don't. Audits normally run after implementation, as a separate pass, not simultaneously with generation.
+- **Accessibility** is an independent, final-quality axis, checked after visual/implementation work. Accessibility tooling may be discoverable in Codex, but the current Portfolio routing reserves the AccessLint accessibility pass for Claude unless this policy is explicitly changed. Codex should not substitute or invoke an unrouted accessibility tool automatically.
+- **Typography correctness** is mechanical and separate from the type *pairing* decision, which belongs to design-director. Typography tooling may be discoverable in Codex, but the current Portfolio routing reserves the dedicated typography enforcement pass for Claude unless this policy is explicitly changed. Codex may use `ui-ux-pro-max` typography guidance as reference within its approved route.
+
+### Task routing
+
+| Task | Primary | Notes |
+|---|---|---|
+| New page | design-director | new visual decision — consults design-taste-frontend + ui-ux-pro-max during Discover |
+| Redesign | design-director | new visual decision — same loop; do not skip Angela's approval step |
+| Component | design-director only if the look is undecided → composition-patterns for structure | if an approved direction already covers this component's look, skip straight to composition-patterns — no new visual decision needed |
+| React refactor | composition-patterns | straightforward implementation — no design-director loop needed; add react-best-practices too if performance is also in scope |
+| Performance | react-best-practices | straightforward implementation — no design-director loop needed |
+| Responsive | whichever direction is already approved | straightforward implementation of an approved design — no design-director loop needed; check against the Responsive Design policy above |
+| Motion (subtle) | animate / emil-design-eng | if implementing already-approved motion, no design-director loop needed; must honor the Motion policy above |
+| GSAP (complex) | gsap-scrolltrigger + gsap-performance | motion judgment first, per above |
+| Audit | improve-ui | web-design-guidelines for a compliance-checklist pass; run sequentially, not blended, with other audits |
+| Accessibility | Claude: accesslint plugin (see CLAUDE.md). Codex: reserved for Claude by policy, not by technical availability — do not substitute | independent axis; sequential with other audits, never blended |
+| Typography | Claude: typography plugin (see CLAUDE.md). Codex: reserved for Claude by policy — ui-ux-pro-max reference only within approved route | correctness only, not pairing/taste |
+| Design system | `.stitch/DESIGN.md` already exists via design-md (Stitch); extract-design-md for a code-evidence doc reflecting shipped implementation | `.stitch/DESIGN.md` is explicitly historical/input-only, not a constraint |
+| Figma | figma-use, then figma-generate-design only for the code→Figma direction | — |
+| Pre-launch | Claude: full sequence in CLAUDE.md. Codex: improve-ui + web-design-guidelines only | sequential, never simultaneous |
+
+### Note on ui-skills-root
+
+`ui-skills-root`'s own CLI-based routing applies only within its own family (`create-design-md`, `improve-ui`). For this project, the Skill Routing section above takes precedence for every other task type, and its `npx ui-skills get <slug>` command should not be invoked — it would fetch an unaudited skill from the public registry mid-task.

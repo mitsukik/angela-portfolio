@@ -10,6 +10,8 @@ import "./SelectedWork.css";
 export function SelectedWork({ locale }: { locale: Locale }) {
   const {
     sequenceRef,
+    stageRef,
+    rowRef,
     imageRefs,
     textRefs,
     stepRefs,
@@ -25,7 +27,11 @@ export function SelectedWork({ locale }: { locale: Locale }) {
       aria-labelledby="selected-work-heading"
       className="selected-work-sequence relative z-10 border-t border-primary/12 bg-background pb-[80px]"
     >
-      <div className="selected-work-sticky relative mx-auto max-w-[1600px] bg-background px-6 py-16 sm:px-8 lg:px-10 lg:py-20">
+      <div
+        ref={stageRef}
+        data-stage-theme={projects[0].stageBackground}
+        className="selected-work-sticky relative mx-auto max-w-[1600px] px-6 py-16 sm:px-8 lg:px-10 lg:py-20"
+      >
         {/* AmbientField disabled per Angela's review — see AboutHero.tsx
             for the same note. */}
         <h2 id="selected-work-heading" className="mb-10 text-[12px] font-medium uppercase tracking-[0.22em] text-primary sm:text-[12px]">
@@ -37,7 +43,18 @@ export function SelectedWork({ locale }: { locale: Locale }) {
         </p>
 
         <div className="border-t border-primary/12 pt-8 lg:pt-10">
-          <div className="selected-work-row flex flex-col gap-8 lg:grid lg:grid-cols-[minmax(0,38fr)_minmax(0,62fr)] lg:items-end lg:gap-10">
+          <div
+            ref={rowRef}
+            data-project-layout={projects[0].stageLayout === "media-left" ? "reversed" : "default"}
+            data-project-vertical={
+              projects[0].stageLayout === "text-top"
+                ? "top"
+                : projects[0].stageLayout === "text-bottom"
+                  ? "bottom"
+                  : "middle"
+            }
+            className="selected-work-row flex flex-col gap-8 lg:grid lg:grid-cols-[minmax(0,38fr)_minmax(0,62fr)] lg:gap-10"
+          >
             <div className="project-text-slot w-full">
               <ProjectDetails
                 project={projects[0]}
@@ -67,7 +84,7 @@ export function SelectedWork({ locale }: { locale: Locale }) {
               })}
             </div>
 
-            <div className="w-full">
+            <div className="project-media-slot w-full">
               <div className="media-hover-frame relative flex min-h-[340px] overflow-hidden border border-primary/12 bg-surface sm:min-h-[430px] lg:min-h-[520px]">
                 {projects.map((project, index) => {
                   const isActive = project.id === activeProject.id;
@@ -95,7 +112,16 @@ export function SelectedWork({ locale }: { locale: Locale }) {
             </div>
           </div>
 
-          <div className="mt-10 flex items-center justify-center gap-6 pt-6 text-[16px] uppercase tracking-[0.18em] text-primary/40 sm:gap-8 lg:justify-start">
+          <div className="mt-10 flex items-center justify-center gap-6 pt-6 text-[16px] uppercase tracking-[0.18em] text-primary/40 sm:justify-start sm:gap-8">
+            <span
+              key={activeProject.number}
+              aria-hidden="true"
+              className="selected-work-progress inline-flex items-baseline gap-1 text-primary"
+            >
+              <span className="text-accent-yellow">{activeProject.number}</span>
+              <span className="text-primary/40">/ 04</span>
+            </span>
+            <span aria-hidden="true" className="h-4 w-px bg-primary/15" />
             {projects.map((project, index) => (
               <button
                 key={project.id}

@@ -22,20 +22,28 @@ export function SiteHeader({ locale, page }: { locale: Locale; page: Page }) {
   const otherLocale: Locale = locale === "zh" ? "en" : "zh";
   const switchHref = pagePath(otherLocale, page);
 
+  // A switch, not two adjacent links: both labels are always present, one
+  // solid "thumb" sits behind whichever is active, and it slides across on
+  // change — the interaction communicates "this is a two-position control"
+  // rather than "here are two separate links that happen to be near each
+  // other." Still just <Link>/<span> underneath, so it's a real navigation
+  // (SSR'd, no-JS-safe) rather than a client-only toggle.
   const languageSwitch = (
-    <span className="inline-flex items-center gap-2 leading-none">
+    <span data-active={locale} className="lang-switch" aria-label="Language">
+      <span aria-hidden="true" className="lang-switch-thumb" />
       {locale === "zh" ? (
-        <span lang="zh-Hant" className="type-meta-zh leading-none">中</span>
+        <span lang="zh-Hant" className="lang-switch-option lang-switch-option-active type-meta-zh">
+          中
+        </span>
       ) : (
-        <Link href={switchHref} lang="zh-Hant" className="type-meta-zh leading-none transition-colors hover:text-accent-yellow">
+        <Link href={switchHref} lang="zh-Hant" className="lang-switch-option type-meta-zh">
           中
         </Link>
       )}
-      <span aria-hidden="true" className="leading-none text-primary/50">/</span>
       {locale === "en" ? (
-        <span className="leading-none text-primary">EN</span>
+        <span className="lang-switch-option lang-switch-option-active">EN</span>
       ) : (
-        <Link href={switchHref} className="leading-none transition-colors hover:text-accent-yellow">
+        <Link href={switchHref} className="lang-switch-option">
           EN
         </Link>
       )}
@@ -107,6 +115,7 @@ export function SiteHeader({ locale, page }: { locale: Locale; page: Page }) {
             id="mobile-navigation"
             aria-label="Mobile navigation"
             aria-hidden={!isMobileMenuOpen}
+            data-open={isMobileMenuOpen}
             inert={!isMobileMenuOpen ? true : undefined}
             className={`absolute left-3 right-3 top-[52px] z-[60]
               rounded-[24px]
@@ -124,7 +133,7 @@ export function SiteHeader({ locale, page }: { locale: Locale; page: Page }) {
               }
             `}
           >
-            <div className="flex flex-col items-end gap-5 text-[11px] uppercase tracking-[0.18em] text-primary">
+            <div className="mobile-nav-list flex flex-col items-end gap-5 text-[11px] uppercase tracking-[0.18em] text-primary">
               <Link
                 href={workHref}
                 onClick={() => setIsMobileMenuOpen(false)}

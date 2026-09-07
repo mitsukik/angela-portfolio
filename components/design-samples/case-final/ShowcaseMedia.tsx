@@ -12,36 +12,46 @@ const clamp = (v: number, min = 0, max = 1) => Math.min(max, Math.max(min, v));
 
 /**
  * The one "showcase" moment (Final UI). Gets more presence than
- * EvidenceFigure: a one-time scroll-reveal entrance (scale + opacity,
- * strong ease-out, ~650ms — the "rare/first-time" motion tier, since it
- * appears once per reading) plus a restrained, damped pointer parallax
- * while it's in view. Distinct from EvidenceFigure's static-position
- * hover so the two media types don't read as the same effect reused.
+ * EvidenceFigure: a larger, more noticeable one-time scroll-reveal
+ * entrance (clip-path wipe + scale + opacity, strong ease-out, ~750ms —
+ * the "rare/first-time" motion tier, since it appears once per reading),
+ * a drawn-in accent frame edge, plus a restrained, damped pointer
+ * parallax while it's in view. Distinct from EvidenceFigure's static-
+ * position spotlight so the two media types don't read as the same
+ * effect reused.
  */
 export function ShowcaseMedia({ figure }: { figure: CaseFinalFigure }) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const frameRef = useRef<HTMLDivElement | null>(null);
+  const edgeRef = useRef<HTMLSpanElement | null>(null);
 
   useLayoutEffect(() => {
     const wrap = wrapRef.current;
     const frame = frameRef.current;
-    if (!wrap || !frame) return;
+    const edge = edgeRef.current;
+    if (!wrap || !frame || !edge) return;
 
     gsap.registerPlugin(ScrollTrigger);
     const media = gsap.matchMedia();
     const context = gsap.context(() => {
       media.add(MOTION_QUERY, () => {
-        gsap.set(frame, { autoAlpha: 0, scale: 0.96, y: 24 });
+        gsap.set(frame, { autoAlpha: 0, scale: 0.92, y: 32, clipPath: "inset(6% 6% 6% 6%)" });
+        gsap.set(edge, { scaleX: 0 });
         const trigger = ScrollTrigger.create({
           trigger: wrap,
-          start: "top 80%",
+          start: "top 78%",
           once: true,
-          onEnter: () =>
-            gsap.to(frame, { autoAlpha: 1, scale: 1, y: 0, duration: 0.65, ease: "power3.out" }),
+          onEnter: () => {
+            const timeline = gsap.timeline();
+            timeline
+              .to(frame, { autoAlpha: 1, scale: 1, y: 0, clipPath: "inset(0% 0% 0% 0%)", duration: 0.75, ease: "power3.out" })
+              .to(edge, { scaleX: 1, duration: 0.5, ease: "power2.out" }, "-=0.3");
+          },
         });
         return () => {
           trigger.kill();
-          gsap.set(frame, { clearProps: "opacity,visibility,transform" });
+          gsap.set(frame, { clearProps: "opacity,visibility,transform,clipPath" });
+          gsap.set(edge, { clearProps: "transform" });
         };
       });
 
@@ -74,15 +84,16 @@ export function ShowcaseMedia({ figure }: { figure: CaseFinalFigure }) {
 
   return (
     <div ref={wrapRef} className="relative">
-      <div ref={frameRef} className="cf-showcase cf-figure relative aspect-[16/10] w-full">
+      <div ref={frameRef} className="cf-showcase cf-figure relative aspect-[16/9] w-full">
         <Image
           src={figure.src}
           alt={figure.alt}
           fill
-          sizes="(max-width: 1024px) 100vw, 1200px"
+          sizes="(max-width: 1024px) 100vw, 1600px"
           className="object-cover"
         />
-        <span className="cf-figure-caption cf-meta absolute bottom-4 left-4">
+        <span ref={edgeRef} aria-hidden className="absolute inset-x-0 bottom-0 h-[3px] origin-left bg-acid" />
+        <span className="cf-figure-caption cf-meta absolute bottom-5 left-4">
           {figure.figureNumber} — {figure.caption}
         </span>
       </div>

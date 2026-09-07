@@ -17,12 +17,16 @@ import { decisionFigures, overviewFigure, showcaseFigure } from "./caseFinalMedi
 
 const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
 
+// Chapter naming follows Angela's preferred Lovable-style register
+// ("01 / 問題" as one unit — see ChapterRegister.tsx), adapted to this
+// project's real section structure (Role+Workflow share one chapter;
+// Final UI/Outcome/Learnings close together as one).
 const CHAPTERS: Chapter[] = [
   { number: "01", label: "概述" },
-  { number: "02", label: "挑戰" },
+  { number: "02", label: "問題" },
   { number: "03", label: "角色與流程" },
   { number: "04", label: "決策" },
-  { number: "05", label: "成果" },
+  { number: "05", label: "成果與學習" },
 ];
 
 /**
@@ -31,7 +35,14 @@ const CHAPTERS: Chapter[] = [
  * outer .case-final wrapper; every sub-component below stays theme-
  * agnostic and reads color from the CSS custom properties that
  * attribute switches (see .case-final rules in globals.css). No
- * component here branches on `theme` in JS.
+ * component here branches on `theme` in JS. SiteHeader's own `variant`
+ * prop is set from the same `theme` value, so the header register
+ * always matches the case it's on top of.
+ *
+ * A per-project theme mapping for the eventual production system
+ * (case01/03 dark, case02/04 light) exists in caseTheme.ts — not wired
+ * in here yet; these prototype routes still pass theme explicitly so
+ * both registers can be reviewed against the same real content.
  */
 export function CaseStudyPrototype({
   theme,
@@ -78,14 +89,16 @@ export function CaseStudyPrototype({
   }, []);
 
   const decisions = caseStudy.decisions;
+  const nextDescription = nextProject.description?.join("");
 
   return (
     <div className="min-h-screen">
-      <SiteHeader locale="zh" page="case" />
+      <SiteHeader locale="zh" page="case" variant={theme} />
 
       <main className="case-final" data-theme={theme}>
-        {/* Opening */}
-        <div ref={openingRef} className="mx-auto flex min-h-[92svh] max-w-[1600px] flex-col justify-end px-5 pb-16 pt-28 md:px-10 md:pb-20">
+        {/* Opening — sized to its content (no forced min-h-[92svh]), same
+            "avoid a dead zone before real content" fix as Closing below. */}
+        <div ref={openingRef} className="mx-auto max-w-[1600px] px-5 pb-16 pt-16 md:px-10 md:pb-24 md:pt-24">
           <p data-open-eyebrow className="cf-meta cf-accent">
             {project.number} / {caseStudy.eyebrowTitle ?? displayTitle}
           </p>
@@ -109,7 +122,7 @@ export function CaseStudyPrototype({
         </div>
 
         <div className="mx-auto max-w-[1600px] px-5 md:px-10">
-          <div className="md:grid md:grid-cols-[3.5rem_minmax(0,1fr)] md:gap-10">
+          <div className="md:grid md:grid-cols-[7rem_minmax(0,1fr)] md:gap-10">
             <ChapterRegister chapters={CHAPTERS} active={active} sectionRefs={chapterSectionRefs} />
 
             <div className="space-y-24 py-20 md:space-y-32 md:py-28">
@@ -126,6 +139,7 @@ export function CaseStudyPrototype({
                   paragraphs={caseStudy.overview.body as string[]}
                   supporting={caseStudy.overview.supportingLine}
                   media={<EvidenceFigure figure={overviewFigure} />}
+                  mediaFullBleed
                 />
               </div>
 
@@ -171,7 +185,9 @@ export function CaseStudyPrototype({
 
               <SectionMarquee zh="設計決策" en="DESIGN DECISIONS" direction="ltr" />
 
-              {/* Chapter 04 — Decisions */}
+              {/* Chapter 04 — Decisions: the "key summary" content, so
+                  each gets the stronger reading-aware surface and its
+                  evidence figure at full scale. */}
               <div
                 ref={(el) => {
                   registerChapter(3)(el);
@@ -190,6 +206,8 @@ export function CaseStudyPrototype({
                         paragraphs={(decision.body as string).split("\n\n")}
                         supporting={decision.principle}
                         media={figure ? <EvidenceFigure figure={figure} /> : undefined}
+                        mediaFullBleed
+                        strong
                       />
                     );
                   })}
@@ -212,6 +230,7 @@ export function CaseStudyPrototype({
                   paragraphs={caseStudy.finalUI.body as string[]}
                   points={caseStudy.finalUI.points}
                   media={<ShowcaseMedia figure={showcaseFigure} />}
+                  mediaFullBleed
                 />
                 <ReadingSection
                   label={caseStudy.outcome.heading}
@@ -230,20 +249,38 @@ export function CaseStudyPrototype({
           </div>
         </div>
 
-        {/* Next project handoff */}
+        {/* Next project handoff — Round 2 rebuild: title + description +
+            tags + CTA all composed together (content, metadata, and the
+            action visually belong to one block), not a bare title with
+            an isolated arrow floating in an otherwise empty section. */}
         <div className="border-t cf-rule px-5 py-20 md:px-10 md:py-28">
           <div className="mx-auto max-w-[1600px]">
-            <p className="cf-meta cf-dim">{caseStudy.nextProjectLabel ?? "下一個專案"}</p>
-            <CaseTransitionLink
-              href={`/work/${nextProject.slug}`}
-              className="cf-heading group mt-6 flex items-center justify-between gap-6 border-b cf-rule py-6 text-[2rem] font-medium tracking-[-0.02em] md:text-[4.5rem]"
-            >
-              <span>{caseStudy.nextProjectTitle ?? nextProject.title}</span>
-              <span aria-hidden className="cf-accent transition-transform group-hover:translate-x-2">→</span>
+            <CaseTransitionLink href={`/work/${nextProject.slug}`} className="case-link group block">
+              <p className="cf-meta cf-accent">{caseStudy.nextProjectLabel ?? "下一個專案"}</p>
+              <div className="mt-6 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                <div className="max-w-[46ch]">
+                  <h2 className="cf-heading text-[2.25rem] font-medium tracking-[-0.02em] md:text-[4rem]">
+                    {caseStudy.nextProjectTitle ?? nextProject.title}
+                  </h2>
+                  {nextDescription && <p className="cf-dim body-tc mt-4">{nextDescription}</p>}
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {nextProject.tags.slice(0, 3).map((tag) => (
+                      <span key={tag} className="cf-tag">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <span className="cf-accent flex shrink-0 items-center gap-3 border-b border-current pb-2 label-mono transition-transform duration-300 group-hover:translate-x-2">
+                  {nextProject.number}
+                  <span aria-hidden>→</span>
+                </span>
+              </div>
             </CaseTransitionLink>
+
             <CaseTransitionLink
               href="/#selected-work"
-              className="cf-dim group mt-10 inline-flex items-center gap-2 text-[0.75rem] font-medium uppercase tracking-[0.18em]"
+              className="cf-dim group mt-14 inline-flex items-center gap-2 text-[0.75rem] font-medium uppercase tracking-[0.18em]"
             >
               <span aria-hidden>←</span>
               <span>{caseStudy.backToSelectedWorkLabel ?? "返回精選作品"}</span>

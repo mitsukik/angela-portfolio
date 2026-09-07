@@ -9,6 +9,7 @@ import { getLenisInstance } from "@/components/site/lenisInstance";
 // "case" is a non-nav page (Case Study) — neither WORK nor ABOUT should
 // read as active there; existing "home"/"about" behavior is unchanged.
 type Page = "home" | "about" | "case";
+type Variant = "dark" | "light";
 
 function pagePath(locale: Locale, page: Page): string {
   const prefix = locale === "en" ? "/en" : "";
@@ -18,19 +19,32 @@ function pagePath(locale: Locale, page: Page): string {
 
 /**
  * Ported from the connected Lovable "VER B" project's SiteHeader/
- * LanguageSwitch — always-dark header (bg-ink/text-paper, not the site's
- * theme background), nav-line underline behavior, language-switch pill
- * with a sliding acid thumb, and a full-screen clip-path mobile menu.
+ * LanguageSwitch — nav-line underline behavior, language-switch pill with
+ * a sliding acid thumb, a full-screen clip-path mobile menu.
+ *
+ * `variant` (Round 2): the desktop header bar reads dark or light from
+ * the CALLING PAGE's own fixed register (Home/About always "dark"; a
+ * Case Study page passes its own case01/03=dark, case02/04=light theme)
+ * — never from scroll position, and never a user-facing toggle. The
+ * full-screen mobile menu intentionally stays dark regardless of variant
+ * (matching the Lovable source, and keeping one strong, consistent
+ * "reveal" moment rather than a second themed surface to maintain).
  *
  * Two deliberate departures from the Lovable source, both explicit
- * standing decisions for this Portfolio (not points of visual polish):
- * WORK links to /#selected-work (an anchor into Home's own pinned stage)
+ * standing decisions for this Portfolio: WORK links to /#selected-work
  * rather than a standalone /work index route, and the language switch
- * navigates between this site's existing per-locale routes (/, /en, ...)
- * rather than toggling client-side state — this codebase's i18n is
- * route-based, not a single-page language context.
+ * navigates between this site's existing per-locale routes rather than
+ * toggling client-side state.
  */
-export function SiteHeader({ locale, page }: { locale: Locale; page: Page }) {
+export function SiteHeader({
+  locale,
+  page,
+  variant = "dark",
+}: {
+  locale: Locale;
+  page: Page;
+  variant?: Variant;
+}) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -62,8 +76,8 @@ export function SiteHeader({ locale, page }: { locale: Locale; page: Page }) {
     router.push(workHref);
   };
 
-  const languageSwitch = (inverse = false) => (
-    <div className={`language-switch ${inverse ? "language-switch-inverse" : ""}`} role="group" aria-label="語言 / Language">
+  const languageSwitch = (tone: Variant) => (
+    <div className={`language-switch language-switch-${tone}`} role="group" aria-label="語言 / Language">
       <span aria-hidden className="language-switch-thumb" style={{ transform: `translateX(${locale === "en" ? "100%" : "0"})` }} />
       {locale === "zh" ? (
         <span lang="zh-Hant" className="language-switch-option" data-active="true" aria-current="true">中</span>
@@ -84,16 +98,16 @@ export function SiteHeader({ locale, page }: { locale: Locale; page: Page }) {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-ink text-paper">
+    <header data-header-variant={variant} className="header-surface sticky top-0 z-50">
       <div className="mx-auto flex h-16 max-w-[1520px] items-center justify-between px-6 md:h-20 md:px-10 lg:px-14">
-        <Link href={homeHref} className="group label-mono relative py-3 text-paper">
+        <Link href={homeHref} className="group label-mono relative py-3 header-fg">
           ANGELA YU
         </Link>
 
         <nav aria-label={locale === "zh" ? "主要導覽" : "Primary navigation"} className="hidden items-center gap-10 md:flex">
           {navItems.map((item) =>
             item.onClick ? (
-              <button key={item.href} type="button" onClick={item.onClick} className="nav-line label-mono py-3 text-paper/70">
+              <button key={item.href} type="button" onClick={item.onClick} className="nav-line label-mono py-3 header-fg-dim">
                 {item.label}
               </button>
             ) : (
@@ -101,13 +115,13 @@ export function SiteHeader({ locale, page }: { locale: Locale; page: Page }) {
                 key={item.href}
                 href={item.href}
                 data-status={item.active ? "active" : undefined}
-                className={`nav-line label-mono py-3 ${item.active ? "text-paper" : "text-paper/70"}`}
+                className={`nav-line label-mono py-3 ${item.active ? "header-fg" : "header-fg-dim"}`}
               >
                 {item.label}
               </Link>
             ),
           )}
-          {languageSwitch(true)}
+          {languageSwitch(variant)}
         </nav>
 
         <button
@@ -116,16 +130,32 @@ export function SiteHeader({ locale, page }: { locale: Locale; page: Page }) {
           aria-expanded={open}
           aria-controls="mobile-navigation"
           onClick={() => setOpen((value) => !value)}
-          className="menu-trigger relative flex h-11 w-11 items-center justify-center text-paper md:hidden"
+          className="menu-trigger header-fg relative flex h-11 w-11 items-center justify-center md:hidden"
         >
           <span className={`menu-line ${open ? "translate-y-0 rotate-45" : "-translate-y-1"}`} />
           <span className={`menu-line ${open ? "translate-y-0 -rotate-45" : "translate-y-1"}`} />
         </button>
       </div>
 
+      {/* Full-screen mobile menu: intentionally always dark (ink/paper),
+          independent of `variant` — one consistent reveal moment rather
+          than a second themed surface. Refined per Angela's feedback:
+          smaller type, no arrows, subtle dividers, rounded language
+          switch, no oversized poster-style rows. */}
       <div id="mobile-navigation" className={`mobile-menu md:hidden ${open ? "mobile-menu-open" : ""}`} aria-hidden={!open}>
-        <nav className="flex h-full flex-col justify-between px-5 pb-8 pt-20" aria-label={locale === "zh" ? "行動版主要導覽" : "Mobile primary navigation"}>
-          <div className="border-t border-paper/20">
+        <nav className="flex h-full flex-col justify-between px-6 pb-8 pt-6" aria-label={locale === "zh" ? "行動版主要導覽" : "Mobile primary navigation"}>
+          <div className="flex items-center justify-between">
+            <span className="label-mono text-paper/70">{locale === "zh" ? "選單" : "Menu"}</span>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="label-mono flex min-h-11 items-center px-2 text-paper transition-colors hover:text-acid"
+            >
+              {locale === "zh" ? "關閉" : "CLOSE"}
+            </button>
+          </div>
+
+          <div className="border-t border-paper/12">
             {navItems.map((item, index) =>
               item.onClick ? (
                 <button
@@ -133,11 +163,10 @@ export function SiteHeader({ locale, page }: { locale: Locale; page: Page }) {
                   type="button"
                   tabIndex={open ? 0 : -1}
                   onClick={item.onClick}
-                  style={{ transitionDelay: open ? `${120 + index * 70}ms` : "0ms" }}
-                  className="mobile-menu-link group flex w-full items-center justify-between border-b border-paper/20 py-6 text-left"
+                  style={{ transitionDelay: open ? `${100 + index * 60}ms` : "0ms" }}
+                  className="mobile-menu-link flex w-full items-center border-b border-paper/12 py-5 text-left text-[1.5rem] font-medium tracking-[-0.01em] text-paper transition-colors hover:text-acid"
                 >
-                  <span className="text-[clamp(2.5rem,13vw,4.5rem)] font-semibold uppercase leading-none">{item.label}</span>
-                  <span aria-hidden className="text-2xl transition-transform group-hover:translate-x-1">↗</span>
+                  {item.label}
                 </button>
               ) : (
                 <Link
@@ -145,18 +174,18 @@ export function SiteHeader({ locale, page }: { locale: Locale; page: Page }) {
                   href={item.href}
                   tabIndex={open ? 0 : -1}
                   onClick={() => setOpen(false)}
-                  style={{ transitionDelay: open ? `${120 + index * 70}ms` : "0ms" }}
-                  className="mobile-menu-link group flex items-center justify-between border-b border-paper/20 py-6"
+                  style={{ transitionDelay: open ? `${100 + index * 60}ms` : "0ms" }}
+                  className="mobile-menu-link flex items-center border-b border-paper/12 py-5 text-[1.5rem] font-medium tracking-[-0.01em] text-paper transition-colors hover:text-acid"
                 >
-                  <span className="text-[clamp(2.5rem,13vw,4.5rem)] font-semibold uppercase leading-none">{item.label}</span>
-                  <span aria-hidden className="text-2xl transition-transform group-hover:translate-x-1">↗</span>
+                  {item.label}
                 </Link>
               ),
             )}
           </div>
-          <div className="mobile-menu-meta flex items-end justify-between" style={{ transitionDelay: open ? "280ms" : "0ms" }}>
+
+          <div className="mobile-menu-meta flex items-center justify-between" style={{ transitionDelay: open ? "240ms" : "0ms" }}>
             <p className="label-mono text-paper/50">{locale === "zh" ? "資深產品設計師" : "Senior Product Designer"}</p>
-            {languageSwitch(true)}
+            {languageSwitch("dark")}
           </div>
         </nav>
       </div>

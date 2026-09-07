@@ -3,7 +3,7 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { CONTACT_EMAIL } from "@/data/contact";
+import { CONTACT_EMAIL, RESUME_URL } from "@/data/contact";
 import type { Locale } from "@/data/locale";
 import { getLenisInstance } from "@/components/site/lenisInstance";
 
@@ -11,8 +11,7 @@ const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
 
 const CONTACT_LINKS = (locale: Locale) => [
   { label: "Email", value: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` },
-  { label: "LinkedIn", value: "/in/angela-yu", href: "https://www.linkedin.com/in/angela-yu" },
-  { label: "Resume", value: locale === "zh" ? "PDF — 準備中" : "PDF — coming soon", href: "#contact" },
+  { label: "Resume", value: locale === "zh" ? "線上履歷" : "Online Resume", href: RESUME_URL },
 ];
 
 /**
@@ -21,6 +20,12 @@ const CONTACT_LINKS = (locale: Locale) => [
  * contact rows) — kept in Home per Angela's standing decision. The Footer
  * utility row below it is a distinct, separate layer (copyright + Back to
  * Top only), not a continuation of Closing's content.
+ *
+ * Round 2: sized to its own content (no forced min-h-[100svh] +
+ * justify-between) — that combination was what produced a large blank
+ * gap between the top label and the actual heading at wide/short
+ * viewports (e.g. 1920x1080), since the content doesn't naturally fill a
+ * full viewport height. Generous but fixed vertical padding instead.
  */
 export function SiteFooter({ locale = "zh" }: { locale?: Locale }) {
   const closingRef = useRef<HTMLDivElement | null>(null);
@@ -80,14 +85,21 @@ export function SiteFooter({ locale = "zh" }: { locale?: Locale }) {
   return (
     <>
       <section id="contact" className="scene-dark relative">
-        <div ref={closingRef} className="mx-auto flex min-h-[100svh] max-w-[1600px] flex-col justify-between px-5 py-16 md:px-10 md:py-20">
+        <div ref={closingRef} className="mx-auto max-w-[1600px] px-5 py-24 md:px-10 md:py-32">
           <p className="label-mono scene-dim-text">{locale === "zh" ? "結尾 / 聯絡" : "Closing / Contact"}</p>
 
-          <div className="grid gap-12 md:grid-cols-12">
+          <div className="mt-12 grid gap-12 md:mt-16 md:grid-cols-12">
             <div className="md:col-span-7">
-              <h2 ref={headingRef} className="display-xl">
-                <span className="block">Let&apos;s build</span>
-                <span className="block scene-dim-text">the system.</span>
+              {/* Hover shifts the whole statement to acid, per-line, one
+                  deliberate color transition — a quiet "alive" cue on the
+                  closing line without becoming playful/cute. */}
+              <h2 ref={headingRef} className="closing-statement group display-xl cursor-default">
+                <span className="closing-statement-line block transition-colors duration-300 group-hover:text-acid">
+                  Let&apos;s build
+                </span>
+                <span className="closing-statement-line block scene-dim-text transition-colors duration-300 group-hover:text-acid">
+                  the system.
+                </span>
               </h2>
               <p className="body-tc mt-8 max-w-[42ch]">
                 {locale === "zh"
@@ -109,6 +121,8 @@ export function SiteFooter({ locale = "zh" }: { locale?: Locale }) {
                       transition, no JS involved. */}
                   <a
                     href={link.href}
+                    target={link.href.startsWith("http") ? "_blank" : undefined}
+                    rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
                     className="contact-row group relative flex items-baseline justify-between gap-6 overflow-hidden border-t scene-rule px-3 py-5 -mx-3"
                   >
                     <span aria-hidden className="contact-row-surface absolute inset-0 -z-10 bg-paper" />

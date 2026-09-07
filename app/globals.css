@@ -1049,23 +1049,59 @@ body {
 
 .work-index-link .case-link::after { transform-origin: left; }
 
+/*
+ * Header surface — theme comes from a fixed per-page `variant` prop
+ * (SiteHeader.tsx), never scroll position and never a user toggle. Home/
+ * About always pass "dark" (unchanged from before); a Case Study page
+ * passes its own case01/03=dark, case02/04=light register.
+ */
+.header-surface[data-header-variant="dark"] {
+  background: var(--ink);
+  --hdr-fg: var(--paper);
+  --hdr-fg-dim: oklch(0.968 0.012 95 / 70%);
+}
+
+.header-surface[data-header-variant="light"] {
+  background: var(--paper);
+  --hdr-fg: var(--ink);
+  --hdr-fg-dim: oklch(0.16 0.008 265 / 62%);
+}
+
+.header-fg { color: var(--hdr-fg); }
+.header-fg-dim { color: var(--hdr-fg-dim); }
+
+/*
+ * Language switch — rounded capsule (an intentional, sanctioned exception
+ * to the site's sharp-corner rule, same as the nav itself already is).
+ * `language-switch-dark`/`-light` set the tone explicitly (replaces the
+ * earlier ad-hoc "inverse" boolean) so the control reads correctly
+ * whichever surface it sits on — the always-dark mobile menu, or either
+ * header variant.
+ */
 .language-switch {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(2, 2.65rem);
+  grid-template-columns: repeat(2, 2.75rem);
+  border-radius: 999px;
   border: 1px solid var(--hairline);
   color: var(--foreground);
 }
 
-.language-switch-inverse {
+.language-switch-dark {
   border-color: oklch(1 0 0 / 30%);
   color: var(--paper);
+}
+
+.language-switch-light {
+  border-color: oklch(0.16 0.008 265 / 22%);
+  color: var(--ink);
 }
 
 .language-switch-thumb {
   position: absolute;
   inset: 2px auto 2px 2px;
   width: calc(50% - 2px);
+  border-radius: 999px;
   background: var(--acid);
   transition: transform 360ms cubic-bezier(.2,.8,.2,1);
 }
@@ -1077,14 +1113,13 @@ body {
      both labels — without it this is a plain inline element, height has
      no effect on inline boxes, and "中" (whose CJK line-box metrics differ
      from "EN"'s Latin ones at the same font-size) renders top-aligned/
-     clipped relative to "EN" rather than sharing its center line. This is
-     the fix for the reported broken/misaligned switch. */
+     clipped relative to "EN" rather than sharing its center line. */
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 1.8rem;
+  height: 1.9rem;
   min-width: 0;
-  border-radius: 0;
+  border-radius: 999px;
   padding: 0;
   color: inherit;
   font-family: var(--font-label);
@@ -1307,9 +1342,33 @@ body {
 .cf-accent { color: var(--cf-accent); }
 .cf-accent-2 { color: var(--cf-accent-2); }
 
-/* Reading-aware block: a near-imperceptible tint, never a transform on
-   the text itself — state indication only, gated to real hover devices
-   so touch/keyboard never see a stuck "hover" state. */
+/* Round 2 H2 target — Lovable Case A's rendered size/leading
+   (~text-5xl/1.08), matched directly rather than an inline override
+   fighting a smaller shared class. */
+.cf-h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
+  font-size: clamp(1.85rem, 3.6vw, 3rem);
+}
+
+/* Local rule — a short accent line connected to the content it
+   introduces, never a full-width form-style separator. */
+.cf-local-rule {
+  display: block;
+  width: 2.5rem;
+  height: 2px;
+  background: var(--cf-accent);
+}
+
+/* Reading-aware block, two strengths. Ordinary paragraphs get a quiet
+   near-imperceptible tint; decision/key-summary sections (`strong`) get
+   a clearly-owned surface with a left accent edge — still never a
+   transform on the text itself, still gated to real hover devices so
+   touch/keyboard never see a stuck "hover" state. Generous inset on
+   both (Angela's explicit "more padding, more presence" correction —
+   Round 1's -1rem/-1.25rem read as cramped). */
 .cf-reading-block {
   position: relative;
   isolation: isolate;
@@ -1318,36 +1377,75 @@ body {
 .cf-reading-block::before {
   content: "";
   position: absolute;
-  inset: -1rem -1.25rem;
+  inset: -1.5rem -2rem;
   z-index: -1;
   background: var(--cf-surface-hover);
   opacity: 0;
   border-radius: 2px;
 }
 
+.cf-reading-block-strong::before {
+  inset: -2rem -2.5rem;
+  border-left: 2px solid var(--cf-accent);
+}
+
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .cf-reading-block::before {
-    transition: opacity 200ms ease;
+    transition: opacity 220ms ease;
   }
 
   .cf-reading-block:hover::before,
   .cf-reading-block:focus-within::before {
     opacity: 1;
   }
+
+  .cf-reading-block-strong:hover::before,
+  .cf-reading-block-strong:focus-within::before {
+    opacity: 1;
+  }
+
+  .cf-reading-block-strong:not(:hover):not(:focus-within)::before {
+    opacity: 0;
+  }
+
+  /* The strong variant's own tint reads slightly more present than the
+     ordinary one — same mechanism, different intensity, not a
+     different effect. */
+  .cf-reading-block-strong::before {
+    background: color-mix(in oklab, var(--cf-accent) 6%, var(--cf-surface-hover));
+  }
 }
 
-/* Chapter register */
+/* Chapter register — numeral + label as one persistent unit ("01 / 問題"),
+   not a bare numeral with a hover-only label. ~16px, mono. */
 .cf-chapter-marker {
+  position: relative;
   font-family: var(--font-label);
   font-size: 1rem;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   color: var(--cf-dim);
-  opacity: 0.55;
+  opacity: 0.6;
+  padding-bottom: 0.4rem;
+}
+
+.cf-chapter-marker-rule {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1px;
+  width: 100%;
+  background: var(--cf-accent);
+  transform: scaleX(0);
+  transform-origin: left;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .cf-chapter-marker {
     transition: opacity 200ms ease, color 200ms ease;
+  }
+
+  .cf-chapter-marker-rule {
+    transition: transform 260ms ease;
   }
 }
 
@@ -1356,8 +1454,61 @@ body {
   opacity: 1;
 }
 
-/* Evidence figures (system/flow-diagram media) — a restrained, barely-
-   perceptible focus lift. Never obscures the diagram's own labels. */
+.cf-chapter-marker[data-active="true"] .cf-chapter-marker-rule {
+  transform: scaleX(1);
+}
+
+/* Scan-friendly summary rows (decision breakdowns, role/system
+   responsibilities that carry a real index+label+description) —
+   Round 2 replaces the previous cramped 12px grid list. Larger type,
+   generous padding, a clear per-row hover, no card chrome. */
+.cf-summary-list {
+  border-top: 1px solid var(--cf-hairline);
+}
+
+.cf-summary-row {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  gap: 1rem;
+  align-items: baseline;
+  padding: 1.1rem 0.75rem;
+  border-bottom: 1px solid var(--cf-hairline);
+  margin: 0 -0.75rem;
+}
+
+.cf-summary-index {
+  font-family: var(--font-label);
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .cf-summary-row {
+    transition: background-color 200ms ease;
+  }
+
+  .cf-summary-row:hover,
+  .cf-summary-row:focus-within {
+    background: var(--cf-surface-hover);
+  }
+}
+
+/* Unstructured point lists (plain skill/tool tags with no index or
+   description) get a simple flowing tag treatment instead — a numbered
+   row would imply structure these items don't have. */
+.cf-tag {
+  border: 1px solid var(--cf-hairline);
+  padding: 0.4rem 0.85rem;
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: var(--cf-body);
+}
+
+/* Evidence figures (system/flow-diagram media) — Round 2 makes the focus
+   response clearly perceptible (not the previous barely-there lift)
+   while still never obscuring the diagram's own labels: a moderate
+   scale/brightness lift plus a soft pointer-tracking spotlight. */
 .cf-figure {
   position: relative;
   border: 1px solid var(--cf-hairline);
@@ -1371,17 +1522,45 @@ body {
 
 @media (prefers-reduced-motion: no-preference) {
   .cf-figure-image {
-    transition: transform 260ms ease, filter 260ms ease;
+    transition: transform 320ms ease, filter 320ms ease;
   }
 }
 
 .cf-figure:is(:hover, :focus-within) .cf-figure-image {
-  transform: scale(1.012);
-  filter: brightness(1.03);
+  transform: scale(1.035);
+  filter: brightness(1.06);
+}
+
+/* Pointer-zone spotlight — a soft highlight that follows the cursor
+   across the diagram (see EvidenceFigure.tsx's pointermove handler),
+   distinct from ShowcaseMedia's perspective parallax. Opacity is low
+   enough to never compete with the diagram's own text/labels. */
+.cf-figure-spotlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    360px circle at var(--cf-spot-x, 50%) var(--cf-spot-y, 50%),
+    color-mix(in oklab, var(--cf-accent) 16%, transparent),
+    transparent 70%
+  );
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .cf-figure-spotlight::after {
+    transition: opacity 240ms ease;
+  }
+
+  .cf-figure-spotlight:is(:hover, :focus-within)::after {
+    opacity: 1;
+  }
 }
 
 .cf-figure-caption {
-  opacity: 0.65;
+  opacity: 0.7;
+  font-size: 0.8rem;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -1408,20 +1587,36 @@ body {
 }
 
 /* Marquee section breaks — CSS animation (runs off the main thread),
-   never scroll-linked, so it can't jank the reading experience. */
+   never scroll-linked, so it can't jank the reading experience. Chinese
+   and English render at the same size (see SectionMarquee.tsx); the
+   track repeats its unit 8x per half specifically so the combined width
+   safely exceeds any real viewport — with too little content the loop
+   showed bare background before snapping back, reading as a visible
+   jump. Duration is scaled up to match (a longer track at the same
+   speed would otherwise read as frantic, not ambient). */
 .cf-marquee-track {
   display: flex;
   width: max-content;
   will-change: transform;
 }
 
+.cf-marquee-scale {
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
 @media (prefers-reduced-motion: no-preference) {
+  /* 256s = 32s (Round 1's duration for 1 unit/half) x 8 (this round's
+     repetition count per half) — proportional, so the pace actually
+     matches what Round 1 intended rather than just being "some slower
+     number." */
   .cf-marquee-track[data-direction="ltr"] {
-    animation: cf-marquee-ltr 32s linear infinite;
+    animation: cf-marquee-ltr 256s linear infinite;
   }
 
   .cf-marquee-track[data-direction="rtl"] {
-    animation: cf-marquee-rtl 32s linear infinite;
+    animation: cf-marquee-rtl 256s linear infinite;
   }
 }
 
@@ -1432,6 +1627,10 @@ body {
   }
 
   .cf-marquee-track > *:nth-child(n + 2) {
+    display: none;
+  }
+
+  .cf-marquee-track > *:first-child > *:nth-child(n + 2) {
     display: none;
   }
 }

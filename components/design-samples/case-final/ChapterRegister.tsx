@@ -5,12 +5,12 @@ import { getLenisInstance } from "@/components/site/lenisInstance";
 export type Chapter = { number: string; label: string };
 
 /**
- * Sticky chapter register (desktop only — mobile gets the chapter number
+ * Sticky chapter register (desktop only — mobile gets the chapter marker
  * inline per section instead, avoiding persistent bottom-viewport
- * clutter on small screens). Numerals sized for real readability
- * (~1rem/16px, per Angela's feedback that the previous sample's chapter
- * marks were too small) without becoming visually dominant next to the
- * display headings.
+ * clutter on small screens). Round 2: numeral + label render as one
+ * always-visible unit ("01 / 問題"), not a bare numeral with a
+ * hover-only label — Angela's explicit correction. ~16px, mono, active
+ * chapter in acid with a short underline.
  */
 export function ChapterRegister({
   chapters,
@@ -33,24 +33,19 @@ export function ChapterRegister({
   };
 
   return (
-    <nav
-      aria-label="章節"
-      className="sticky top-24 hidden self-start pl-1 md:block"
-    >
-      <ol className="space-y-4">
+    <nav aria-label="章節" className="sticky top-24 hidden self-start pl-1 md:block">
+      <ol className="space-y-5">
         {chapters.map((chapter, index) => (
           <li key={chapter.number}>
             <button
               type="button"
               onClick={() => goToChapter(index)}
               aria-current={active === index ? "true" : undefined}
-              className="cf-chapter-marker group flex items-baseline gap-2 text-left"
+              className="cf-chapter-marker block text-left"
               data-active={active === index}
             >
-              <span>{chapter.number}</span>
-              <span className="max-w-[7rem] truncate opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
-                {chapter.label}
-              </span>
+              {chapter.number} / {chapter.label}
+              <span aria-hidden className="cf-chapter-marker-rule" />
             </button>
           </li>
         ))}

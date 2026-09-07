@@ -1249,4 +1249,201 @@ body {
   color: var(--ink);
 }
 
+/*
+ * ============================================================
+ * Case Study "Final" prototype (dark/light comparison)
+ * ============================================================
+ * Fully scoped to .case-final — does not touch the shared
+ * scene-dark/scene-light tokens Home/Selected Work/Closing already use.
+ * Theme is a fixed per-route prop, not a user toggle: data-theme sets one
+ * CSS custom-property block, every sub-component stays theme-agnostic.
+ *
+ * Light heading/body values are deliberately NOT the site's --ink
+ * (oklch 0.16, near-black) — Angela's own feedback was that near-black
+ * body copy on a light ground reads as tiring over long-form reading.
+ * Deep charcoal/softer gray step down from --ink instead. Dark values
+ * are deliberately not --paper at full strength either, for the same
+ * "avoid pure extremes over long reading" reason.
+ */
+.case-final {
+  background: var(--cf-bg);
+  color: var(--cf-body);
+}
+
+.case-final[data-theme="dark"] {
+  --cf-bg: var(--ink);
+  --cf-heading: oklch(0.95 0.01 90);
+  --cf-body: oklch(0.82 0.012 90);
+  --cf-meta: oklch(0.62 0.014 90);
+  --cf-dim: oklch(0.56 0.012 90);
+  --cf-hairline: oklch(1 0 0 / 10%);
+  --cf-accent: var(--acid);
+  --cf-accent-2: var(--lavender);
+  --cf-surface-hover: oklch(1 0 0 / 4%);
+}
+
+.case-final[data-theme="light"] {
+  --cf-bg: var(--paper);
+  --cf-heading: oklch(0.28 0.01 265);
+  --cf-body: oklch(0.42 0.01 265);
+  --cf-meta: oklch(0.55 0.012 265);
+  --cf-dim: oklch(0.58 0.01 265);
+  --cf-hairline: oklch(0.16 0.008 265 / 10%);
+  --cf-accent: oklch(0.48 0.15 116);
+  --cf-accent-2: oklch(0.42 0.13 300);
+  --cf-surface-hover: oklch(0.16 0.008 265 / 4%);
+}
+
+.case-final ::selection {
+  background: var(--cf-accent);
+  color: var(--cf-bg);
+}
+
+.cf-heading { color: var(--cf-heading); }
+.cf-body { color: var(--cf-body); }
+.cf-meta { color: var(--cf-meta); font-family: var(--font-label); font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; }
+.cf-dim { color: var(--cf-dim); }
+.cf-rule { border-color: var(--cf-hairline); }
+.cf-accent { color: var(--cf-accent); }
+.cf-accent-2 { color: var(--cf-accent-2); }
+
+/* Reading-aware block: a near-imperceptible tint, never a transform on
+   the text itself — state indication only, gated to real hover devices
+   so touch/keyboard never see a stuck "hover" state. */
+.cf-reading-block {
+  position: relative;
+  isolation: isolate;
+}
+
+.cf-reading-block::before {
+  content: "";
+  position: absolute;
+  inset: -1rem -1.25rem;
+  z-index: -1;
+  background: var(--cf-surface-hover);
+  opacity: 0;
+  border-radius: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .cf-reading-block::before {
+    transition: opacity 200ms ease;
+  }
+
+  .cf-reading-block:hover::before,
+  .cf-reading-block:focus-within::before {
+    opacity: 1;
+  }
+}
+
+/* Chapter register */
+.cf-chapter-marker {
+  font-family: var(--font-label);
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  color: var(--cf-dim);
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cf-chapter-marker {
+    transition: opacity 200ms ease, color 200ms ease;
+  }
+}
+
+.cf-chapter-marker[data-active="true"] {
+  color: var(--cf-accent);
+  opacity: 1;
+}
+
+/* Evidence figures (system/flow-diagram media) — a restrained, barely-
+   perceptible focus lift. Never obscures the diagram's own labels. */
+.cf-figure {
+  position: relative;
+  border: 1px solid var(--cf-hairline);
+  overflow: hidden;
+}
+
+.cf-figure-image {
+  transform: scale(1);
+  filter: brightness(1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cf-figure-image {
+    transition: transform 260ms ease, filter 260ms ease;
+  }
+}
+
+.cf-figure:is(:hover, :focus-within) .cf-figure-image {
+  transform: scale(1.012);
+  filter: brightness(1.03);
+}
+
+.cf-figure-caption {
+  opacity: 0.65;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cf-figure-caption {
+    transition: opacity 200ms ease;
+  }
+}
+
+.cf-figure:is(:hover, :focus-within) .cf-figure-caption {
+  opacity: 1;
+}
+
+/* Showcase media — the one "delight budget" moment. Pointer parallax is
+   applied via JS-set custom properties (see ShowcaseMedia.tsx); this just
+   composes and smooths them. */
+.cf-showcase {
+  transform: perspective(1400px) rotateX(var(--cf-pointer-rx, 0deg)) rotateY(var(--cf-pointer-ry, 0deg));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cf-showcase {
+    transition: transform 200ms ease;
+  }
+}
+
+/* Marquee section breaks — CSS animation (runs off the main thread),
+   never scroll-linked, so it can't jank the reading experience. */
+.cf-marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cf-marquee-track[data-direction="ltr"] {
+    animation: cf-marquee-ltr 32s linear infinite;
+  }
+
+  .cf-marquee-track[data-direction="rtl"] {
+    animation: cf-marquee-rtl 32s linear infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-marquee-track {
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .cf-marquee-track > *:nth-child(n + 2) {
+    display: none;
+  }
+}
+
+@keyframes cf-marquee-ltr {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes cf-marquee-rtl {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
 } /* end @layer components */

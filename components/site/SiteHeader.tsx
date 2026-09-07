@@ -6,7 +6,9 @@ import { useEffect, useState } from "react";
 import type { Locale } from "@/data/locale";
 import { getLenisInstance } from "@/components/site/lenisInstance";
 
-type Page = "home" | "about";
+// "case" is a non-nav page (Case Study) — neither WORK nor ABOUT should
+// read as active there; existing "home"/"about" behavior is unchanged.
+type Page = "home" | "about" | "case";
 
 function pagePath(locale: Locale, page: Page): string {
   const prefix = locale === "en" ? "/en" : "";

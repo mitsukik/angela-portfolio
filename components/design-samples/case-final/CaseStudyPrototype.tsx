@@ -16,18 +16,10 @@ import { CaseTransitionLink } from "./CaseTransitionLink";
 import { decisionFigures, overviewFigure, showcaseFigure } from "./caseFinalMedia";
 
 const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
-
-// Chapter naming follows Angela's preferred Lovable-style register
-// ("01 / 問題" as one unit — see ChapterRegister.tsx), adapted to this
-// project's real section structure (Role+Workflow share one chapter;
-// Final UI/Outcome/Learnings close together as one).
-const CHAPTERS: Chapter[] = [
-  { number: "01", label: "概述" },
-  { number: "02", label: "問題" },
-  { number: "03", label: "角色與流程" },
-  { number: "04", label: "決策" },
-  { number: "05", label: "成果與學習" },
-];
+const CHAPTER_COUNT = 5;
+const CHAPTERS: Chapter[] = Array.from({ length: CHAPTER_COUNT }, (_, i) => ({
+  number: String(i + 1).padStart(2, "0"),
+}));
 
 /**
  * One shared architecture, two theme configurations (per composition-
@@ -38,6 +30,12 @@ const CHAPTERS: Chapter[] = [
  * component here branches on `theme` in JS. SiteHeader's own `variant`
  * prop is set from the same `theme` value, so the header register
  * always matches the case it's on top of.
+ *
+ * Round 3: the content container now matches the header's own
+ * (max-w-[1520px] px-6/10/14) so the grid genuinely aligns with the nav
+ * above it, instead of two slightly different containers. The chapter
+ * register is numerals-only (see ChapterRegister.tsx) — the descriptive
+ * label lives with its section's own content, not duplicated in the nav.
  *
  * A per-project theme mapping for the eventual production system
  * (case01/03 dark, case02/04 light) exists in caseTheme.ts — not wired
@@ -56,7 +54,7 @@ export function CaseStudyPrototype({
   const { caseStudy } = project;
   const displayTitle = caseStudy.displayTitle ?? project.title;
   const openingRef = useRef<HTMLDivElement | null>(null);
-  const { active, registerChapter } = useActiveChapter(CHAPTERS.length);
+  const { active, registerChapter } = useActiveChapter(CHAPTER_COUNT);
   const chapterSectionRefs = useRef<Array<HTMLElement | null>>([]);
 
   useLayoutEffect(() => {
@@ -89,16 +87,20 @@ export function CaseStudyPrototype({
   }, []);
 
   const decisions = caseStudy.decisions;
-  const nextDescription = nextProject.description?.join("");
+  const nextDescription = nextProject.description.join("");
 
   return (
     <div className="min-h-screen">
-      <SiteHeader locale="zh" page="case" variant={theme} />
+      <SiteHeader
+        locale="zh"
+        page="case"
+        variant={theme}
+        caseContext={{ number: project.number, category: project.category.zh }}
+      />
 
       <main className="case-final" data-theme={theme}>
-        {/* Opening — sized to its content (no forced min-h-[92svh]), same
-            "avoid a dead zone before real content" fix as Closing below. */}
-        <div ref={openingRef} className="mx-auto max-w-[1600px] px-5 pb-16 pt-16 md:px-10 md:pb-24 md:pt-24">
+        {/* Opening — sized to its content (no forced min-height). */}
+        <div ref={openingRef} className="mx-auto max-w-[1520px] px-6 pb-16 pt-16 md:px-10 md:pb-24 md:pt-24 lg:px-14">
           <p data-open-eyebrow className="cf-meta cf-accent">
             {project.number} / {caseStudy.eyebrowTitle ?? displayTitle}
           </p>
@@ -121,13 +123,17 @@ export function CaseStudyPrototype({
           </dl>
         </div>
 
-        <div className="mx-auto max-w-[1600px] px-5 md:px-10">
-          <div className="md:grid md:grid-cols-[7rem_minmax(0,1fr)] md:gap-10">
+        <div className="mx-auto max-w-[1520px] px-6 md:px-10 lg:px-14">
+          <div className="md:grid md:grid-cols-[3rem_minmax(0,1fr)] md:gap-8 lg:grid-cols-[3.5rem_minmax(0,1fr)] lg:gap-12">
             <ChapterRegister chapters={CHAPTERS} active={active} sectionRefs={chapterSectionRefs} />
 
-            <div className="space-y-24 py-20 md:space-y-32 md:py-28">
+            {/* Main column: section meta + content + media all belong to
+                this one composed system (Round 3 grid principle) — the
+                chapter rail is the only other zone. */}
+            <div>
               {/* Chapter 01 — Overview */}
               <div
+                className="cf-section"
                 ref={(el) => {
                   registerChapter(0)(el);
                   chapterSectionRefs.current[0] = el;
@@ -145,6 +151,7 @@ export function CaseStudyPrototype({
 
               {/* Chapter 02 — Challenge */}
               <div
+                className="cf-section cf-section-divider"
                 ref={(el) => {
                   registerChapter(1)(el);
                   chapterSectionRefs.current[1] = el;
@@ -163,7 +170,7 @@ export function CaseStudyPrototype({
 
               {/* Chapter 03 — Role + Workflow */}
               <div
-                className="space-y-24 md:space-y-32"
+                className="cf-section cf-section-divider space-y-20 md:space-y-24"
                 ref={(el) => {
                   registerChapter(2)(el);
                   chapterSectionRefs.current[2] = el;
@@ -185,10 +192,9 @@ export function CaseStudyPrototype({
 
               <SectionMarquee zh="設計決策" en="DESIGN DECISIONS" direction="ltr" />
 
-              {/* Chapter 04 — Decisions: the "key summary" content, so
-                  each gets the stronger reading-aware surface and its
-                  evidence figure at full scale. */}
+              {/* Chapter 04 — Decisions */}
               <div
+                className="cf-section cf-section-divider"
                 ref={(el) => {
                   registerChapter(3)(el);
                   chapterSectionRefs.current[3] = el;
@@ -207,7 +213,6 @@ export function CaseStudyPrototype({
                         supporting={decision.principle}
                         media={figure ? <EvidenceFigure figure={figure} /> : undefined}
                         mediaFullBleed
-                        strong
                       />
                     );
                   })}
@@ -218,7 +223,7 @@ export function CaseStudyPrototype({
 
               {/* Chapter 05 — Final UI, Outcome, Learnings */}
               <div
-                className="space-y-24 md:space-y-32"
+                className="cf-section cf-section-divider space-y-20 md:space-y-24"
                 ref={(el) => {
                   registerChapter(4)(el);
                   chapterSectionRefs.current[4] = el;
@@ -249,42 +254,31 @@ export function CaseStudyPrototype({
           </div>
         </div>
 
-        {/* Next project handoff — Round 2 rebuild: title + description +
-            tags + CTA all composed together (content, metadata, and the
-            action visually belong to one block), not a bare title with
-            an isolated arrow floating in an otherwise empty section. */}
-        <div className="border-t cf-rule px-5 py-20 md:px-10 md:py-28">
-          <div className="mx-auto max-w-[1600px]">
-            <CaseTransitionLink href={`/work/${nextProject.slug}`} className="case-link group block">
-              <p className="cf-meta cf-accent">{caseStudy.nextProjectLabel ?? "下一個專案"}</p>
-              <div className="mt-6 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-                <div className="max-w-[46ch]">
-                  <h2 className="cf-heading text-[2.25rem] font-medium tracking-[-0.02em] md:text-[4rem]">
-                    {caseStudy.nextProjectTitle ?? nextProject.title}
-                  </h2>
-                  {nextDescription && <p className="cf-dim body-tc mt-4">{nextDescription}</p>}
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {nextProject.tags.slice(0, 3).map((tag) => (
-                      <span key={tag} className="cf-tag">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <span className="cf-accent flex shrink-0 items-center gap-3 border-b border-current pb-2 label-mono transition-transform duration-300 group-hover:translate-x-2">
-                  {nextProject.number}
-                  <span aria-hidden>→</span>
-                </span>
+        {/* Next project — Round 3 rebuild matching the connected Lovable
+            Case Study A's actual reference pattern exactly: a modest
+            title on one side and a real labeled CTA (reusing the site's
+            existing .case-link underline+arrow-travel interaction, not a
+            bespoke effect) on the other — not a giant clickable block,
+            not an isolated arrow. "返回精選作品" removed entirely, no
+            replacement. */}
+        <div className="border-t cf-rule px-6 py-20 md:px-10 md:py-28 lg:px-14">
+          <div className="mx-auto max-w-[1520px]">
+            <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+              <div className="max-w-[46ch]">
+                <p className="cf-meta cf-accent">{caseStudy.nextProjectLabel ?? "下一個專案"}</p>
+                <h2 className="cf-heading cf-h3 mt-5 text-[clamp(1.75rem,3vw,2.5rem)]">
+                  {caseStudy.nextProjectTitle ?? nextProject.title}
+                </h2>
+                {nextDescription && <p className="cf-dim body-tc mt-4">{nextDescription}</p>}
               </div>
-            </CaseTransitionLink>
-
-            <CaseTransitionLink
-              href="/#selected-work"
-              className="cf-dim group mt-14 inline-flex items-center gap-2 text-[0.75rem] font-medium uppercase tracking-[0.18em]"
-            >
-              <span aria-hidden>←</span>
-              <span>{caseStudy.backToSelectedWorkLabel ?? "返回精選作品"}</span>
-            </CaseTransitionLink>
+              <CaseTransitionLink
+                href={`/work/${nextProject.slug}`}
+                className="case-link group inline-flex shrink-0 items-center gap-3 pb-2 label-mono cf-heading"
+              >
+                {caseStudy.decisionsHeading ? "查看案例" : "View case study"}
+                <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-2">→</span>
+              </CaseTransitionLink>
+            </div>
           </div>
         </div>
       </main>

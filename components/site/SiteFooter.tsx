@@ -86,9 +86,7 @@ export function SiteFooter({ locale = "zh" }: { locale?: Locale }) {
     <>
       <section id="contact" className="scene-dark relative">
         <div ref={closingRef} className="mx-auto max-w-[1600px] px-5 py-24 md:px-10 md:py-32">
-          <p className="label-mono scene-dim-text">{locale === "zh" ? "結尾 / 聯絡" : "Closing / Contact"}</p>
-
-          <div className="mt-12 grid gap-12 md:mt-16 md:grid-cols-12">
+          <div className="grid gap-12 md:grid-cols-12">
             <div className="md:col-span-7">
               {/* Hover shifts the whole statement to acid, per-line, one
                   deliberate color transition — a quiet "alive" cue on the

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Locale } from "@/data/locale";
 import { getLenisInstance } from "@/components/site/lenisInstance";
 
@@ -20,15 +20,23 @@ function pagePath(locale: Locale, page: Page): string {
 /**
  * Ported from the connected Lovable "VER B" project's SiteHeader/
  * LanguageSwitch — nav-line underline behavior, language-switch pill with
- * a sliding acid thumb, a full-screen clip-path mobile menu.
+ * a sliding acid thumb.
  *
  * `variant` (Round 2): the desktop header bar reads dark or light from
  * the CALLING PAGE's own fixed register (Home/About always "dark"; a
  * Case Study page passes its own case01/03=dark, case02/04=light theme)
- * — never from scroll position, and never a user-facing toggle. The
- * full-screen mobile menu intentionally stays dark regardless of variant
- * (matching the Lovable source, and keeping one strong, consistent
- * "reveal" moment rather than a second themed surface to maintain).
+ * — never from scroll position, and never a user-facing toggle.
+ *
+ * `caseContext` (Round 3, optional): when set, the header shows real
+ * project info (number + category — never fabricated, sourced from the
+ * calling page's own data) alongside the brand, so a Case page's header
+ * feels composed rather than a few controls floating in an empty bar.
+ * Home/About omit this and are unaffected.
+ *
+ * Mobile menu (Round 3): rebuilt as a compact anchored dropdown — not a
+ * full-screen takeover — sized to its own content, theme-matched to
+ * `variant`. Contains only brand + WORK/ABOUT + language switch + close;
+ * no arrows, no extra labels.
  *
  * Two deliberate departures from the Lovable source, both explicit
  * standing decisions for this Portfolio: WORK links to /#selected-work
@@ -40,13 +48,17 @@ export function SiteHeader({
   locale,
   page,
   variant = "dark",
+  caseContext,
 }: {
   locale: Locale;
   page: Page;
   variant?: Variant;
+  caseContext?: { number: string; category: string };
 }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   const homeHref = pagePath(locale, "home");
   const aboutHref = pagePath(locale, "about");
@@ -55,9 +67,20 @@ export function SiteHeader({
   const switchHref = pagePath(otherLocale, page);
 
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
+    if (!open) return;
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target as Node;
+      if (menuRef.current?.contains(target) || triggerRef.current?.contains(target)) return;
+      setOpen(false);
+    };
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKey);
     return () => {
-      document.body.style.overflow = "";
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKey);
     };
   }, [open]);
 
@@ -100,9 +123,16 @@ export function SiteHeader({
   return (
     <header data-header-variant={variant} className="header-surface sticky top-0 z-50">
       <div className="mx-auto flex h-16 max-w-[1520px] items-center justify-between px-6 md:h-20 md:px-10 lg:px-14">
-        <Link href={homeHref} className="group label-mono relative py-3 header-fg">
-          ANGELA YU
-        </Link>
+        <div className="flex items-baseline gap-4">
+          <Link href={homeHref} className="group label-mono relative py-3 header-fg">
+            ANGELA YU
+          </Link>
+          {caseContext && (
+            <span className="header-fg-dim hidden label-mono py-3 sm:inline">
+              {caseContext.number} — {caseContext.category}
+            </span>
+          )}
+        </div>
 
         <nav aria-label={locale === "zh" ? "主要導覽" : "Primary navigation"} className="hidden items-center gap-10 md:flex">
           {navItems.map((item) =>
@@ -125,6 +155,7 @@ export function SiteHeader({
         </nav>
 
         <button
+          ref={triggerRef}
           type="button"
           aria-label={open ? (locale === "zh" ? "關閉選單" : "Close menu") : locale === "zh" ? "開啟選單" : "Open menu"}
           aria-expanded={open}
@@ -137,57 +168,58 @@ export function SiteHeader({
         </button>
       </div>
 
-      {/* Full-screen mobile menu: intentionally always dark (ink/paper),
-          independent of `variant` — one consistent reveal moment rather
-          than a second themed surface. Refined per Angela's feedback:
-          smaller type, no arrows, subtle dividers, rounded language
-          switch, no oversized poster-style rows. */}
-      <div id="mobile-navigation" className={`mobile-menu md:hidden ${open ? "mobile-menu-open" : ""}`} aria-hidden={!open}>
-        <nav className="flex h-full flex-col justify-between px-6 pb-8 pt-6" aria-label={locale === "zh" ? "行動版主要導覽" : "Mobile primary navigation"}>
-          <div className="flex items-center justify-between">
-            <span className="label-mono text-paper/70">{locale === "zh" ? "選單" : "Menu"}</span>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="label-mono flex min-h-11 items-center px-2 text-paper transition-colors hover:text-acid"
-            >
-              {locale === "zh" ? "關閉" : "CLOSE"}
-            </button>
-          </div>
+      {/* Compact anchored dropdown (Round 3) — not a full-screen menu.
+          Theme-matched to `variant` via --hdr-panel-bg. Only brand +
+          WORK/ABOUT + language switch + close; no extra labels, no
+          arrows. */}
+      <div
+        ref={menuRef}
+        id="mobile-navigation"
+        className={`mobile-menu md:hidden ${open ? "mobile-menu-open" : ""}`}
+        aria-hidden={!open}
+      >
+        <div className="flex items-center justify-between border-b border-current/10 px-5 py-4">
+          <span className="mobile-menu-meta label-mono header-fg">ANGELA YU</span>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            tabIndex={open ? 0 : -1}
+            aria-label={locale === "zh" ? "關閉選單" : "Close menu"}
+            className="mobile-menu-meta header-fg-dim flex h-8 w-8 items-center justify-center transition-colors hover:text-acid"
+          >
+            <span aria-hidden className="text-lg leading-none">×</span>
+          </button>
+        </div>
 
-          <div className="border-t border-paper/12">
-            {navItems.map((item, index) =>
-              item.onClick ? (
-                <button
-                  key={item.href}
-                  type="button"
-                  tabIndex={open ? 0 : -1}
-                  onClick={item.onClick}
-                  style={{ transitionDelay: open ? `${100 + index * 60}ms` : "0ms" }}
-                  className="mobile-menu-link flex w-full items-center border-b border-paper/12 py-5 text-left text-[1.5rem] font-medium tracking-[-0.01em] text-paper transition-colors hover:text-acid"
-                >
-                  {item.label}
-                </button>
-              ) : (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  tabIndex={open ? 0 : -1}
-                  onClick={() => setOpen(false)}
-                  style={{ transitionDelay: open ? `${100 + index * 60}ms` : "0ms" }}
-                  className="mobile-menu-link flex items-center border-b border-paper/12 py-5 text-[1.5rem] font-medium tracking-[-0.01em] text-paper transition-colors hover:text-acid"
-                >
-                  {item.label}
-                </Link>
-              ),
-            )}
-          </div>
-
-          <div className="mobile-menu-meta flex items-center justify-between" style={{ transitionDelay: open ? "240ms" : "0ms" }}>
-            <p className="label-mono text-paper/50">{locale === "zh" ? "資深產品設計師" : "Senior Product Designer"}</p>
-            {languageSwitch("dark")}
-          </div>
+        <nav className="px-5 py-3" aria-label={locale === "zh" ? "行動版主要導覽" : "Mobile primary navigation"}>
+          {navItems.map((item) =>
+            item.onClick ? (
+              <button
+                key={item.href}
+                type="button"
+                tabIndex={open ? 0 : -1}
+                onClick={item.onClick}
+                className="mobile-menu-link header-fg flex w-full items-center py-3 text-left text-[1.05rem] font-medium tracking-[-0.01em] transition-colors hover:text-acid"
+              >
+                {item.label}
+              </button>
+            ) : (
+              <Link
+                key={item.href}
+                href={item.href}
+                tabIndex={open ? 0 : -1}
+                onClick={() => setOpen(false)}
+                className="mobile-menu-link header-fg flex items-center py-3 text-[1.05rem] font-medium tracking-[-0.01em] transition-colors hover:text-acid"
+              >
+                {item.label}
+              </Link>
+            ),
+          )}
         </nav>
+
+        <div className="mobile-menu-meta flex justify-end border-t border-current/10 px-5 py-4">
+          {languageSwitch(variant)}
+        </div>
       </div>
     </header>
   );

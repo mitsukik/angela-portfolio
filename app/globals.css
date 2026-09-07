@@ -1059,12 +1059,16 @@ body {
   background: var(--ink);
   --hdr-fg: var(--paper);
   --hdr-fg-dim: oklch(0.968 0.012 95 / 70%);
+  --hdr-panel-bg: oklch(0.21 0.008 265);
+  --hdr-panel-border: oklch(1 0 0 / 14%);
 }
 
 .header-surface[data-header-variant="light"] {
   background: var(--paper);
   --hdr-fg: var(--ink);
   --hdr-fg-dim: oklch(0.16 0.008 265 / 62%);
+  --hdr-panel-bg: oklch(0.99 0.006 95);
+  --hdr-panel-border: oklch(0.16 0.008 265 / 14%);
 }
 
 .header-fg { color: var(--hdr-fg); }
@@ -1147,20 +1151,45 @@ body {
   transition: transform 400ms cubic-bezier(.16,1,.3,1);
 }
 
+/*
+ * Compact anchored dropdown, not a full-screen takeover — Angela's
+ * explicit Round 3 correction (Round 1/2 both used a full-viewport
+ * overlay). Occupies only the space its own content needs, positioned
+ * under the menu trigger, theme-matched to whichever header variant
+ * it's attached to (--hdr-panel-bg, set alongside --hdr-fg above) rather
+ * than hardcoded dark, since it's no longer a large theatrical reveal
+ * that needs a single fixed treatment.
+ */
 .mobile-menu {
-  position: fixed;
-  inset: 4rem 0 0;
-  height: calc(100svh - 4rem);
-  background: var(--ink);
-  color: var(--paper);
-  clip-path: inset(0 0 100% 0);
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 1rem;
+  width: min(15rem, calc(100vw - 2rem));
+  background: var(--hdr-panel-bg);
+  color: var(--hdr-fg);
+  border: 1px solid var(--hdr-panel-border);
+  border-radius: 16px;
+  transform-origin: top right;
+  transform: scale(0.95) translateY(-4px);
+  opacity: 0;
   visibility: hidden;
-  transition: clip-path 480ms cubic-bezier(.76,0,.24,1), visibility 480ms;
+  overflow: hidden;
 }
 
-.mobile-menu-open { clip-path: inset(0); visibility: visible; }
+@media (prefers-reduced-motion: no-preference) {
+  .mobile-menu {
+    transition: transform 260ms cubic-bezier(.16,1,.3,1), opacity 200ms ease, visibility 260ms;
+  }
+}
+
+.mobile-menu-open {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  visibility: visible;
+}
+
 .mobile-menu-link,
-.mobile-menu-meta { opacity: 0; transform: translateY(18px); transition: opacity 360ms ease, transform 480ms cubic-bezier(.16,1,.3,1); }
+.mobile-menu-meta { opacity: 0; transform: translateY(10px); transition: opacity 260ms ease, transform 300ms cubic-bezier(.16,1,.3,1); }
 .mobile-menu-open .mobile-menu-link,
 .mobile-menu-open .mobile-menu-meta { opacity: 1; transform: translateY(0); }
 
@@ -1324,7 +1353,9 @@ body {
   --cf-meta: oklch(0.55 0.012 265);
   --cf-dim: oklch(0.58 0.01 265);
   --cf-hairline: oklch(0.16 0.008 265 / 10%);
-  --cf-accent: oklch(0.48 0.15 116);
+  /* Round 3: Angela rejected the derived olive/green accent — an exact
+     hex per her direction, not a computed value. */
+  --cf-accent: #a3926a;
   --cf-accent-2: oklch(0.42 0.13 300);
   --cf-surface-hover: oklch(0.16 0.008 265 / 4%);
 }
@@ -1342,15 +1373,32 @@ body {
 .cf-accent { color: var(--cf-accent); }
 .cf-accent-2 { color: var(--cf-accent-2); }
 
-/* Round 2 H2 target — Lovable Case A's rendered size/leading
-   (~text-5xl/1.08), matched directly rather than an inline override
-   fighting a smaller shared class. */
-.cf-h2 {
+/* Section meta label ("專案概述" etc.) — Round 3: ~16px (was inheriting
+   .cf-meta's 12px base, meant for smaller captions/tags/stats) and never
+   wraps; it needs real width to sit on one line, which the Round 3 grid
+   change (meta above content, not squeezed into a 3-col rail) provides. */
+.cf-section-label {
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+}
+
+/* Case Study H3 — Round 3: weight 500 (was 600, read as too heavy/bold
+   against the screenshots Angela rejected), and a looser line-height on
+   mobile specifically so 2-3 line Chinese headings stay comfortable
+   when they wrap — desktop keeps the tighter 1.08 Lovable Case A
+   target, not loosened globally. */
+.cf-h3 {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: -0.01em;
   line-height: 1.08;
   font-size: clamp(1.85rem, 3.6vw, 3rem);
+}
+
+@media (max-width: 767px) {
+  .cf-h3 {
+    line-height: 1.3;
+  }
 }
 
 /* Local rule — a short accent line connected to the content it
@@ -1362,62 +1410,34 @@ body {
   background: var(--cf-accent);
 }
 
-/* Reading-aware block, two strengths. Ordinary paragraphs get a quiet
-   near-imperceptible tint; decision/key-summary sections (`strong`) get
-   a clearly-owned surface with a left accent edge — still never a
-   transform on the text itself, still gated to real hover devices so
-   touch/keyboard never see a stuck "hover" state. Generous inset on
-   both (Angela's explicit "more padding, more presence" correction —
-   Round 1's -1rem/-1.25rem read as cramped). */
-.cf-reading-block {
-  position: relative;
-  isolation: isolate;
+/* Round 3: all reading-content hover treatment removed per Angela's
+   explicit correction (previously .cf-reading-block/-strong — a tint
+   surface behind paragraphs). Long-form content now stays completely
+   stable while reading; only real interactive controls (links,
+   buttons — .case-link, .contact-row, .cf-chapter-marker, etc.) keep
+   hover/focus states. --cf-surface-hover is intentionally unused now
+   and kept only as a token in case a future interactive (not reading)
+   surface needs it. */
+
+/* Chapter-level rhythm (Round 3): every major chapter group gets
+   generous bottom breathing room; every group after the first also
+   gets top padding plus a subtle hairline seam — producing
+   SECTION -> reading -> media -> breathing space -> divider -> next
+   SECTION, rather than either a huge meaningless void or compressed
+   stacked content. Not applied to the very first chapter (Overview),
+   which sits directly under the opening and needs no seam above it. */
+.cf-section {
+  padding-bottom: clamp(3rem, 6vw, 5rem);
 }
 
-.cf-reading-block::before {
-  content: "";
-  position: absolute;
-  inset: -1.5rem -2rem;
-  z-index: -1;
-  background: var(--cf-surface-hover);
-  opacity: 0;
-  border-radius: 2px;
+.cf-section-divider {
+  padding-top: clamp(3rem, 6vw, 5rem);
+  border-top: 1px solid var(--cf-hairline);
 }
 
-.cf-reading-block-strong::before {
-  inset: -2rem -2.5rem;
-  border-left: 2px solid var(--cf-accent);
-}
-
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .cf-reading-block::before {
-    transition: opacity 220ms ease;
-  }
-
-  .cf-reading-block:hover::before,
-  .cf-reading-block:focus-within::before {
-    opacity: 1;
-  }
-
-  .cf-reading-block-strong:hover::before,
-  .cf-reading-block-strong:focus-within::before {
-    opacity: 1;
-  }
-
-  .cf-reading-block-strong:not(:hover):not(:focus-within)::before {
-    opacity: 0;
-  }
-
-  /* The strong variant's own tint reads slightly more present than the
-     ordinary one — same mechanism, different intensity, not a
-     different effect. */
-  .cf-reading-block-strong::before {
-    background: color-mix(in oklab, var(--cf-accent) 6%, var(--cf-surface-hover));
-  }
-}
-
-/* Chapter register — numeral + label as one persistent unit ("01 / 問題"),
-   not a bare numeral with a hover-only label. ~16px, mono. */
+/* Chapter register — bare numeral only (Round 3 reversal of an earlier
+   "01 / 問題" combined-label treatment); the descriptive label lives
+   with its section's own content, not duplicated in the nav. ~16px, mono. */
 .cf-chapter-marker {
   position: relative;
   font-family: var(--font-label);
@@ -1459,9 +1479,9 @@ body {
 }
 
 /* Scan-friendly summary rows (decision breakdowns, role/system
-   responsibilities that carry a real index+label+description) —
-   Round 2 replaces the previous cramped 12px grid list. Larger type,
-   generous padding, a clear per-row hover, no card chrome. */
+   responsibilities that carry a real index+label+description) — larger
+   type, generous padding, no card chrome, no hover (read-only content,
+   per Round 3's reading-block removal above). */
 .cf-summary-list {
   border-top: 1px solid var(--cf-hairline);
 }
@@ -1482,17 +1502,6 @@ body {
   letter-spacing: 0.06em;
 }
 
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .cf-summary-row {
-    transition: background-color 200ms ease;
-  }
-
-  .cf-summary-row:hover,
-  .cf-summary-row:focus-within {
-    background: var(--cf-surface-hover);
-  }
-}
-
 /* Unstructured point lists (plain skill/tool tags with no index or
    description) get a simple flowing tag treatment instead — a numbered
    row would imply structure these items don't have. */
@@ -1505,72 +1514,22 @@ body {
   color: var(--cf-body);
 }
 
-/* Evidence figures (system/flow-diagram media) — Round 2 makes the focus
-   response clearly perceptible (not the previous barely-there lift)
-   while still never obscuring the diagram's own labels: a moderate
-   scale/brightness lift plus a soft pointer-tracking spotlight. */
-.cf-figure {
+/* Evidence figures (system/flow-diagram media) — Round 3: static,
+   complete, inspectable images with no hover/spotlight (Angela's
+   explicit correction; see EvidenceFigure.tsx / ShowcaseMedia.tsx,
+   which no longer wrap the image in any interactive treatment). The
+   hairline frame belongs to the image box only (.cf-figure-frame) —
+   the caption sits below it in normal flow, at a fixed, always-legible
+   opacity, never overlaid on top of the image itself. */
+.cf-figure-frame {
   position: relative;
   border: 1px solid var(--cf-hairline);
   overflow: hidden;
 }
 
-.cf-figure-image {
-  transform: scale(1);
-  filter: brightness(1);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .cf-figure-image {
-    transition: transform 320ms ease, filter 320ms ease;
-  }
-}
-
-.cf-figure:is(:hover, :focus-within) .cf-figure-image {
-  transform: scale(1.035);
-  filter: brightness(1.06);
-}
-
-/* Pointer-zone spotlight — a soft highlight that follows the cursor
-   across the diagram (see EvidenceFigure.tsx's pointermove handler),
-   distinct from ShowcaseMedia's perspective parallax. Opacity is low
-   enough to never compete with the diagram's own text/labels. */
-.cf-figure-spotlight::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0;
-  background: radial-gradient(
-    360px circle at var(--cf-spot-x, 50%) var(--cf-spot-y, 50%),
-    color-mix(in oklab, var(--cf-accent) 16%, transparent),
-    transparent 70%
-  );
-}
-
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .cf-figure-spotlight::after {
-    transition: opacity 240ms ease;
-  }
-
-  .cf-figure-spotlight:is(:hover, :focus-within)::after {
-    opacity: 1;
-  }
-}
-
 .cf-figure-caption {
-  opacity: 0.7;
+  opacity: 0.75;
   font-size: 0.8rem;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .cf-figure-caption {
-    transition: opacity 200ms ease;
-  }
-}
-
-.cf-figure:is(:hover, :focus-within) .cf-figure-caption {
-  opacity: 1;
 }
 
 /* Showcase media — the one "delight budget" moment. Pointer parallax is
@@ -1604,6 +1563,19 @@ body {
   font-size: clamp(2rem, 6vw, 4.5rem);
   line-height: 1;
   letter-spacing: -0.01em;
+}
+
+/*
+ * Round 3 theme split: on DARK, the marquee becomes a quiet background-
+ * level divider — flat white at ~20% opacity, zh and en identical, no
+ * color distinction. On LIGHT it keeps the normal heading/dim two-tone
+ * hierarchy already set by SectionMarquee.tsx's own classes (cf-heading
+ * / cf-dim) at full opacity — this override intentionally targets
+ * data-theme="dark" only, never a single global opacity rule.
+ */
+.case-final[data-theme="dark"] .cf-marquee-scale {
+  color: white;
+  opacity: 0.2;
 }
 
 @media (prefers-reduced-motion: no-preference) {

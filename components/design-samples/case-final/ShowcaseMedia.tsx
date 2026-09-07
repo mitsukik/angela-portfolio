@@ -11,14 +11,16 @@ const POINTER_QUERY = "(hover: hover) and (pointer: fine) and (prefers-reduced-m
 const clamp = (v: number, min = 0, max = 1) => Math.min(max, Math.max(min, v));
 
 /**
- * The one "showcase" moment (Final UI). Gets more presence than
- * EvidenceFigure: a larger, more noticeable one-time scroll-reveal
+ * The one "showcase" moment (Final UI). Gets more presence than the
+ * (now static, no-hover) EvidenceFigure: a one-time scroll-reveal
  * entrance (clip-path wipe + scale + opacity, strong ease-out, ~750ms —
  * the "rare/first-time" motion tier, since it appears once per reading),
  * a drawn-in accent frame edge, plus a restrained, damped pointer
- * parallax while it's in view. Distinct from EvidenceFigure's static-
- * position spotlight so the two media types don't read as the same
- * effect reused.
+ * parallax while it's in view — an entrance/ambient treatment, not a
+ * reading-content hover effect, so it's unaffected by Round 3's removal
+ * of block hover states. Shows the complete source image (object-
+ * contain, aspect-[3/2] matches every real asset's native ratio exactly
+ * — no cropping).
  */
 export function ShowcaseMedia({ figure }: { figure: CaseFinalFigure }) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
@@ -83,20 +85,20 @@ export function ShowcaseMedia({ figure }: { figure: CaseFinalFigure }) {
   }, []);
 
   return (
-    <div ref={wrapRef} className="relative">
-      <div ref={frameRef} className="cf-showcase cf-figure relative aspect-[16/9] w-full">
+    <figure ref={wrapRef} className="relative">
+      <div ref={frameRef} className="cf-showcase cf-figure-frame relative aspect-[3/2] w-full">
         <Image
           src={figure.src}
           alt={figure.alt}
           fill
           sizes="(max-width: 1024px) 100vw, 1600px"
-          className="object-cover"
+          className="object-contain"
         />
         <span ref={edgeRef} aria-hidden className="absolute inset-x-0 bottom-0 h-[3px] origin-left bg-acid" />
-        <span className="cf-figure-caption cf-meta absolute bottom-5 left-4">
-          {figure.figureNumber} — {figure.caption}
-        </span>
       </div>
-    </div>
+      <figcaption className="cf-figure-caption cf-meta mt-4">
+        {figure.figureNumber} — {figure.caption}
+      </figcaption>
+    </figure>
   );
 }

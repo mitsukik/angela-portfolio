@@ -2,15 +2,15 @@
 
 import { getLenisInstance } from "@/components/site/lenisInstance";
 
-export type Chapter = { number: string; label: string };
+export type Chapter = { number: string };
 
 /**
- * Sticky chapter register (desktop only — mobile gets the chapter marker
- * inline per section instead, avoiding persistent bottom-viewport
- * clutter on small screens). Round 2: numeral + label render as one
- * always-visible unit ("01 / 問題"), not a bare numeral with a
- * hover-only label — Angela's explicit correction. ~16px, mono, active
- * chapter in acid with a short underline.
+ * Sticky chapter register (desktop only — mobile gets the section meta
+ * label inline per section instead, avoiding persistent bottom-viewport
+ * clutter on small screens). Round 3: reverted to numerals ONLY per
+ * Angela's explicit correction — Round 2's "01 / 問題" combined unit
+ * duplicated the section's own meta label, which already lives in the
+ * content column. The descriptive label belongs there, not here.
  */
 export function ChapterRegister({
   chapters,
@@ -41,10 +41,11 @@ export function ChapterRegister({
               type="button"
               onClick={() => goToChapter(index)}
               aria-current={active === index ? "true" : undefined}
+              aria-label={`Section ${chapter.number}`}
               className="cf-chapter-marker block text-left"
               data-active={active === index}
             >
-              {chapter.number} / {chapter.label}
+              {chapter.number}
               <span aria-hidden className="cf-chapter-marker-rule" />
             </button>
           </li>

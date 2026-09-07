@@ -141,13 +141,13 @@ export function Hero({ locale }: { locale: Locale }) {
           ))}
         </div>
 
-        <div className="relative mx-auto grid h-full max-w-[1600px] grid-cols-1 items-end gap-6 px-5 pb-10 md:grid-cols-12 md:gap-10 md:px-10 md:pb-12">
+        <div className="site-frame relative grid h-full grid-cols-1 items-end gap-6 pb-10 md:grid-cols-12 md:gap-10 md:pb-12">
           <div className="relative z-10 md:col-span-7 md:pb-6">
-            <p ref={kickerRef} className="hero-kicker label-mono text-ink/50">
+            <p ref={kickerRef} className="hero-kicker type-v3-label text-ink/50">
               {content.kicker}
             </p>
 
-            <h1 ref={titleRef} className="hero-title display-xl mt-5 uppercase">
+            <h1 ref={titleRef} className="hero-title type-v3-display mt-5 uppercase">
               <span className="hero-title-mask block">
                 <span className="hero-title-word block">{content.identityLines[0]}</span>
               </span>
@@ -159,7 +159,7 @@ export function Hero({ locale }: { locale: Locale }) {
               </span>
             </h1>
 
-            <p ref={copyRef} lang={lang} className="hero-copy body-tc mt-7 max-w-[48ch]">
+            <p ref={copyRef} lang={lang} className="hero-copy type-v3-body mt-7 max-w-[48ch]">
               {content.statement.map((segment, index) =>
                 segment.noBreak ? (
                   <span key={index} className="whitespace-nowrap">
@@ -178,12 +178,12 @@ export function Hero({ locale }: { locale: Locale }) {
               <button
                 type="button"
                 onClick={handleWorkClick}
-                className="case-link label-mono group inline-flex items-center gap-3 border-b border-ink py-3"
+                className="interaction-destination type-v3-label group inline-flex items-center gap-3 border-b border-ink py-3"
               >
                 {locale === "zh" ? "精選作品" : "Selected Work"}
                 <span aria-hidden className="transition-transform group-hover:translate-y-1">↓</span>
               </button>
-              <p className="label-mono text-ink/50">
+              <p className="type-v3-label text-ink/50">
                 {locale === "zh" ? "SCROLL TO ADVANCE" : "Scroll to advance"}
               </p>
             </div>
@@ -203,7 +203,7 @@ export function Hero({ locale }: { locale: Locale }) {
                 <span key={`v-${i}`} className="absolute inset-y-0 w-px bg-ink/15" style={{ left: `${(i + 1) * 16.66}%` }} />
               ))}
               <span ref={planeLineRef} className="absolute left-0 top-0 h-px bg-acid" style={{ width: "20%" }} />
-              <span className="absolute bottom-4 right-4 label-mono text-ink/50">
+              <span className="absolute bottom-4 right-4 type-v3-label text-ink/50">
                 {locale === "zh" ? "空間場域 · 01" : "Spatial field · 01"}
               </span>
             </div>

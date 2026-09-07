@@ -12,19 +12,57 @@
   --motion-ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
 
   /*
-   * V3 (VER B port) tokens — exact oklch values from the connected Lovable
-   * "Angela Portfolio — VER B" project's src/styles.css, the visual source
-   * of truth for the Home/Nav/Closing scrollytelling pass. Kept as
-   * separate named tokens rather than overwriting --background/--foreground
-   * above: those still drive About/Case Study and the rest of the site,
-   * which are not in scope for this pass and must stay on the existing
-   * approved dark palette.
+   * V3 primitives — exact oklch values from the approved Home/Nav/Closing
+   * implementation. These are the Portfolio's authoritative destination;
+   * the older aliases above remain temporarily for unmigrated About/Case
+   * consumers and are not a second source of design authority.
    */
   --ink: oklch(0.16 0.008 265);
   --paper: oklch(0.968 0.012 95);
   --acid: oklch(0.93 0.19 116);
   --lavender: oklch(0.78 0.11 300);
   --hairline: oklch(0.16 0.008 265 / 18%);
+
+  /*
+   * Authoritative V3 implementation foundation.
+   *
+   * These semantic tokens preserve the approved Home/Nav/Closing output
+   * exactly while giving later About/Case migrations one destination. Theme
+   * selectors may override color semantics only; typography, frame, radius,
+   * and motion semantics remain rooted here.
+   */
+  --portfolio-font-display: var(--font-archivo), "Noto Sans TC", system-ui, sans-serif;
+  --portfolio-font-body: var(--font-noto-sans-tc), var(--font-archivo), system-ui, sans-serif;
+  --portfolio-font-label: var(--font-ibm-plex-mono), ui-monospace, monospace;
+
+  --portfolio-type-display-size: clamp(2.75rem, 9vw, 8.5rem);
+  --portfolio-type-display-weight: 700;
+  --portfolio-type-display-leading: 0.88;
+  --portfolio-type-display-tracking: 0;
+  --portfolio-type-section-size: clamp(1.75rem, 3.3vw, 3.1rem);
+  --portfolio-type-section-weight: 600;
+  --portfolio-type-section-leading: 0.94;
+  --portfolio-type-section-tracking: 0;
+  --portfolio-type-subheading-size: clamp(1.25rem, 2vw, 2rem);
+  --portfolio-type-subheading-weight: 600;
+  --portfolio-type-subheading-leading: 1.1;
+  --portfolio-type-body-size: clamp(0.9375rem, 1.05vw, 1.0625rem);
+  --portfolio-type-body-leading: 1.85;
+  --portfolio-type-body-tracking: 0.02em;
+  --portfolio-type-label-size: 0.75rem;
+  --portfolio-type-label-leading: 1.4;
+  --portfolio-type-label-tracking: 0.18em;
+
+  --portfolio-frame-max: 1600px;
+  --portfolio-frame-gutter-mobile: 1.25rem;
+  --portfolio-frame-gutter-tablet: 2.5rem;
+  --portfolio-header-frame-max: 1520px;
+  --portfolio-header-gutter-mobile: 1.5rem;
+  --portfolio-header-gutter-tablet: 2.5rem;
+  --portfolio-header-gutter-desktop: 3.5rem;
+
+  --portfolio-interaction-duration: 300ms;
+  --portfolio-interaction-ease: ease;
 }
 
 @theme inline {
@@ -42,8 +80,8 @@
   --color-acid: var(--acid);
   --color-lavender: var(--lavender);
   --color-hairline: var(--hairline);
-  --font-display: var(--font-archivo), "Noto Sans TC", system-ui, sans-serif;
-  --font-label: var(--font-ibm-plex-mono), ui-monospace, monospace;
+  --font-display: var(--portfolio-font-display);
+  --font-label: var(--portfolio-font-label);
 }
 
 /*
@@ -342,6 +380,46 @@ body {
  * whole reason Tailwind v4's layer system exists.
  */
 @layer components {
+
+/*
+ * ============================================================
+ * Authoritative V3 site frame
+ * ============================================================
+ * .site-frame is the shared outer viewport relationship. The header keeps
+ * its approved optical inset through a documented component variant; page
+ * interiors remain free to define their own grids inside either frame.
+ */
+.site-frame,
+.site-frame-header {
+  width: 100%;
+  margin-inline: auto;
+}
+
+.site-frame {
+  max-width: var(--portfolio-frame-max);
+  padding-inline: var(--portfolio-frame-gutter-mobile);
+}
+
+.site-frame-header {
+  max-width: var(--portfolio-header-frame-max);
+  padding-inline: var(--portfolio-header-gutter-mobile);
+}
+
+@media (min-width: 48rem) {
+  .site-frame {
+    padding-inline: var(--portfolio-frame-gutter-tablet);
+  }
+
+  .site-frame-header {
+    padding-inline: var(--portfolio-header-gutter-tablet);
+  }
+}
+
+@media (min-width: 64rem) {
+  .site-frame-header {
+    padding-inline: var(--portfolio-header-gutter-desktop);
+  }
+}
 
 /*
  * ============================================================
@@ -1021,11 +1099,15 @@ body {
 .hero-cta { animation: detail-resolve 600ms ease-out 620ms both; }
 .hero-plane { animation: plane-enter 900ms cubic-bezier(.16,1,.3,1) 360ms both; transition: transform 120ms ease-out; }
 
+.interaction-nav,
+.interaction-destination,
 .nav-line,
 .case-link {
   position: relative;
 }
 
+.interaction-nav::after,
+.interaction-destination::after,
 .nav-line::after,
 .case-link::after {
   content: "";
@@ -1036,10 +1118,16 @@ body {
   background: currentColor;
   transform: scaleX(0);
   transform-origin: right;
-  transition: transform 300ms ease;
+  transition: transform var(--portfolio-interaction-duration) var(--portfolio-interaction-ease);
 }
 
+.interaction-nav:hover::after,
+.interaction-nav:focus-visible::after,
+.interaction-nav[data-status="active"]::after,
+.interaction-destination:hover::after,
+.interaction-destination:focus-visible::after,
 .nav-line:hover::after,
+.nav-line:focus-visible::after,
 .nav-line[data-status="active"]::after,
 .case-link:hover::after,
 .case-link:focus-visible::after {
@@ -1047,7 +1135,7 @@ body {
   transform-origin: left;
 }
 
-.work-index-link .case-link::after { transform-origin: left; }
+.work-index-link :is(.interaction-destination, .case-link)::after { transform-origin: left; }
 
 /*
  * Header surface — theme comes from a fixed per-page `variant` prop
@@ -1239,35 +1327,54 @@ body {
   border-color: var(--scene-line, var(--hairline));
 }
 
+.type-v3-label,
 .label-mono {
-  font-family: var(--font-label);
-  font-size: 0.75rem;
-  letter-spacing: 0.18em;
+  font-family: var(--portfolio-font-label);
+  font-size: var(--portfolio-type-label-size);
+  letter-spacing: var(--portfolio-type-label-tracking);
   text-transform: uppercase;
-  line-height: 1.4;
+  line-height: var(--portfolio-type-label-leading);
 }
 
+.type-v3-display,
 .display-xl {
-  font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: 0;
-  line-height: 0.88;
-  font-size: clamp(2.75rem, 9vw, 8.5rem);
+  font-family: var(--portfolio-font-display);
+  font-weight: var(--portfolio-type-display-weight);
+  letter-spacing: var(--portfolio-type-display-tracking);
+  line-height: var(--portfolio-type-display-leading);
+  font-size: var(--portfolio-type-display-size);
 }
 
+.type-v3-section-heading {
+  font-family: var(--portfolio-font-display);
+  font-weight: var(--portfolio-type-section-weight);
+  letter-spacing: var(--portfolio-type-section-tracking);
+  line-height: var(--portfolio-type-section-leading);
+  font-size: var(--portfolio-type-section-size);
+}
+
+/* Compatibility owner for unmigrated design-sample/prototype consumers. */
 .display-l {
-  font-family: var(--font-display);
+  font-family: var(--portfolio-font-display);
   font-weight: 600;
   letter-spacing: 0;
   line-height: 0.94;
   font-size: clamp(2rem, 5.2vw, 4.5rem);
 }
 
+.type-v3-subheading {
+  font-family: var(--portfolio-font-display);
+  font-size: var(--portfolio-type-subheading-size);
+  font-weight: var(--portfolio-type-subheading-weight);
+  line-height: var(--portfolio-type-subheading-leading);
+}
+
+.type-v3-body,
 .body-tc {
-  font-family: var(--font-noto-sans-tc), var(--font-display);
-  font-size: clamp(0.9375rem, 1.05vw, 1.0625rem);
-  line-height: 1.85;
-  letter-spacing: 0.02em;
+  font-family: var(--portfolio-font-body);
+  font-size: var(--portfolio-type-body-size);
+  line-height: var(--portfolio-type-body-leading);
+  letter-spacing: var(--portfolio-type-body-tracking);
 }
 
 .edge-frame {

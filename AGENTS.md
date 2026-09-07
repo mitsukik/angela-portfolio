@@ -231,6 +231,26 @@ This calibration does not invalidate or redesign those decisions.
 - Explain significant structural changes before implementing them.
 - Do not add dependencies unless they are genuinely necessary.
 
+## Implementation Design System Authority
+
+The Portfolio has one implementation-level Design System. The current V3
+Home / Header / Closing foundation in `app/globals.css` is authoritative for
+shared typography roles, font ownership, site-frame behavior, navigation and
+destination-link roles, and global interaction timing. About and production
+Case Study still contain compatibility-era rules pending explicit migration;
+those rules are legacy consumers, not independent sources of visual truth.
+
+Home, About, Case Study, Header/Nav, Closing, and Footer must ultimately
+consume this shared V3 foundation. Page-specific composition and choreography
+remain valid when they express a genuinely different page role. Do not create
+parallel typography scales, outer-frame systems, or equivalent interaction
+grammars while correcting an individual page.
+
+Dark and Light are color/theme variants only. They may change background,
+foreground, muted, accent, surface, divider, and contrast-related colors. They
+must not change typography, spacing, grids, dimensions, radius, breakpoints,
+motion timing/easing, or composition.
+
 ## Skill Routing
 
 This section governs which tool handles which kind of work. It supplements, and does not override, the Design Direction and Preference Boundaries above.

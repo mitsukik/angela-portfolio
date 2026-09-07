@@ -71,7 +71,7 @@ export function ProjectScene({ project, locale, f, still, compact }: Props) {
     <dl className="grid grid-cols-3 gap-4 border-t scene-rule pt-4">
       {facts.map((fact) => (
         <div key={fact.k}>
-          <dt className="label-mono scene-dim-text">{fact.k}</dt>
+          <dt className="type-v3-label scene-dim-text">{fact.k}</dt>
           <dd className="mt-1 text-[15px] leading-snug">{fact.v}</dd>
         </div>
       ))}
@@ -80,17 +80,17 @@ export function ProjectScene({ project, locale, f, still, compact }: Props) {
 
   const Head = (
     <div style={lift(0)}>
-      <p className="label-mono flex items-center gap-3">
+      <p className="type-v3-label flex items-center gap-3">
         <span className={accentText}>{project.number}</span>
         <span aria-hidden className={`h-px w-10 ${accentBg}`} />
         <span className="scene-dim-text">{project.category[locale]}</span>
       </p>
-      <h3 className="display-l mt-4 text-[clamp(1.75rem,3.3vw,3.1rem)]">
+      <h3 className="type-v3-section-heading mt-4">
         <span lang="zh-Hant">
           <MixedText text={project.chineseTitle} />
         </span>
       </h3>
-      <p className="label-mono mt-3 scene-dim-text">
+      <p className="type-v3-label mt-3 scene-dim-text">
         {project.title} · {project.year}
       </p>
     </div>
@@ -98,17 +98,17 @@ export function ProjectScene({ project, locale, f, still, compact }: Props) {
 
   const Body = (
     <div style={lift(0.06)} className="space-y-4">
-      <p lang={locale === "zh" ? "zh-Hant" : "en"} className="body-tc max-w-[44ch]">
+      <p lang={locale === "zh" ? "zh-Hant" : "en"} className="type-v3-body max-w-[44ch]">
         {summary}
       </p>
-      {role && <p className="label-mono scene-dim-text">{role}</p>}
+      {role && <p className="type-v3-label scene-dim-text">{role}</p>}
       {/* Same bordered-CTA grammar as Hero's "Selected Work ↓" and the
           Closing contact rows — visible at rest (not only on hover/whole-
           card click), so it reads unambiguously as this scene's entry
           point into the Case Study rather than blending into body copy. */}
       <Link
         href={`/work/${project.slug}`}
-        className="case-link group inline-flex items-center gap-3 border-b border-current/50 pb-2 label-mono"
+        className="interaction-destination group inline-flex items-center gap-3 border-b border-current/50 pb-2 type-v3-label"
       >
         {locale === "zh" ? "查看案例" : "VIEW CASE STUDY"}
         <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">→</span>
@@ -148,7 +148,7 @@ export function ProjectScene({ project, locale, f, still, compact }: Props) {
       style={{ ...wrapStyle, visibility: live ? "visible" : "hidden" }}
       aria-hidden={!live || opacity < 0.4}
     >
-      <div className="mx-auto flex h-full max-w-[1600px] flex-col overflow-hidden px-5 pb-36 pt-28 md:px-10 md:pb-32 md:pt-32">
+      <div className="site-frame flex h-full flex-col overflow-hidden pb-36 pt-28 md:pb-32 md:pt-32">
         <div className="grid h-full min-h-0 grid-cols-1 gap-6 md:grid-cols-12 md:gap-10">
           <div
             className={`flex min-h-0 flex-col justify-center gap-6 md:col-span-6 ${

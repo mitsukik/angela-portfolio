@@ -49,8 +49,8 @@ export function SelectedWork({ locale }: { locale: Locale }) {
             } bg-transparent`}
           >
             <div className="flex items-center justify-between border-b scene-rule pb-3">
-              <p className="label-mono scene-text">{locale === "zh" ? "精選作品" : "Selected Work"}</p>
-              <div className="h-[1.1rem] overflow-hidden label-mono scene-dim-text" aria-label={`${active.number} / 04`}>
+              <p className="type-v3-label scene-text">{locale === "zh" ? "精選作品" : "Selected Work"}</p>
+              <div className="h-[1.1rem] overflow-hidden type-v3-label scene-dim-text" aria-label={`${active.number} / 04`}>
                 <div className="transition-transform duration-500" style={{ transform: `translateY(-${current * 1.1}rem)` }}>
                   {projects.map((project) => (
                     <span key={project.id} className="block h-[1.1rem]">
@@ -78,7 +78,7 @@ export function SelectedWork({ locale }: { locale: Locale }) {
                       <span className="relative block h-px w-full scene-rule border-t">
                         <span className="absolute inset-y-0 left-0 -top-px block h-[2px] bg-current transition-none" style={{ width: `${local * 100}%` }} />
                       </span>
-                      <span className={`label-mono mt-2 block transition-opacity ${isActive ? "scene-text" : "scene-dim-text opacity-60 group-hover:opacity-100"}`}>
+                      <span className={`type-v3-label mt-2 block transition-opacity ${isActive ? "scene-text" : "scene-dim-text opacity-60 group-hover:opacity-100"}`}>
                         {project.number}
                         <span className="ml-2 hidden md:inline">{project.title}</span>
                       </span>

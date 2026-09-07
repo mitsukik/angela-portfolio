@@ -16,7 +16,7 @@ const CONTACT_LINKS = (locale: Locale) => [
 
 /**
  * Closing / Contact scene, styled to match the connected Lovable "VER B"
- * project's Closing.tsx (display-xl "Let's build / the system.", label-mono
+ * project's Closing.tsx (V3 display + mono-label semantics
  * contact rows) — kept in Home per Angela's standing decision. The Footer
  * utility row below it is a distinct, separate layer (copyright + Back to
  * Top only), not a continuation of Closing's content.
@@ -85,13 +85,13 @@ export function SiteFooter({ locale = "zh" }: { locale?: Locale }) {
   return (
     <>
       <section id="contact" className="scene-dark relative">
-        <div ref={closingRef} className="mx-auto max-w-[1600px] px-5 py-24 md:px-10 md:py-32">
+        <div ref={closingRef} className="site-frame py-24 md:py-32">
           <div className="grid gap-12 md:grid-cols-12">
             <div className="md:col-span-7">
               {/* Hover shifts the whole statement to acid, per-line, one
                   deliberate color transition — a quiet "alive" cue on the
                   closing line without becoming playful/cute. */}
-              <h2 ref={headingRef} className="closing-statement group display-xl cursor-default">
+              <h2 ref={headingRef} className="closing-statement group type-v3-display cursor-default">
                 <span className="closing-statement-line block transition-colors duration-300 group-hover:text-acid">
                   Let&apos;s build
                 </span>
@@ -99,7 +99,7 @@ export function SiteFooter({ locale = "zh" }: { locale?: Locale }) {
                   the system.
                 </span>
               </h2>
-              <p className="body-tc mt-8 max-w-[42ch]">
+              <p className="type-v3-body mt-8 max-w-[42ch]">
                 {locale === "zh"
                   ? "正在尋找能一起處理複雜問題的團隊。如果你的產品需要有人把混亂的流程整理成清楚的體驗，歡迎聊聊。"
                   : "Looking for a team that tackles complex problems together. If your product needs someone to turn messy workflows into a clear experience, let's talk."}
@@ -124,7 +124,7 @@ export function SiteFooter({ locale = "zh" }: { locale?: Locale }) {
                     className="contact-row group relative flex items-baseline justify-between gap-6 overflow-hidden border-t scene-rule px-3 py-5 -mx-3"
                   >
                     <span aria-hidden className="contact-row-surface absolute inset-0 -z-10 bg-paper" />
-                    <span className="contact-row-text label-mono">{link.label}</span>
+                    <span className="contact-row-text type-v3-label">{link.label}</span>
                     <span className="contact-row-text text-[15px] tracking-tight">
                       {link.value}
                       <span aria-hidden className="ml-3 inline-block transition-transform duration-300 group-hover:translate-x-1">
@@ -140,9 +140,9 @@ export function SiteFooter({ locale = "zh" }: { locale?: Locale }) {
       </section>
 
       <footer className="scene-dark border-t scene-rule">
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-6 px-5 py-8 md:px-10">
-          <p className="label-mono scene-dim-text">© ANGELA YU 2026</p>
-          <button type="button" onClick={handleBackToTop} className="group label-mono scene-dim-text inline-flex items-center gap-2 transition-colors hover:text-acid focus-visible:text-acid">
+        <div className="site-frame flex items-center justify-between gap-6 py-8">
+          <p className="type-v3-label scene-dim-text">© ANGELA YU 2026</p>
+          <button type="button" onClick={handleBackToTop} className="group type-v3-label scene-dim-text inline-flex items-center gap-2 transition-colors hover:text-acid focus-visible:text-acid">
             <span>BACK TO TOP</span>
             <span aria-hidden className="transition-transform group-hover:-translate-y-1">↑</span>
           </button>

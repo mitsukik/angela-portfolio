@@ -19,7 +19,7 @@ function pagePath(locale: Locale, page: Page): string {
 
 /**
  * Ported from the connected Lovable "VER B" project's SiteHeader/
- * LanguageSwitch — nav-line underline behavior, language-switch pill with
+ * LanguageSwitch — shared navigation-link behavior, language-switch pill with
  * a sliding acid thumb.
  *
  * `variant` (Round 2): the desktop header bar reads dark or light from
@@ -122,13 +122,13 @@ export function SiteHeader({
 
   return (
     <header data-header-variant={variant} className="header-surface sticky top-0 z-50">
-      <div className="mx-auto flex h-16 max-w-[1520px] items-center justify-between px-6 md:h-20 md:px-10 lg:px-14">
+      <div className="site-frame-header flex h-16 items-center justify-between md:h-20">
         <div className="flex items-baseline gap-4">
-          <Link href={homeHref} className="group label-mono relative py-3 header-fg">
+          <Link href={homeHref} className="group type-v3-label relative py-3 header-fg">
             ANGELA YU
           </Link>
           {caseContext && (
-            <span className="header-fg-dim hidden label-mono py-3 sm:inline">
+            <span className="header-fg-dim hidden type-v3-label py-3 sm:inline">
               {caseContext.number} — {caseContext.category}
             </span>
           )}
@@ -137,7 +137,7 @@ export function SiteHeader({
         <nav aria-label={locale === "zh" ? "主要導覽" : "Primary navigation"} className="hidden items-center gap-10 md:flex">
           {navItems.map((item) =>
             item.onClick ? (
-              <button key={item.href} type="button" onClick={item.onClick} className="nav-line label-mono py-3 header-fg-dim">
+              <button key={item.href} type="button" onClick={item.onClick} className="interaction-nav type-v3-label py-3 header-fg-dim">
                 {item.label}
               </button>
             ) : (
@@ -145,7 +145,7 @@ export function SiteHeader({
                 key={item.href}
                 href={item.href}
                 data-status={item.active ? "active" : undefined}
-                className={`nav-line label-mono py-3 ${item.active ? "header-fg" : "header-fg-dim"}`}
+                className={`interaction-nav type-v3-label py-3 ${item.active ? "header-fg" : "header-fg-dim"}`}
               >
                 {item.label}
               </Link>
@@ -179,7 +179,7 @@ export function SiteHeader({
         aria-hidden={!open}
       >
         <div className="flex items-center justify-between border-b border-current/10 px-5 py-4">
-          <span className="mobile-menu-meta label-mono header-fg">ANGELA YU</span>
+          <span className="mobile-menu-meta type-v3-label header-fg">ANGELA YU</span>
           <button
             type="button"
             onClick={() => setOpen(false)}

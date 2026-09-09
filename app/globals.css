@@ -20,7 +20,13 @@
   --ink: oklch(0.16 0.008 265);
   --paper: oklch(0.968 0.012 95);
   --acid: oklch(0.93 0.19 116);
-  --lavender: oklch(0.78 0.11 300);
+  /* Round 14: Angela's explicitly approved exact value (was
+     oklch(0.78 0.11 300) — close but not numerically identical). Updates
+     the one authoritative token in place, not a duplicate: every existing
+     consumer (Hero's "YU", Selected Work's lavender-accent projects,
+     Case dark theme's --cf-accent-2, and now Case/Selected Work light
+     theme's shared accent) inherits this automatically. */
+  --lavender: lab(73.0671% 21.3951 -34.7226);
   --hairline: oklch(0.16 0.008 265 / 18%);
 
   /*

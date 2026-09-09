@@ -1,65 +1,81 @@
 # CURRENT STATE
 
-- Branch: `fix/home-responsive-structure-v2` (branched from `b7adfd2` on `fix/index-scroll-rhythm-v1`, which is where Index Scroll Rhythm Fix V1 lives — see the section below, still valid and unmodified by this pass).
+- Branch: `fix/case01-responsive-qa` (branched from `fix/home-responsive-structure-v2` at commit `92e884d`, which is where Homepage Responsive Structure Fix V2 lives — see below, still valid and unmodified by this pass).
 - Foundation tag: `v3-design-system-foundation`.
-- Current task: none. Homepage Responsive Structure Fix V2 (the two confirmed P0 root-cause fixes below) is complete and committed on this branch. Angela reviews visually before any further polish round.
-- Files touched this pass: `components/home/SelectedWork/ProjectScene.tsx`, `components/home/SelectedWork/SelectedWork.tsx`, `components/home/SelectedWork/motion.ts`.
-- Note: this branch also carries pre-existing unrelated uncommitted work (About V2, Case Final prototype rounds, SiteHeader nav changes, globals.css) from earlier in the session — untouched and left exactly as found; only the three files above were staged/committed for this task.
+- Current task: none. CASE01 — Responsive QA & Final Freeze is implementation-complete and validated (tsc/eslint/build + browser QA, see below), but was **not committed** before the prior session ended — corrected here after a recovery audit. It has now been checkpointed in a scoped commit on this branch. Angela reviews visually before merge.
+- Files committed for this task: `components/design-samples/case-final/CaseStudyPrototype.tsx`, `components/design-samples/case-final/CaseOneFinalContent.tsx` (new), `components/design-samples/case-final/ReadingSection.tsx` (15px→16px hunk only), `components/design-samples/case-final/FlowEvidence.tsx` (new), `components/design-samples/case-final/EvidenceMotion.tsx` (new, hard dependency of CaseOneFinalContent), `components/design-samples/case-final/caseFinalMedia.ts` (hard dependency — CaseStudyPrototype.tsx now calls its locale-aware getters), `app/design-samples/case-final-01/page.tsx` (new — the only route that reaches this content), `app/design-samples/case-final-dark/page.tsx` + `case-final-light/page.tsx` (one-line `locale` prop add, required since CaseStudyPrototype.tsx now takes `locale` as a mandatory prop), 5 evidence images under `public/images/case01/evidence/`.
+- Note: this branch also carries pre-existing unrelated uncommitted work (About V2 incl. production `app/about/page.tsx`/`app/en/about/page.tsx` wiring, `SiteHeader.tsx` nav changes, `case-final-02/03/04` + `en/design-samples/case-final-01..04` bilingual routes, `AGENTS.md`/`CLAUDE.md` governance edits, `globals.css`) — untouched and left exactly as found, still uncommitted. `ReadingSection.tsx` also still carries one unstaged, unscoped hunk (`mt-6`→`mt-10` Section Title→Content spacing change, affects all four cases, no task record) — deliberately left out of this commit as out of CASE01's scope.
 
-# LATEST COMPLETION — HOMEPAGE RESPONSIVE STRUCTURE FIX V2
+# LATEST COMPLETION — CASE01 RESPONSIVE QA & FINAL FREEZE
 
-## A. ProjectScene mobile compact layout (P0-D / P0-E)
+## CHANGED
 
-- **Root cause:** on mobile, the stage grid's media item claimed a fixed `h-[32vh]` unconditionally; the sibling text item carried `min-h-0`, which strips the grid's normal content-based minimum, so its auto-sized row got whatever height was *left over* (293.9px at 390×844) regardless of whether the text's real content fit. The text column's `justify-center` was also unconditional (only the `md:`-scoped `verticalClass` variants overrode it, which don't apply below `md`), so once content exceeded that leftover budget, it overflowed symmetrically above *and* below the row — colliding with the fixed "SELECTED WORK" stage-chrome above (project 01 heading), and with the media block below/above depending on stacking order (project 01 metadata, project 02 eyebrow, project 03 metadata).
-- **Fix:** the stage grid now uses an explicit two-row `grid-template-rows` on mobile, keyed to the same `textFirst` order the columns already use: the text row is `minmax(min-content,auto)` (grows to real content, never squeezed smaller) and the media row is `minmax(9rem,1fr)` (keeps a guaranteed floor but yields the remaining budget to text). Media's mobile height changed from the fixed `h-[32vh]` to `h-full` (fills whatever its now-flexible track resolves to). The text column's base `justify-center` became `justify-start` (the coherent mobile reading — there's no shared row to center within once content stacks full-width; `md:` variants for top/bottom/middle are unchanged at desktop). `md:grid-rows-none` cancels the mobile template at `md:`, restoring the original single shared-height row exactly.
-- Verified via real-browser geometry (Playwright, live DOM `getBoundingClientRect`): all four confirmed collisions resolved with 5–28px of clear margin; desktop `gridTemplateRows` measured unchanged (`644px`, single row) before and after.
+Scoped, minimal fixes only — no content rewrite, no new sections, no new evidence, no storytelling change. Two typography-floor compliance fixes and one motion addition, both precisely scoped to CASE01 (`isCaseOneV2` / content only Case01 exercises) so Cases 02–04 are provably unaffected.
 
-## B. Homepage → SiteFooter reveal (P0-B / P0-C, stale ScrollTrigger geometry)
+## FILES TOUCHED
 
-- **Root cause:** `useMedia` (the hook backing `compact`) starts at a guessed `false` and only corrects via a plain `useEffect`, which runs *after* paint and after all `useLayoutEffect`s in the tree. `SiteFooter`'s own Closing-reveal `ScrollTrigger` is created in a `useLayoutEffect`, which therefore always runs against the stale, taller (desktop-formula) `SelectedWork` track height on an actual mobile load — before `compact` corrects and the track shrinks. GSAP's own auto-refresh only fires on a native `resize` event; a React-state-driven height change isn't one, so the cached trigger position never recalculates. On mobile, this deficit is compounded because the corrected height is *shorter*, meaning the real scrollable page becomes shorter than the trigger's stale cached start point — so `onEnter` (which sets `heading`/`details` from `autoAlpha:0`) can permanently never fire. Confirmed by temporarily reverting to the pre-fix baseline: heading/details measured stuck at `opacity:0`/`visibility:hidden` even after scrolling fully to the bottom.
-- **Fix (two parts, same root cause):**
-  1. `useMedia` now uses an isomorphic layout effect (`useLayoutEffect` on the client, falling back to `useEffect` only when `window` is undefined, to avoid the SSR "useLayoutEffect does nothing on the server" warning) — resolves `compact` synchronously before paint instead of one tick later.
-  2. `SelectedWork.tsx` calls `ScrollTrigger.refresh()` in a `useEffect` keyed to `[compact]` — this always runs after the full commit (including any cascading re-render from part 1) has settled, so it reliably fires after the track's final height is in the DOM, recalculating every trigger on the page (including SiteFooter's) against correct geometry. Scoped to fire only when `compact` resolves/changes, not on every render.
-- Verified: reveal confirmed broken on the pre-fix baseline (stashed comparison), confirmed fixed after restoring — on Home mobile (390×844, ~430×932) and Home desktop (1440); About mobile re-confirmed still correct (unchanged, since About has no `SelectedWork`/`compact` in its tree).
+- `components/design-samples/case-final/CaseStudyPrototype.tsx` — opening summary paragraph gets a distinct lead-tier size, gated to `isCaseOneV2`.
+- `components/design-samples/case-final/ReadingSection.tsx` — `cf-summary-row` description text 15px → 16px.
+- `components/design-samples/case-final/CaseOneFinalContent.tsx` — FIG.01 and FIG.04 switched from `Evidence` to the new `FlowEvidence`.
+- `components/design-samples/case-final/FlowEvidence.tsx` (new) — directional entrance for the two flow/state diagrams.
 
-## C. Shared footer architecture — unchanged
+## RESPONSIVE DECISIONS
 
-- `SiteFooter` remains the single shared component for Home, About, and the active Case Final prototype line. No extraction, duplication, or Home-specific footer was introduced. Production `/work/[slug]`'s separate legacy closing in `CaseStudyTemplate.tsx` was explicitly out of scope for this task and was not touched.
+- Full QA pass across Large Desktop (1920), Laptop (1440), Tablet (820), Mobile (390) found the existing responsive architecture (from the prior, uncommitted "CASE01 Real Evidence Placement Pass") already solid: `InspectableEvidence`/`TopCropEvidence`'s `overflow-x-auto` + fixed `min-w` pattern already implements the "horizontal masked viewport" rule 5 asks for — evidence text renders at a real, non-shrunk pixel size on mobile (confirmed: Order List statuses, Supplier Dashboard figures, filter labels all legible in close-up screenshots without any pinch-zoom-equivalent scaling), the user scrolls horizontally within the figure to see more columns rather than the whole page shrinking. No page-level horizontal overflow at any breakpoint (confirmed only the intentional per-figure inner scroll exists).
+- Did **not** introduce a new heading-size tier split (Decision headings vs. Section headings, 20-24px vs 28-36px per the QA brief's floor values). `cf-h3` is used uniformly for both today (`clamp(1.85rem,3.6vw,3rem)` = 29.6-48px, already well above both floors) and was deliberately reviewed/tuned in an earlier round (see its own code comments). Splitting it into two visually distinct tiers now would be a hierarchy *redesign*, which conflicts directly with "Preserve the current CASE01 hierarchy... this is not a redesign pass." Documented here as an intentional non-change, not an oversight.
+- Chapter register rail (numerals-only, left column) confirmed legible and non-overlapping at tablet (820px), where the two-column grid (`md:grid-cols-[3rem_minmax(0,1fr)]`) first activates.
+- SiteFooter/Closing confirmed still reveals correctly on this route (no `SelectedWork`/`compact` dependency exists here, so the Homepage V2 stale-trigger class of bug doesn't apply to Case Final routes).
 
-# ARCHITECTURE DECISIONS
+## EVIDENCE PRESENTATION DECISIONS
 
-- The mobile grid-row split (`minmax(min-content,auto)` / `minmax(9rem,1fr)`) is a named, mobile-only exception inside `ProjectScene.tsx`'s own compact layout math — cancelled at `md:` via `grid-rows-none`, so it does not become a second source of truth for the shared desktop grid role.
-- `ScrollTrigger.refresh()` in `SelectedWork.tsx` is intentionally narrow: keyed to `[compact]`, not called unconditionally on every render or from a global/unrelated lifecycle hook.
-- Native CSS `sticky` still owns pinning; GSAP/ScrollTrigger still only supplies the scrubbed progress value — unchanged from V1.
+- **Order List / Order Management** (FIG.09, also reused in the Final Evidence section): kept at its existing `InspectableEvidence` treatment (native-resolution horizontal scroll, `aspect-[2048/1565]`) — table structure, filters, statuses, and row-action menu all confirmed legible at mobile without modification.
+- **Streamer List + Expanded Filter**: kept as the existing context (FIG.02, clean cards, no tooltip) + detail (FIG.03, expanded filter, includes a real product tooltip) pairing — already satisfies "one context + one focused detail, not two near-identical screens." Considered re-cropping FIG.03 to avoid its open tooltip overlapping card content, but confirmed (via direct inspection of the source asset at native 2250×2950) that the tooltip is real, legitimate UX-detail evidence, not a capture artifact, and renders at the same legible relative scale on mobile as at laptop — left unchanged.
+- **Checkout Out-of-stock**: kept at its existing `TopCropEvidence` portrait crop (`aspect-[6/7]`) — the backend-state → checkout-validation → consumer-feedback chain (error banner, disabled state, guidance) confirmed legible and undisturbed by any secondary evidence.
+- **Supplier Dashboard**: kept at its existing `InspectableEvidence` treatment; confirmed legible (earnings, revenue chart, top-10 ranking chart with tooltip all readable) at `lg:col-span-8` desktop width and at mobile's native-scroll width — not reduced to thumbnail scale.
+- **Inventory Status Flow / Shared Inventory UI**: kept as-is; confirmed legible at all four breakpoints.
+- No screenshot was regenerated, re-cropped in a way that changes what portion of the source asset is used, or replaced. Only two typography values (see CHANGED) and one entrance-motion swap were touched.
 
-# VALIDATION
+## MOTION ADDED
 
-- `npx tsc --noEmit`: pass. `eslint` on the 3 changed files: pass. `npm run build`: pass, 26 routes (unchanged).
-- Live-browser geometry checks (Playwright + Chromium, driven via the diagnosed-reliable method: real wheel input for any desktop/Lenis-active check, direct `scrollTo` for mobile where Lenis is inactive) at 390×844, ~430×932, and 1440×900:
-  - Project 01 heading/eyebrow vs "SELECTED WORK" chrome: no longer overlapping (~5px clearance, was ~-26px).
-  - Project 01 metadata vs image: no longer overlapping (~24px clearance, was ~50px overlap).
-  - Project 02 eyebrow vs image: no longer overlapping (~28px clearance, was ~8px overlap, previously sustained across most of its scroll window).
-  - Project 03 metadata vs image: no longer overlapping (~24px clearance, was ~8px overlap).
-  - Desktop `gridTemplateRows` unchanged (`644px`, single row) — no desktop regression.
-- Full opacity sweep (60 steps, both 1440×1000 and 390×844): **zero dead windows, min(max-opacity) = 1.0** on both — V1's guarantee still holds.
-- Reverse scroll (forward to project 03, back to project 01): correct article at opacity 1 in both directions.
-- Project-selector nav click (bottom progress nav, index 2 → project 03): correct article at opacity 1.
-- `prefers-reduced-motion: reduce` (mobile, mid-scroll): correct single active article, no errors.
-- SiteFooter reveal: confirmed broken pre-fix (stashed baseline test) and fixed post-fix on Home mobile (390, ~430) and Home desktop (1440); About mobile unaffected/still correct.
-- No horizontal overflow at 390, 430, or 1440. No console errors in any pass.
+- New `FlowEvidence` component: a one-time, left-to-right `clip-path` wipe reveal (`inset(0% 100% 0% 0%)` → `inset(0%)`, 0.85s, `power2.out`), applied only to FIG.01 (Cross-border Ecosystem — Section 8 bullet 1, "System Flow") and FIG.04 (Inventory Status Flow — bullet 2, "Inventory → Consumer State"). Reuses the exact technique `ShowcaseMedia.tsx` already established elsewhere in Case Final — no new animation mechanism introduced.
+- Gated by `gsap.matchMedia("(prefers-reduced-motion: no-preference)")`: under reduced motion, no inline styles are ever applied and the figure is opacity:1/unclipped from first paint — verified directly (computed style stayed `opacity:1, clip-path:none` throughout).
+- Every other evidence figure keeps its existing plain fade/translate via `EvidenceMotion` (Section 8 bullet 3) — unchanged, already present from the prior evidence-placement pass, confirmed still settling correctly (zero stuck-invisible figures after a full scroll-through, both motion preferences).
+- No scroll-jacking, no parallax added, no per-card animation, no long delays — both new triggers are `once: true` and fire once per page load.
 
-# KNOWN ISSUES / DEFERRED (explicitly out of scope for this task)
+## VALIDATION
 
-- Production `/work/[slug]` Case Study migration to the shared `SiteFooter`/design system — separate legacy migration, explicitly not touched.
-- Hero work, Project 04 typography polish — not started, not part of this task.
-- The mobile media-row floor (`9rem` / 144px) is a uniform, non-per-project constant; it hasn't been visually tuned beyond confirming it clears all four current collisions with margin — a design pass may want to adjust it once Angela reviews.
+- `npx tsc --noEmit`: pass. `eslint` on all 4 touched files: pass. `npm run build`: pass, 26 routes (unchanged).
+- Live-browser checks (Playwright + Chromium) at 1920×1080, 1440×900, 820×1180, 390×844:
+  - No horizontal page overflow at any breakpoint (only the intentional inner-figure `overflow-x-auto` scroll exists).
+  - No console errors in any pass.
+  - Opening summary computed font-size: 17px (mobile) / 18px (`md:`+) for CASE01; confirmed Cases 02-04's opening summary unaffected (15.12px, unchanged, since `isCaseOneV2` is false there).
+  - `cf-summary-row` description computed font-size: 16px (was 15px) for all 3 Challenge points; confirmed the `｜`-triggered code path this touches is exclusive to Case01's real content (Cases 02-04 use placeholder text with no such character — grep-verified).
+  - `FlowEvidence` reveal verified mid-animation (partial `clip-path`, partial opacity right after scroll-into-view) and fully settled (`opacity:1`, `clip-path:none`) after its duration, under normal motion; verified permanently unclipped/opaque under reduced motion.
+  - Full scroll-through (30 steps) under both motion preferences: zero stuck-invisible `[data-evidence-entrance]` figures.
+- Manually inspected all 4 target breakpoints via full-page and targeted element screenshots (Order List, Supplier Dashboard, Streamer List/Filter, Checkout, both diagrams, opening, chapter register, final-evidence section, footer) — no heading collisions, no clipped metadata, no accidental overlap, no layout jump, captions confirmed attached to their correct figure at every breakpoint, footer/closing balanced and matches the shared `SiteFooter` used on Home/About.
+
+## KNOWN ISSUES
+
+- The Decision-heading vs. Section-heading size-tier distinction the QA brief's floor values imply (20-24px vs 28-36px) does not exist in the current implementation — `cf-h3` is one unified, already-reviewed scale for both. Not changed here; see RESPONSIVE DECISIONS above for the reasoning. Flagging for Angela in case she *does* want that split — it would be a deliberate hierarchy decision, not a QA-pass default.
+- Pricing UI evidence (`Slot` placeholder, Decision 03) remains an unfilled "REAL UI EVIDENCE NEEDED" slot — unchanged, pre-existing, not part of this task's scope (no new evidence created).
+- Production `/work/[slug]` Case Study migration remains untouched and out of scope, per explicit instruction.
+
+## FREEZE STATUS
+
+**CASE01 Chinese version: FROZEN**, per the stated freeze condition — all major evidence remains readable at every tested breakpoint, no breakpoint breaks hierarchy, wide screenshots are intentionally handled (horizontal masked viewport, not shrink-to-illegible), motion is subtle/non-essential/reduced-motion-safe, no content changes were required, and validation passes. Do not resume polishing this route without a specific issue from a fresh audit.
 
 # NEXT ACTION
 
-- Angela reviews `fix/home-responsive-structure-v2` visually on real Desktop + Mobile (the P0-D/P0-E collisions and the Home mobile Closing reveal) before any merge or further polish round.
+- Angela reviews `fix/case01-responsive-qa` visually against the delivered screenshots (Large Desktop/Laptop/Tablet/Mobile) before merge.
 
 ---
 
-# PRIOR COMPLETION (unrelated, still valid) — CASE01 Real Evidence
+# PRIOR COMPLETION (unrelated, still valid) — HOMEPAGE RESPONSIVE STRUCTURE FIX V2
 
-- Chinese CASE01 Final Real Evidence Placement Pass is complete at `/design-samples/case-final-01` (implementation: `components/design-samples/case-final/CaseOneFinalContent.tsx`; review artifact: `artifacts/case01-final-real-evidence-fullpage.png`, 1440×18331). Real Order Management, Streamer List/Filter, Checkout Out-of-stock, and Supplier Dashboard evidence placed; unavailable Inventory Log placeholder removed without substitution; Pricing UI placeholder remains (no approved asset yet). Section order/approved copy unchanged except captions/figure numbering. Chinese CASE01 body copy stays ≥16px / 1.7 line-height. English CASE01, Cases 02–04, production `/work/[slug]`, Home, About/About V2, Selected Work, SiteHeader, Footer, and the global design system were untouched by that pass. `tsc`/`lint`/`git diff --check` all passed; Desktop+Mobile QA done; no horizontal overflow; no console errors. Not committed — pending Angela's separate design-lead audit of the review artifact.
+- Branch `fix/home-responsive-structure-v2`, commit `92e884d`. Two confirmed P0 root-cause fixes: (A) `ProjectScene.tsx`'s mobile compact grid layout, which was causing project 01 heading/metadata, project 02 eyebrow, and project 03 metadata to visually collide with the stage chrome or media block; (B) a stale `ScrollTrigger` on Home's `SiteFooter` Closing reveal caused by `SelectedWork`'s `compact` media-query hook resolving one render tick too late. Files touched: `components/home/SelectedWork/ProjectScene.tsx`, `SelectedWork.tsx`, `motion.ts`. Full validation (tsc/eslint/build, live-browser geometry, 60-step opacity sweep, reverse scroll, project selector, reduced motion) passed. See git log for the full commit message; this branch's own HANDOFF section was superseded by CASE01's above per the "replace, don't accumulate" rule, but the work itself remains valid and is the base this branch continues from.
+
+---
+
+# PRIOR COMPLETION (unrelated, still valid) — CASE01 Real Evidence Placement
+
+- Chinese CASE01 Final Real Evidence Placement Pass (implementation: `components/design-samples/case-final/CaseOneFinalContent.tsx`; review artifact: `artifacts/case01-final-real-evidence-fullpage.png`, 1440×18331). Real Order Management, Streamer List/Filter, Checkout Out-of-stock, and Supplier Dashboard evidence placed; unavailable Inventory Log placeholder removed without substitution; Pricing UI placeholder remains (no approved asset yet). This is the pass CASE01 Responsive QA above builds on and froze. English CASE01, Cases 02–04, production `/work/[slug]`, Home, About/About V2, Selected Work, SiteHeader, Footer, and the global design system were untouched by that pass.

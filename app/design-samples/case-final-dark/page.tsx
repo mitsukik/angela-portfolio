@@ -13,5 +13,5 @@ const SAMPLE_SLUG = "complex-system";
 export default function CaseFinalDarkPage() {
   const project = getProjectBySlug(SAMPLE_SLUG);
   if (!project) notFound();
-  return <CaseStudyPrototype theme="dark" project={project} nextProject={getNextProject(project)} />;
+  return <CaseStudyPrototype theme="dark" project={project} nextProject={getNextProject(project)} locale="zh" />;
 }

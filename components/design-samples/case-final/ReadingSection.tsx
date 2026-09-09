@@ -138,7 +138,11 @@ export function ReadingSection({
                   {parsed.index && <span className="cf-summary-index cf-accent">{parsed.index}</span>}
                   <div>
                     <p className="cf-heading text-[1.05rem] font-medium">{parsed.label}</p>
-                    {parsed.description && <p className="cf-body mt-1 text-[15px] leading-6">{parsed.description}</p>}
+                    {/* CASE01 responsive QA: 15px -> 16px. This description
+                        is real explanatory sentence content (Challenge's
+                        numbered points), not a caption/meta label, so it
+                        falls under the 16px Chinese-body-text floor. */}
+                    {parsed.description && <p className="cf-body mt-1 text-[16px] leading-6">{parsed.description}</p>}
                   </div>
                 </li>
               );

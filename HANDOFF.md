@@ -1,11 +1,29 @@
 # CURRENT STATE
 
-- Branch: `fix/homepage-visual-polish-v3` (branched from `fix/case01-responsive-qa` at commit `f0d57e9`, which carries the CASE01/About V2/Lavender-token checkpoints below — all still valid and unmodified by this pass).
+- Branch: `fix/homepage-tablet-hero-v3-1` (branched from `fix/homepage-visual-polish-v3` at commit `1329bd6`, which carries Homepage Visual Polish V3 — still valid and unmodified by this pass — plus the CASE01/About V2/Lavender-token checkpoints beneath it).
 - Foundation tag: `v3-design-system-foundation`.
-- Current task: none. Homepage Visual Polish V3 (below) is implementation-complete, validated, and checkpointed. Angela reviews visually before merge.
+- Current task: none. Homepage Tablet Hero Polish V3.1 (below) is implementation-complete, validated, and checkpointed. Angela reviews visually before merge.
 - Note: this branch also carries pre-existing unrelated uncommitted work (`SiteHeader.tsx`'s Round-11 bilingual nav changes, `case-final-02/03/04` + `en/design-samples/case-final-01..04` bilingual routes, `AGENTS.md`/`CLAUDE.md` governance edits, and most of `globals.css` — `.cf-accent: var(--lavender)`, `.cf-opening-title`, `.mobile-menu` redesign, CTA hover color, etc.) — untouched and left exactly as found. `ReadingSection.tsx` also still carries one unstaged, unscoped hunk (`mt-6`→`mt-10` Section Title→Content spacing change, affects all four cases, no task record) — deliberately left out of scope.
 
-# LATEST COMPLETION — HOMEPAGE VISUAL POLISH V3
+# LATEST COMPLETION — HOMEPAGE TABLET HERO POLISH V3.1
+
+Tablet-only (768–1023px) rebalance of `components/home/Hero.tsx`'s first-viewport composition. Mobile (<768) and Desktop (≥1024) are provably unchanged: every touched property was already `md:`-scoped (applying 768px+), so each new tablet value got a matching `lg:` override restoring the exact prior value at 1024px+, and mobile's unprefixed base classes were never touched.
+
+**Root cause (measured at 820×1180):** the shared `md:items-end` (bottom-anchoring, correct for desktop's wide/short aspect) left 752px of dead space above the content and pinned the CTA row 9px below the fold on a tablet's taller portrait aspect. The grid visual was also capped by its 5/12 column share, rendering at only 285×380 relative to the text column's 415px width.
+
+**Fix (4 properties, all `md:` tablet value + `lg:` desktop-restore pair):**
+- Alignment: `md:items-center` (was shared `items-end`) / `lg:items-end` restores desktop.
+- Bottom padding: `md:pb-16` (was shared `pb-12`, gives the scroll cue more clearance) / `lg:pb-12` restores desktop.
+- Text column: `md:col-span-6` (was shared `col-span-7`) / `lg:col-span-7` restores desktop.
+- Plane column: `md:col-span-6` (was shared `col-span-5`, more grid presence) / `lg:col-span-5` restores desktop.
+
+**Result (measured, 820×1180):** eyebrow now at 434px (was 832px — 398px sooner), plane grew to 350×462 (was 285×380), CTA now ends at 819px with 361px comfortable clearance (was 9px below the fold). Verified visually at 768×1024, 820×1180, and both sides of the 1024 boundary — composition holds across the whole tablet range, not just one device size. Both locales checked.
+
+**Validation:** `tsc`/`eslint`/`build` clean. Regression matrix (390/768/820/1023/1024/1440 × zh/en): zero overflow, zero console errors. Hero→Selected Work boundary measured identical at every width (no collision, scroll-track height untouched). Zero dead-opacity windows across a tablet-width scroll sweep. Reduced-motion clean at tablet. Mobile (390×844) and Desktop (1440×900) geometry re-measured and confirmed byte-identical to the pre-this-task V3 state.
+
+---
+
+# PRIOR COMPLETION (unrelated, still valid) — HOMEPAGE VISUAL POLISH V3
 
 ## CHANGED
 

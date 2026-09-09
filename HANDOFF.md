@@ -1,11 +1,23 @@
 # CURRENT STATE
 
-- Branch: `fix/homepage-tablet-hero-v3-1` (branched from `fix/homepage-visual-polish-v3` at commit `1329bd6`, which carries Homepage Visual Polish V3 — still valid and unmodified by this pass — plus the CASE01/About V2/Lavender-token checkpoints beneath it).
+- Branch: `fix/homepage-hero-balance-v3-2` (branched from `fix/homepage-tablet-hero-v3-1` at commit `055cc23`, which carries Tablet Hero Polish V3.1 — still valid and unmodified by this pass — plus Homepage Visual Polish V3 and the CASE01/About V2/Lavender-token checkpoints beneath it).
 - Foundation tag: `v3-design-system-foundation`.
-- Current task: none. Homepage Tablet Hero Polish V3.1 (below) is implementation-complete, validated, and checkpointed. Angela reviews visually before merge.
+- Current task: none. Homepage Hero Final Responsive Balance V3.2 (below) is implementation-complete, validated, and checkpointed. Angela reviews visually before merge.
 - Note: this branch also carries pre-existing unrelated uncommitted work (`SiteHeader.tsx`'s Round-11 bilingual nav changes, `case-final-02/03/04` + `en/design-samples/case-final-01..04` bilingual routes, `AGENTS.md`/`CLAUDE.md` governance edits, and most of `globals.css` — `.cf-accent: var(--lavender)`, `.cf-opening-title`, `.mobile-menu` redesign, CTA hover color, etc.) — untouched and left exactly as found. `ReadingSection.tsx` also still carries one unstaged, unscoped hunk (`mt-6`→`mt-10` Section Title→Content spacing change, affects all four cases, no task record) — deliberately left out of scope.
 
-# LATEST COMPLETION — HOMEPAGE TABLET HERO POLISH V3.1
+# LATEST COMPLETION — HOMEPAGE HERO FINAL RESPONSIVE BALANCE V3.2
+
+Two targeted fixes to `components/home/Hero.tsx`'s `≥1024px` composition. Only 3 utility-class strings touched (6 lines); Mobile (<768) and the 768–1023 tablet range are untouched — every changed property was already `lg:`-scoped.
+
+**1024×1366 tall-portrait tablet:** V3.1's `lg:` overrides (`items-end`, `pb-12`, `col-span-7/5`) applied at any width ≥1024 regardless of aspect ratio, so a tall portrait tablet at exactly 1024px width got Desktop's bottom-anchored treatment — same bug V3.1 fixed for 820×1180, recurring one breakpoint tier up. Fixed by rescoping those four `lg:` overrides to `lg:landscape:` (Tailwind's built-in `orientation: landscape` variant, stacked with the existing `lg:` breakpoint — no new breakpoint system, no device sniffing). Since `md:items-center`/`md:pb-16`/`md:col-span-6` are already the tablet-style base applying at 768px+, and `lg:landscape:` only overrides them when width ≥1024 **and** landscape, a tall-portrait 1024px-wide viewport now falls through and correctly keeps the tablet balance — no cascade-order risk, since `md:` (lower breakpoint tier) vs `lg:landscape:` (higher tier) is a standard, guaranteed-correct Tailwind sort, unlike stacking two competing rules at the same `lg:` tier would have been.
+
+**1920×1080 (and all desktop-landscape) too bottom-heavy:** the shared bottom padding for the `lg:landscape:` (true desktop) bucket increased from a flat `pb-12` (48px, non-scaling) to `pb-[15vh]` (viewport-relative). Because both the text column and the plane column share the same `items-end`-aligned row, this lifts them together in one coordinated move — plane position rises with the text, no separate adjustment needed. Measured delta: +87px at 900px-tall viewports (1024×900, 1440×900) and +114px at 1920×1080 — 9.7% and 10.6% of viewport height respectively, both inside the requested 8–12% range. Bottom-anchoring (`items-end`) is preserved, not centered — still reads as the same cinematic, bottom-weighted Desktop identity, just with less dead space above it and a real mid-viewport anchor.
+
+**Validation:** `tsc`/`eslint`/`build` clean. Regression matrix (390 / 768 / 820 / 1023 / 1024×1366 / 1024×900 / 1440 / 1920 × zh/en): zero overflow, zero console errors. Hero→Selected Work boundary re-measured with zero collision at every width, and every scroll-track height matches the unchanged `130svh`/`170svh` formula exactly (e.g. 1920×1080 → 1836px = 1080×1.7), confirming scroll architecture untouched. Zero dead-opacity windows and reduced-motion clean at both new breakpoints tested (1024×1366, 1920×1080). Mobile (390×844) and 820×1180 tablet re-measured pixel-identical (within 1px rounding) to their pre-this-task V3.1 state — confirmed unchanged, not just visually similar. Selected Work, About, and CASE01 were not touched by this pass (only `Hero.tsx` was edited).
+
+---
+
+# PRIOR COMPLETION (unrelated, still valid) — HOMEPAGE TABLET HERO POLISH V3.1
 
 Tablet-only (768–1023px) rebalance of `components/home/Hero.tsx`'s first-viewport composition. Mobile (<768) and Desktop (≥1024) are provably unchanged: every touched property was already `md:`-scoped (applying 768px+), so each new tablet value got a matching `lg:` override restoring the exact prior value at 1024px+, and mobile's unprefixed base classes were never touched.
 

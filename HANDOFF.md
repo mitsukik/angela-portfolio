@@ -1,11 +1,56 @@
 # CURRENT STATE
 
-- Branch: `fix/homepage-hero-balance-v3-2` (branched from `fix/homepage-tablet-hero-v3-1` at commit `055cc23`, which carries Tablet Hero Polish V3.1 — still valid and unmodified by this pass — plus Homepage Visual Polish V3 and the CASE01/About V2/Lavender-token checkpoints beneath it).
+- Branch: `fix/case01-decision-03-pricing`. **Branch-ancestry note:** intended to branch from `fix/case01-responsive-qa` (`f0d57e9`), but `git checkout` refused because the pre-existing unrelated uncommitted files below conflict across branches, and `git stash` was unavailable in this session — so this branch was actually cut from the current tip of `fix/homepage-hero-balance-v3-2` (commit `bb99abc`) instead. Verified before proceeding: every CASE01 file (including `CaseOneFinalContent.tsx`) is byte-identical between that commit and `fix/case01-responsive-qa`, so no Homepage content leaked into this work — but the branch's git ancestry does include the Homepage V3/V3.1/V3.2 commits. Rebase onto `fix/case01-responsive-qa` before merging if a clean CASE01-only history is wanted.
 - Foundation tag: `v3-design-system-foundation`.
-- Current task: none. Homepage Hero Final Responsive Balance V3.2 (below) is implementation-complete, validated, and checkpointed. Angela reviews visually before merge.
-- Note: this branch also carries pre-existing unrelated uncommitted work (`SiteHeader.tsx`'s Round-11 bilingual nav changes, `case-final-02/03/04` + `en/design-samples/case-final-01..04` bilingual routes, `AGENTS.md`/`CLAUDE.md` governance edits, and most of `globals.css` — `.cf-accent: var(--lavender)`, `.cf-opening-title`, `.mobile-menu` redesign, CTA hover color, etc.) — untouched and left exactly as found. `ReadingSection.tsx` also still carries one unstaged, unscoped hunk (`mt-6`→`mt-10` Section Title→Content spacing change, affects all four cases, no task record) — deliberately left out of scope.
+- Current task: none. CASE01 Decision 03 — Pricing Placeholder Replacement (below) is implementation-complete, validated, and checkpointed. Angela reviews visually before merge.
+- Note: this branch also carries pre-existing unrelated uncommitted work (`SiteHeader.tsx`'s Round-11 bilingual nav changes, `case-final-02/03/04` + `en/design-samples/case-final-01..04` bilingual routes, `AGENTS.md`/`CLAUDE.md` governance edits, most of `globals.css`, and Homepage's `Hero.tsx` history) — untouched and left exactly as found. `ReadingSection.tsx` also still carries one unstaged, unscoped hunk (`mt-6`→`mt-10` Section Title→Content spacing change, affects all four cases, no task record) — deliberately left out of scope. `artifacts/case01-final-real-evidence-fullpage.png` and `artifacts/case01-real-evidence-pass-fullpage.png` remain untracked from an earlier pass — not staged by this checkpoint.
 
-# LATEST COMPLETION — HOMEPAGE HERO FINAL RESPONSIVE BALANCE V3.2
+# LATEST COMPLETION — CASE01 DECISION 03 PRICING EVIDENCE
+
+Replaced Decision 03's `Slot` placeholder ("REAL UI EVIDENCE NEEDED") with real, sanitized product UI. Chinese CASE01 only — English version, other decisions, other evidence sections, and CASE01's frozen structure/content/caption were not touched.
+
+## SOURCES
+
+- Primary: `1-2 供貨商 -  商品管理.pdf` (`~/Downloads/媒合銷售平台系統後台 - 第一階段/`) — the Product "Price" tab, showing Unit Cost, Suggested Retail Price (SRP), Estimated Profit, and Pricing Adjustment Record. This is a single giant 15669×13063px vector canvas (one Figma page exported to PDF); located the correct frame via a downscaled overview render, then re-rendered just that region at 4x native scale using a small Quartz/CoreGraphics script (`CGContextDrawPDFPage` restricted to a target CGRect) — full-page rasterization at native resolution wasn't practical (205MP).
+- Secondary: `媒合銷售平台系統後台 - 第一階段.pdf` (same Downloads folder) — an even larger 56182×86129px (~4.8B px) canvas. Located the "Price & Inventory" → invalid-state frame (profit-pool-negative validation) via a QuickLook thumbnail overview (`qlmanage -t`, efficient enough to avoid full rasterization), then rendered just that frame with the same targeted Quartz approach.
+- Both source PDFs confirmed accessible; no substitution was needed.
+
+## SANITIZATION
+
+Redaction bars (solid, not blur) placed via pixel-precise bounding boxes from macOS's on-device Vision OCR (`VNRecognizeTextRequest` + `boundingBoxForRange:` for sub-string ranges) — not eyeballed; a first hand-estimated attempt landed on the wrong lines and was redone this way.
+
+- **Primary (Pricing Adjustment Record table):** the 3 sample data rows (Unit Cost/Retail Price/Profit/Qty Sold/Sales Period/Sales Days/Last update values) are fully redacted. Column headers stay visible. The `USD$0.00` values in the Unit Cost/SRP/Estimated Profit calculator above are untouched — they're empty-state placeholders, not real data.
+- **Secondary (invalid-state panel):** redacted every formula constant — cost multiplier (1.15X), suggested-price multiplier (3.15X), price-float percentage (80%), tax rate (8%), corporate-tax multiplier (0.0255X), and the two revenue-split percentages (31% / 69%) — plus the specific computed warning figure (-92.73). The warning's structural message ("利潤池 [redacted] < 0，該方案不可用") stays fully legible, and every `USD$0.00` placeholder is untouched, so the invalid-state logic is still completely clear.
+
+## LAYOUT
+
+New wrapper `<div className="lg:grid lg:grid-cols-12 lg:items-start lg:gap-8">` inside the existing `DecisionMedia`, reusing the exact `lg:grid lg:grid-cols-12` + `lg:col-span-N` grammar already established in this file's "10 — FINAL PRODUCT" section (no new layout system). Primary evidence `lg:col-span-8` (66.7%, within the requested 65–70%), secondary `lg:col-span-4` (33.3%, within 30–35%). `<InspectableEvidence>` for the primary (dense small-text UI — same component already used for Order Management/Supplier Dashboard, so it never gets forced below a readable size) and plain `<Evidence>` for the secondary (a portrait crop that needs to show its full height, not `object-cover`). Below `lg:`, both stack full-width in document order with a manual `mt-8`/`lg:mt-0` on the second one (the wrapper isn't a flex/grid container below `lg:`, so it doesn't inherit `DecisionMedia`'s own `space-y-8`).
+
+New figure numbers `FIG. 06a` / `FIG. 06b` (not `07`/`08`/`09` — those are already used later in the same file for Decision 04's evidence; renumbering them would have touched an unrelated section). The existing `FIG. 06` sanitized Pricing & Revenue Logic diagram is unchanged, still the first item in this decision's evidence.
+
+Removed the now-orphaned `Slot` function (its only caller was the placeholder this pass replaces) — left it in first and confirmed via `tsc`/`eslint` that removing it was safe (no other consumers) rather than leaving dead code with a lint warning.
+
+## VALIDATION
+
+- `tsc --noEmit`, `eslint` on the touched file, `npm run build`: all clean, 26 routes.
+- Live-browser check (Chromium via Playwright) on `/design-samples/case-final-01`: zero console/page errors while scrolling through and past Decision 03. Caption verified byte-exact: "Give users flexibility without breaking the business model." — unchanged, since it's the existing `DecisionMedia principle` prop and this pass never touched it.
+- Visual confirmation: primary evidence clearly shows Unit Cost / SRP / Estimated Profit / Pricing Adjustment Record; secondary clearly shows the invalid-pricing-state warning; measured column split ≈65.8% / 31.6% in the rendered page, matching the target; no layout break, no collision with surrounding sections.
+- Full-page screenshot saved to `artifacts/case01-decision03-pricing-fullpage.png` (1440×18424).
+
+## FILES
+
+- `components/design-samples/case-final/CaseOneFinalContent.tsx` — Decision 03 media swap + `Slot` removal.
+- `public/images/case01/evidence/case01-pricing-detail.png` (new) — primary evidence.
+- `public/images/case01/evidence/case01-pricing-invalid-state.png` (new) — secondary evidence.
+- `artifacts/case01-decision03-pricing-fullpage.png` (new) — review screenshot.
+
+# NEXT ACTION
+
+- Angela reviews the Decision 03 pricing evidence on `fix/case01-decision-03-pricing` before merge. English CASE01 intentionally not started.
+
+---
+
+# PRIOR COMPLETION (unrelated, still valid) — HOMEPAGE HERO FINAL RESPONSIVE BALANCE V3.2
 
 Two targeted fixes to `components/home/Hero.tsx`'s `≥1024px` composition. Only 3 utility-class strings touched (6 lines); Mobile (<768) and the 768–1023 tablet range are untouched — every changed property was already `lg:`-scoped.
 
@@ -172,7 +217,7 @@ Scoped, minimal fixes only — no content rewrite, no new sections, no new evide
 ## KNOWN ISSUES
 
 - The Decision-heading vs. Section-heading size-tier distinction the QA brief's floor values imply (20-24px vs 28-36px) does not exist in the current implementation — `cf-h3` is one unified, already-reviewed scale for both. Not changed here; see RESPONSIVE DECISIONS above for the reasoning. Flagging for Angela in case she *does* want that split — it would be a deliberate hierarchy decision, not a QA-pass default.
-- Pricing UI evidence (`Slot` placeholder, Decision 03) remains an unfilled "REAL UI EVIDENCE NEEDED" slot — unchanged, pre-existing, not part of this task's scope (no new evidence created).
+- Pricing UI evidence (`Slot` placeholder, Decision 03): RESOLVED — see LATEST COMPLETION above. Real sanitized UI now fills this slot.
 - Production `/work/[slug]` Case Study migration remains untouched and out of scope, per explicit instruction.
 
 ## FREEZE STATUS

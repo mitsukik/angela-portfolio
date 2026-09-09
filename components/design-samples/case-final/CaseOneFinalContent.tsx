@@ -13,20 +13,6 @@ type EvidenceProps = {
   className?: string;
 };
 
-function Slot({ reference, purpose, aspect = "aspect-[3/2]" }: { reference: string; purpose: string; aspect?: string }) {
-  return (
-    <figure>
-      <div className={`cf-figure-frame ${aspect} flex w-full items-center justify-center px-6 text-center`}>
-        <div className="max-w-[36rem]">
-          <p className="cf-meta cf-accent">REAL UI EVIDENCE NEEDED</p>
-          <p className="cf-heading mt-4 text-[clamp(1.15rem,2vw,1.65rem)]">{purpose}</p>
-          <p className="cf-dim mt-3 font-mono text-[14px] leading-6">{reference}</p>
-        </div>
-      </div>
-    </figure>
-  );
-}
-
 function Caption({ children }: { children: ReactNode }) {
   return <figcaption className="cf-figure-caption cf-meta mt-4">{children}</figcaption>;
 }
@@ -154,7 +140,22 @@ export function CaseOneFinalContent({ register }: { register: RegisterSection })
           paragraphs={["Streamer 可以自行選擇銷售價格，但 Selling Price 必須大於或等於系統設定的 Suggested / Minimum Price。介面需要同時提供彈性、限制與即時驗證。"]}
           media={<DecisionMedia principle="Give users flexibility without breaking the business model.">
             <Evidence src="/images/case01/case01_PRL_chi01.png" alt="已移除敏感參數的定價與收益邏輯圖" caption="FIG. 06 — Pricing & Revenue Logic · Sanitized" />
-            <Slot reference="Pricing UI · sanitized crop required" purpose="Real UI — selling price constraint and validation" aspect="aspect-[16/9]" />
+            <div className="lg:grid lg:grid-cols-12 lg:items-start lg:gap-8">
+              <InspectableEvidence
+                src="/images/case01/evidence/case01-pricing-detail.png"
+                alt="商品定價頁面，顯示 Unit Cost、Suggested Retail Price、Estimated Profit 與已移除敏感數值的定價調整紀錄"
+                caption="FIG. 06a — Product Pricing · Unit Cost, SRP, Estimated Profit, Pricing Adjustment Record"
+                aspect="aspect-[2600/2313]"
+                className="lg:col-span-8"
+              />
+              <Evidence
+                src="/images/case01/evidence/case01-pricing-invalid-state.png"
+                alt="定價試算結果，呈現利潤池為負時方案不可用的即時驗證警示，已移除敏感參數與數值"
+                caption="FIG. 06b — Pricing Validation · Invalid state, sanitized"
+                aspect="aspect-[1600/2666]"
+                className="mt-8 lg:col-span-4 lg:mt-0"
+              />
+            </div>
           </DecisionMedia>}
           mediaFullBleed
         />

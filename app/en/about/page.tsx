@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AboutSections } from "@/components/about/AboutSections";
+import { AboutV2 } from "@/components/about-v2/AboutV2";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 
@@ -16,14 +16,14 @@ export const metadata: Metadata = {
 
 export default function AboutPageEn() {
   return (
-    <div id="top" className="min-h-screen bg-background text-primary">
+    <div id="top" className="scene-dark min-h-screen">
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
       <SiteHeader locale="en" page="about" />
 
       <main id="main-content" tabIndex={-1}>
-        <AboutSections locale="en" />
+        <AboutV2 locale="en" />
       </main>
 
       <SiteFooter locale="en" />

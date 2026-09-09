@@ -117,18 +117,28 @@ export function ProjectScene({ project, locale, f, still, compact, holdExit }: P
   // accent-bg rule + dimmed category, three visually distinct pieces —
   // not the same role Case uses. The rule/bar element is gone; Case's
   // own section label has no equivalent line, just the text run.
+  // Homepage Visual Polish V3: the big heading now follows `locale`
+  // (was hardcoded to chineseTitle regardless of route, so /en showed a
+  // Chinese title under an English eyebrow) — data already had both
+  // fields (Project.title / Project.chineseTitle), this was purely a
+  // rendering gap. The other language's title keeps its existing role as
+  // the small caption below, just swapped to match — same bilingual
+  // pairing pattern already used elsewhere (e.g. Case Opening's
+  // "01 / COMPLEX SYSTEM"), not new content. `lang` moves onto the h3
+  // itself (was only on an inner span) so `.type-v3-section-heading:lang(zh-Hant)`
+  // can actually match it.
+  const primaryTitle = locale === "zh" ? project.chineseTitle : project.title;
+  const secondaryTitle = locale === "zh" ? project.title : project.chineseTitle;
   const Head = (
     <div style={lift(0)}>
       <p className={`type-v3-label cf-section-label whitespace-nowrap ${accentText}`}>
         {project.number} — {project.category[locale]}
       </p>
-      <h3 className="type-v3-section-heading mt-4">
-        <span lang="zh-Hant">
-          <MixedText text={project.chineseTitle} />
-        </span>
+      <h3 lang={locale === "zh" ? "zh-Hant" : "en"} className="type-v3-section-heading mt-4">
+        {locale === "zh" ? <MixedText text={primaryTitle} /> : primaryTitle}
       </h3>
-      <p className="type-v3-label mt-3 scene-dim-text">
-        {project.title} · {project.year}
+      <p lang={locale === "zh" ? "en" : "zh-Hant"} className="type-v3-label mt-3 scene-dim-text">
+        {locale === "zh" ? secondaryTitle : <MixedText text={secondaryTitle} />} · {project.year}
       </p>
     </div>
   );

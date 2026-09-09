@@ -153,7 +153,7 @@ export function Hero({ locale }: { locale: Locale }) {
           ))}
         </div>
 
-        <div className="site-frame relative grid h-full grid-cols-1 items-end gap-6 pb-10 md:grid-cols-12 md:gap-10 md:pb-12">
+        <div className="site-frame relative grid h-full grid-cols-1 items-center gap-6 pb-10 md:grid-cols-12 md:items-end md:gap-10 md:pb-12">
           <div className="relative z-10 md:col-span-7 md:pb-6">
             <p ref={kickerRef} className="hero-kicker type-v3-label scene-dim-text">
               {content.kicker}
@@ -201,7 +201,7 @@ export function Hero({ locale }: { locale: Locale }) {
             </div>
           </div>
 
-          <div className="hero-plane-wrap absolute inset-x-5 top-24 h-[36vh] md:relative md:inset-auto md:col-span-5 md:h-auto md:pb-6">
+          <div className="hero-plane-wrap absolute inset-x-5 top-10 h-[16vh] md:relative md:inset-auto md:col-span-5 md:h-auto md:pb-6">
             <div
               ref={planeRef}
               aria-hidden

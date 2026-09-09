@@ -1359,6 +1359,18 @@ body {
   font-size: var(--portfolio-type-section-size);
 }
 
+/* Homepage Visual Polish V3: Chinese titles at this hierarchy (currently
+   Selected Work's project titles, the sole consumer of this class) read
+   too heavy at the shared Latin-tuned weight/tracking — Angela's
+   requested correction, scoped by :lang so an English title rendered
+   through this same class is never affected. Restrained positive
+   tracking only; CJK glyphs don't want Latin-style negative/zero
+   tracking at display size. */
+.type-v3-section-heading:lang(zh-Hant) {
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
 /* Compatibility owner for unmigrated design-sample/prototype consumers. */
 .display-l {
   font-family: var(--portfolio-font-display);

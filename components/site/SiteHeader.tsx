@@ -122,7 +122,7 @@ export function SiteHeader({
 
   return (
     <header data-header-variant={variant} className="header-surface sticky top-0 z-50">
-      <div className="site-frame-header flex h-16 items-center justify-between md:h-20">
+      <div className="site-frame-header flex h-14 items-center justify-between md:h-20">
         <div className="flex items-baseline gap-4">
           <Link href={homeHref} className="group type-v3-label relative py-3 header-fg">
             ANGELA YU

@@ -1,12 +1,78 @@
 # CURRENT STATE
 
-- Branch: `fix/case01-responsive-qa` (branched from `fix/home-responsive-structure-v2` at commit `92e884d`, which is where Homepage Responsive Structure Fix V2 lives — see below, still valid and unmodified by this pass).
+- Branch: `fix/homepage-visual-polish-v3` (branched from `fix/case01-responsive-qa` at commit `f0d57e9`, which carries the CASE01/About V2/Lavender-token checkpoints below — all still valid and unmodified by this pass).
 - Foundation tag: `v3-design-system-foundation`.
-- Current task: none. Three scoped checkpoints now sit on this branch: CASE01 Responsive QA & Final Freeze (commit `f15026c`, Angela reviews before merge — see PRIOR COMPLETION below), About V2 (PRIOR COMPLETION below), which Angela has visually reviewed and approved for production, and the approved Lavender accent token (below).
-- Files committed for CASE01: `components/design-samples/case-final/CaseStudyPrototype.tsx`, `components/design-samples/case-final/CaseOneFinalContent.tsx` (new), `components/design-samples/case-final/ReadingSection.tsx` (15px→16px hunk only), `components/design-samples/case-final/FlowEvidence.tsx` (new), `components/design-samples/case-final/EvidenceMotion.tsx` (new, hard dependency of CaseOneFinalContent), `components/design-samples/case-final/caseFinalMedia.ts` (hard dependency — CaseStudyPrototype.tsx now calls its locale-aware getters), `app/design-samples/case-final-01/page.tsx` (new — the only route that reaches this content), `app/design-samples/case-final-dark/page.tsx` + `case-final-light/page.tsx` (one-line `locale` prop add, required since CaseStudyPrototype.tsx now takes `locale` as a mandatory prop), 5 evidence images under `public/images/case01/evidence/`.
-- Note: this branch also carries pre-existing unrelated uncommitted work (`SiteHeader.tsx` nav changes, `case-final-02/03/04` + `en/design-samples/case-final-01..04` bilingual routes, `AGENTS.md`/`CLAUDE.md` governance edits, and the remainder of `globals.css` — the `--lavender` token itself is now checkpointed separately, see below, but its Case Final-specific consumer hunks — `.cf-accent: var(--lavender)`, `.cf-opening-title`, `.mobile-menu` redesign, CTA hover color, etc. — remain uncommitted) — untouched and left exactly as found. `ReadingSection.tsx` also still carries one unstaged, unscoped hunk (`mt-6`→`mt-10` Section Title→Content spacing change, affects all four cases, no task record) — deliberately left out of the CASE01 commit as out of scope.
+- Current task: none. Homepage Visual Polish V3 (below) is implementation-complete, validated, and checkpointed. Angela reviews visually before merge.
+- Note: this branch also carries pre-existing unrelated uncommitted work (`SiteHeader.tsx`'s Round-11 bilingual nav changes, `case-final-02/03/04` + `en/design-samples/case-final-01..04` bilingual routes, `AGENTS.md`/`CLAUDE.md` governance edits, and most of `globals.css` — `.cf-accent: var(--lavender)`, `.cf-opening-title`, `.mobile-menu` redesign, CTA hover color, etc.) — untouched and left exactly as found. `ReadingSection.tsx` also still carries one unstaged, unscoped hunk (`mt-6`→`mt-10` Section Title→Content spacing change, affects all four cases, no task record) — deliberately left out of scope.
 
-# LATEST COMPLETION — APPROVED LAVENDER ACCENT TOKEN CHECKPOINT
+# LATEST COMPLETION — HOMEPAGE VISUAL POLISH V3
+
+## CHANGED
+
+Four scoped mobile-only polish fixes plus one locale-correctness bug fix, all on top of the already-approved V1/V2 Homepage architecture — no scroll-architecture changes, no content rewrite, no project reordering.
+
+## FILES TOUCHED
+
+- `components/site/SiteHeader.tsx` — mobile header bar `h-16` → `h-14` (one Tailwind class, isolated hunk — see MOBILE HEADER DECISION). Desktop `md:h-20` untouched.
+- `components/home/Hero.tsx` — mobile-only alignment and plane-visual sizing (see MOBILE HERO DECISION). Desktop explicitly preserved via added `md:items-end`.
+- `components/home/SelectedWork/ProjectScene.tsx` — project-title `Head` block restructured to be locale-aware (see TITLE LOCALIZATION FIX).
+- `app/globals.css` — one new rule, `.type-v3-section-heading:lang(zh-Hant)` (see LOCALE TYPOGRAPHY DECISIONS). Pure addition, isolated hunk.
+- `HANDOFF.md` — this section.
+
+All four source files had pre-existing, unrelated uncommitted work sitting in them from earlier sessions (`SiteHeader.tsx`'s Round-11 bilingual routing, `globals.css`'s Case Final/mobile-menu rules). Where my edit landed in the same hunk as that pre-existing work (`SiteHeader.tsx`'s header line), I hand-built an isolated patch against HEAD and staged it via `git apply --cached` rather than staging the whole hunk — same technique used for the CASE01/lavender checkpoints. `Hero.tsx` and `ProjectScene.tsx` had no pre-existing diff at all; staged whole. Verified via `git diff --cached --stat` (31 lines across 4 files) vs. the remaining unstaged diff (166 lines, all pre-existing/unrelated) before committing.
+
+## MOBILE HEADER DECISION
+
+Measured baseline: mobile header bar was exactly `h-16` (64px, the only sizing lever — no separate padding rule exists; `.header-surface` only sets colors). Reduced to `h-14` (56px). The `.menu-trigger` hamburger button stays `h-11 w-11` (44×44, WCAG-safe tap target) — verified via live measurement it still sits centered with 6px clearance top/bottom, not cramped. `.mobile-menu` dropdown (`top: 100%`, relative) automatically tracks the new shorter header with no separate fix needed — verified flush (`headerBottom === menuTop`) after the change. Desktop `md:h-20` (80px) untouched.
+
+## MOBILE HERO DECISION
+
+Root cause (measured, not assumed): the text column used unconditional `items-end` (bottom-anchored, no `md:` override), so identity content (eyebrow → ANGELA YU → copy → CTA) was pinned to the very bottom of the 100svh first viewport regardless of what sat above it. At baseline 390×844, this meant: a 73px dead gap between the grid visual's bottom edge (464px) and the eyebrow's top (537px), and the CTA row's bottom edge landing at 869px — 25px **below the fold**, clipped on first paint.
+
+Fix, mobile-only (`items-center` added, desktop explicitly re-asserted via new `md:items-end` so desktop composition is provably unchanged): the identity content now centers within the first viewport instead of hugging its bottom edge. The grid visual (`hero-plane-wrap`) is shrunk on mobile only (`top-24 h-[36vh]` → `top-10 h-[16vh]`; desktop's `md:relative md:h-auto` already overrode both, so this has zero desktop effect) so it no longer competes for the same vertical space as the now-centered text — first attempt at `top-14 h-[24vh]` still overlapped the eyebrow by 23px (measured), corrected to `top-10 h-[16vh]` which clears it with 61px of clean margin.
+
+Result (measured, 390×844): eyebrow now starts at 292px (was 537px — enters 245px sooner), CTA row now ends at 624px, fully inside the fold (was 869px, clipped). Grid visual is retained as a clearly legible, intentional band, not removed. Verified visually via screenshot at 390×844, 430×932, and desktop 1440×900 (desktop screenshot confirms zero visual change there).
+
+## LOCALE TYPOGRAPHY DECISIONS
+
+Added `.type-v3-section-heading:lang(zh-Hant) { font-weight: 500; letter-spacing: 0.04em; }` in `app/globals.css`, immediately after the existing `.type-v3-section-heading` rule it extends (base weight 600, tracking 0) — follows the same `:lang(zh-Hant)`-scoped-override pattern already established elsewhere in this file (`.type-step-title:lang(zh-Hant)`, `.scene-light .text-lavender`). `.type-v3-section-heading` currently has exactly one consumer (Selected Work's project title `h3`), so this is the shared project-title style already, not a new local class — no per-project special-casing. Scoping is CSS-native (`:lang()`), so an English title rendered through the same class is structurally unaffected — verified live: zh route computed `font-weight: 500, letter-spacing: 1.12px` (0.04em of the section-heading's clamp size); en route computed `font-weight: 600, letter-spacing: normal` on the same class, unchanged from baseline. 0.04em was used as-given; visual check across all four Chinese titles (2–10 characters) didn't show it as too tight or too loose, so no adjustment was needed.
+
+## TITLE LOCALIZATION FIX
+
+Confirmed bug: `ProjectScene.tsx`'s `Head` block rendered `project.chineseTitle` in the big heading unconditionally, regardless of `locale` — the English route showed a Chinese title under an English eyebrow. Root cause was a rendering gap, not missing data: `data/projects.ts`'s `Project` type already has both `title` (English) and `chineseTitle` for all four projects (verified: Complex System / Corporate Website / IoT System / Consumer Product — none missing), so no translation was invented.
+
+Fix: the big heading now renders `locale === "zh" ? project.chineseTitle : project.title`; the small caption below it renders whichever of the two the heading isn't showing (`{title} · {year}` on zh, `{chineseTitle} · {year}` on en) — same bilingual-pairing convention already used elsewhere on the site (e.g. Case Opening's "01 / COMPLEX SYSTEM"), not new content. `lang` moved from an inner `<span>` onto the `h3` itself (required for the new `:lang(zh-Hant)` CSS rule to match at all — `:lang()` doesn't propagate up from a child). `MixedText` (isolates embedded Latin/numeric runs into the correct font) now wraps `chineseTitle` wherever it renders — heading or caption — matching project 03's "IoT 系統與數據儀表板", which has an embedded Latin run either way.
+
+Verified live on all 4 projects × both locales (8 checks): zh route → Chinese heading (weight 500) + English caption; en route → English heading (weight 600, unaffected) + Chinese caption. Zero console errors.
+
+## MEDIA ROW VISUAL CHECK
+
+Visually inspected all four projects' mobile media rows (measured heights: Project 01 hits the `9rem`/144px floor exactly — its text column is the longest, 3-column metadata wraps to 4 lines; Projects 02–04 get 206–229px since their text is shorter). Project 01's image (laptop/dashboard photo) is a tight letterbox crop but stays clearly legible — the dashboard content and "01" marker are readable, not compressed into illegibility. Projects 02–04 have comfortable proportions. **Verdict: no change made to the 9rem floor** — it produces a tight-but-functional result for the one project that hits it, not a real problem, so per the task's own instruction ("only adjust if visual evidence shows a real problem") it was left as-is.
+
+## VALIDATION
+
+- `npx tsc --noEmit`: pass. `eslint` on all 4 touched source files: pass. `npm run build`: pass, 26 routes (unchanged).
+- Live-browser checks (Playwright/Chromium) at 390×844, 430×932 (mobile), 1440×900 (desktop), both `/` and `/en`:
+  - No horizontal overflow at any of the 6 combinations.
+  - Zero console/page errors across all checks, including a `prefers-reduced-motion: reduce` pass.
+  - Full 61-step opacity sweep across the pinned Selected Work stage: zero dead-opacity windows (V1 dead-scroll fix and V2 mobile crossfade both intact).
+  - Reverse scroll verified explicitly: forward to Project 04 (opacity 1) → back to Project 01 (opacity 1), correct article each time.
+  - `SiteFooter` reveal verified at both mobile and desktop (opacity 1, visible) — V2's stale-ScrollTrigger fix intact.
+  - Mobile menu: opens correctly, sits flush under the new shorter header, hamburger tap target still 44×44.
+  - Project-selector nav buttons present and functional (4 found, matching 4 projects); underlying pinned-stage motion architecture unchanged by this pass (only `ProjectScene.tsx`'s title JSX was touched, not `SelectedWork.tsx`'s scroll/selector logic).
+- Isolated-commit build verification: attempted via disposable git worktree (same technique as the CASE01/lavender checkpoints) but Turbopack rejects any symlinked `node_modules` inside a git worktree outright (`Symlink [project]/node_modules is invalid, it points out of the filesystem root` — a Turbopack/worktree interaction issue, not specific to this diff; hit the identical error at two different filesystem locations). Fell back to manual hunk-isolation verification instead: confirmed each staged hunk's exact boundaries via `git diff`, confirmed `Hero.tsx`/`ProjectScene.tsx` have zero pre-existing diff to entangle with, and confirmed neither staged hunk in `SiteHeader.tsx`/`globals.css` depends on anything in the adjacent unstaged hunks (no shared identifiers, no new exports consumed).
+
+## KNOWN ISSUES
+
+- None found specific to this pass. The pre-existing unrelated uncommitted work noted above (SiteHeader bilingual routing, most of globals.css, governance docs, ReadingSection's spacing hunk) remains exactly as found — not evaluated or touched by this task.
+
+## NEXT RECOMMENDED STAGE
+
+- Angela reviews `fix/homepage-visual-polish-v3` visually (mobile 390/430, desktop 1440, both locales) before merge. Do not start a second Homepage polish pass without a specific issue from that review.
+
+---
+
+# PRIOR COMPLETION (unrelated, still valid) — APPROVED LAVENDER ACCENT TOKEN CHECKPOINT
 
 - **Status: approved by Angela, checkpointed.** The root `--lavender` design token was updated from `oklch(0.78 0.11 300)` to `lab(73.0671% 21.3951 -34.7226)` — Angela's explicitly approved exact value. Site-wide scope: this is the one authoritative definition, consumed via `var(--lavender)` everywhere (Hero "YU", Selected Work lavender-accent projects, Case Final dark `--cf-accent-2`, and — once its own separate uncommitted hunk lands — Case/Selected Work light theme's shared accent). Never redefined per theme.
 - **Files/hunks included:** `app/globals.css` — only the `:root` token-definition hunk (value + its explanatory comment). Verified isolated: it's the only edit in that hunk, and `--lavender` has exactly one definition site in the file (no dark/light redefinition to split). Every other `globals.css` hunk (cursor rule, CTA hover color, `.mobile-menu` redesign, `.cf-accent`/`.cf-opening-title`/`.cf-marquee-scale` Case Final rules) was left unstaged — those are separate, Case-Final-scoped consumer decisions, not the token itself.

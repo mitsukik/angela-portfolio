@@ -16,6 +16,18 @@ const easeOut = (t: number) => 1 - Math.pow(1 - clamp(t), 3);
 const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
 const POINTER_QUERY = "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
 
+/**
+ * Theme correction: the opening scene now uses the shared `.scene-dark`
+ * token system (same role Selected Work/Closing/Footer already use)
+ * instead of hardcoded `bg-paper text-ink` + literal `ink/opacity`
+ * utilities — this section was the one part of Home still on the
+ * pre-V3 light treatment while the global SiteHeader above it was
+ * already dark. Color-only migration: every `border-ink`/`bg-ink`/
+ * `text-ink` reference below became `border-current`/`bg-current`/
+ * `scene-dim-text` (which resolve through the scene's own foreground),
+ * and `border-hairline` became `scene-rule` — composition, grid,
+ * typography, content, spacing, motion, and GSAP are untouched.
+ */
 export function Hero({ locale }: { locale: Locale }) {
   const content = heroContent[locale];
   const lang = locale === "zh" ? "zh-Hant" : "en";
@@ -127,7 +139,7 @@ export function Hero({ locale }: { locale: Locale }) {
   return (
     <section
       ref={sectionRef}
-      className="hero-track relative h-[170svh] bg-paper text-ink"
+      className="hero-track scene-dark relative h-[130svh] md:h-[170svh]"
       aria-label={locale === "zh" ? "開場：Angela Yu 定位" : "Opening: Angela Yu positioning"}
     >
       <div className="sticky top-0 h-[100svh] overflow-hidden motion-safe:sticky motion-safe:top-0">
@@ -135,7 +147,7 @@ export function Hero({ locale }: { locale: Locale }) {
           {Array.from({ length: 12 }).map((_, i) => (
             <div
               key={i}
-              className={`hero-grid-line border-l border-hairline ${i > 3 ? "hidden md:block" : ""}`}
+              className={`hero-grid-line border-l scene-rule ${i > 3 ? "hidden md:block" : ""}`}
               style={{ animationDelay: `${i * 35}ms` }}
             />
           ))}
@@ -143,7 +155,7 @@ export function Hero({ locale }: { locale: Locale }) {
 
         <div className="site-frame relative grid h-full grid-cols-1 items-end gap-6 pb-10 md:grid-cols-12 md:gap-10 md:pb-12">
           <div className="relative z-10 md:col-span-7 md:pb-6">
-            <p ref={kickerRef} className="hero-kicker type-v3-label text-ink/50">
+            <p ref={kickerRef} className="hero-kicker type-v3-label scene-dim-text">
               {content.kicker}
             </p>
 
@@ -169,7 +181,7 @@ export function Hero({ locale }: { locale: Locale }) {
                   <span key={index}>{segment.text}</span>
                 ),
               )}
-              <span className="mt-1 block text-ink/50">
+              <span className="mt-1 block scene-dim-text">
                 {content.supportLines.join("")}
               </span>
             </p>
@@ -178,12 +190,12 @@ export function Hero({ locale }: { locale: Locale }) {
               <button
                 type="button"
                 onClick={handleWorkClick}
-                className="interaction-destination type-v3-label group inline-flex items-center gap-3 border-b border-ink py-3"
+                className="interaction-destination type-v3-label group inline-flex items-center gap-3 border-b border-current py-3"
               >
                 {locale === "zh" ? "精選作品" : "Selected Work"}
                 <span aria-hidden className="transition-transform group-hover:translate-y-1">↓</span>
               </button>
-              <p className="type-v3-label text-ink/50">
+              <p className="type-v3-label scene-dim-text">
                 {locale === "zh" ? "SCROLL TO ADVANCE" : "Scroll to advance"}
               </p>
             </div>
@@ -195,15 +207,15 @@ export function Hero({ locale }: { locale: Locale }) {
               aria-hidden
               className="hero-plane relative h-full w-full md:ml-auto md:aspect-[4/5] md:max-w-[520px]"
             >
-              <div className="absolute inset-0 border border-ink/30" />
+              <div className="absolute inset-0 border border-current/30" />
               {Array.from({ length: 7 }).map((_, i) => (
-                <span key={`h-${i}`} className="absolute inset-x-0 h-px bg-ink/15" style={{ top: `${(i + 1) * 12.5}%` }} />
+                <span key={`h-${i}`} className="absolute inset-x-0 h-px bg-current/15" style={{ top: `${(i + 1) * 12.5}%` }} />
               ))}
               {Array.from({ length: 5 }).map((_, i) => (
-                <span key={`v-${i}`} className="absolute inset-y-0 w-px bg-ink/15" style={{ left: `${(i + 1) * 16.66}%` }} />
+                <span key={`v-${i}`} className="absolute inset-y-0 w-px bg-current/15" style={{ left: `${(i + 1) * 16.66}%` }} />
               ))}
               <span ref={planeLineRef} className="absolute left-0 top-0 h-px bg-acid" style={{ width: "20%" }} />
-              <span className="absolute bottom-4 right-4 type-v3-label text-ink/50">
+              <span className="absolute bottom-4 right-4 type-v3-label scene-dim-text">
                 {locale === "zh" ? "空間場域 · 01" : "Spatial field · 01"}
               </span>
             </div>

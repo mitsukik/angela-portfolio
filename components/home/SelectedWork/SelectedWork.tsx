@@ -38,9 +38,28 @@ export function SelectedWork({ locale }: { locale: Locale }) {
         style={{ height: compact ? `${projects.length * 100 + 40}svh` : `${projects.length * 130 + 55}vh` }}
       >
         <div className={`sticky top-0 h-[100svh] overflow-hidden ${stageTone === "dark" ? "scene-dark" : "scene-light"}`}>
-          {projects.map((project, i) => (
-            <ProjectScene key={project.id} project={project} locale={locale} f={sceneP - i} still={still} compact={compact} />
-          ))}
+          {projects.map((project, i) => {
+            const isLast = i === projects.length - 1;
+            return (
+              <ProjectScene
+                key={project.id}
+                project={project}
+                locale={locale}
+                f={sceneP - i}
+                still={still}
+                compact={compact}
+                // Root cause of the "dead scroll" gap: every project shares
+                // the same exit animation, but the track's own 0.35-scene-
+                // unit tail (see SPAN above) gives the last project extra
+                // scroll after that exit would normally finish — so it was
+                // fully faded/clipped away well before the pin actually
+                // released, leaving bare background for the remainder. Only
+                // the last project skips its exit entirely and holds at its
+                // settled resting state through the tail (see ProjectScene).
+                holdExit={isLast}
+              />
+            );
+          })}
 
           {/* stage chrome */}
           <div
@@ -49,7 +68,9 @@ export function SelectedWork({ locale }: { locale: Locale }) {
             } bg-transparent`}
           >
             <div className="flex items-center justify-between border-b scene-rule pb-3">
-              <p className="type-v3-label scene-text">{locale === "zh" ? "精選作品" : "Selected Work"}</p>
+              {/* Round 14: always "SELECTED WORK" in both locales, per
+                  Angela's explicit correction — no longer 精選作品 on zh. */}
+              <p className="type-v3-label scene-text">SELECTED WORK</p>
               <div className="h-[1.1rem] overflow-hidden type-v3-label scene-dim-text" aria-label={`${active.number} / 04`}>
                 <div className="transition-transform duration-500" style={{ transform: `translateY(-${current * 1.1}rem)` }}>
                   {projects.map((project) => (

@@ -13,7 +13,34 @@ type Props = {
   f: number; // relative progress: 0 = arriving, 1 = fully gone
   still: boolean; // reduced motion
   compact: boolean; // mobile
+  // The track's own trailing "tail" (see SPAN in SelectedWork.tsx) gives
+  // the LAST project extra scroll after it would normally have exited, so
+  // the pin doesn't release the instant it's gone. Root cause of the
+  // "dead scroll" bug: exit is a *gradual* clip-path/opacity wind-down,
+  // designed to be masked by the next project's content filling in during
+  // the same window — for every other project that's true, but the last
+  // project has no next project, so the same gradual exit just visibly
+  // shrinks/crops the content away against a static, otherwise-empty
+  // background for however long the window lasts. Retiming the window
+  // (tried first) doesn't fix that — it only moves the empty gap later.
+  // Skipping exit entirely is the actual fix: the last project holds at
+  // its fully-settled resting state for the whole tail, and the handoff
+  // to Closing happens via the ordinary sticky-release + native scroll
+  // once the pin ends, not via this scroll-driven exit animation.
+  holdExit?: boolean;
 };
+
+// Scroll-rhythm fix (index-scroll-rhythm-v1): mobile gets a wider
+// enter/exit window than desktop — not a naive isMobile * factor of the
+// desktop numbers, but its own deliberately larger overlap so the
+// incoming/outgoing crossfade has more physical scroll distance to
+// resolve across on a fast mobile flick, reading as a continuous wipe
+// rather than a snap. Desktop values are unchanged from the original
+// Lovable "VER B" port.
+const ENTER_WINDOW = { desktop: [-0.22, 0.16] as const, mobile: [-0.3, 0.22] as const };
+const EXIT_START = 0.78;
+const EXIT_END = 1.02;
+const LIVE_BUFFER = 0.04;
 
 /**
  * One project's resolved presentation state inside the shared pinned
@@ -22,13 +49,14 @@ type Props = {
  * clip-path wipe axis (project 03 is the one horizontal wipe among four
  * otherwise-vertical ones), same bespoke per-project media transform.
  */
-export function ProjectScene({ project, locale, f, still, compact }: Props) {
+export function ProjectScene({ project, locale, f, still, compact, holdExit }: Props) {
   const depth = compact ? 0.55 : 1;
-  const enter = easeOut(mapRange(f, -0.22, 0.16));
-  const exit = easeOut(mapRange(f, 0.78, 1.02));
-  const live = f > -0.32 && f < 1.06;
+  const [enterStart, enterEnd] = compact ? ENTER_WINDOW.mobile : ENTER_WINDOW.desktop;
+  const enter = easeOut(mapRange(f, enterStart, enterEnd));
+  const exit = holdExit ? 0 : easeOut(mapRange(f, EXIT_START, EXIT_END));
+  const live = holdExit ? f > enterStart - 0.1 : f > enterStart - 0.1 && f < EXIT_END + LIVE_BUFFER;
 
-  const opacity = still ? (f >= -0.05 && f < 0.95 ? 1 : 0) : clamp(enter * (1 - exit) * 2.4);
+  const opacity = still ? (f >= -0.05 && (holdExit || f < 0.95) ? 1 : 0) : clamp(enter * (1 - exit) * 2.4);
 
   const wrapStyle: React.CSSProperties = still
     ? { opacity }
@@ -78,12 +106,21 @@ export function ProjectScene({ project, locale, f, still, compact }: Props) {
     </dl>
   );
 
+  // Round 14: the subtitle now shares the Case Opening/Section Label's
+  // exact design-system role ("NN — Title", one accent-colored run) —
+  // reusing .cf-section-label directly (it holds no .case-final-scoped
+  // variable, just a literal font-size/letter-spacing override, so it's
+  // already safe to use outside Case) combined with the site's own
+  // type-v3-label (family/transform) and the existing per-project
+  // text-acid/text-lavender utility for color, rather than a duplicated
+  // .selected-work-subtitle rule. Previously: a separate number + short
+  // accent-bg rule + dimmed category, three visually distinct pieces —
+  // not the same role Case uses. The rule/bar element is gone; Case's
+  // own section label has no equivalent line, just the text run.
   const Head = (
     <div style={lift(0)}>
-      <p className="type-v3-label flex items-center gap-3">
-        <span className={accentText}>{project.number}</span>
-        <span aria-hidden className={`h-px w-10 ${accentBg}`} />
-        <span className="scene-dim-text">{project.category[locale]}</span>
+      <p className={`type-v3-label cf-section-label whitespace-nowrap ${accentText}`}>
+        {project.number} — {project.category[locale]}
       </p>
       <h3 className="type-v3-section-heading mt-4">
         <span lang="zh-Hant">
@@ -106,8 +143,14 @@ export function ProjectScene({ project, locale, f, still, compact }: Props) {
           Closing contact rows — visible at rest (not only on hover/whole-
           card click), so it reads unambiguously as this scene's entry
           point into the Case Study rather than blending into body copy. */}
+      {/* Round 9 routing correction: points into the numbered Case Final
+          prototype sequence (case-final-01..04) rather than the
+          production /work/[slug] route, so Home's own "查看案例" entry
+          point actually reaches the reviewable prototype experience.
+          Round 11: locale-prefixed (same /en convention as Home/About)
+          so English Home opens the English Case, not the Chinese one. */}
       <Link
-        href={`/work/${project.slug}`}
+        href={locale === "zh" ? `/design-samples/case-final-${project.number}` : `/en/design-samples/case-final-${project.number}`}
         className="interaction-destination group inline-flex items-center gap-3 border-b border-current/50 pb-2 type-v3-label"
       >
         {locale === "zh" ? "查看案例" : "VIEW CASE STUDY"}

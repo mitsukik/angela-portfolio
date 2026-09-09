@@ -212,7 +212,7 @@ export function CaseStudyPrototype({
                 data-open-summary
                 className={`cf-body body-tc mt-6 max-w-[56ch] ${isCaseOneV2 ? "text-[17px] md:text-[18px]" : ""}`}
               >
-                {isCaseOneV2 ? "將台灣供應商、越南倉儲、代理公司、直播主與消費者串連在同一套商業流程中，建立從跨境入庫、共享庫存、選品銷售到訂單履約的完整 Web Experience。" : caseStudy.summary}
+                {isCaseOneV2 ? "將台灣供應商、越南倉儲、代理公司、直播主與消費者串連在同一套商業流程中，建立從跨境入庫、共享庫存、選品銷售到訂單履約的完整產品體驗。" : caseStudy.summary}
               </p>
             </div>
 

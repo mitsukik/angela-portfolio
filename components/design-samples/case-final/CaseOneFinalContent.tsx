@@ -89,7 +89,7 @@ export function CaseOneFinalContent({ register }: { register: RegisterSection })
   return (
     <EvidenceMotion><>
       <Section index={0} register={register} divider={false}>
-        <ReadingSection label="02 — PROJECT OVERVIEW" title="從台灣商品到越南消費者的跨境銷售平台" paragraphs={["以越南市場為核心的跨境寄賣與直播電商平台。台灣供應商將商品運往越南，由當地平台／倉庫點貨入庫，再提供 Agent 與 Streamer 從共享庫存選品銷售。消費者透過平台或直播主 Storefront 購買，由越南倉庫負責履約與售後。"]} points={["Supplier", "Warehouse / Platform", "Agent", "Streamer", "Consumer"]} />
+        <ReadingSection label="02 — PROJECT OVERVIEW" title="從台灣商品到越南消費者的跨境銷售平台" paragraphs={["以越南市場為核心的跨境寄賣與直播電商平台。台灣供應商將商品運往越南，由當地平台／倉庫點貨入庫，再提供 Agent（代理商）與 Streamer（直播主）從共享庫存中選品銷售。消費者透過平台或直播主的 Storefront 購買，由越南倉庫負責履約與售後。"]} points={["Supplier", "Warehouse / Platform", "Agent", "Streamer", "Consumer"]} />
       </Section>
 
       <Section index={1} register={register}>
@@ -100,18 +100,18 @@ export function CaseOneFinalContent({ register }: { register: RegisterSection })
       </Section>
 
       <Section index={2} register={register}>
-        <ReadingSection label="04 — CHALLENGE" title="設計的不是單一後台，而是一套彼此相依的商業系統" paragraphs={[]} points={["01 多角色協作｜同一份商業資料，需要依角色提供不同的資訊與操作權限。", "02 實體 × 數位庫存｜線上商品狀態必須反映越南倉庫真正收到與確認的實體商品。", "03 彼此連動的商業規則｜庫存、價格、Campaign、訂單與售後並不是彼此獨立的功能。"]} supporting="如何將跨境實體商品、共享庫存與多角色銷售流程，整合成一套可操作的 Web System？" />
+        <ReadingSection label="04 — CHALLENGE" title="設計的不是單一後台，而是一套彼此相依的商業系統" paragraphs={[]} points={["01 多角色協作｜同一套商品、庫存與訂單資料，需要依不同角色提供對應的資訊與操作權限。", "02 實體 × 數位庫存｜線上商品狀態必須反映越南倉庫真正收到與確認的實體商品。", "03 彼此連動的商業規則｜庫存、價格、Campaign、訂單與售後並不是彼此獨立的功能。"]} supporting="如何將跨境實體商品、共享庫存與多角色銷售流程，整合成一套可操作的 Web System？" />
       </Section>
 
       <Section index={3} register={register}>
-        <ReadingSection label="05 — MY ROLE" title="Lead Product Designer" paragraphs={["我主導產品從早期需求梳理到開發落地的 UX/UI Design，負責建立整體 Product Architecture、核心 Workflow、Interaction 與設計方向。", "專案初期許多實際流程、System States、Validation 與 Edge Cases 尚未完整定義，因此我的工作不只是把需求畫成畫面，而是需要補足產品操作邏輯，再與工程團隊確認並落實。"]} points={["Product Architecture", "System Thinking", "UX Flow", "Interaction Design", "State Design", "UI Design", "Developer Handoff"]} />
+        <ReadingSection label="05 — MY ROLE" title="Lead Product Designer" paragraphs={["我主導產品從早期需求梳理到開發落地的 UX/UI 設計，負責建立整體產品架構、核心流程、互動邏輯與設計方向。", "專案初期許多實際流程、系統狀態、驗證條件與 Edge Cases 尚未完整定義，因此我的工作不只是把需求轉成畫面，也需要整理未明確的操作邏輯與情境，再與工程團隊確認後落實到產品中。"]} points={["Product Architecture", "System Thinking", "UX Flow", "Interaction Design", "State Design", "UI Design", "Developer Handoff"]} />
       </Section>
 
       <Section index={4} register={register}>
         <ReadingSection
           label="06 — KEY DESIGN DECISION 01"
           title="建立多角色協作的產品模型"
-          paragraphs={["Supplier、Platform / Warehouse、Agent、Streamer 與 Consumer 使用同一套 Product / Inventory / Order data，但不同角色擁有不同的資訊與操作權限。", "Supplier 可以查看商品表現、庫存與 Streamer 合作狀態；實體庫存的啟用與異動則由越南 Platform / Warehouse 控制，因為商品必須先完成實際驗收。"]}
+          paragraphs={["Supplier、Platform / Warehouse、Agent、Streamer 與 Consumer 使用同一套 Product / Inventory / Order 資料，但不同角色擁有不同的資訊與操作權限。", "Supplier 可以查看商品表現、庫存與 Streamer 合作狀態；實體庫存的啟用與異動則由越南 Platform / Warehouse 控制，因為商品必須先完成實際驗收。"]}
           media={<DecisionMedia principle="Shared system. Role-specific responsibilities.">
             <TopCropEvidence src="/images/case01/evidence/case01-streamer-list.png" alt="直播主名單，呈現搜尋、直播時段、專長與合作狀態等營運資訊" caption="FIG. 02 — Streamer List · Discovery, status and collaboration context" />
             <TopCropEvidence src="/images/case01/evidence/case01-streamer-filter.png" alt="直播主名單的展開篩選狀態，呈現多條件篩選與名單內容的關係" caption="FIG. 03 — Expanded Streamer Filter · Multi-filter decision support" className="lg:ml-auto lg:w-4/5" />
@@ -124,7 +124,7 @@ export function CaseOneFinalContent({ register }: { register: RegisterSection })
         <ReadingSection
           label="07 — KEY DESIGN DECISION 02"
           title="連結實體庫存與數位商品狀態"
-          paragraphs={["商品經實際到貨、倉庫驗收與 Scan 後才成為 Active，並進入 Shared Inventory。系統也需要表達 In Stock、Low Stock、Sold Out、Oversold、Pre-order、Expected Arrival 與 Restock。"]}
+          paragraphs={["商品經實際到貨、倉庫驗收與 Scan 後，才會成為 Active 狀態並進入 Shared Inventory。系統也需要表達 In Stock、Low Stock、Sold Out、Oversold、Pre-order、Expected Arrival 與 Restock。"]}
           media={<DecisionMedia principle="Inventory is not just a number — it is a changing system state.">
             <FlowEvidence src="/images/case01/case01_ISF_chi01.png" alt="庫存狀態流程，呈現實體到貨、驗收、數位庫存與消費端影響" caption="FIG. 04 — Inventory Status Flow" />
             <Evidence src="/images/case01/case01_inventory_showcase_sample.png" alt="共享庫存後台介面，包含商品列表、庫存狀態與篩選" caption="FIG. 05 — Shared Inventory UI" />
@@ -165,7 +165,7 @@ export function CaseOneFinalContent({ register }: { register: RegisterSection })
         <ReadingSection
           label="09 — KEY DESIGN DECISION 04"
           title="設計 Happy Path 之外的系統狀態"
-          paragraphs={["當共享庫存在 Consumer Checkout 過程中改變，介面必須說明發生了什麼、為什麼不能繼續，以及使用者下一步可以做什麼。"]}
+          paragraphs={["當 Consumer Checkout 過程中的共享庫存發生變化，介面必須說明發生了什麼、為什麼不能繼續，以及使用者下一步可以做什麼。"]}
           media={<DecisionMedia principle="Backend / system state → consumer impact.">
             <Evidence src="/images/case01/case01_BE_chi01.png" alt="後台庫存狀態如何影響消費者結帳流程" caption="FIG. 07 — How Backend State Impacts the Consumer Experience" />
             <Sequence items={[["What happened?", "商品庫存已在 Checkout 過程中改變。"], ["Why can’t I continue?", "目前訂單內容已不再有效。"], ["What next?", "更新 Cart 後重新確認可購買商品。"]]} />
@@ -192,11 +192,11 @@ export function CaseOneFinalContent({ register }: { register: RegisterSection })
       </Section>
 
       <Section index={9} register={register}>
-        <ReadingSection label="11 — OUTCOME" title="從模糊需求建立到完整產品開發" paragraphs={["完成平台營運、Supplier、Agent 與 Consumer Web Storefront 的核心產品設計，並與工程團隊協作完成開發。", "產品後續因公司商業策略調整，未正式進入商業營運。"]} />
+        <ReadingSection label="11 — OUTCOME" title="從模糊需求建立到完整產品開發" paragraphs={["完成平台營運、Supplier、Agent 與 Consumer Web Storefront 的核心產品設計，並與工程團隊協作完成主要功能的開發落地。", "產品後續因公司商業策略調整，未正式進入商業營運。"]} />
       </Section>
 
       <Section index={10} register={register}>
-        <ReadingSection label="12 — LEARNINGS" title="複雜系統設計的核心，是讓關係變得可以理解" paragraphs={["在進入畫面設計之前，我會先確認角色、System State、Business Rules，以及每個操作會對其他角色與流程造成什麼影響。"]} supporting="好的複雜系統設計，不是隱藏複雜性，而是讓使用者清楚知道自己在哪裡、能做什麼，以及接下來會發生什麼。" />
+        <ReadingSection label="12 — LEARNINGS" title="複雜系統設計的核心，是讓關係變得可以理解" paragraphs={["在進入畫面設計之前，我會先確認角色、系統狀態、Business Rules，以及每個操作會如何影響其他角色與流程。"]} supporting="好的複雜系統設計，不是隱藏複雜性，而是讓使用者清楚知道自己在哪裡、能做什麼，以及接下來會發生什麼。" />
       </Section>
     </></EvidenceMotion>
   );

@@ -137,7 +137,7 @@ export function CaseOneFinalContent({ register }: { register: RegisterSection })
         <ReadingSection
           label="08 — KEY DESIGN DECISION 03"
           title="在彈性定價與商業規則之間取得平衡"
-          paragraphs={["Streamer 可以自行選擇銷售價格，但 Selling Price 必須大於或等於系統設定的 Suggested / Minimum Price。介面需要同時提供彈性、限制與即時驗證。"]}
+          paragraphs={["Streamer 可以自行選擇銷售價格，但 Selling Price 必須符合系統設定的建議售價（SRP）與價格區間限制。介面需要同時提供彈性、限制與即時驗證。"]}
           media={<DecisionMedia principle="Give users flexibility without breaking the business model.">
             <Evidence src="/images/case01/case01_PRL_chi01.png" alt="已移除敏感參數的定價與收益邏輯圖" caption="FIG. 06 — Pricing & Revenue Logic · Sanitized" />
             <div className="lg:grid lg:grid-cols-12 lg:items-start lg:gap-8">

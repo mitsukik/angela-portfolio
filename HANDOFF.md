@@ -2,11 +2,48 @@
 
 - Branch: `fix/case01-decision-03-pricing`.
 - Foundation tag: `v3-design-system-foundation`.
-- Current task: none. CASE02 Phase 2 real evidence replacement is implementation-complete and validated below. CASE01 ZH Copy Proofread remains implementation-complete and checkpointed.
-- Review routes: `/design-samples/case-final-01` (CASE01, this checkpoint), `/design-samples/case-final-02` (CASE02, no commit yet).
+- Current task: none. **CASE01 ZH is FROZEN** (below) — responsive QA, real evidence replacement, copy proofread, and Decision 03 terminology alignment are all complete and checkpointed. No further Chinese CASE01 changes are planned unless a specific audit issue is found. CASE02 Phase 2 real evidence replacement is also implementation-complete and committed (`d2f0e5c`).
+- Review routes: `/design-samples/case-final-01` (CASE01, frozen), `/design-samples/case-final-02` (CASE02, committed).
 - **Continuity note:** this file was fully rewritten (not appended) by the session that did the CASE02 work, which dropped the prior history chain that used to live here (Homepage Visual Polish V3/V3.1/V3.2, the Lavender token checkpoint, About V2, CASE01 Responsive QA, CASE01 Decision 03 pricing evidence). That history isn't reconstructed here — git log and each topic branch (`fix/homepage-hero-balance-v3-2`, `fix/case01-decision-03-pricing`, etc.) remain the authoritative record per AGENTS.md's "if documentation conflicts with Git, investigate and report" rule. Flagged for Angela; not reverted.
 
-# LATEST COMPLETION — CASE01 ZH COPY PROOFREAD IMPLEMENTATION
+# LATEST COMPLETION — CASE01 ZH FROZEN
+
+CASE01 Chinese is frozen. This closes out the sequence of CASE01 ZH passes on this branch: Responsive QA & Final Freeze (`f15026c`, prior branch) → Decision 03 pricing evidence (`dde3182`) → copy proofread (`cde9249`) → this terminology correction. Do not resume polishing this route without a specific issue from a fresh audit.
+
+## This pass: Decision 03 terminology correction
+
+Replaced the one inaccurate phrase found during the terminology review: the body copy asserted a named "Minimum Price" field that isn't evidenced anywhere in the real UI (confirmed via exhaustive OCR across both full source screens, not just the cropped evidence). Replaced with wording that only asserts what's actually shown — "Suggested Retail Price (SRP)" (evidenced, consistent across both source screens) plus a general "price-range constraint" (matching the evidenced "價格浮動"/Price Float range mechanism, without inventing a specific field name or exposing redacted values).
+
+- **Before:** "...但 Selling Price 必須大於或等於系統設定的 Suggested / Minimum Price。..."
+- **After:** "...但 Selling Price 必須符合系統設定的建議售價（SRP）與價格區間限制。..."
+- FIG.06a alt text and caption, FIG.06b, evidence images, sanitized values, section order — all unchanged.
+
+## Freeze checklist
+
+- ✅ Responsive QA passed (Large Desktop 1920 / 1440 / Tablet 820 / Mobile 390) — hero hierarchy, body readability, no wrap regression, no heading collision, no clipped metadata, no horizontal overflow, no layout jumps.
+- ✅ Real evidence replacement complete (Decision 03 pricing placeholder → sanitized real UI, `dde3182`).
+- ✅ Copy proofread complete (10 approved edits, `cde9249`).
+- ✅ Decision 03 terminology aligned to evidenced UI (this pass).
+- ✅ Decision 03 evidence remains correctly paired (all 15 figcaptions verified present/unchanged at every breakpoint); primary/secondary pricing composition (FIG.06a ~67% / FIG.06b ~33%) intact.
+- ✅ Wide evidence (Pricing Adjustment Record table, Order Management, etc.) still uses intentional inner horizontal scroll on mobile, not page-level shrink or overflow.
+- ✅ Footer/Closing reveals correctly (mobile + desktop).
+- ✅ Motion unchanged — still subtle/non-essential; `prefers-reduced-motion` verified clean.
+- ✅ English CASE01 untouched — `/en/design-samples/case-final-01` still renders default/dormant content, not `case01-v2`.
+
+## Validation
+
+- `tsc --noEmit`, `eslint`, `git diff --check`, `npm run build`: all clean, 26 routes.
+- Live-browser regression (Playwright/Chromium) at 1920×1080, 1440×900, 820×1180, 390×844, both `/design-samples/case-final-01` and `/en/design-samples/case-final-01`: new sentence present at every breakpoint, old "Suggested / Minimum Price" phrase absent, all 15 captions present and correctly paired, zero horizontal overflow, zero console errors.
+- Footer reveal and `prefers-reduced-motion` re-verified clean.
+
+## Files
+
+- `components/design-samples/case-final/CaseOneFinalContent.tsx` — one sentence (Decision 03 body copy).
+- `HANDOFF.md` — this section.
+
+---
+
+# PRIOR COMPLETION (unrelated, still valid) — CASE01 ZH COPY PROOFREAD IMPLEMENTATION
 
 Implemented the 10 approved copy edits from the CASE01 ZH proofread pass — wording/clarity refinements only. Structure, section order, evidence, screenshots, layout, and Decision 03's `Suggested / Minimum Price / SRP` terminology were explicitly left untouched, per the brief.
 

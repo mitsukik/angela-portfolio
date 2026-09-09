@@ -2,7 +2,7 @@
 
 - Branch: `fix/case01-decision-03-pricing`.
 - Foundation tag: `v3-design-system-foundation`.
-- Current task: none. CASE01 ZH Copy Proofread (below) is implementation-complete, validated, and checkpointed. CASE02 Chinese review prototype implementation (also below) is complete and still awaiting Angela's visual review — untouched by this pass, remains uncommitted.
+- Current task: none. CASE02 Phase 2 real evidence replacement is implementation-complete and validated below. CASE01 ZH Copy Proofread remains implementation-complete and checkpointed.
 - Review routes: `/design-samples/case-final-01` (CASE01, this checkpoint), `/design-samples/case-final-02` (CASE02, no commit yet).
 - **Continuity note:** this file was fully rewritten (not appended) by the session that did the CASE02 work, which dropped the prior history chain that used to live here (Homepage Visual Polish V3/V3.1/V3.2, the Lavender token checkpoint, About V2, CASE01 Responsive QA, CASE01 Decision 03 pricing evidence). That history isn't reconstructed here — git log and each topic branch (`fix/homepage-hero-balance-v3-2`, `fix/case01-decision-03-pricing`, etc.) remain the authoritative record per AGENTS.md's "if documentation conflicts with Git, investigate and report" rule. Flagged for Angela; not reverted.
 
@@ -43,6 +43,45 @@ Implemented the 10 approved copy edits from the CASE01 ZH proofread pass — wor
 - `HANDOFF.md` — this section.
 
 ---
+
+# LATEST COMPLETION — CASE02 PHASE 2 REAL EVIDENCE REPLACEMENT
+
+Replaced CASE02's 12 explicit evidence placeholders with real website captures from the verified SDX, Charming Clinic, and NATEX project sources. The approved information architecture, section order, ownership boundaries, light editorial presentation, and no-motion constraint remain intact. Added a bounded three-project evidence composition to the existing CASE02 opening so the page identifies all projects visually without turning the hero into a gallery.
+
+## Evidence placed
+
+- SDX: homepage, services structure, and business-context evidence; desktop/mobile homepage pair.
+- Charming Clinic: homepage, service discovery, booking/contact evidence; desktop/mobile homepage pair.
+- NATEX: services, solution detail, credentials, partners, inquiry evidence; desktop/mobile homepage pair.
+- All local evidence is stored as compressed WebP under `public/images/case02/evidence/` and is sourced from the live project URLs recorded in the Phase 2 work log.
+
+## Validation
+
+- `npx tsc --noEmit`: pass.
+- `npm run lint`: pass.
+- `git diff --check`: pass.
+- `npx next build --webpack`: pass, 26 routes.
+- Browser QA was performed on the CASE02 route at desktop and 390px narrow width: opening composition, SDX, Charming, NATEX, responsive evidence, no placeholder text, no page overflow, and mobile table containment were checked visually. The live browser automation session later expired due platform usage limits; the final local WebP load path was therefore additionally hardened with `unoptimized` and verified by the successful webpack build.
+- No motion was added.
+
+## Files
+
+- `components/design-samples/case-final/CaseTwoFinalContent.tsx` — evidence compositions, real image references, concise captions/copy, responsive pairs, and opening composition export.
+- `components/design-samples/case-final/CaseStudyPrototype.tsx` — renders the CASE02-only opening evidence composition.
+- `public/images/case02/evidence/` — real source captures, compressed to WebP for local presentation.
+- `HANDOFF.md` — current operational state.
+
+## Protected / untouched in this pass
+
+- Cases 01, 03–04 content and evidence.
+- English CASE02 route.
+- Production `/work/[slug]` routes.
+- Home, About, Selected Work, SiteHeader, Footer, global design tokens, and existing motion systems.
+- No Design Director preferences or permanent DNA rules were updated.
+
+## Known issue / next action
+
+- The captured evidence is from the verified live project URLs, not a direct Figma export. The linked Figma MCP metadata call was unavailable in this session, so no Figma-only artifact was substituted. Angela should review evidence authenticity, crop choices, readability at normal zoom, and whether the live-source captures match the intended project snapshots before any motion pass.
 
 # PRIOR COMPLETION (unrelated, still valid, uncommitted) — CASE02 IMPLEMENTATION V1
 

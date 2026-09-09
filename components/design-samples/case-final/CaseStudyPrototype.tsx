@@ -17,6 +17,7 @@ import { SectionMarquee } from "./SectionMarquee";
 import { CaseTransitionLink } from "./CaseTransitionLink";
 import { getDecisionFigure, getOverviewFigure, getShowcaseFigure } from "./caseFinalMedia";
 import { CaseOneFinalContent } from "./CaseOneFinalContent";
+import { CaseTwoFinalContent, CaseTwoHeroEvidence } from "./CaseTwoFinalContent";
 
 /**
  * Section body copy is authored as either a pre-split string[] (Complex
@@ -84,7 +85,7 @@ export function CaseStudyPrototype({
   project: Project;
   nextProject: Project;
   locale: Locale;
-  contentVersion?: "default" | "case01-v2";
+  contentVersion?: "default" | "case01-v2" | "case02-v1";
 }) {
   // Round 11: the ONE place that makes this component locale-aware. Every
   // existing `caseStudy.xxx` reference below now automatically resolves
@@ -96,13 +97,20 @@ export function CaseStudyPrototype({
   // dedicated caseStudyEn — see data/projects.ts's placeholderSections).
   const caseStudy = locale === "en" ? (project.caseStudyEn ?? project.caseStudy) : project.caseStudy;
   const isCaseOneV2 = contentVersion === "case01-v2";
-  const displayTitle = isCaseOneV2 ? "複雜系統設計" : (caseStudy.displayTitle ?? project.title);
+  const isCaseTwoV1 = contentVersion === "case02-v1";
+  const displayTitle = isCaseOneV2
+    ? "複雜系統設計"
+    : isCaseTwoV1
+      ? "Brand & Web Experience"
+      : (caseStudy.displayTitle ?? project.title);
   const zhHant = locale === "zh";
   const openingRef = useRef<HTMLDivElement | null>(null);
-  const chapterCount = isCaseOneV2 ? 11 : CHAPTER_COUNT;
+  const chapterCount = isCaseOneV2 ? 11 : isCaseTwoV1 ? 7 : CHAPTER_COUNT;
   const chapters: Chapter[] = isCaseOneV2
     ? Array.from({ length: 11 }, (_, i) => ({ number: String(i + 2).padStart(2, "0") }))
-    : CHAPTERS;
+    : isCaseTwoV1
+      ? Array.from({ length: 7 }, (_, i) => ({ number: String(i + 2).padStart(2, "0") }))
+      : CHAPTERS;
   const { active, registerChapter } = useActiveChapter(chapterCount);
   const chapterSectionRefs = useRef<Array<HTMLElement | null>>([]);
 
@@ -153,16 +161,25 @@ export function CaseStudyPrototype({
   // metadata dict already defines (角色/平台/範疇/狀態 for this project).
   // No field is invented; a project without extra metadata just shows
   // fewer rows rather than fabricated ones.
-  const openingInfoRows = isCaseOneV2 ? [
-    { label: "角色", value: "Lead Product Designer" },
-    { label: "平台", value: "Web Platform" },
-    { label: "專長", value: "Complex Systems · B2B · Dashboard · Responsive Web" },
-    { label: "狀態", value: "Designed & Developed" },
-  ] : [
-    { label: zhHant ? "類別" : "Category", value: zhHant ? project.category.zh : project.category.en },
-    { label: zhHant ? "年份" : "Year", value: project.year },
-    ...Object.entries(caseStudy.metadata).map(([label, value]) => ({ label, value })),
-  ];
+  const openingInfoRows = isCaseOneV2
+    ? [
+        { label: "角色", value: "Lead Product Designer" },
+        { label: "平台", value: "Web Platform" },
+        { label: "專長", value: "Complex Systems · B2B · Dashboard · Responsive Web" },
+        { label: "狀態", value: "Designed & Developed" },
+      ]
+    : isCaseTwoV1
+      ? [
+          { label: "案例", value: "SDX · Charming Clinic · NATEX" },
+          { label: "策略", value: "Information Architecture" },
+          { label: "設計", value: "UX/UI Design · Brand Communication" },
+          { label: "交付", value: "Responsive Web" },
+        ]
+      : [
+          { label: zhHant ? "類別" : "Category", value: zhHant ? project.category.zh : project.category.en },
+          { label: zhHant ? "年份" : "Year", value: project.year },
+          ...Object.entries(caseStudy.metadata).map(([label, value]) => ({ label, value })),
+        ];
 
   return (
     <div className="min-h-screen">
@@ -193,13 +210,25 @@ export function CaseStudyPrototype({
           <div className="md:grid md:grid-cols-12 md:gap-10 lg:gap-16">
             <div className="md:col-span-7">
               <p data-open-eyebrow className="cf-meta cf-accent">
-                {isCaseOneV2 ? "01 / COMPLEX SYSTEM" : `${project.number} / ${caseStudy.eyebrowTitle ?? displayTitle}`}
+                {isCaseOneV2
+                  ? "01 / COMPLEX SYSTEM"
+                  : isCaseTwoV1
+                    ? "02 / BRAND & WEB EXPERIENCE"
+                    : `${project.number} / ${caseStudy.eyebrowTitle ?? displayTitle}`}
               </p>
               <h1 data-open-title className="cf-heading cf-opening-title mt-5">
                 {displayTitle}
               </h1>
               <p lang={zhHant ? "zh-Hant" : "en"} className="cf-dim mt-4 text-[1.05rem]">
-                <MixedText text={isCaseOneV2 ? "跨境寄賣與直播電商平台" : (caseStudy.projectName ?? (zhHant ? project.chineseTitle : project.title))} />
+                <MixedText
+                  text={
+                    isCaseOneV2
+                      ? "跨境寄賣與直播電商平台"
+                      : isCaseTwoV1
+                        ? "Shun De Xing · Charming Clinic · NATEX"
+                        : (caseStudy.projectName ?? (zhHant ? project.chineseTitle : project.title))
+                  }
+                />
               </p>
               {/* CASE01 responsive QA: the opening summary is the page's one
                   true lead paragraph — distinct from every other body-tc
@@ -212,7 +241,11 @@ export function CaseStudyPrototype({
                 data-open-summary
                 className={`cf-body body-tc mt-6 max-w-[56ch] ${isCaseOneV2 ? "text-[17px] md:text-[18px]" : ""}`}
               >
-                {isCaseOneV2 ? "將台灣供應商、越南倉儲、代理公司、直播主與消費者串連在同一套商業流程中，建立從跨境入庫、共享庫存、選品銷售到訂單履約的完整產品體驗。" : caseStudy.summary}
+                {isCaseOneV2
+                  ? "將台灣供應商、越南倉儲、代理公司、直播主與消費者串連在同一套商業流程中，建立從跨境入庫、共享庫存、選品銷售到訂單履約的完整產品體驗。"
+                  : isCaseTwoV1
+                    ? "Designing clear, credible digital experiences across corporate, healthcare, and technology brands."
+                    : caseStudy.summary}
               </p>
             </div>
 
@@ -227,6 +260,7 @@ export function CaseStudyPrototype({
               </dl>
             </div>
           </div>
+          {isCaseTwoV1 && <CaseTwoHeroEvidence />}
         </div>
 
         {/* pt matches cf-section-divider's own padding-top exactly (see
@@ -243,6 +277,13 @@ export function CaseStudyPrototype({
             <div>
               {isCaseOneV2 ? (
                 <CaseOneFinalContent
+                  register={(index, element) => {
+                    registerChapter(index)(element);
+                    chapterSectionRefs.current[index] = element;
+                  }}
+                />
+              ) : isCaseTwoV1 ? (
+                <CaseTwoFinalContent
                   register={(index, element) => {
                     registerChapter(index)(element);
                     chapterSectionRefs.current[index] = element;

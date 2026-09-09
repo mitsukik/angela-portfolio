@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { Locale } from "@/data/locale";
 import { projects } from "@/data/projects";
 import { clamp, useMedia } from "./motion";
@@ -22,6 +23,23 @@ export function SelectedWork({ locale }: { locale: Locale }) {
   const current = clamp(Math.floor(sceneP + 0.25), 0, projects.length - 1);
   const active = projects[current];
   const stageTone = active.stageBackground;
+
+  // `compact` (see useMedia) starts as a guessed `false` on first render —
+  // SSR has no viewport to check — and corrects once the client confirms
+  // it. The track's own height above keys off that value, so on an actual
+  // mobile load the document briefly has the taller desktop-formula
+  // height before shrinking to the compact one. Any ScrollTrigger created
+  // during that window (e.g. SiteFooter's Closing reveal, mounted right
+  // after this section) caches its start/end against the stale, taller
+  // layout and never recalculates on its own — a plain layout change from
+  // React state isn't a `resize` event, so ScrollTrigger's own
+  // auto-refresh doesn't see it (same class of staleness as the Lenis
+  // `resize()` call in SmoothScroll.tsx, just at mount instead of at
+  // navigation). Refreshing once `compact` settles recalculates every
+  // trigger on the page against the corrected geometry.
+  useEffect(() => {
+    ScrollTrigger.refresh();
+  }, [compact]);
 
   const goTo = (index: number) => {
     const el = trackRef.current;

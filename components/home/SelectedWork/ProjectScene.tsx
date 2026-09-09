@@ -178,12 +178,39 @@ export function ProjectScene({ project, locale, f, still, compact, holdExit }: P
   // 01-04 (text-left, media-left, text-left, media-left); stageVertical
   // is each project's own choreography and doesn't affect that rhythm.
   const textFirst = project.stageColumn === "text-left";
+  // Desktop keeps its existing top/bottom/middle vertical anchor inside a
+  // shared-height row (unchanged). Mobile has no such row to anchor
+  // within — each block stacks full-width — so "justify-center" there was
+  // never a deliberate reading of stageVertical, just what was left once
+  // nothing below `md` overrode it. `justify-start` is the coherent mobile
+  // reading: content begins at the top of whatever space its own row
+  // resolves to, the same way every other stacked mobile section reads.
   const verticalClass =
     project.stageVertical === "top"
-      ? "md:justify-start"
+      ? "justify-start md:justify-start"
       : project.stageVertical === "bottom"
-        ? "md:justify-end"
-        : "md:justify-center md:self-center";
+        ? "justify-start md:justify-end"
+        : "justify-start md:justify-center md:self-center";
+
+  // Mobile row split: the media row used to claim a fixed h-[32vh] share
+  // unconditionally, leaving the text row whatever remained (293.9px at
+  // 390x844) regardless of whether the text's actual content fit — with
+  // min-h-0 removing the grid's usual content-based floor, it didn't, and
+  // justify-center bled the overflow symmetrically into the stage-chrome
+  // above and the media row below (confirmed: project 01 heading/metadata,
+  // project 02 eyebrow, project 03 metadata). Explicit two-row templates,
+  // keyed to the same textFirst order the columns already use, invert
+  // that: the text row is `minmax(min-content, auto)` (grows to whatever
+  // its real content needs, never squeezed smaller), and the media row is
+  // `minmax(9rem, 1fr)` (keeps a guaranteed minimum presence but yields
+  // the rest of the budget to text) — so text is accommodated naturally
+  // and media only shrinks below its usual share when text genuinely
+  // needs the room, rather than the two silently overlapping. Cancelled
+  // at md: (`grid-rows-none`) so desktop's existing single shared-height
+  // row is untouched.
+  const rowsClass = textFirst
+    ? "grid-rows-[minmax(min-content,auto)_minmax(9rem,1fr)]"
+    : "grid-rows-[minmax(9rem,1fr)_minmax(min-content,auto)]";
 
   return (
     <article
@@ -192,9 +219,9 @@ export function ProjectScene({ project, locale, f, still, compact, holdExit }: P
       aria-hidden={!live || opacity < 0.4}
     >
       <div className="site-frame flex h-full flex-col overflow-hidden pb-36 pt-28 md:pb-32 md:pt-32">
-        <div className="grid h-full min-h-0 grid-cols-1 gap-6 md:grid-cols-12 md:gap-10">
+        <div className={`grid h-full min-h-0 grid-cols-1 gap-6 md:grid-cols-12 md:grid-rows-none md:gap-10 ${rowsClass}`}>
           <div
-            className={`flex min-h-0 flex-col justify-center gap-6 md:col-span-6 ${
+            className={`flex min-h-0 flex-col gap-6 md:col-span-6 ${
               textFirst ? "order-1 md:col-start-1" : "order-2 md:col-start-7"
             } ${verticalClass}`}
           >
@@ -205,7 +232,7 @@ export function ProjectScene({ project, locale, f, still, compact, holdExit }: P
             </div>
           </div>
           <div
-            className={`relative h-[32vh] md:col-span-6 md:h-full ${
+            className={`relative h-full md:col-span-6 md:h-full ${
               textFirst ? "order-2 md:col-start-7" : "order-1 md:col-start-1"
             } ${project.stageVertical === "middle" ? "md:h-[62vh] md:self-center" : ""}`}
           >

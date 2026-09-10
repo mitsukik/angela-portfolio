@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
+import type { Locale } from "@/data/locale";
 import { EvidenceMotion } from "./EvidenceMotion";
 import { FlowEvidence } from "./FlowEvidence";
 import { ReadingSection } from "./ReadingSection";
@@ -85,36 +86,110 @@ function DecisionMedia({ principle, children }: { principle: string; children: R
   return <div className="space-y-8">{children}<p className="border-t cf-rule pt-5"><span className="cf-heading text-[clamp(1rem,1.7vw,1.3rem)] font-medium">{principle}</span></p></div>;
 }
 
-export function CaseOneFinalContent({ register }: { register: RegisterSection }) {
+export function CaseOneFinalContent({ register, locale }: { register: RegisterSection; locale: Locale }) {
+  const zhHant = locale === "zh";
+
   return (
     <EvidenceMotion><>
       <Section index={0} register={register} divider={false}>
-        <ReadingSection label="02 — PROJECT OVERVIEW" title="從台灣商品到越南消費者的跨境銷售平台" paragraphs={["以越南市場為核心的跨境寄賣與直播電商平台。台灣供應商將商品運往越南，由當地平台／倉庫點貨入庫，再提供 Agent（代理商）與 Streamer（直播主）從共享庫存中選品銷售。消費者透過平台或直播主的 Storefront 購買，由越南倉庫負責履約與售後。"]} points={["Supplier", "Warehouse / Platform", "Agent", "Streamer", "Consumer"]} />
+        <ReadingSection
+          label="02 — PROJECT OVERVIEW"
+          title={zhHant ? "從台灣商品到越南消費者的跨境銷售平台" : "A Cross-Border Sales Platform Connecting Taiwanese Products with Vietnamese Consumers"}
+          paragraphs={[
+            zhHant
+              ? "以越南市場為核心的跨境寄賣與直播電商平台。台灣供應商將商品運往越南，由當地平台／倉庫點貨入庫，再提供 Agent（代理商）與 Streamer（直播主）從共享庫存中選品銷售。消費者透過平台或直播主的 Storefront 購買，由越南倉庫負責履約與售後。"
+              : "A cross-border consignment and live-commerce platform built around the Vietnamese market. Taiwanese Suppliers ship products to Vietnam, where the local Platform / Warehouse receives and verifies them. Agents and Streamers then select products from Shared Inventory to sell, while Consumers purchase through the Platform or a Streamer’s Storefront. The Vietnamese Warehouse handles fulfillment and after-sales support.",
+          ]}
+          points={["Supplier", "Warehouse / Platform", "Agent", "Streamer", "Consumer"]}
+        />
       </Section>
 
       <Section index={1} register={register}>
-        <EvidenceSection label="03 — SYSTEM / ECOSYSTEM" title="一套從實體入庫延伸到消費者履約的系統">
-          <FlowEvidence src="/images/case01/case01_CE_chi01.png" alt="跨境直播電商生態系統，呈現供應、銷售與消費端的角色及流程" caption="FIG. 01 — Cross-border Live Commerce Ecosystem" />
+        <EvidenceSection
+          label="03 — SYSTEM / ECOSYSTEM"
+          title={zhHant ? "一套從實體入庫延伸到消費者履約的系統" : "One System, from Physical Receiving to Consumer Fulfillment"}
+        >
+          <FlowEvidence
+            src="/images/case01/case01_CE_chi01.png"
+            alt={zhHant ? "跨境直播電商生態系統，呈現供應、銷售與消費端的角色及流程" : "Cross-border live commerce ecosystem diagram, showing the roles and flow across supply, sales, and consumer touchpoints"}
+            caption={zhHant ? "FIG. 01 — Cross-border Live Commerce Ecosystem" : "FIG. 01 — Cross-Border Live Commerce Ecosystem"}
+          />
           <p className="cf-body body-tc mt-8 max-w-[70ch] border-t cf-rule pt-6">Supplier → Cross-border Shipping → Vietnam Warehouse → Inspect / Scan → Active Product → Shared Inventory → Agent / Streamer → Campaign / Storefront → Consumer → Order → Fulfillment</p>
         </EvidenceSection>
       </Section>
 
       <Section index={2} register={register}>
-        <ReadingSection label="04 — CHALLENGE" title="設計的不是單一後台，而是一套彼此相依的商業系統" paragraphs={[]} points={["01 多角色協作｜同一套商品、庫存與訂單資料，需要依不同角色提供對應的資訊與操作權限。", "02 實體 × 數位庫存｜線上商品狀態必須反映越南倉庫真正收到與確認的實體商品。", "03 彼此連動的商業規則｜庫存、價格、Campaign、訂單與售後並不是彼此獨立的功能。"]} supporting="如何將跨境實體商品、共享庫存與多角色銷售流程，整合成一套可操作的 Web System？" />
+        <ReadingSection
+          label="04 — CHALLENGE"
+          title={zhHant ? "設計的不是單一後台，而是一套彼此相依的商業系統" : "Designing an Interdependent Business System—not a Standalone Backend"}
+          paragraphs={[]}
+          points={
+            zhHant
+              ? [
+                  "01 多角色協作｜同一套商品、庫存與訂單資料，需要依不同角色提供對應的資訊與操作權限。",
+                  "02 實體 × 數位庫存｜線上商品狀態必須反映越南倉庫真正收到與確認的實體商品。",
+                  "03 彼此連動的商業規則｜庫存、價格、Campaign、訂單與售後並不是彼此獨立的功能。",
+                ]
+              : [
+                  "01 Multi-role collaboration｜The same Product, Inventory, and Order data must support different information needs and permissions for each role.",
+                  "02 Physical × digital Inventory｜Online Product states must reflect the physical goods actually received and verified by the Vietnamese Warehouse.",
+                  "03 Interdependent business rules｜Inventory, Pricing, Campaigns, Orders, and after-sales workflows do not operate independently.",
+                ]
+          }
+          supporting={
+            zhHant
+              ? "如何將跨境實體商品、共享庫存與多角色銷售流程，整合成一套可操作的 Web System？"
+              : "How might we bring cross-border physical goods, Shared Inventory, and multi-role sales workflows into one operable Web System?"
+          }
+        />
       </Section>
 
       <Section index={3} register={register}>
-        <ReadingSection label="05 — MY ROLE" title="Lead Product Designer" paragraphs={["我主導產品從早期需求梳理到開發落地的 UX/UI 設計，負責建立整體產品架構、核心流程、互動邏輯與設計方向。", "專案初期許多實際流程、系統狀態、驗證條件與 Edge Cases 尚未完整定義，因此我的工作不只是把需求轉成畫面，也需要整理未明確的操作邏輯與情境，再與工程團隊確認後落實到產品中。"]} points={["Product Architecture", "System Thinking", "UX Flow", "Interaction Design", "State Design", "UI Design", "Developer Handoff"]} />
+        <ReadingSection
+          label="05 — MY ROLE"
+          title="Lead Product Designer"
+          paragraphs={
+            zhHant
+              ? [
+                  "我主導產品從早期需求梳理到開發落地的 UX/UI 設計，負責建立整體產品架構、核心流程、互動邏輯與設計方向。",
+                  "專案初期許多實際流程、系統狀態、驗證條件與 Edge Cases 尚未完整定義，因此我的工作不只是把需求轉成畫面，也需要整理未明確的操作邏輯與情境，再與工程團隊確認後落實到產品中。",
+                ]
+              : [
+                  "I led UX/UI design from early requirements clarification through implementation, establishing the Product Architecture, core workflows, interaction logic, and overall design direction.",
+                  "Early in the project, many operational workflows, system states, validation conditions, and Edge Cases were still undefined. My role extended beyond translating requirements into screens: I clarified unresolved interactions and scenarios, then aligned the resulting decisions with engineering before carrying them into the product.",
+                ]
+          }
+          points={["Product Architecture", "System Thinking", "UX Flow", "Interaction Design", "State Design", "UI Design", "Developer Handoff"]}
+        />
       </Section>
 
       <Section index={4} register={register}>
         <ReadingSection
           label="06 — KEY DESIGN DECISION 01"
-          title="建立多角色協作的產品模型"
-          paragraphs={["Supplier、Platform / Warehouse、Agent、Streamer 與 Consumer 使用同一套 Product / Inventory / Order 資料，但不同角色擁有不同的資訊與操作權限。", "Supplier 可以查看商品表現、庫存與 Streamer 合作狀態；實體庫存的啟用與異動則由越南 Platform / Warehouse 控制，因為商品必須先完成實際驗收。"]}
+          title={zhHant ? "建立多角色協作的產品模型" : "Building a Product Model for Multi-Role Collaboration"}
+          paragraphs={
+            zhHant
+              ? [
+                  "Supplier、Platform / Warehouse、Agent、Streamer 與 Consumer 使用同一套 Product / Inventory / Order 資料，但不同角色擁有不同的資訊與操作權限。",
+                  "Supplier 可以查看商品表現、庫存與 Streamer 合作狀態；實體庫存的啟用與異動則由越南 Platform / Warehouse 控制，因為商品必須先完成實際驗收。",
+                ]
+              : [
+                  "Supplier, Platform / Warehouse, Agent, Streamer, and Consumer all work with the same Product, Inventory, and Order data, but each role has different responsibilities, permissions, and information needs.",
+                  "Suppliers can review product performance, Inventory, and Streamer collaboration status. Product activation and physical Inventory changes remain under the control of the Vietnamese Platform / Warehouse because products must first pass physical verification.",
+                ]
+          }
           media={<DecisionMedia principle="Shared system. Role-specific responsibilities.">
-            <TopCropEvidence src="/images/case01/evidence/case01-streamer-list.png" alt="直播主名單，呈現搜尋、直播時段、專長與合作狀態等營運資訊" caption="FIG. 02 — Streamer List · Discovery, status and collaboration context" />
-            <TopCropEvidence src="/images/case01/evidence/case01-streamer-filter.png" alt="直播主名單的展開篩選狀態，呈現多條件篩選與名單內容的關係" caption="FIG. 03 — Expanded Streamer Filter · Multi-filter decision support" className="lg:ml-auto lg:w-4/5" />
+            <TopCropEvidence
+              src="/images/case01/evidence/case01-streamer-list.png"
+              alt={zhHant ? "直播主名單，呈現搜尋、直播時段、專長與合作狀態等營運資訊" : "Streamer list showing search, streaming schedule, specialty, and collaboration status"}
+              caption={zhHant ? "FIG. 02 — Streamer List · Discovery, status and collaboration context" : "FIG. 02 — Streamer List · Discovery, status, and collaboration context"}
+            />
+            <TopCropEvidence
+              src="/images/case01/evidence/case01-streamer-filter.png"
+              alt={zhHant ? "直播主名單的展開篩選狀態，呈現多條件篩選與名單內容的關係" : "Expanded filter state of the streamer list, showing the relationship between multi-criteria filtering and list content"}
+              caption="FIG. 03 — Expanded Streamer Filter · Multi-filter decision support"
+              className="lg:ml-auto lg:w-4/5"
+            />
           </DecisionMedia>}
           mediaFullBleed
         />
@@ -123,11 +198,23 @@ export function CaseOneFinalContent({ register }: { register: RegisterSection })
       <Section index={5} register={register}>
         <ReadingSection
           label="07 — KEY DESIGN DECISION 02"
-          title="連結實體庫存與數位商品狀態"
-          paragraphs={["商品經實際到貨、倉庫驗收與 Scan 後，才會成為 Active 狀態並進入 Shared Inventory。系統也需要表達 In Stock、Low Stock、Sold Out、Oversold、Pre-order、Expected Arrival 與 Restock。"]}
-          media={<DecisionMedia principle="Inventory is not just a number — it is a changing system state.">
-            <FlowEvidence src="/images/case01/case01_ISF_chi01.png" alt="庫存狀態流程，呈現實體到貨、驗收、數位庫存與消費端影響" caption="FIG. 04 — Inventory Status Flow" />
-            <Evidence src="/images/case01/case01_inventory_showcase_sample.png" alt="共享庫存後台介面，包含商品列表、庫存狀態與篩選" caption="FIG. 05 — Shared Inventory UI" />
+          title={zhHant ? "連結實體庫存與數位商品狀態" : "Connecting Physical Inventory with Digital Product States"}
+          paragraphs={[
+            zhHant
+              ? "商品經實際到貨、倉庫驗收與 Scan 後，才會成為 Active 狀態並進入 Shared Inventory。系統也需要表達 In Stock、Low Stock、Sold Out、Oversold、Pre-order、Expected Arrival 與 Restock。"
+              : "Products enter Shared Inventory as Active only after arriving in Vietnam and completing Warehouse inspection and Scan. The system must also communicate In Stock, Low Stock, Sold Out, Oversold, Pre-order, Expected Arrival, and Restock states.",
+          ]}
+          media={<DecisionMedia principle={zhHant ? "Inventory is not just a number — it is a changing system state." : "Inventory is not just a number—it is a changing system state."}>
+            <FlowEvidence
+              src="/images/case01/case01_ISF_chi01.png"
+              alt={zhHant ? "庫存狀態流程，呈現實體到貨、驗收、數位庫存與消費端影響" : "Inventory status flow, showing physical arrival, inspection, digital inventory, and consumer-facing impact"}
+              caption="FIG. 04 — Inventory Status Flow"
+            />
+            <Evidence
+              src="/images/case01/case01_inventory_showcase_sample.png"
+              alt={zhHant ? "共享庫存後台介面，包含商品列表、庫存狀態與篩選" : "Shared inventory backend interface, including product list, inventory status, and filters"}
+              caption="FIG. 05 — Shared Inventory UI"
+            />
           </DecisionMedia>}
           mediaFullBleed
         />
@@ -136,21 +223,29 @@ export function CaseOneFinalContent({ register }: { register: RegisterSection })
       <Section index={6} register={register}>
         <ReadingSection
           label="08 — KEY DESIGN DECISION 03"
-          title="在彈性定價與商業規則之間取得平衡"
-          paragraphs={["Streamer 可以自行選擇銷售價格，但 Selling Price 必須符合系統設定的建議售價（SRP）與價格區間限制。介面需要同時提供彈性、限制與即時驗證。"]}
+          title={zhHant ? "在彈性定價與商業規則之間取得平衡" : "Balancing Pricing Flexibility with Business Rules"}
+          paragraphs={[
+            zhHant
+              ? "Streamer 可以自行選擇銷售價格，但 Selling Price 必須符合系統設定的建議售價（SRP）與價格區間限制。介面需要同時提供彈性、限制與即時驗證。"
+              : "Streamers can set their own selling prices, but the Selling Price must comply with the system-defined Suggested Retail Price (SRP) and price-range constraints. The interface must communicate flexibility, constraints, and validation in real time.",
+          ]}
           media={<DecisionMedia principle="Give users flexibility without breaking the business model.">
-            <Evidence src="/images/case01/case01_PRL_chi01.png" alt="已移除敏感參數的定價與收益邏輯圖" caption="FIG. 06 — Pricing & Revenue Logic · Sanitized" />
+            <Evidence
+              src="/images/case01/case01_PRL_chi01.png"
+              alt={zhHant ? "已移除敏感參數的定價與收益邏輯圖" : "Pricing and revenue logic diagram with sensitive parameters removed"}
+              caption="FIG. 06 — Pricing & Revenue Logic · Sanitized"
+            />
             <div className="lg:grid lg:grid-cols-12 lg:items-start lg:gap-8">
               <InspectableEvidence
                 src="/images/case01/evidence/case01-pricing-detail.png"
-                alt="商品定價頁面，顯示 Unit Cost、Suggested Retail Price、Estimated Profit 與已移除敏感數值的定價調整紀錄"
-                caption="FIG. 06a — Product Pricing · Unit Cost, SRP, Estimated Profit, Pricing Adjustment Record"
+                alt={zhHant ? "商品定價頁面，顯示 Unit Cost、Suggested Retail Price、Estimated Profit 與已移除敏感數值的定價調整紀錄" : "Product pricing page showing Unit Cost, Suggested Retail Price, Estimated Profit, and a pricing adjustment record with sensitive values removed"}
+                caption={zhHant ? "FIG. 06a — Product Pricing · Unit Cost, SRP, Estimated Profit, Pricing Adjustment Record" : "FIG. 06a — Product Pricing · Unit Cost, SRP, Estimated Profit, and Pricing Adjustment Record"}
                 aspect="aspect-[2600/2313]"
                 className="lg:col-span-8"
               />
               <Evidence
                 src="/images/case01/evidence/case01-pricing-invalid-state.png"
-                alt="定價試算結果，呈現利潤池為負時方案不可用的即時驗證警示，已移除敏感參數與數值"
+                alt={zhHant ? "定價試算結果，呈現利潤池為負時方案不可用的即時驗證警示，已移除敏感參數與數值" : "Pricing calculation result showing a real-time validation warning when the profit margin is negative, with sensitive parameters and values removed"}
                 caption="FIG. 06b — Pricing Validation · Invalid state, sanitized"
                 aspect="aspect-[1600/2666]"
                 className="mt-8 lg:col-span-4 lg:mt-0"
@@ -164,39 +259,121 @@ export function CaseOneFinalContent({ register }: { register: RegisterSection })
       <Section index={7} register={register}>
         <ReadingSection
           label="09 — KEY DESIGN DECISION 04"
-          title="設計 Happy Path 之外的系統狀態"
-          paragraphs={["當 Consumer Checkout 過程中的共享庫存發生變化，介面必須說明發生了什麼、為什麼不能繼續，以及使用者下一步可以做什麼。"]}
+          title={zhHant ? "設計 Happy Path 之外的系統狀態" : "Designing System States Beyond the Happy Path"}
+          paragraphs={[
+            zhHant
+              ? "當 Consumer Checkout 過程中的共享庫存發生變化，介面必須說明發生了什麼、為什麼不能繼續，以及使用者下一步可以做什麼。"
+              : "When Shared Inventory changes during Consumer Checkout, the interface must explain what happened, why the user cannot continue, and what they can do next.",
+          ]}
           media={<DecisionMedia principle="Backend / system state → consumer impact.">
-            <Evidence src="/images/case01/case01_BE_chi01.png" alt="後台庫存狀態如何影響消費者結帳流程" caption="FIG. 07 — How Backend State Impacts the Consumer Experience" />
-            <Sequence items={[["What happened?", "商品庫存已在 Checkout 過程中改變。"], ["Why can’t I continue?", "目前訂單內容已不再有效。"], ["What next?", "更新 Cart 後重新確認可購買商品。"]]} />
-            <TopCropEvidence src="/images/case01/evidence/case01-checkout-out-of-stock.png" alt="消費者結帳確認頁的缺貨狀態，呈現警告訊息、數量歸零商品與停用的 Checkout 按鈕" caption="FIG. 08 — Checkout Out-of-stock · Blocked state and recovery guidance" aspect="aspect-[6/7]" className="mx-auto max-w-[70rem]" />
-            <InspectableEvidence src="/images/case01/evidence/case01-order-list.png" alt="平台訂單管理列表，呈現搜尋、篩選、訂單與付款狀態、配送方式、來源、日期及列操作" caption="FIG. 09 — Order Management · Search, filters, states and row actions" aspect="aspect-[2048/1565]" />
+            <Evidence
+              src="/images/case01/case01_BE_chi01.png"
+              alt={zhHant ? "後台庫存狀態如何影響消費者結帳流程" : "How backend inventory state affects the consumer checkout flow"}
+              caption="FIG. 07 — How Backend State Impacts the Consumer Experience"
+            />
+            <Sequence
+              items={
+                zhHant
+                  ? [
+                      ["What happened?", "商品庫存已在 Checkout 過程中改變。"],
+                      ["Why can’t I continue?", "目前訂單內容已不再有效。"],
+                      ["What next?", "更新 Cart 後重新確認可購買商品。"],
+                    ]
+                  : [
+                      ["What happened?", "Product availability changed during Checkout."],
+                      ["Why can’t I continue?", "The current Order is no longer valid."],
+                      ["What can I do next?", "Update the Cart and confirm the available products before continuing."],
+                    ]
+              }
+            />
+            <TopCropEvidence
+              src="/images/case01/evidence/case01-checkout-out-of-stock.png"
+              alt={zhHant ? "消費者結帳確認頁的缺貨狀態，呈現警告訊息、數量歸零商品與停用的 Checkout 按鈕" : "Consumer checkout confirmation page in an out-of-stock state, showing a warning message, a zeroed-out product quantity, and a disabled checkout button"}
+              caption="FIG. 08 — Checkout Out-of-stock · Blocked state and recovery guidance"
+              aspect="aspect-[6/7]"
+              className="mx-auto max-w-[70rem]"
+            />
+            <InspectableEvidence
+              src="/images/case01/evidence/case01-order-list.png"
+              alt={zhHant ? "平台訂單管理列表，呈現搜尋、篩選、訂單與付款狀態、配送方式、來源、日期及列操作" : "Platform order management list, showing search, filters, order and payment status, shipping method, source, date, and row actions"}
+              caption={zhHant ? "FIG. 09 — Order Management · Search, filters, states and row actions" : "FIG. 09 — Order Management · Search, filters, states, and row actions"}
+              aspect="aspect-[2048/1565]"
+            />
           </DecisionMedia>}
           mediaFullBleed
         />
       </Section>
 
       <Section index={8} register={register}>
-        <EvidenceSection label="10 — FINAL PRODUCT / UI EVIDENCE" title="One ecosystem, from operations to consumer purchase">
+        <EvidenceSection
+          label="10 — FINAL PRODUCT / UI EVIDENCE"
+          title={zhHant ? "One ecosystem, from operations to consumer purchase" : "One Ecosystem, from Operations to Purchase"}
+        >
           <div className="space-y-10">
-            <InspectableEvidence src="/images/case01/evidence/case01-order-list.png" alt="平台營運端訂單管理列表，呈現訂單處理所需的搜尋、篩選、狀態與操作資訊" caption="PLATFORM OPERATIONS — Order Management" aspect="aspect-[2048/1565]" />
+            <InspectableEvidence
+              src="/images/case01/evidence/case01-order-list.png"
+              alt={zhHant ? "平台營運端訂單管理列表，呈現訂單處理所需的搜尋、篩選、狀態與操作資訊" : "Platform operations order management list, showing the search, filters, status, and actions needed to process orders"}
+              caption="PLATFORM OPERATIONS — Order Management"
+              aspect="aspect-[2048/1565]"
+            />
             <div className="lg:grid lg:grid-cols-12">
-              <InspectableEvidence src="/images/case01/evidence/case01-supplier-dashboard.png" alt="供貨商營運儀表板，呈現收益、訂單、庫存提醒、餘額、商品、圖表與通知" caption="SUPPLIER — Dashboard hierarchy and operational priorities" aspect="aspect-[1900/1700]" className="lg:col-span-8" />
+              <InspectableEvidence
+                src="/images/case01/evidence/case01-supplier-dashboard.png"
+                alt={zhHant ? "供貨商營運儀表板，呈現收益、訂單、庫存提醒、餘額、商品、圖表與通知" : "Supplier operations dashboard showing revenue, orders, inventory alerts, balance, products, charts, and notifications"}
+                caption="SUPPLIER — Dashboard hierarchy and operational priorities"
+                aspect="aspect-[1900/1700]"
+                className="lg:col-span-8"
+              />
             </div>
             <div className="grid gap-8 lg:grid-cols-2">
-              <TopCropEvidence src="/images/case01/evidence/case01-streamer-filter.png" alt="直播主名單的多條件篩選介面" caption="SALES / COLLABORATION — Expanded Streamer Filter" />
-              <TopCropEvidence src="/images/case01/evidence/case01-checkout-out-of-stock.png" alt="消費者結帳流程中的缺貨與 Checkout 停用狀態" caption="CONSUMER — Out-of-stock checkout state" />
+              <TopCropEvidence
+                src="/images/case01/evidence/case01-streamer-filter.png"
+                alt={zhHant ? "直播主名單的多條件篩選介面" : "Multi-criteria filter interface for the streamer list"}
+                caption="SALES / COLLABORATION — Expanded Streamer Filter"
+              />
+              <TopCropEvidence
+                src="/images/case01/evidence/case01-checkout-out-of-stock.png"
+                alt={zhHant ? "消費者結帳流程中的缺貨與 Checkout 停用狀態" : "Out-of-stock and disabled-checkout state in the consumer checkout flow"}
+                caption="CONSUMER — Out-of-stock checkout state"
+              />
             </div>
           </div>
         </EvidenceSection>
       </Section>
 
       <Section index={9} register={register}>
-        <ReadingSection label="11 — OUTCOME" title="從模糊需求建立到完整產品開發" paragraphs={["完成平台營運、Supplier、Agent 與 Consumer Web Storefront 的核心產品設計，並與工程團隊協作完成主要功能的開發落地。", "產品後續因公司商業策略調整，未正式進入商業營運。"]} />
+        <ReadingSection
+          label="11 — OUTCOME"
+          title={zhHant ? "從模糊需求建立到完整產品開發" : "From Ambiguous Requirements to an Implemented Product"}
+          paragraphs={
+            zhHant
+              ? [
+                  "完成平台營運、Supplier、Agent 與 Consumer Web Storefront 的核心產品設計，並與工程團隊協作完成主要功能的開發落地。",
+                  "產品後續因公司商業策略調整，未正式進入商業營運。",
+                ]
+              : [
+                  "I completed the core product design across Platform operations, Supplier, Agent, and Consumer Web Storefront experiences, collaborating with engineering to implement the main product capabilities.",
+                  "The company later changed its business strategy, so the product did not enter commercial operation.",
+                ]
+          }
+        />
       </Section>
 
       <Section index={10} register={register}>
-        <ReadingSection label="12 — LEARNINGS" title="複雜系統設計的核心，是讓關係變得可以理解" paragraphs={["在進入畫面設計之前，我會先確認角色、系統狀態、Business Rules，以及每個操作會如何影響其他角色與流程。"]} supporting="好的複雜系統設計，不是隱藏複雜性，而是讓使用者清楚知道自己在哪裡、能做什麼，以及接下來會發生什麼。" />
+        <ReadingSection
+          label="12 — LEARNINGS"
+          title={zhHant ? "複雜系統設計的核心，是讓關係變得可以理解" : "The Core of Complex-System Design Is Making Relationships Understandable"}
+          paragraphs={[
+            zhHant
+              ? "在進入畫面設計之前，我會先確認角色、系統狀態、Business Rules，以及每個操作會如何影響其他角色與流程。"
+              : "Before moving into interface design, I first clarify the roles involved, the current system state, the applicable Business Rules, and how each action affects other roles and workflows.",
+          ]}
+          supporting={
+            zhHant
+              ? "好的複雜系統設計，不是隱藏複雜性，而是讓使用者清楚知道自己在哪裡、能做什麼，以及接下來會發生什麼。"
+              : "Good complex-system design does not hide complexity. It helps users understand where they are, what they can do, and what will happen next."
+          }
+        />
       </Section>
     </></EvidenceMotion>
   );

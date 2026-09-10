@@ -99,7 +99,7 @@ export function CaseStudyPrototype({
   const isCaseOneV2 = contentVersion === "case01-v2";
   const isCaseTwoV1 = contentVersion === "case02-v1";
   const displayTitle = isCaseOneV2
-    ? "複雜系統設計"
+    ? (locale === "zh" ? "複雜系統設計" : "Complex System Design")
     : isCaseTwoV1
       ? "Brand & Web Experience"
       : (caseStudy.displayTitle ?? project.title);
@@ -148,6 +148,14 @@ export function CaseStudyPrototype({
   // ProjectScene.tsx: zh sentences concatenate with no separator,
   // English sentences join with a space.
   const nextDescription = (zhHant ? nextProject.description : nextProject.descriptionEn).join(zhHant ? "" : " ");
+  // CASE01 EN localization: the shared Next Project blurb (nextProject.descriptionEn)
+  // is global copy used elsewhere (Home, /work/[slug]) and differs by one word from
+  // the copy approved specifically for this case's Next Project CTA — overridden
+  // here only, without touching the shared data file or affecting other routes.
+  const nextDescriptionDisplay =
+    isCaseOneV2 && !zhHant
+      ? "Bringing brand positioning, content structure, and visual design together to create a clear, consistent digital experience."
+      : nextDescription;
   // Real Case01 evidence (caseFinalMedia.ts) is diagram/screenshot content
   // specific to Complex System's own story — showing it for another
   // project would be fabricated evidence. Cases without their own
@@ -162,12 +170,19 @@ export function CaseStudyPrototype({
   // No field is invented; a project without extra metadata just shows
   // fewer rows rather than fabricated ones.
   const openingInfoRows = isCaseOneV2
-    ? [
-        { label: "角色", value: "Lead Product Designer" },
-        { label: "平台", value: "Web Platform" },
-        { label: "專長", value: "Complex Systems · B2B · Dashboard · Responsive Web" },
-        { label: "狀態", value: "Designed & Developed" },
-      ]
+    ? zhHant
+      ? [
+          { label: "角色", value: "Lead Product Designer" },
+          { label: "平台", value: "Web Platform" },
+          { label: "專長", value: "Complex Systems · B2B · Dashboard · Responsive Web" },
+          { label: "狀態", value: "Designed & Developed" },
+        ]
+      : [
+          { label: "Role", value: "Lead Product Designer" },
+          { label: "Platform", value: "Web Platform" },
+          { label: "Expertise", value: "Complex Systems · B2B · Dashboard · Responsive Web" },
+          { label: "Status", value: "Designed & Implemented with Engineering" },
+        ]
     : isCaseTwoV1
       ? [
           { label: "案例", value: "SDX · Charming Clinic · NATEX" },
@@ -223,7 +238,7 @@ export function CaseStudyPrototype({
                 <MixedText
                   text={
                     isCaseOneV2
-                      ? "跨境寄賣與直播電商平台"
+                      ? (zhHant ? "跨境寄賣與直播電商平台" : "Cross-Border Consignment & Live Commerce Platform")
                       : isCaseTwoV1
                         ? "Shun De Xing · Charming Clinic · NATEX"
                         : (caseStudy.projectName ?? (zhHant ? project.chineseTitle : project.title))
@@ -242,7 +257,9 @@ export function CaseStudyPrototype({
                 className={`cf-body body-tc mt-6 max-w-[56ch] ${isCaseOneV2 ? "text-[17px] md:text-[18px]" : ""}`}
               >
                 {isCaseOneV2
-                  ? "將台灣供應商、越南倉儲、代理公司、直播主與消費者串連在同一套商業流程中，建立從跨境入庫、共享庫存、選品銷售到訂單履約的完整產品體驗。"
+                  ? zhHant
+                    ? "將台灣供應商、越南倉儲、代理公司、直播主與消費者串連在同一套商業流程中，建立從跨境入庫、共享庫存、選品銷售到訂單履約的完整產品體驗。"
+                    : "Connecting Taiwanese Suppliers, a Vietnamese Platform / Warehouse, Agents, Streamers, and Consumers in one business flow—from cross-border receiving and Shared Inventory to product selection, sales, and Order fulfillment."
                   : isCaseTwoV1
                     ? "Designing clear, credible digital experiences across corporate, healthcare, and technology brands."
                     : caseStudy.summary}
@@ -277,6 +294,7 @@ export function CaseStudyPrototype({
             <div>
               {isCaseOneV2 ? (
                 <CaseOneFinalContent
+                  locale={locale}
                   register={(index, element) => {
                     registerChapter(index)(element);
                     chapterSectionRefs.current[index] = element;
@@ -447,7 +465,7 @@ export function CaseStudyPrototype({
                 <h2 className="cf-heading cf-h3 mt-5 text-[clamp(1.75rem,3vw,2.5rem)]">
                   {caseStudy.nextProjectTitle ?? (zhHant ? nextProject.chineseTitle : nextProject.title)}
                 </h2>
-                {nextDescription && <p className="cf-dim body-tc mt-4">{nextDescription}</p>}
+                {nextDescriptionDisplay && <p className="cf-dim body-tc mt-4">{nextDescriptionDisplay}</p>}
               </div>
               {/* Round 8: routes into the numbered prototype sequence
                   (01→02→03→04→01, via data/projects.ts's own wraparound

@@ -2,8 +2,8 @@
 
 - Branch: `feat/case02-en-localization`.
 - Foundation tag: `v3-design-system-foundation`.
-- Current task: none. **CASE01 (ZH + EN) and CASE02 (ZH + EN) are all FROZEN.** Do not reopen discovery on either case — see the ownership/positioning/evidence sections below, which are source of truth.
-- Review routes: `/design-samples/case-final-01` (CASE01 ZH), `/en/design-samples/case-final-01` (CASE01 EN), `/design-samples/case-final-02` (CASE02 ZH), `/en/design-samples/case-final-02` (CASE02 EN).
+- Current task: none. **CASE01 (ZH + EN), CASE02 (ZH + EN), and CASE03 (ZH + EN) are all FROZEN.** Do not reopen discovery on any of these cases — see the ownership/positioning/evidence sections below, which are source of truth.
+- Review routes: `/design-samples/case-final-01` (CASE01 ZH), `/en/design-samples/case-final-01` (CASE01 EN), `/design-samples/case-final-02` (CASE02 ZH), `/en/design-samples/case-final-02` (CASE02 EN), `/design-samples/case-final-03` (CASE03 ZH), `/en/design-samples/case-final-03` (CASE03 EN).
 - **Continuity note:** this file was fully rewritten (not appended) to replace stale pre-freeze CASE02 status and a dropped prior history chain. Older history (Homepage Visual Polish V3/V3.1/V3.2, Lavender token checkpoint, About V2, CASE01 Responsive QA) is not reconstructed here — git log and topic branches remain the authoritative record per AGENTS.md's "if documentation conflicts with Git, investigate and report" rule.
 
 ---
@@ -84,14 +84,47 @@ Prior CASE01 ZH freeze checklist (Decision 03 terminology aligned to evidenced U
 
 ---
 
+# CASE03 — Manufacturing Operations Interface
+
+Status: **ZH + EN V1 FROZEN / COMPLETE.**
+
+## Positioning
+
+Translating complex manufacturing specifications into clear, consistent interfaces for shop-floor and management operations. CASE03 intentionally uses plain-language, recruiter-facing storytelling — not technical/systems-engineering jargon — and is deliberately shorter than CASE01.
+
+## Ownership (verified — do not broaden)
+
+PM/System Analyst owned requirements, manufacturing workflows, business rules, and system logic.
+Angela owned UI/UX translation of those specifications, information/interaction hierarchy, the visual system, desktop/tablet UI, frontend implementation, and the vector floorplan + SVG interaction.
+Did NOT own: user research, client interviews, requirement definition, workflow/process design, or system/ERP/IoT architecture.
+
+## NDA
+
+Client identity, factory location, sensitive production data, original PM/SA flowcharts, and technical specification details are not public. Public client name: "Confidential Manufacturing Client." A source floorplan GIF asset was excluded entirely from evidence because a frame exposed "斗六倉" (a real facility name) — do not reintroduce it.
+
+## Evidence (4 images, real screenshots only)
+
+- Hero: management desktop + industrial tablet menu
+- Section 04: operational UI pattern collage
+- Section 05: warehouse spatial interface (single floorplan screenshot — a duplicate/secondary floorplan crop was evaluated and removed; do not restore it)
+- Section 06: dark monitoring dashboard
+
+## Localization
+
+EN route uses the same frozen renderer (`CaseThreeFinalContent.tsx`) via `locale`/`zhHant` branching, not a separate build. EN copy is slightly shorter and faster to scan than ZH per the approved brief; UI screenshots remain Chinese (real evidence, not translated/fabricated). Section 07 label/heading in both locales: "07 — MY ROLE ACROSS THE SYSTEM" / "My Role Across the System" (ZH H2: 「我在這套系統中的角色」).
+
+Commit: `084052c` — `feat(portfolio): add CASE03 manufacturing operations case`.
+
+---
+
 # WORKFLOW RULE
 
-Do not reopen CASE01 or CASE02 discovery. Do not ask the user to repeat ownership, positioning, evidence strategy, project roles, or CASE01-vs-CASE02 differentiation — the sections above are source of truth. Preserve both cases unless a genuine bug or factual issue appears.
+Do not reopen CASE01, CASE02, or CASE03 discovery. Do not ask the user to repeat ownership, positioning, evidence strategy, project roles, or cross-case differentiation — the sections above are source of truth. Preserve all three cases unless a genuine bug or factual issue appears.
 
 ---
 
 # NEXT ACTION
 
-No active task. CASE01 and CASE02 (ZH + EN) are both complete and frozen. The natural next candidates are **CASE03 (IoT System)** and **CASE04 (Consumer Product)**, which still run on generic/placeholder content (`data/projects.ts`'s `placeholderSections`) rather than real project evidence — bringing them to the same real-evidence, localized, frozen standard as CASE01/CASE02 is the likely next body of work, pending Angela's prioritization.
+No active task. CASE01, CASE02, and CASE03 (ZH + EN) are all complete and frozen. Next portfolio priority: **CASE04 (LABO65) V1**, while the product is still in active development. Selected Work later includes a **Foresight Realtors** case. A whole-site skills audit (accessibility, typography, design-guidelines, pre-launch coherence) happens only after Portfolio V1 coverage (all four case studies) is complete — do not run it early.
 
-Note: the worktree currently has untracked `app/design-samples/case-final-03/`, `case-final-04/`, and their `/en` counterparts, plus unrelated uncommitted changes to `AGENTS.md`, `CLAUDE.md`, `app/globals.css`, `ReadingSection.tsx`, and `SiteHeader.tsx`. These were not reviewed or authored as part of the CASE01/CASE02 work recorded above — a future session should run `git status`/`git diff` to assess their state before treating them as either in-progress work or safe to discard.
+Note: the worktree has unrelated uncommitted changes (`AGENTS.md`, `CLAUDE.md`, `app/globals.css`, `ReadingSection.tsx`, `SiteHeader.tsx`, `.impeccable/`, `artifacts/case01-*.png`) and untracked `case-final-04`/`en/case-final-04` scaffolding, none of which were reviewed or authored as part of the CASE01/CASE02/CASE03 work recorded above. A future session should run `git status`/`git diff` to assess their state before treating them as either in-progress work or safe to discard.

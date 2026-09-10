@@ -18,6 +18,7 @@ import { CaseTransitionLink } from "./CaseTransitionLink";
 import { getDecisionFigure, getOverviewFigure, getShowcaseFigure } from "./caseFinalMedia";
 import { CaseOneFinalContent } from "./CaseOneFinalContent";
 import { CaseTwoFinalContent, CaseTwoHeroEvidence } from "./CaseTwoFinalContent";
+import { CaseThreeFinalContent, CaseThreeHeroEvidence } from "./CaseThreeFinalContent";
 
 /**
  * Section body copy is authored as either a pre-split string[] (Complex
@@ -85,7 +86,7 @@ export function CaseStudyPrototype({
   project: Project;
   nextProject: Project;
   locale: Locale;
-  contentVersion?: "default" | "case01-v2" | "case02-v1";
+  contentVersion?: "default" | "case01-v2" | "case02-v1" | "case03-v1";
 }) {
   // Round 11: the ONE place that makes this component locale-aware. Every
   // existing `caseStudy.xxx` reference below now automatically resolves
@@ -98,17 +99,20 @@ export function CaseStudyPrototype({
   const caseStudy = locale === "en" ? (project.caseStudyEn ?? project.caseStudy) : project.caseStudy;
   const isCaseOneV2 = contentVersion === "case01-v2";
   const isCaseTwoV1 = contentVersion === "case02-v1";
+  const isCaseThreeV1 = contentVersion === "case03-v1";
   const displayTitle = isCaseOneV2
     ? (locale === "zh" ? "複雜系統設計" : "Complex System Design")
     : isCaseTwoV1
       ? "Brand & Web Experience"
-      : (caseStudy.displayTitle ?? project.title);
+      : isCaseThreeV1
+        ? "Manufacturing Operations Interface"
+        : (caseStudy.displayTitle ?? project.title);
   const zhHant = locale === "zh";
   const openingRef = useRef<HTMLDivElement | null>(null);
-  const chapterCount = isCaseOneV2 ? 11 : isCaseTwoV1 ? 7 : CHAPTER_COUNT;
+  const chapterCount = isCaseOneV2 ? 11 : isCaseTwoV1 ? 7 : isCaseThreeV1 ? 7 : CHAPTER_COUNT;
   const chapters: Chapter[] = isCaseOneV2
     ? Array.from({ length: 11 }, (_, i) => ({ number: String(i + 2).padStart(2, "0") }))
-    : isCaseTwoV1
+    : isCaseTwoV1 || isCaseThreeV1
       ? Array.from({ length: 7 }, (_, i) => ({ number: String(i + 2).padStart(2, "0") }))
       : CHAPTERS;
   const { active, registerChapter } = useActiveChapter(chapterCount);
@@ -197,11 +201,23 @@ export function CaseStudyPrototype({
             { label: "Design", value: "UX/UI Design · Brand Communication" },
             { label: "Delivery", value: "Responsive Web" },
           ]
-      : [
-          { label: zhHant ? "類別" : "Category", value: zhHant ? project.category.zh : project.category.en },
-          { label: zhHant ? "年份" : "Year", value: project.year },
-          ...Object.entries(caseStudy.metadata).map(([label, value]) => ({ label, value })),
-        ];
+      : isCaseThreeV1
+        ? zhHant
+          ? [
+              { label: "Role", value: "UI/UX Designer · Frontend" },
+              { label: "Platform", value: "Web · Industrial Tablet" },
+              { label: "Client", value: "Confidential Manufacturing Client" },
+            ]
+          : [
+              { label: "Role", value: "UI/UX Designer · Frontend Implementation" },
+              { label: "Platform", value: "Web · Industrial Tablet" },
+              { label: "Client", value: "Confidential Manufacturing Client" },
+            ]
+        : [
+            { label: zhHant ? "類別" : "Category", value: zhHant ? project.category.zh : project.category.en },
+            { label: zhHant ? "年份" : "Year", value: project.year },
+            ...Object.entries(caseStudy.metadata).map(([label, value]) => ({ label, value })),
+          ];
 
   return (
     <div className="min-h-screen">
@@ -236,7 +252,9 @@ export function CaseStudyPrototype({
                   ? "01 / COMPLEX SYSTEM"
                   : isCaseTwoV1
                     ? "02 / BRAND & WEB EXPERIENCE"
-                    : `${project.number} / ${caseStudy.eyebrowTitle ?? displayTitle}`}
+                    : isCaseThreeV1
+                      ? "03 / MANUFACTURING OPERATIONS INTERFACE"
+                      : `${project.number} / ${caseStudy.eyebrowTitle ?? displayTitle}`}
               </p>
               <h1 data-open-title className="cf-heading cf-opening-title mt-5">
                 {displayTitle}
@@ -248,7 +266,11 @@ export function CaseStudyPrototype({
                       ? (zhHant ? "跨境寄賣與直播電商平台" : "Cross-Border Consignment & Live Commerce Platform")
                       : isCaseTwoV1
                         ? "Shun De Xing · Charming Clinic · NATEX"
-                        : (caseStudy.projectName ?? (zhHant ? project.chineseTitle : project.title))
+                        : isCaseThreeV1
+                          ? zhHant
+                            ? "將複雜的製造需求，轉化為清楚、一致的現場與管理操作介面。"
+                            : "Turning complex manufacturing specifications into clear, consistent interfaces for shop-floor and management operations."
+                          : (caseStudy.projectName ?? (zhHant ? project.chineseTitle : project.title))
                   }
                 />
               </p>
@@ -259,18 +281,42 @@ export function CaseStudyPrototype({
                   isCaseOneV2 specifically (not a change to body-tc, and not
                   applied to Cases 02-04's opening, which this task doesn't
                   touch). */}
-              <p
-                data-open-summary
-                className={`cf-body body-tc mt-6 max-w-[56ch] ${isCaseOneV2 ? "text-[17px] md:text-[18px]" : ""}`}
-              >
-                {isCaseOneV2
-                  ? zhHant
-                    ? "將台灣供應商、越南倉儲、代理公司、直播主與消費者串連在同一套商業流程中，建立從跨境入庫、共享庫存、選品銷售到訂單履約的完整產品體驗。"
-                    : "Connecting Taiwanese Suppliers, a Vietnamese Platform / Warehouse, Agents, Streamers, and Consumers in one business flow—from cross-border receiving and Shared Inventory to product selection, sales, and Order fulfillment."
-                  : isCaseTwoV1
-                    ? "Designing clear, credible digital experiences across corporate, healthcare, and technology brands."
-                    : caseStudy.summary}
-              </p>
+              {isCaseThreeV1 ? (
+                <div data-open-summary className="mt-6 max-w-[56ch] space-y-4">
+                  {zhHant ? (
+                    <>
+                      <p className="cf-body body-tc">
+                        這是一套供工廠管理人員與現場人員使用的內部作業系統，涵蓋日常生產、庫存、設備狀態與管理資訊。
+                      </p>
+                      <p className="cf-body body-tc">
+                        我的工作不是定義製造流程，而是根據 PM / System Analyst 已整理好的需求與流程，將複雜規格轉化成實際可操作的 UI，並完成前端實作。
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="cf-body body-tc">
+                        This internal system supports everyday factory work across management and production-floor environments, including production tasks, inventory, equipment status, and operational information.
+                      </p>
+                      <p className="cf-body body-tc">
+                        The workflows and business rules were defined by the PM/System Analyst. My role was to translate those specifications into usable UI, establish consistent interaction patterns, and implement the frontend experience.
+                      </p>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <p
+                  data-open-summary
+                  className={`cf-body body-tc mt-6 max-w-[56ch] ${isCaseOneV2 ? "text-[17px] md:text-[18px]" : ""}`}
+                >
+                  {isCaseOneV2
+                    ? zhHant
+                      ? "將台灣供應商、越南倉儲、代理公司、直播主與消費者串連在同一套商業流程中，建立從跨境入庫、共享庫存、選品銷售到訂單履約的完整產品體驗。"
+                      : "Connecting Taiwanese Suppliers, a Vietnamese Platform / Warehouse, Agents, Streamers, and Consumers in one business flow—from cross-border receiving and Shared Inventory to product selection, sales, and Order fulfillment."
+                    : isCaseTwoV1
+                      ? "Designing clear, credible digital experiences across corporate, healthcare, and technology brands."
+                      : caseStudy.summary}
+                </p>
+              )}
             </div>
 
             <div data-open-stats className="mt-12 md:col-span-4 md:col-start-9 md:mt-0">
@@ -285,6 +331,7 @@ export function CaseStudyPrototype({
             </div>
           </div>
           {isCaseTwoV1 && <CaseTwoHeroEvidence />}
+          {isCaseThreeV1 && <CaseThreeHeroEvidence />}
         </div>
 
         {/* pt matches cf-section-divider's own padding-top exactly (see
@@ -309,6 +356,14 @@ export function CaseStudyPrototype({
                 />
               ) : isCaseTwoV1 ? (
                 <CaseTwoFinalContent
+                  locale={locale}
+                  register={(index, element) => {
+                    registerChapter(index)(element);
+                    chapterSectionRefs.current[index] = element;
+                  }}
+                />
+              ) : isCaseThreeV1 ? (
+                <CaseThreeFinalContent
                   locale={locale}
                   register={(index, element) => {
                     registerChapter(index)(element);

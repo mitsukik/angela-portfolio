@@ -133,6 +133,68 @@ Final polish commit: `f7b570e` — `fix(portfolio): polish CASE03 copy and namin
 
 ---
 
+# CASE04 — LABO65
+
+Status: **ACTIVE / IN DEVELOPMENT.** Portfolio status: **V1 case study not yet implemented** — do not build the CASE04 portfolio page, write final case-study copy, or freeze section structure until noted otherwise. This section is an active evidence log, not a frozen case record.
+
+## Positioning
+
+A mobile product UX/UI redesign taken over during active development.
+
+Current recruiter-facing direction: "Restructuring an early-stage mobile product into a clearer, lighter, and more app-native experience while development was already in progress."
+
+## Core design principle
+
+少讀、少打、少滑、少等、不強迫
+EN shorthand: Less reading. Less typing. Less scrolling. Less waiting. No forced steps.
+
+## Project context
+
+- Engineering had already been developing the product for roughly 1–2 weeks before UX/UI ownership was handed over.
+- Existing technical foundations and some functional flows already existed.
+- The design approach is not to restart the product from zero.
+- UX/UI changes should prioritise usability impact, implementation feasibility, and development speed.
+- Product is not yet released.
+
+## Ownership boundaries
+
+Do not claim: original product requirements defined from scratch by Angela; backend architecture; payment infrastructure / payment integration engineering; engineering implementation owned by Angela unless specifically confirmed; user research that did not happen.
+
+Current confirmed design ownership: UX/UI redesign; flow restructuring where applicable; information hierarchy; app-native interaction direction; onboarding/registration simplification; questionnaire UX; generation/loading/failure/recovery states; Today/Home experience; player/listening-state UX; shared design system; Android-first UI with consistent iOS presentation; design decisions prepared for engineering implementation; feasibility discussion/collaboration with engineering.
+
+## Current UX problems identified
+
+- Forms/flows too long
+- Too much reading
+- Too much scrolling
+- Too much manual input
+- Keyboard can cover fields/actions
+- Experience feels too much like responsive web rather than a mobile app
+- Generation waiting feels too passive
+- Progression should not require unnecessary forced completion
+- Recovery / leave-and-return states need to be clear
+
+## Evidence log (evolving — not final section order)
+
+1. Before / early engineering build
+2. Onboarding and first-profile setup
+3. Questionnaire simplification
+4. Generating / in-progress / failed / ready states
+5. Player / listening / completed states
+6. Today / Home
+7. Design system / shared components
+8. Engineering constraints / feasibility decisions
+9. Before → After comparisons
+10. New screens and decisions added during ongoing development
+
+**Evidence rule:** for every meaningful new design decision, record what existed before, what problem was identified, who defined the requirement, what Angela changed, why it was changed, any engineering constraint, and what was actually approved/implemented. Do not turn routine production details into portfolio evidence unless they demonstrate a meaningful UX/UI decision.
+
+## Next action (CASE04-specific)
+
+After the next LABO65 engineering meeting: update this evidence log with new decisions/screens, identify which changes are portfolio-worthy, and only then decide the CASE04 V1 narrative and evidence selection.
+
+---
+
 # WORKFLOW RULE
 
 Do not reopen CASE01, CASE02, or CASE03 discovery. Do not ask the user to repeat ownership, positioning, evidence strategy, project roles, or cross-case differentiation — the sections above are source of truth. Preserve all three cases unless a genuine bug or factual issue appears.

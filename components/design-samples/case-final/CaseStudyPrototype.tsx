@@ -184,12 +184,19 @@ export function CaseStudyPrototype({
           { label: "Status", value: "Designed & Implemented with Engineering" },
         ]
     : isCaseTwoV1
-      ? [
-          { label: "案例", value: "SDX · Charming Clinic · NATEX" },
-          { label: "策略", value: "Information Architecture" },
-          { label: "設計", value: "UX/UI Design · Brand Communication" },
-          { label: "交付", value: "Responsive Web" },
-        ]
+      ? zhHant
+        ? [
+            { label: "案例", value: "SDX · Charming Clinic · NATEX" },
+            { label: "策略", value: "Information Architecture" },
+            { label: "設計", value: "UX/UI Design · Brand Communication" },
+            { label: "交付", value: "Responsive Web" },
+          ]
+        : [
+            { label: "Projects", value: "SDX · Charming Clinic · NATEX" },
+            { label: "Strategy", value: "Information Architecture" },
+            { label: "Design", value: "UX/UI Design · Brand Communication" },
+            { label: "Delivery", value: "Responsive Web" },
+          ]
       : [
           { label: zhHant ? "類別" : "Category", value: zhHant ? project.category.zh : project.category.en },
           { label: zhHant ? "年份" : "Year", value: project.year },
@@ -302,6 +309,7 @@ export function CaseStudyPrototype({
                 />
               ) : isCaseTwoV1 ? (
                 <CaseTwoFinalContent
+                  locale={locale}
                   register={(index, element) => {
                     registerChapter(index)(element);
                     chapterSectionRefs.current[index] = element;

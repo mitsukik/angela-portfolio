@@ -110,7 +110,7 @@ export function CaseOneFinalContent({ register, locale }: { register: RegisterSe
           title={zhHant ? "一套從實體入庫延伸到消費者履約的系統" : "One System, from Physical Receiving to Consumer Fulfillment"}
         >
           <FlowEvidence
-            src="/images/case01/case01_CE_chi01.png"
+            src={zhHant ? "/images/case01/case01_CE_chi01.png" : "/images/case01/case01_CE_eng01.png"}
             alt={zhHant ? "跨境直播電商生態系統，呈現供應、銷售與消費端的角色及流程" : "Cross-border live commerce ecosystem diagram, showing the roles and flow across supply, sales, and consumer touchpoints"}
             caption={zhHant ? "FIG. 01 — Cross-border Live Commerce Ecosystem" : "FIG. 01 — Cross-Border Live Commerce Ecosystem"}
           />
@@ -206,7 +206,7 @@ export function CaseOneFinalContent({ register, locale }: { register: RegisterSe
           ]}
           media={<DecisionMedia principle={zhHant ? "Inventory is not just a number — it is a changing system state." : "Inventory is not just a number—it is a changing system state."}>
             <FlowEvidence
-              src="/images/case01/case01_ISF_chi01.png"
+              src={zhHant ? "/images/case01/case01_ISF_chi01.png" : "/images/case01/case01_ISF_eng01.png"}
               alt={zhHant ? "庫存狀態流程，呈現實體到貨、驗收、數位庫存與消費端影響" : "Inventory status flow, showing physical arrival, inspection, digital inventory, and consumer-facing impact"}
               caption="FIG. 04 — Inventory Status Flow"
             />
@@ -231,7 +231,7 @@ export function CaseOneFinalContent({ register, locale }: { register: RegisterSe
           ]}
           media={<DecisionMedia principle="Give users flexibility without breaking the business model.">
             <Evidence
-              src="/images/case01/case01_PRL_chi01.png"
+              src={zhHant ? "/images/case01/case01_PRL_chi01.png" : "/images/case01/case01_PRL_eng01.png"}
               alt={zhHant ? "已移除敏感參數的定價與收益邏輯圖" : "Pricing and revenue logic diagram with sensitive parameters removed"}
               caption="FIG. 06 — Pricing & Revenue Logic · Sanitized"
             />
@@ -267,7 +267,7 @@ export function CaseOneFinalContent({ register, locale }: { register: RegisterSe
           ]}
           media={<DecisionMedia principle="Backend / system state → consumer impact.">
             <Evidence
-              src="/images/case01/case01_BE_chi01.png"
+              src={zhHant ? "/images/case01/case01_BE_chi01.png" : "/images/case01/case01_BE_eng01.png"}
               alt={zhHant ? "後台庫存狀態如何影響消費者結帳流程" : "How backend inventory state affects the consumer checkout flow"}
               caption="FIG. 07 — How Backend State Impacts the Consumer Experience"
             />

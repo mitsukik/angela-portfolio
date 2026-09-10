@@ -115,6 +115,22 @@ EN route uses the same frozen renderer (`CaseThreeFinalContent.tsx`) via `locale
 
 Commit: `084052c` — `feat(portfolio): add CASE03 manufacturing operations case`.
 
+## Final polish (post-freeze) — complete
+
+Public naming, finalized:
+- Title: **Manufacturing Operations Interface**
+- ZH title: **工廠現場與管理操作介面**
+- Category: **Manufacturing Operations / 製造營運**
+- Platform: **Web · Industrial Tablet**
+
+Legacy visible naming ("IoT System" / "IoT 系統與數據儀表板") has been removed from all public-facing labels (homepage Selected Work card, `/work/iot-system`, CASE02's Next Project link). Route slug remains `/work/iot-system` intentionally — not renamed, to avoid unnecessary routing risk.
+
+ZH + EN copy received a final recruiter-facing proofreading pass (Hero, Sections 03/05/06, Reflection). Ownership and NDA boundaries (see above) are unchanged by this polish.
+
+Final polish commit: `f7b570e` — `fix(portfolio): polish CASE03 copy and naming`.
+
+**Status remains FROZEN / COMPLETE.** Reopen only for production bugs or future evidence/material updates.
+
 ---
 
 # WORKFLOW RULE

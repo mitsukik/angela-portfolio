@@ -10,16 +10,19 @@ const projects = {
     name: "Shun De Xing / SDX",
     role: "UX/UI Designer",
     focus: "Information Architecture · Content Hierarchy · Corporate Communication",
+    url: "https://sdxdevelop.com/",
   },
   charming: {
     name: "Charming Clinic",
     role: "UX/UI Designer · Frontend Support",
     focus: "Service Discovery · Brand Trust · User Flow",
+    url: "https://charmingvip.com/",
   },
   natex: {
     name: "NATEX",
     role: "UX/UI Designer · Frontend",
     focus: "B2B Communication · Technical Content Hierarchy · Responsive Execution",
+    url: "https://www.natex.com.tw/",
   },
 } as const;
 
@@ -66,26 +69,38 @@ function ProjectMeta({
   name,
   role,
   focus,
+  url,
 }: {
   name: string;
   role: string;
   focus: string;
+  url: string;
 }) {
   return (
-    <dl className="mt-8 border-t cf-rule">
-      <div className="grid gap-2 border-b cf-rule py-4 sm:grid-cols-[7rem_1fr] sm:gap-5">
-        <dt className="cf-meta cf-dim">Project</dt>
-        <dd className="cf-heading text-[16px] leading-7">{name}</dd>
-      </div>
-      <div className="grid gap-2 border-b cf-rule py-4 sm:grid-cols-[7rem_1fr] sm:gap-5">
-        <dt className="cf-meta cf-dim">Role</dt>
-        <dd className="cf-body text-[15px] leading-7">{role}</dd>
-      </div>
-      <div className="grid gap-2 border-b cf-rule py-4 sm:grid-cols-[7rem_1fr] sm:gap-5">
-        <dt className="cf-meta cf-dim">Focus</dt>
-        <dd className="cf-body text-[15px] leading-7">{focus}</dd>
-      </div>
-    </dl>
+    <>
+      <dl className="mt-8 border-t cf-rule">
+        <div className="grid gap-2 border-b cf-rule py-4 sm:grid-cols-[7rem_1fr] sm:gap-5">
+          <dt className="cf-meta cf-dim">Project</dt>
+          <dd className="cf-heading text-[16px] leading-7">{name}</dd>
+        </div>
+        <div className="grid gap-2 border-b cf-rule py-4 sm:grid-cols-[7rem_1fr] sm:gap-5">
+          <dt className="cf-meta cf-dim">Role</dt>
+          <dd className="cf-body text-[15px] leading-7">{role}</dd>
+        </div>
+        <div className="grid gap-2 border-b cf-rule py-4 sm:grid-cols-[7rem_1fr] sm:gap-5">
+          <dt className="cf-meta cf-dim">Focus</dt>
+          <dd className="cf-body text-[15px] leading-7">{focus}</dd>
+        </div>
+      </dl>
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="case-link cf-meta cf-dim mt-5 inline-block"
+      >
+        Visit Website ↗
+      </a>
+    </>
   );
 }
 

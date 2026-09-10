@@ -289,7 +289,7 @@ export function CaseStudyPrototype({
                         這是一套供工廠管理人員與現場人員使用的內部作業系統，涵蓋日常生產、庫存、設備狀態與管理資訊。
                       </p>
                       <p className="cf-body body-tc">
-                        我的工作不是定義製造流程，而是根據 PM / System Analyst 已整理好的需求與流程，將複雜規格轉化成實際可操作的 UI，並完成前端實作。
+                        需求與流程由 PM / System Analyst 定義；我負責將這些複雜規格轉化成實際可操作的 UI，並完成前端實作。
                       </p>
                     </>
                   ) : (

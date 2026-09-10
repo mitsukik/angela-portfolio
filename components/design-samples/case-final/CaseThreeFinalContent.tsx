@@ -199,7 +199,7 @@ export function CaseThreeFinalContent({ register, locale }: { register: Register
         </Reveal>
         <p className="cf-body body-tc mt-4 max-w-[62ch]">
           {zhHant
-            ? "我的工作是進一步思考這些規則應該如何出現在畫面上：哪些資訊需要先被看見、操作應該放在哪裡、不同狀態如何呈現，以及大量相似的工作頁面要如何保持一致。"
+            ? "我的工作是將這些規則轉化為畫面上的資訊與操作：哪些資訊需要先被看見、操作應該放在哪裡、不同狀態如何呈現，以及大量相似的工作頁面如何保持一致。"
             : "My responsibility was to determine how those rules should appear on screen — what users needed to see first, where actions should live, how different states should be presented, and how similar tasks could remain consistent across the system."}
         </p>
         {/* Portfolio explanatory diagram only — not a reproduction of the
@@ -272,13 +272,13 @@ export function CaseThreeFinalContent({ register, locale }: { register: Register
         <div className="cf-body body-tc mt-4 max-w-[62ch] space-y-4">
           {zhHant ? (
             <>
-              <p>為了讓使用者更直覺地理解物品實際位於哪個區域，我將真實的儲存空間重新繪製成 vector floorplan，並以 SVG 製作互動呈現。</p>
+              <p>為了讓使用者更直覺地理解庫存實際位於哪個區域，我將真實的儲存空間重新繪製成 vector floorplan，並以 SVG 製作互動呈現。</p>
               <p>使用者不需要只靠位置名稱或編號理解資料，而能直接從空間關係判斷所在位置。</p>
             </>
           ) : (
             <>
               <p>I redrew the physical storage area as a vector floorplan and implemented an SVG-based interface that connected location data with the real layout of the warehouse.</p>
-              <p>This gave users a more direct way to understand where inventory was positioned.</p>
+              <p>This gave users a more direct way to understand where inventory was stored.</p>
             </>
           )}
         </div>
@@ -303,7 +303,7 @@ export function CaseThreeFinalContent({ register, locale }: { register: Register
         <Reveal>
           <SectionHeading
             label="06 — MAKING STATUS EASY TO SCAN"
-            title={zhHant ? "讓正在發生的狀態更容易被看見" : "Making Status Easy to Scan"}
+            title={zhHant ? "讓作業狀態一眼可見" : "Making Status Easy to Scan"}
             intro={
               zhHant
                 ? "監控畫面和一般資料輸入頁面的使用目的不同。"
@@ -314,13 +314,13 @@ export function CaseThreeFinalContent({ register, locale }: { register: Register
         <div className="cf-body body-tc mt-4 max-w-[62ch] space-y-4">
           {zhHant ? (
             <>
-              <p>在這類畫面中，使用者更需要快速知道目前是否正常、工作進行到哪裡，以及是否有需要注意的狀態。</p>
+              <p>在這類畫面中，使用者更需要快速知道哪些設備運作正常、工作進行到哪裡，以及是否有異常需要注意。</p>
               <p>因此畫面會把狀態、進度與重要數值放在比詳細輸入資訊更高的視覺層級。</p>
             </>
           ) : (
             <>
-              <p>Users needed to quickly understand what was running normally, what was in progress, and which conditions required attention.</p>
-              <p>The visual hierarchy therefore prioritised status, progress, and key operational values over detailed input controls.</p>
+              <p>Users needed to quickly understand what was operating normally, what was in progress, and which conditions required attention.</p>
+              <p>The visual hierarchy therefore prioritized status, progress, and key operational values over detailed input controls.</p>
             </>
           )}
         </div>
@@ -402,8 +402,8 @@ export function CaseThreeFinalContent({ register, locale }: { register: Register
         </Reveal>
         <p className="cf-body body-tc mt-8 max-w-[62ch]">
           {zhHant
-            ? "這個專案讓我更理解，複雜系統的 UX 不一定是重新發明流程。很多時候，更重要的設計工作，是把大量規則、資訊與操作需求整理成使用者每天都能理解並重複使用的介面。"
-            : "This project reinforced that complex operational UX is not always about inventing new workflows. Often, the harder design task is turning dense rules, information, and operational requirements into interfaces people can understand and reuse every day."}
+            ? "這個專案讓我更理解，複雜系統的 UX 很大一部分在於如何整理大量規則、資訊與操作需求，並將它們轉化成清楚、一致，能在日常工作中持續使用的介面。"
+            : "This project reinforced a key lesson in operational UX: the design challenge often lies in turning dense rules, information, and requirements into clear, consistent interfaces people can use every day."}
         </p>
         <p className="cf-heading mt-8 text-[clamp(1.1rem,2vw,1.4rem)] font-medium">
           Complex requirements. Clear everyday interactions.

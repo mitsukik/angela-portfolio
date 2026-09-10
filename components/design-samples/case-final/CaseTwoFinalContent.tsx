@@ -1,5 +1,7 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
+import { Reveal } from "../Reveal";
+import { HeroEvidenceReveal } from "./HeroEvidenceReveal";
 
 type RegisterSection = (index: number, element: HTMLElement | null) => void;
 
@@ -177,7 +179,7 @@ function ResponsiveEvidence({
         <h3 className="cf-heading text-[18px] font-medium">{project}</h3>
         <p className="cf-meta cf-dim">Desktop / Mobile</p>
       </div>
-      <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_12rem] sm:items-start lg:grid-cols-[minmax(0,1fr)_14rem]">
+      <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_16rem] sm:items-start lg:grid-cols-[minmax(0,1fr)_18rem]">
         <EvidenceImage asset={desktop} />
         <EvidenceImage asset={mobile} format="portrait" />
       </div>
@@ -190,39 +192,41 @@ export function CaseTwoHeroEvidence() {
   return (
     <figure className="mt-12 md:mt-16">
       <div className="cf-figure-frame relative aspect-[4/5] overflow-hidden bg-black/[0.035] sm:aspect-[16/8]">
-        <div className="absolute left-[3%] top-[4%] h-[42%] w-[88%] overflow-hidden border cf-rule bg-white sm:h-[68%] sm:w-[56%]">
-          <Image
-            src="/images/case02/evidence/sdx-home-desktop.webp"
-            alt="Shun De Xing corporate website homepage"
-            fill
-            priority
-            sizes="(min-width: 640px) 48vw, 88vw"
-            className="object-cover object-top"
-          />
-          <span className="cf-meta absolute bottom-3 left-3 bg-white px-2 py-1 text-[#111]">SDX</span>
-        </div>
-        <div className="absolute right-[3%] top-[31%] h-[35%] w-[76%] overflow-hidden border cf-rule bg-white sm:top-[12%] sm:h-[54%] sm:w-[38%]">
-          <Image
-            src="/images/case02/evidence/charming-home-desktop.webp"
-            alt="Charming Clinic website homepage"
-            fill
-            priority
-            sizes="(min-width: 640px) 34vw, 76vw"
-            className="object-cover object-top"
-          />
-          <span className="cf-meta absolute bottom-3 left-3 bg-white px-2 py-1 text-[#111]">Charming Clinic</span>
-        </div>
-        <div className="absolute bottom-[4%] left-[8%] h-[35%] w-[84%] overflow-hidden border cf-rule bg-white sm:bottom-[4%] sm:left-auto sm:right-[8%] sm:h-[48%] sm:w-[44%]">
-          <Image
-            src="/images/case02/evidence/natex-home-desktop.webp"
-            alt="NATEX technology company website homepage"
-            fill
-            priority
-            sizes="(min-width: 640px) 40vw, 84vw"
-            className="object-cover object-top"
-          />
-          <span className="cf-meta absolute bottom-3 left-3 bg-white px-2 py-1 text-[#111]">NATEX</span>
-        </div>
+        <HeroEvidenceReveal>
+          <div className="absolute left-[3%] top-[4%] h-[42%] w-[88%] overflow-hidden border cf-rule bg-white sm:h-[68%] sm:w-[56%]">
+            <Image
+              src="/images/case02/evidence/sdx-home-desktop.webp"
+              alt="Shun De Xing corporate website homepage"
+              fill
+              priority
+              sizes="(min-width: 640px) 48vw, 88vw"
+              className="object-cover object-top"
+            />
+            <span className="cf-meta absolute bottom-3 left-3 bg-white px-2 py-1 text-[#111]">SDX</span>
+          </div>
+          <div className="absolute right-[3%] top-[31%] h-[35%] w-[76%] overflow-hidden border cf-rule bg-white sm:top-[12%] sm:h-[54%] sm:w-[38%]">
+            <Image
+              src="/images/case02/evidence/charming-home-desktop.webp"
+              alt="Charming Clinic website homepage"
+              fill
+              priority
+              sizes="(min-width: 640px) 34vw, 76vw"
+              className="object-cover object-top"
+            />
+            <span className="cf-meta absolute bottom-3 left-3 bg-white px-2 py-1 text-[#111]">Charming Clinic</span>
+          </div>
+          <div className="absolute bottom-[4%] left-[8%] h-[35%] w-[84%] overflow-hidden border cf-rule bg-white sm:bottom-[4%] sm:left-auto sm:right-[8%] sm:h-[48%] sm:w-[44%]">
+            <Image
+              src="/images/case02/evidence/natex-home-desktop.webp"
+              alt="NATEX technology company website homepage"
+              fill
+              priority
+              sizes="(min-width: 640px) 40vw, 84vw"
+              className="object-cover object-top"
+            />
+            <span className="cf-meta absolute bottom-3 left-3 bg-white px-2 py-1 text-[#111]">NATEX</span>
+          </div>
+        </HeroEvidenceReveal>
       </div>
       <figcaption className="cf-figure-caption cf-meta mt-4">
         Three industries, each translated into a distinct information and trust strategy.
@@ -256,11 +260,13 @@ export function CaseTwoFinalContent({ register }: { register: RegisterSection })
   return (
     <>
       <Section index={0} register={register} divider={false}>
-        <SectionHeading
-          label="02 — OVERVIEW"
-          title="Three websites. Three different business contexts."
-          intro="三個專案橫跨企業服務、醫療美容與科技產業。我從商業需求出發，依各自的受眾與溝通目標整理資訊架構、使用流程與介面層級。"
-        />
+        <Reveal>
+          <SectionHeading
+            label="02 — OVERVIEW"
+            title="Three websites. Three different business contexts."
+            intro="三個專案橫跨企業服務、醫療美容與科技產業。我從商業需求出發，依各自的受眾與溝通目標整理資訊架構、使用流程與介面層級。"
+          />
+        </Reveal>
         <ul className="mt-12 grid border-t cf-rule md:grid-cols-3">
           {[projects.sdx, projects.charming, projects.natex].map((project, index) => (
             <li
@@ -276,11 +282,13 @@ export function CaseTwoFinalContent({ register }: { register: RegisterSection })
       </Section>
 
       <Section index={1} register={register}>
-        <SectionHeading
-          label="03 — FROM BUSINESS NEEDS TO WEB STRUCTURE"
-          title="不同的業務，需要不同的資訊優先順序"
-          intro="我沒有把同一套網站公式套用在三個品牌上，而是先確認使用者需要理解什麼、信任什麼，以及最終要採取什麼行動。"
-        />
+        <Reveal>
+          <SectionHeading
+            label="03 — FROM BUSINESS NEEDS TO WEB STRUCTURE"
+            title="不同的業務，需要不同的資訊優先順序"
+            intro="我沒有把同一套網站公式套用在三個品牌上，而是先確認使用者需要理解什麼、信任什麼，以及最終要採取什麼行動。"
+          />
+        </Reveal>
         <div className="mt-12 grid border-t cf-rule lg:grid-cols-3">
           {[
             ["SDX", "Understand the business", ["Broad cross-border services", "Clear service structure", "Corporate credibility", "Contact"]],
@@ -318,35 +326,37 @@ export function CaseTwoFinalContent({ register }: { register: RegisterSection })
               <p>我直接向客戶釐清需求、定義頁面流程與資訊層級、完成 UX/UI，並與 PM 協調補齊各區塊所需素材，讓廣泛服務更容易理解。</p>
             </div>
           </div>
-          <EvidenceComposition
-            primary={{
-              src: "/images/case02/evidence/sdx-home-desktop.webp",
-              alt: "Shun De Xing homepage showing corporate positioning, navigation, and primary action",
-            }}
-            secondary={{
-              src: "/images/case02/evidence/sdx-services-desktop.webp",
-              alt: "Shun De Xing services page showing grouped business services and enterprise landing flow",
-            }}
-            caption="首頁先建立跨國商務定位；服務頁再將廣泛業務拆成可理解的入口與企業落地流程。"
-            className="lg:col-span-7"
-          />
+          <Reveal className="lg:col-span-7">
+            <EvidenceComposition
+              primary={{
+                src: "/images/case02/evidence/sdx-home-desktop.webp",
+                alt: "Shun De Xing homepage showing corporate positioning, navigation, and primary action",
+              }}
+              secondary={{
+                src: "/images/case02/evidence/sdx-services-desktop.webp",
+                alt: "Shun De Xing services page showing grouped business services and enterprise landing flow",
+              }}
+              caption="首頁先建立跨國商務定位；服務頁再將廣泛業務拆成可理解的入口與企業落地流程。"
+            />
+          </Reveal>
         </div>
 
-        <div className="mt-20 border-t cf-rule pt-16 md:mt-24 md:pt-20">
+        <div className="mt-14 border-t cf-rule pt-10 md:mt-16 md:pt-12">
         <ProjectStoryHeading index="04B / CHARMING CLINIC" title="Turning Services into a Clear Customer Journey" />
         <div className="mt-10 grid gap-12 lg:grid-cols-12 lg:items-start">
-          <EvidenceComposition
-            primary={{
-              src: "/images/case02/evidence/charming-home-desktop.webp",
-              alt: "Charming Clinic homepage showing clinic environment, brand tone, and primary booking action",
-            }}
-            secondary={{
-              src: "/images/case02/evidence/charming-services-desktop.webp",
-              alt: "Charming Clinic services page showing treatment categories and booking access",
-            }}
-            caption="首頁以診所環境與專業語氣建立信任；服務頁把療程分群，並保留直接預約入口。"
-            className="lg:col-span-7"
-          />
+          <Reveal className="lg:col-span-7">
+            <EvidenceComposition
+              primary={{
+                src: "/images/case02/evidence/charming-home-desktop.webp",
+                alt: "Charming Clinic homepage showing clinic environment, brand tone, and primary booking action",
+              }}
+              secondary={{
+                src: "/images/case02/evidence/charming-services-desktop.webp",
+                alt: "Charming Clinic services page showing treatment categories and booking access",
+              }}
+              caption="首頁以診所環境與專業語氣建立信任；服務頁把療程分群，並保留直接預約入口。"
+            />
+          </Reveal>
           <div className="lg:col-span-5">
             <ProjectMeta {...projects.charming} />
             <div className="cf-body body-tc mt-8 space-y-4">
@@ -357,7 +367,7 @@ export function CaseTwoFinalContent({ register }: { register: RegisterSection })
         </div>
         </div>
 
-        <div className="mt-20 border-t cf-rule pt-16 md:mt-24 md:pt-20">
+        <div className="mt-14 border-t cf-rule pt-10 md:mt-16 md:pt-12">
         <ProjectStoryHeading index="04C / NATEX" title="Translating Technical Expertise for Business Users" />
         <div className="mt-10 grid gap-12 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-4">
@@ -367,76 +377,69 @@ export function CaseTwoFinalContent({ register }: { register: RegisterSection })
               <p>除內容製作外，我負責需求、資訊架構、UX flow、介面設計、responsive layouts 與 frontend implementation，是 CASE02 中交付範圍最完整的專案。</p>
             </div>
           </div>
-          <EvidenceComposition
-            primary={{
-              src: "/images/case02/evidence/natex-services-desktop.webp",
-              alt: "NATEX services overview showing technical service categories and content hierarchy",
-            }}
-            secondary={{
-              src: "/images/case02/evidence/natex-showcase-desktop.webp",
-              alt: "NATEX solution detail page connecting service categories with an implemented management system",
-            }}
-            caption="服務總覽先建立技術範圍；方案頁再用實際系統畫面連接能力與應用情境。"
-            className="lg:col-span-8"
-          />
-        </div>
-        <div className="mt-8 grid gap-6 sm:grid-cols-2">
-          <DetailEvidence
-            asset={{
-              src: "/images/case02/evidence/natex-partners-desktop.webp",
-              alt: "NATEX partner section showing industry, research, and cultural organizations",
-            }}
-            caption="合作夥伴區用可辨識的組織名稱，補強跨產業交付脈絡。"
-          />
-          <DetailEvidence
-            asset={{
-              src: "/images/case02/evidence/natex-inquiry-desktop.webp",
-              alt: "NATEX contact section with direct inquiry information",
-            }}
-            caption="技術與可信度資訊之後，以明確聯絡資料完成商務詢問路徑。"
-          />
+          <Reveal className="lg:col-span-8">
+            <EvidenceComposition
+              primary={{
+                src: "/images/case02/evidence/natex-services-desktop.webp",
+                alt: "NATEX services overview showing technical service categories and content hierarchy",
+              }}
+              secondary={{
+                src: "/images/case02/evidence/natex-showcase-desktop.webp",
+                alt: "NATEX solution detail page connecting service categories with an implemented management system",
+              }}
+              caption="服務總覽先建立技術範圍；方案頁再用實際系統畫面連接能力與應用情境。"
+            />
+          </Reveal>
         </div>
         </div>
         </div>
       </Section>
 
       <Section index={3} register={register}>
-        <SectionHeading
-          label="05 — ONE PRINCIPLE, DIFFERENT EXPRESSIONS"
-          title="同一個設計原則，依品牌目標形成不同表達"
-          intro="Rather than applying the same visual formula across projects, each website was shaped around its audience, industry, and communication goals."
-        />
+        <Reveal>
+          <SectionHeading
+            label="05 — ONE PRINCIPLE, DIFFERENT EXPRESSIONS"
+            title="同一個設計原則，依品牌目標形成不同表達"
+            intro="Rather than applying the same visual formula across projects, each website was shaped around its audience, industry, and communication goals."
+          />
+        </Reveal>
         <div className="mt-12 grid gap-10 lg:grid-cols-3">
           <article>
-            <DetailEvidence
-              asset={{
-                src: "/images/case02/evidence/sdx-context-desktop.webp",
-                alt: "Shun De Xing page combining business categories with cross-market company context",
-              }}
-              caption="跨市場服務先以清楚定位與分組降低理解成本。"
-            />
+            <Reveal>
+              <DetailEvidence
+                asset={{
+                  src: "/images/case02/evidence/sdx-context-desktop.webp",
+                  alt: "Shun De Xing page showing multi-country office locations and established business cooperation",
+                }}
+                caption="多國據點與長期合作紀錄，具體呈現跨市場的營運規模。"
+              />
+            </Reveal>
             <h3 className="cf-heading mt-6 text-[20px] font-medium">Clear Structure</h3>
             <p className="cf-body body-tc mt-3">協助使用者理解廣泛且跨領域的企業服務。</p>
           </article>
           <article>
-            <DetailEvidence
-              asset={{
-                src: "/images/case02/evidence/charming-booking-desktop.webp",
-                alt: "Charming Clinic contact section showing clinic location, opening hours, and booking action",
-              }}
-              caption="診所位置、營業資訊與直接預約入口共同支撐信任與行動。"
-            />
+            <Reveal>
+              <DetailEvidence
+                asset={{
+                  src: "/images/case02/evidence/charming-booking-desktop.webp",
+                  alt: "Charming Clinic contact section showing clinic location, opening hours, and booking action",
+                }}
+                caption="診所位置、營業資訊與直接預約入口共同支撐信任與行動。"
+              />
+            </Reveal>
             <h3 className="cf-heading mt-6 text-[20px] font-medium">Build Trust</h3>
             <p className="cf-body body-tc mt-3">在服務資訊與安心、專業的品牌感受之間取得平衡。</p>
           </article>
           <article>
-            <DetailEvidence
-              asset={{
-                src: "/images/case02/evidence/natex-credentials-desktop.webp",
-                alt: "NATEX company section showing expertise, certification, and business credibility",
-              }}
-              caption="公司能力、資安認證與合作脈絡建立 B2B 可信度。"
-            />
+            <Reveal>
+              <DetailEvidence
+                asset={{
+                  src: "/images/case02/evidence/natex-credentials-desktop.webp",
+                  alt: "NATEX company section showing expertise, certification, and business credibility",
+                }}
+                caption="公司能力、資安認證與合作脈絡建立 B2B 可信度。"
+              />
+            </Reveal>
             <h3 className="cf-heading mt-6 text-[20px] font-medium">Communicate Expertise</h3>
             <p className="cf-body body-tc mt-3">呈現技術能力，同時避免讓商務受眾承受過多資訊。</p>
           </article>
@@ -444,35 +447,45 @@ export function CaseTwoFinalContent({ register }: { register: RegisterSection })
       </Section>
 
       <Section index={4} register={register}>
-        <SectionHeading
-          label="06 — DESIGNING BEYOND DESKTOP"
-          title="跨裝置保留正確的資訊順序與行動"
-          intro="版面不是單純把 desktop 縮小，而是依螢幕尺寸重新安排內容層級、閱讀節奏與主要行動，讓每個品牌在較小畫面上仍能傳達正確資訊。"
-        />
+        <Reveal>
+          <SectionHeading
+            label="06 — DESIGNING BEYOND DESKTOP"
+            title="跨裝置保留正確的資訊順序與行動"
+            intro="版面不是單純把 desktop 縮小，而是依螢幕尺寸重新安排內容層級、閱讀節奏與主要行動，讓每個品牌在較小畫面上仍能傳達正確資訊。"
+          />
+        </Reveal>
         <div className="mt-12 space-y-14">
-          <ResponsiveEvidence
-            project={projects.sdx.name}
-            desktop={{ src: "/images/case02/evidence/sdx-home-desktop.webp", alt: "Shun De Xing desktop homepage" }}
-            mobile={{ src: "/images/case02/evidence/sdx-home-mobile.webp", alt: "Shun De Xing mobile homepage" }}
-            caption="主要定位、服務入口與內容順序在窄螢幕重新排列，核心資訊不依賴桌機構圖。"
-          />
-          <ResponsiveEvidence
-            project={projects.charming.name}
-            desktop={{ src: "/images/case02/evidence/charming-home-desktop.webp", alt: "Charming Clinic desktop homepage" }}
-            mobile={{ src: "/images/case02/evidence/charming-home-mobile.webp", alt: "Charming Clinic mobile homepage" }}
-            caption="品牌影像、診所介紹與預約行動在手機上維持清楚的閱讀先後。"
-          />
-          <ResponsiveEvidence
-            project={projects.natex.name}
-            desktop={{ src: "/images/case02/evidence/natex-home-desktop.webp", alt: "NATEX desktop homepage" }}
-            mobile={{ src: "/images/case02/evidence/natex-home-mobile.webp", alt: "NATEX mobile homepage" }}
-            caption="技術定位、服務分類與聯絡入口在手機版改為線性閱讀，不只是縮小桌機內容。"
-          />
+          <Reveal>
+            <ResponsiveEvidence
+              project={projects.sdx.name}
+              desktop={{ src: "/images/case02/evidence/sdx-service-desktop.webp", alt: "Shun De Xing services page on desktop" }}
+              mobile={{ src: "/images/case02/evidence/sdx-service-mobile.webp", alt: "Shun De Xing services page on mobile" }}
+              caption="版面調整保留了內容層級與可讀性，適應不同螢幕尺寸。"
+            />
+          </Reveal>
+          <Reveal>
+            <ResponsiveEvidence
+              project={projects.charming.name}
+              desktop={{ src: "/images/case02/evidence/charming-home-desktop.webp", alt: "Charming Clinic desktop homepage" }}
+              mobile={{ src: "/images/case02/evidence/charming-home-mobile.webp", alt: "Charming Clinic mobile homepage" }}
+              caption="品牌影像、診所介紹與預約行動在手機上維持清楚的閱讀先後。"
+            />
+          </Reveal>
+          <Reveal>
+            <ResponsiveEvidence
+              project={projects.natex.name}
+              desktop={{ src: "/images/case02/evidence/natex-home-desktop.webp", alt: "NATEX desktop homepage" }}
+              mobile={{ src: "/images/case02/evidence/natex-home-mobile.webp", alt: "NATEX mobile homepage" }}
+              caption="版面在手機版重新排列，維持清楚的層級、可讀性與主要操作動線。"
+            />
+          </Reveal>
         </div>
       </Section>
 
       <Section index={5} register={register}>
-        <SectionHeading label="07 — MY ROLE ACROSS THE PROJECTS" title="相同的設計責任，不同的交付範圍" />
+        <Reveal>
+          <SectionHeading label="07 — MY ROLE ACROSS THE PROJECTS" title="相同的設計責任，不同的交付範圍" />
+        </Reveal>
         <div className="mt-10 w-full min-w-0 max-w-full overflow-x-auto">
           <table className="w-full min-w-[46rem] border-collapse text-left">
             <thead>
@@ -503,9 +516,11 @@ export function CaseTwoFinalContent({ register }: { register: RegisterSection })
       <Section index={6} register={register}>
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-8">
-            <SectionHeading label="08 — REFLECTION" title="Effective web design is not one visual style applied everywhere." />
+            <Reveal>
+              <SectionHeading label="08 — REFLECTION" title="Effective web design is not one visual style applied everywhere." />
+            </Reveal>
             <p className="cf-body body-tc mt-8 max-w-[62ch]">
-              三個產業各自需要不同的結構、清晰度、品牌溝通、可信度與行動節奏，同時兼顧使用者理解與商業目標。
+              Across these projects, the design approach changed with the business context — from structuring broad corporate services, to guiding treatment discovery, to communicating technical expertise.
             </p>
           </div>
 

@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { ReactNode } from "react";
 import { Reveal } from "../Reveal";
 import { HeroEvidenceReveal } from "./HeroEvidenceReveal";
+import { CaseEvidenceViewerProvider, EvidenceTrigger } from "./CaseEvidenceViewer";
 
 type RegisterSection = (index: number, element: HTMLElement | null) => void;
 
@@ -124,14 +125,16 @@ function EvidenceImage({
 
   return (
     <div className={`cf-figure-frame relative ${aspect} overflow-hidden bg-white`}>
-      <Image
-        src={asset.src}
-        alt={asset.alt}
-        fill
-        unoptimized
-        sizes="(min-width: 1024px) 58vw, 100vw"
-        className="object-contain"
-      />
+      <EvidenceTrigger asset={asset}>
+        <Image
+          src={asset.src}
+          alt=""
+          fill
+          unoptimized
+          sizes="(min-width: 1024px) 58vw, 100vw"
+          className="object-contain"
+        />
+      </EvidenceTrigger>
     </div>
   );
 }
@@ -273,7 +276,7 @@ const contributionRows = [
 
 export function CaseTwoFinalContent({ register }: { register: RegisterSection }) {
   return (
-    <>
+    <CaseEvidenceViewerProvider>
       <Section index={0} register={register} divider={false}>
         <Reveal>
           <SectionHeading
@@ -549,6 +552,6 @@ export function CaseTwoFinalContent({ register }: { register: RegisterSection })
           </aside>
         </div>
       </Section>
-    </>
+    </CaseEvidenceViewerProvider>
   );
 }

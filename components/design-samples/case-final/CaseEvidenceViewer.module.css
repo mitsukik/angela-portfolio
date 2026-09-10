@@ -1,0 +1,139 @@
+/* CASE02 evidence viewer — isolated component-scoped styling.
+   Deliberately not touching app/globals.css (unrelated dirty shared file)
+   or any shared token; every rule here is scoped to this module via CSS
+   Modules' local class hashing, so nothing here can leak onto or be
+   affected by other pages. */
+
+.trigger {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.trigger :global(img) {
+  transition: transform 200ms ease-out;
+}
+
+.trigger:hover :global(img) {
+  transform: scale(1.01);
+}
+
+.trigger:focus-visible {
+  outline: none;
+}
+
+/* Inset ring instead of the site's default outset outline: the trigger
+   fills a .cf-figure-frame that has overflow:hidden, so an outset
+   outline-offset ring would be clipped at the frame edge and effectively
+   invisible. Same accent color as the global focus ring, just inset. */
+.trigger:focus-visible::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 2px solid var(--accent-yellow, #e7f34b);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trigger :global(img),
+  .trigger:hover :global(img) {
+    transition: none;
+    transform: none;
+  }
+}
+
+.dialog {
+  border: none;
+  padding: 0;
+  background: transparent;
+  max-width: 96vw;
+  max-height: 96vh;
+  /* Explicit centering rather than relying on the UA stylesheet's own
+     dialog:modal defaults, which left the box pinned to the top-left
+     corner instead of centered once max-width/max-height were set. */
+  position: fixed;
+  inset: 0;
+  margin: auto;
+}
+
+.dialog::backdrop {
+  background: rgba(0, 0, 0, 0.86);
+}
+
+.content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  max-width: 94vw;
+  max-height: 92vh;
+  animation: case-evidence-viewer-in 160ms ease-out;
+}
+
+@keyframes case-evidence-viewer-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content {
+    animation: none;
+  }
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: none;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.close:hover {
+  background: rgba(0, 0, 0, 0.7);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.close:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.imageWrap {
+  max-width: 92vw;
+  max-height: 84vh;
+  overflow: auto;
+  display: flex;
+}
+
+.image {
+  display: block;
+  max-width: 92vw;
+  max-height: 84vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  margin: auto;
+}

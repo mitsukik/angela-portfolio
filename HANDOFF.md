@@ -330,6 +330,20 @@ Do not claim: final brand ownership; completed brand strategy; that AI generated
 
 CASE04 remains ACTIVE / IN DEVELOPMENT.
 
+## Commercial confidentiality — 2026-09-11
+
+Some LABO65 business/commercial strategy is confidential and must not appear in the public portfolio.
+
+Default rule: if a detail is commercially sensitive and has not been explicitly approved for public use, exclude it.
+
+Do not publicly disclose unless explicitly approved: pricing strategy; subscription/monetization strategy; credit/quota business rules; conversion targets; acquisition/go-to-market plans; commercial roadmap; unreleased business features; internal prioritization rationale tied to business strategy; proprietary market positioning/competitive strategy; client confidential commercial decisions; commercially sensitive logic inferred from internal documents.
+
+Public CASE04 content should focus on: high-level product context; user-facing UX problems; UX/UI restructuring; interaction design; async/failure/recovery states; design-system work; app-native mobile experience; delivery constraints; collaboration with PM and engineering.
+
+Treat internal product documents as research/source-of-truth only, not automatically public case-study content. Do not infer publishable business strategy from internal source documents or UI states. If uncertain whether a detail is business-sensitive, omit it from the public portfolio until Angela explicitly approves it.
+
+CASE04 remains ACTIVE / IN DEVELOPMENT.
+
 ## Next action (CASE04-specific)
 
 After the next LABO65 engineering meeting: update this evidence log with new decisions/screens, identify which changes are portfolio-worthy, and only then decide the CASE04 V1 narrative and evidence selection.

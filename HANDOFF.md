@@ -189,6 +189,72 @@ Current confirmed design ownership: UX/UI redesign; flow restructuring where app
 
 **Evidence rule:** for every meaningful new design decision, record what existed before, what problem was identified, who defined the requirement, what Angela changed, why it was changed, any engineering constraint, and what was actually approved/implemented. Do not turn routine production details into portfolio evidence unless they demonstrate a meaningful UX/UI decision.
 
+## Evidence update — 2026-09-11 (confirmed current product coverage)
+
+Confirmed design/evidence update. This is a coverage snapshot, not a narrative freeze — CASE04 V1 narrative and section selection are still undecided.
+
+**Current product coverage:**
+
+01 — Account Entry
+- Login
+- Guest entry
+- Login error
+- Reset password
+- Check-email confirmation
+- Unregistered-email state
+- Registration
+- Account-created state
+- Duplicate-email error
+- Password validation
+- Offline state
+
+02 — Personal / Birth Profile Setup
+- 4-step guided setup: Birth date → Time zone → Gender → Confirmation
+- Building state
+- Completed state
+- Failed state
+- Edit path exists
+
+03 — Home
+- Signed-in / not-yet-generated state
+- Signed-in / today's soundscape available
+- No-credit state
+- Guest Home
+
+04 — Today / Monthly Soundscape
+- 6-step choice-based questionnaire
+- Generating
+- User can leave while generation continues
+- Generation failure
+- Offline failure
+- Retry / later paths
+- Player
+- Pause / loop playback
+- Post-listening feedback
+- Listening completed
+- Listening history
+
+**Updated portfolio signals — CASE04 now has evidence for:**
+1. Simplifying input-heavy flows
+2. Guided multi-step task design
+3. Async generation / waiting UX
+4. Failure and recovery states
+5. Guest / member / constrained product states
+6. Playback and post-completion UX
+7. Repeat-use continuity through listening history
+8. A full product loop rather than isolated UI screens
+
+**Current case story direction:**
+Early engineering build → UX/UI takeover → simplify heavy and linear flows → establish guided interactions and state handling → connect onboarding, Home, generation, playback and history into a coherent mobile experience.
+
+Core principle unchanged: 少讀、少打、少滑、少等、不強迫
+
+Do not claim final product impact or release results yet. Product remains ACTIVE / IN DEVELOPMENT. CASE04 is still not built as a portfolio page and section structure is still not frozen.
+
+## Product copy QA note (tracked — not actioned)
+
+For later cleanup only; no product copy was changed as part of this evidence update. Check typo/terminology consistency across all current screens before any copy is finalized for CASE04 evidence use. Examples observed in current evidence: 成生/生成 inconsistency, 回来/回來 (simplified/traditional mixing), duplicated punctuation, and English annotation spelling. Resolve at copy-finalization time, not now.
+
 ## Next action (CASE04-specific)
 
 After the next LABO65 engineering meeting: update this evidence log with new decisions/screens, identify which changes are portfolio-worthy, and only then decide the CASE04 V1 narrative and evidence selection.

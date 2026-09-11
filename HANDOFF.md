@@ -314,6 +314,22 @@ Do not claim final product impact or release results yet. Product remains ACTIVE
 
 For later cleanup only; no product copy was changed as part of this evidence update. Check typo/terminology consistency across all current screens before any copy is finalized for CASE04 evidence use. Examples observed in current evidence: 成生/生成 inconsistency, 回来/回來 (simplified/traditional mixing), duplicated punctuation, and English annotation spelling. Resolve at copy-finalization time, not now.
 
+## Delivery / brand constraint — 2026-09-11
+
+Current delivery context: the product is moving quickly toward release, and UI/UX work needs to keep engineering moving rather than wait for a fully finalized visual brand — the client's final branding/art direction is still evolving.
+
+Current visual-production approach: UX structure, interaction patterns, states, layout rules, tokens and components remain the stable layer. Some decorative/branded imagery is currently treated as a flexible, replaceable layer — AI-generated visuals may be used as provisional starting points to accelerate production, and Angela manually reviews, edits and refines those assets to fit the LABO65 UI system. Do not frame AI as owning the product design or final branding.
+
+Approved framing: "Because the product was moving toward release before the brand direction was fully defined, I used AI-generated visuals as provisional production assets, then manually refined them to fit the evolving UI system and speed up delivery."
+
+Design principle: "The product structure needed to stay stable even while the brand layer was still evolving."
+
+Portfolio signal: decision-making under uncertainty / pragmatic delivery under time and branding constraints.
+
+Do not claim: final brand ownership; completed brand strategy; that AI generated the app design; that current provisional imagery is final brand work.
+
+CASE04 remains ACTIVE / IN DEVELOPMENT.
+
 ## Next action (CASE04-specific)
 
 After the next LABO65 engineering meeting: update this evidence log with new decisions/screens, identify which changes are portfolio-worthy, and only then decide the CASE04 V1 narrative and evidence selection.

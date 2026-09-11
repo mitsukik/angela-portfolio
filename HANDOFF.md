@@ -162,6 +162,65 @@ Do not claim: original product requirements defined from scratch by Angela; back
 
 Current confirmed design ownership: UX/UI redesign; flow restructuring where applicable; information hierarchy; app-native interaction direction; onboarding/registration simplification; questionnaire UX; generation/loading/failure/recovery states; Today/Home experience; player/listening-state UX; shared design system; Android-first UI with consistent iOS presentation; design decisions prepared for engineering implementation; feasibility discussion/collaboration with engineering.
 
+## Ownership & scope clarification — 2026-09-11 (flow provenance update)
+
+Source-of-truth clarification layered on top of the existing Project context / Ownership boundaries above — does not replace them.
+
+### Team
+
+Active product team:
+- PM
+- 1 full-stack engineer
+- Angela as UI/UX Designer
+
+### Role boundaries
+
+**Client / PM** — product concept and business direction; requirements and scope coordination; project communication / prioritization.
+
+**Full-stack Engineer** — translated the early client concept into the first functional UX flow / early build; owns technical implementation; frontend/backend engineering; existing technical foundations; payment integration / payment infrastructure; other engineering work unless explicitly confirmed otherwise.
+
+**Angela — UI/UX Designer** — took over UX/UI after an early functional flow/build already existed; UX review of the existing experience; restructuring key flows where needed; information hierarchy; interaction design; app-native mobile direction; onboarding/profile setup simplification; questionnaire UX; generation/waiting/failure/recovery states; Today/Home; player/listening-state UX; shared design system; Android-first UI with consistent iOS presentation; direct feasibility collaboration with the full-stack engineer.
+
+**Do not claim** Angela created the original product flow from scratch.
+
+Approved framing: "The initial functional flow had already been translated from the client concept into an early build by the full-stack engineer. Angela took over the UX/UI work to simplify that experience, restructure key interactions, and build a more coherent mobile system around it."
+
+### Early product scope
+
+The earliest LABO65 concept was much broader and included: Home, personal energy analysis, personalized audio, healing plans, crystal-related experiences, physical LABO65 experiences, reading/knowledge content, subscription, member center.
+
+### Product scope evolution
+
+Crystal-related features are now removed from the current product direction. Do NOT claim Angela personally removed the crystal scope unless explicitly confirmed.
+
+Approved framing: "The product scope evolved during development, with earlier concepts such as the crystal-related experience removed from the current app direction."
+
+### Current product focus
+
+The current app is increasingly focused around: account entry; personal / birth profile setup; daily state input; personalized audio generation; waiting / recovery states; listening; feedback / completion; listening history; repeat-use continuity.
+
+### UX problem context
+
+The product requires a substantial amount of personal input to generate personalized audio. Current source logic includes inputs such as: birth information, current needs/state, desired outcome, scene preference, natural sounds, instrument preference, other preference inputs. The system performs internal mapping/generation logic behind the scenes.
+
+Portfolio implication: the user should not feel like they are configuring a complex AI engine or filling out one long technical form.
+
+Approved problem statement: "LABO65 needed enough personal input to generate a meaningful result, but collecting that information risked turning the mobile experience into a long questionnaire."
+
+Approved design challenge: "Make that complexity feel lighter without removing the information the system still needed."
+
+Core principle unchanged: 少讀、少打、少滑、少等、不強迫
+
+### Portfolio story direction
+
+Complex product logic underneath → early functional flow/build → UX friction becomes visible → Angela takes over UX/UI → simplify input and interaction → add clear async / failure / recovery states → connect Home, generation, playback and history → establish a consistent mobile UI system.
+
+Recruiter takeaway: "Angela took over an early functional product with complex input requirements, simplified how users move through it, designed missing states around asynchronous generation, and built a consistent mobile UI system in close collaboration with engineering."
+
+### Status (reaffirmed)
+
+CASE04 remains ACTIVE / IN DEVELOPMENT. Do not freeze final narrative yet. Do not claim release impact / metrics.
+
 ## Current UX problems identified
 
 - Forms/flows too long

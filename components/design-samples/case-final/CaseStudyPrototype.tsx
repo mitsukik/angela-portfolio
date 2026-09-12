@@ -19,6 +19,7 @@ import { getDecisionFigure, getOverviewFigure, getShowcaseFigure } from "./caseF
 import { CaseOneFinalContent } from "./CaseOneFinalContent";
 import { CaseTwoFinalContent, CaseTwoHeroEvidence } from "./CaseTwoFinalContent";
 import { CaseThreeFinalContent, CaseThreeHeroEvidence } from "./CaseThreeFinalContent";
+import { CaseFourFinalContent, CaseFourHeroEvidence } from "./CaseFourFinalContent";
 
 /**
  * Section body copy is authored as either a pre-split string[] (Complex
@@ -86,7 +87,7 @@ export function CaseStudyPrototype({
   project: Project;
   nextProject: Project;
   locale: Locale;
-  contentVersion?: "default" | "case01-v2" | "case02-v1" | "case03-v1";
+  contentVersion?: "default" | "case01-v2" | "case02-v1" | "case03-v1" | "case04-v1";
 }) {
   // Round 11: the ONE place that makes this component locale-aware. Every
   // existing `caseStudy.xxx` reference below now automatically resolves
@@ -100,21 +101,30 @@ export function CaseStudyPrototype({
   const isCaseOneV2 = contentVersion === "case01-v2";
   const isCaseTwoV1 = contentVersion === "case02-v1";
   const isCaseThreeV1 = contentVersion === "case03-v1";
+  const isCaseFourV1 = contentVersion === "case04-v1";
   const displayTitle = isCaseOneV2
     ? (locale === "zh" ? "複雜系統設計" : "Complex System Design")
     : isCaseTwoV1
       ? "Brand & Web Experience"
       : isCaseThreeV1
         ? "Manufacturing Operations Interface"
-        : (caseStudy.displayTitle ?? project.title);
+        : isCaseFourV1
+          ? "Confidential Mobile Wellness Product"
+          : (caseStudy.displayTitle ?? project.title);
   const zhHant = locale === "zh";
   const openingRef = useRef<HTMLDivElement | null>(null);
-  const chapterCount = isCaseOneV2 ? 11 : isCaseTwoV1 ? 7 : isCaseThreeV1 ? 7 : CHAPTER_COUNT;
+  // CASE04's own copy numbers its content chapters 01-08 plus an
+  // unnumbered Reflection (9 chapters starting at 01) — unlike Case01-03,
+  // whose opening block implicitly owns "01" so their content chapters
+  // start at 02. See CaseFourFinalContent.tsx's own comment on Reflection.
+  const chapterCount = isCaseOneV2 ? 11 : isCaseTwoV1 || isCaseThreeV1 ? 7 : isCaseFourV1 ? 9 : CHAPTER_COUNT;
   const chapters: Chapter[] = isCaseOneV2
     ? Array.from({ length: 11 }, (_, i) => ({ number: String(i + 2).padStart(2, "0") }))
     : isCaseTwoV1 || isCaseThreeV1
       ? Array.from({ length: 7 }, (_, i) => ({ number: String(i + 2).padStart(2, "0") }))
-      : CHAPTERS;
+      : isCaseFourV1
+        ? Array.from({ length: 9 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
+        : CHAPTERS;
   const { active, registerChapter } = useActiveChapter(chapterCount);
   const chapterSectionRefs = useRef<Array<HTMLElement | null>>([]);
 
@@ -213,11 +223,18 @@ export function CaseStudyPrototype({
               { label: "Platform", value: "Web · Industrial Tablet" },
               { label: "Client", value: "Confidential Manufacturing Client" },
             ]
-        : [
-            { label: zhHant ? "類別" : "Category", value: zhHant ? project.category.zh : project.category.en },
-            { label: zhHant ? "年份" : "Year", value: project.year },
-            ...Object.entries(caseStudy.metadata).map(([label, value]) => ({ label, value })),
-          ];
+        : isCaseFourV1
+          ? [
+              { label: "Role", value: "UI/UX Designer" },
+              { label: "Team", value: "PM · Full-stack Engineer · UI/UX Designer" },
+              { label: "Platform", value: "Android · iOS" },
+              { label: "Status", value: "In Development" },
+            ]
+          : [
+              { label: zhHant ? "類別" : "Category", value: zhHant ? project.category.zh : project.category.en },
+              { label: zhHant ? "年份" : "Year", value: project.year },
+              ...Object.entries(caseStudy.metadata).map(([label, value]) => ({ label, value })),
+            ];
 
   return (
     <div className="min-h-screen">
@@ -254,7 +271,9 @@ export function CaseStudyPrototype({
                     ? "02 / BRAND & WEB EXPERIENCE"
                     : isCaseThreeV1
                       ? "03 / MANUFACTURING OPERATIONS INTERFACE"
-                      : `${project.number} / ${caseStudy.eyebrowTitle ?? displayTitle}`}
+                      : isCaseFourV1
+                        ? "04 / CONFIDENTIAL MOBILE WELLNESS PRODUCT"
+                        : `${project.number} / ${caseStudy.eyebrowTitle ?? displayTitle}`}
               </p>
               <h1 data-open-title className="cf-heading cf-opening-title mt-5">
                 {displayTitle}
@@ -270,7 +289,9 @@ export function CaseStudyPrototype({
                           ? zhHant
                             ? "將複雜的製造需求，轉化為清楚、一致的現場與管理操作介面。"
                             : "Turning complex manufacturing specifications into clear, consistent interfaces for shop-floor and management operations."
-                          : (caseStudy.projectName ?? (zhHant ? project.chineseTitle : project.title))
+                          : isCaseFourV1
+                            ? "在產品已進入開發的階段接手 UX/UI，重新整理流程、狀態與介面，讓體驗更清楚、更輕量，也更符合 Mobile App 的使用方式。"
+                            : (caseStudy.projectName ?? (zhHant ? project.chineseTitle : project.title))
                   }
                 />
               </p>
@@ -303,6 +324,15 @@ export function CaseStudyPrototype({
                     </>
                   )}
                 </div>
+              ) : isCaseFourV1 ? (
+                <div data-open-summary className="mt-6 max-w-[56ch] space-y-4">
+                  <p className="cf-body body-tc">
+                    一個根據個人資料、當下狀態與偏好生成個人化療癒音樂的 Mobile App。系統需要處理多種輸入與生成邏輯，但使用者不需要理解這些複雜機制。
+                  </p>
+                  <p className="cf-body body-tc">
+                    我在 early functional flow 與初步工程實作完成後接手 UX/UI，重新檢視既有體驗，優先處理最影響操作的問題，並建立一致的 Mobile UI system。
+                  </p>
+                </div>
               ) : (
                 <p
                   data-open-summary
@@ -332,6 +362,7 @@ export function CaseStudyPrototype({
           </div>
           {isCaseTwoV1 && <CaseTwoHeroEvidence />}
           {isCaseThreeV1 && <CaseThreeHeroEvidence />}
+          {isCaseFourV1 && <CaseFourHeroEvidence />}
         </div>
 
         {/* pt matches cf-section-divider's own padding-top exactly (see
@@ -364,6 +395,14 @@ export function CaseStudyPrototype({
                 />
               ) : isCaseThreeV1 ? (
                 <CaseThreeFinalContent
+                  locale={locale}
+                  register={(index, element) => {
+                    registerChapter(index)(element);
+                    chapterSectionRefs.current[index] = element;
+                  }}
+                />
+              ) : isCaseFourV1 ? (
+                <CaseFourFinalContent
                   locale={locale}
                   register={(index, element) => {
                     registerChapter(index)(element);

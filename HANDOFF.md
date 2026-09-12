@@ -2,7 +2,7 @@
 
 - Branch: `feat/case02-en-localization`.
 - Foundation tag: `v3-design-system-foundation`.
-- Current task: none. **CASE01 (ZH + EN), CASE02 (ZH + EN), and CASE03 (ZH + EN) are all FROZEN.** Do not reopen discovery on any of these cases — see the ownership/positioning/evidence sections below, which are source of truth.
+- Current task: none. **CASE01 (ZH + EN), CASE02 (ZH + EN), CASE03 (ZH + EN), and CASE04 ZH V1 are all FROZEN.** CASE04 ZH V1 uses anonymized high-resolution exports from the 2026-09-12 3× PNG source ZIP; the product itself remains active development, but the portfolio case is frozen.
 - Review routes: `/design-samples/case-final-01` (CASE01 ZH), `/en/design-samples/case-final-01` (CASE01 EN), `/design-samples/case-final-02` (CASE02 ZH), `/en/design-samples/case-final-02` (CASE02 EN), `/design-samples/case-final-03` (CASE03 ZH), `/en/design-samples/case-final-03` (CASE03 EN).
 - **Continuity note:** this file was fully rewritten (not appended) to replace stale pre-freeze CASE02 status and a dropped prior history chain. Older history (Homepage Visual Polish V3/V3.1/V3.2, Lavender token checkpoint, About V2, CASE01 Responsive QA) is not reconstructed here — git log and topic branches remain the authoritative record per AGENTS.md's "if documentation conflicts with Git, investigate and report" rule.
 
@@ -135,7 +135,18 @@ Final polish commit: `f7b570e` — `fix(portfolio): polish CASE03 copy and namin
 
 # CASE04 — LABO65
 
-Status: **ACTIVE / IN DEVELOPMENT.** Portfolio status: **V1 case study not yet implemented** — do not build the CASE04 portfolio page, write final case-study copy, or freeze section structure until noted otherwise. This section is an active evidence log, not a frozen case record.
+Product status: **ACTIVE / IN DEVELOPMENT.** Portfolio status: **ZH V1 FROZEN / APPROVED (2026-09-12).** Do not make further design, copy, layout, hierarchy, asset, or motion changes without a specific issue from a fresh audit. Do not claim release impact or metrics; this section remains the evidence authority for future updates.
+
+## Freeze — 2026-09-12
+
+CASE04 ZH V1 approved and frozen. Narrative order (Hero → Team & Role → Taking Over → UX Challenge → Design Principles → Guided Input → Async States & Recovery → Product Continuity → Stable/Flexible Brand Layer → Reflection), copy, evidence set, and hierarchy are locked.
+
+**Confidentiality corrections made before freeze:** two issues found during final visual QA and fixed at the source-image level (no copy/layout changes required):
+- A daily generation-quota counter ("成生數量 01/03") was visible in the Home screen header in 3 evidence instances (Hero, Async "Ready" state, Product Continuity "Home" state) — re-masked via in-place blur on the underlying assets.
+- The login screen's brand-mask was a crude, hard-edged patch leaving a legible logo ghost — redone from the pristine 3× source with a cleaner in-place blur; now fully illegible.
+- As a side effect, the Hero now uses the genuine not-yet-generated Home screen (previously an accidental byte-identical duplicate of the "Ready" evidence) — two distinct real screens instead of one reused twice.
+
+Public evidence lives only under `public/images/case04/` (14 anonymized WebP files). Raw/high-res source PNGs (including client-identifying filenames and the no-credit/quota source) are archived outside the public and Git-tracked tree — do not restage them.
 
 ## Positioning
 
@@ -250,7 +261,7 @@ CASE04 remains ACTIVE / IN DEVELOPMENT. Do not freeze final narrative yet. Do no
 
 ## Evidence update — 2026-09-11 (confirmed current product coverage)
 
-Confirmed design/evidence update. This is a coverage snapshot, not a narrative freeze — CASE04 V1 narrative and section selection are still undecided.
+Confirmed design/evidence update. This is a historical coverage snapshot; the current ZH V1 narrative and section selection are now implemented and FROZEN (see "Freeze — 2026-09-12" above).
 
 **Current product coverage:**
 
@@ -308,7 +319,7 @@ Early engineering build → UX/UI takeover → simplify heavy and linear flows �
 
 Core principle unchanged: 少讀、少打、少滑、少等、不強迫
 
-Do not claim final product impact or release results yet. Product remains ACTIVE / IN DEVELOPMENT. CASE04 is still not built as a portfolio page and section structure is still not frozen.
+Do not claim final product impact or release results yet. Product remains ACTIVE / IN DEVELOPMENT. CASE04 ZH V1 is built and FROZEN; its section structure should not be reopened without a specific issue.
 
 ## Product copy QA note (tracked — not actioned)
 
@@ -346,18 +357,18 @@ CASE04 remains ACTIVE / IN DEVELOPMENT.
 
 ## Next action (CASE04-specific)
 
-After the next LABO65 engineering meeting: update this evidence log with new decisions/screens, identify which changes are portfolio-worthy, and only then decide the CASE04 V1 narrative and evidence selection.
+CASE04 ZH V1 is frozen. Future product updates should be added to this evidence log only when they are portfolio-worthy; do not expose confidential commercial strategy or claim release impact. Reopen the frozen case only for a real bug, factual error, confidentiality issue, or regression.
 
 ---
 
 # WORKFLOW RULE
 
-Do not reopen CASE01, CASE02, or CASE03 discovery. Do not ask the user to repeat ownership, positioning, evidence strategy, project roles, or cross-case differentiation — the sections above are source of truth. Preserve all three cases unless a genuine bug or factual issue appears.
+Do not reopen CASE01, CASE02, CASE03, or CASE04 (ZH V1) discovery. Do not ask the user to repeat ownership, positioning, evidence strategy, project roles, or cross-case differentiation — the sections above are source of truth. Preserve all four cases unless a genuine bug or factual issue appears.
 
 ---
 
 # NEXT ACTION
 
-No active task. CASE01, CASE02, and CASE03 (ZH + EN) are all complete and frozen. Next portfolio priority: **CASE04 (LABO65) V1**, while the product is still in active development. Selected Work later includes a **Foresight Realtors** case. A whole-site skills audit (accessibility, typography, design-guidelines, pre-launch coherence) happens only after Portfolio V1 coverage (all four case studies) is complete — do not run it early.
+No active task. CASE01, CASE02, CASE03 (ZH + EN), and **CASE04 ZH V1 are all complete and frozen** (product itself remains ACTIVE / IN DEVELOPMENT; only the portfolio case is frozen). Portfolio V1 coverage (all four case studies) is now complete. Selected Work later includes a **Foresight Realtors** case. A whole-site audit may now proceed.
 
 Note: the worktree has unrelated uncommitted changes (`AGENTS.md`, `CLAUDE.md`, `app/globals.css`, `ReadingSection.tsx`, `SiteHeader.tsx`, `.impeccable/`, `artifacts/case01-*.png`) and untracked `case-final-04`/`en/case-final-04` scaffolding, none of which were reviewed or authored as part of the CASE01/CASE02/CASE03 work recorded above. A future session should run `git status`/`git diff` to assess their state before treating them as either in-progress work or safe to discard.

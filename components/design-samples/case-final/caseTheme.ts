@@ -5,7 +5,12 @@
  *   01 Complex System      -> dark
  *   02 Corporate Website   -> light
  *   03 IoT System          -> dark
- *   04 Consumer Product    -> light
+ *   04 Consumer Product    -> dark (the real product's own UI is a dark,
+ *                              moody navy/gold product — switched from
+ *                              the earlier generic "light" placeholder
+ *                              set before real evidence existed, so the
+ *                              case page reads consistently with its
+ *                              own screenshots, same as CASE01/03)
  *
  * This is prepared architecture only — production /work/[slug] does not
  * read from this yet (see CaseStudyPrototype.tsx's own doc comment).
@@ -19,7 +24,7 @@ export const caseThemeBySlug: Record<string, ProjectStageBackground> = {
   "complex-system": "dark",
   "corporate-website": "light",
   "iot-system": "dark",
-  "consumer-product": "light",
+  "consumer-product": "dark",
 };
 
 export function getCaseTheme(slug: string): ProjectStageBackground {

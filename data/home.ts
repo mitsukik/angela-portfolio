@@ -17,7 +17,7 @@ type HeroContent = {
 
 export const heroContent: Record<Locale, HeroContent> = {
   zh: {
-    kicker: "資深產品設計師 — 複雜系統 / B2B / 企業產品",
+    kicker: "資深 UI/UX 設計師 — 複雜系統 / B2B / 企業產品",
     identityLines: ["ANGELA", "YU"],
     statement: [
       { text: "我把複雜的系統，轉譯成清晰、可延展、直覺的產品" },
@@ -29,7 +29,7 @@ export const heroContent: Record<Locale, HeroContent> = {
     ],
   },
   en: {
-    kicker: "Senior Product Designer — Complex Systems / B2B / Enterprise",
+    kicker: "Senior UI/UX Designer — Complex Systems / B2B / Enterprise",
     identityLines: ["ANGELA", "YU"],
     statement: [
       { text: "I translate complex systems into clear, scalable, and intuitive product " },

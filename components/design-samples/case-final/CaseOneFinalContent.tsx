@@ -99,6 +99,35 @@ function Sequence({ items }: { items: Array<[string, string]> }) {
   );
 }
 
+// Section 10 scope summary: reuses Sequence's own divider/label/body
+// grammar (top rule, per-cell bottom+right rules, no boxes/shadows) at 4
+// columns instead of 3 — a lightweight editorial list, not a feature-card
+// grid, deliberately quieter than the Supplier Dashboard it sits under.
+// Role/product-area names stay in English in both locales, matching this
+// case study's own established convention for domain terms (e.g. "UX/UI",
+// "Edge Cases", "Platform / Warehouse" already appear as-is in the ZH
+// copy elsewhere on this page) — so there is nothing to translate here,
+// and ZH/EN render identically by construction rather than by coincidence.
+const SCOPE_SUMMARY_GROUPS: Array<{ label: string; items: string }> = [
+  { label: "Platform / Warehouse", items: "Operations · Inventory · Orders · Fulfillment" },
+  { label: "Supplier", items: "Dashboard · Product Management · Pricing" },
+  { label: "Agent / Streamer", items: "Selection · Collaboration · Sales Workflow" },
+  { label: "Consumer", items: "Storefront · Checkout · Order Experience" },
+];
+
+function ScopeSummary() {
+  return (
+    <ul className="grid border-t cf-rule sm:grid-cols-2 lg:grid-cols-4">
+      {SCOPE_SUMMARY_GROUPS.map((group) => (
+        <li key={group.label} className="border-b cf-rule py-6 lg:border-r lg:px-6 lg:first:pl-0 lg:last:border-r-0">
+          <p className="cf-meta cf-accent">{group.label}</p>
+          <p className="cf-dim mt-3 text-[14px] leading-6">{group.items}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function DecisionMedia({ principle, children }: { principle: string; children: ReactNode }) {
   return <div className="space-y-8">{children}<p className="border-t cf-rule pt-5"><span className="cf-heading text-[clamp(1rem,1.7vw,1.3rem)] font-medium">{principle}</span></p></div>;
 }
@@ -164,19 +193,28 @@ export function CaseOneFinalContent({ register, locale }: { register: RegisterSe
       <Section index={3} register={register}>
         <ReadingSection
           label={zhHant ? "05 — 我的角色" : "05 — MY ROLE"}
-          title="Lead Product Designer"
+          title={zhHant ? "Lead Product Designer · 端到端產品設計" : "Lead Product Designer · End-to-end Product Design"}
           paragraphs={
             zhHant
               ? [
-                  "我主導產品從早期需求梳理到開發落地的 UX/UI 設計，負責建立整體產品架構、核心流程、互動邏輯與設計方向。",
-                  "專案初期許多實際流程、系統狀態、驗證條件與 Edge Cases 尚未完整定義，因此我的工作不只是把需求轉成畫面，也需要整理未明確的操作邏輯與情境，再與工程團隊確認後落實到產品中。",
+                  "我主導產品從早期需求梳理、產品架構到 UX/UI 設計與開發交付，負責定義跨角色核心流程、系統狀態、互動邏輯與整體介面方向。",
+                  "專案初期許多商業流程、權限關係、驗證條件與 Edge Cases 尚未完整定義。我需要將零散需求整理成可執行的產品邏輯，釐清不同角色與系統狀態之間的關係，再與 PM／工程團隊確認技術與商業限制，持續推進至實際開發。",
                 ]
               : [
-                  "I led UX/UI design from early requirements clarification through implementation, establishing the Product Architecture, core workflows, interaction logic, and overall design direction.",
-                  "Early in the project, many operational workflows, system states, validation conditions, and Edge Cases were still undefined. My role extended beyond translating requirements into screens: I clarified unresolved interactions and scenarios, then aligned the resulting decisions with engineering before carrying them into the product.",
+                  "I led the product design from early requirement definition and product architecture through UX/UI design and implementation handoff. I was responsible for defining the core cross-role workflows, system states, interaction logic, and overall interface direction.",
+                  "Many business processes, permission relationships, validation rules, and edge cases were still undefined at the beginning of the project. My role involved turning fragmented requirements into actionable product logic, clarifying how different roles and system states interacted, and working closely with PMs and engineers to validate business and technical constraints through implementation.",
                 ]
           }
-          points={["Product Architecture", "System Thinking", "UX Flow", "Interaction Design", "State Design", "UI Design", "Developer Handoff"]}
+          points={[
+            "Product Architecture",
+            "Cross-role User Flows",
+            "Information Architecture",
+            "System & State Design",
+            "Interaction Design",
+            "UI / Responsive Design",
+            "Design System / Reusable Patterns",
+            "Developer Handoff & Implementation Review",
+          ]}
         />
       </Section>
 
@@ -316,16 +354,23 @@ export function CaseOneFinalContent({ register, locale }: { register: RegisterSe
 
       <Section index={8} register={register}>
         <EvidenceSection
-          label={zhHant ? "10 — 最終產品 / UI 實證" : "10 — FINAL PRODUCT / UI EVIDENCE"}
-          title={zhHant ? "從營運到銷售的一體化生態系" : "One Ecosystem, from Operations to Sales"}
+          label={zhHant ? "10 — 跨角色產品介面" : "10 — CROSS-ROLE EXPERIENCE"}
+          title={zhHant ? "從營運到銷售的一體化產品體驗" : "One Ecosystem, from Operations to Sales"}
         >
+          {/* Section 10 revision: previously repeated Order Management and
+              Expanded Streamer Filter verbatim from Sections 09/06, then a
+              second pass reused the Section 03 ecosystem diagram as a
+              "bookend" — still a repeated visual. The full asset library
+              has no unused Platform/Warehouse, Consumer, or Agent-specific
+              screenshot (verified: every real CASE01 image file is already
+              placed somewhere in this case study), so rather than force a
+              multi-image gallery, this keeps only the one genuinely
+              unique, unused image (Supplier Dashboard) as the section's
+              visual focus, paired with a lightweight text summary of scope
+              — not another screenshot — to communicate ecosystem breadth
+              without repeating imagery or re-explaining what Section 03
+              already covers. */}
           <div className="space-y-10">
-            <InspectableEvidence
-              src="/images/case01/evidence/case01-order-list.webp"
-              alt={zhHant ? "平台營運端訂單管理列表，呈現訂單處理所需的搜尋、篩選、狀態與操作資訊" : "Platform operations order management list, showing the search, filters, status, and actions needed to process orders"}
-              caption={zhHant ? "平台營運 — 訂單管理" : "PLATFORM OPERATIONS — Order Management"}
-              aspect="aspect-[2048/1565]"
-            />
             <div className="lg:grid lg:grid-cols-12">
               <InspectableEvidence
                 src="/images/case01/evidence/case01-supplier-dashboard.webp"
@@ -335,29 +380,24 @@ export function CaseOneFinalContent({ register, locale }: { register: RegisterSe
                 className="lg:col-span-8"
               />
             </div>
-            <TopCropEvidence
-              src="/images/case01/evidence/case01-streamer-filter.webp"
-              alt={zhHant ? "直播主名單的多條件篩選介面" : "Multi-criteria filter interface for the streamer list"}
-              caption={zhHant ? "銷售／合作 — 展開直播主篩選" : "SALES / COLLABORATION — Expanded Streamer Filter"}
-              className="mx-auto max-w-[70rem]"
-            />
+            <ScopeSummary />
           </div>
         </EvidenceSection>
       </Section>
 
       <Section index={9} register={register}>
         <ReadingSection
-          label={zhHant ? "11 — 成果" : "11 — OUTCOME"}
-          title={zhHant ? "從模糊需求建立到完整產品開發" : "From Ambiguous Requirements to an Implemented Product"}
+          label={zhHant ? "11 — 交付成果" : "11 — DELIVERY OUTCOME"}
+          title={zhHant ? "從模糊需求到可開發的完整產品系統" : "From Ambiguous Requirements to an Implementation-Ready Product System"}
           paragraphs={
             zhHant
               ? [
-                  "完成平台營運、Supplier、Agent 與 Consumer Web Storefront 的核心產品設計，並與工程團隊協作完成主要功能的開發落地。",
-                  "產品後續因公司商業策略調整，未正式進入商業營運。",
+                  "完成 Platform / Warehouse、Supplier、Agent 與 Consumer Web Storefront 的核心產品設計，涵蓋產品架構、主要使用流程、系統狀態與跨角色介面，並與工程團隊協作完成主要功能的開發落地。",
+                  "產品後續因公司商業策略調整，未正式進入商業營運，因此本案例聚焦於產品架構、系統設計與開發交付成果。",
                 ]
               : [
-                  "I completed the core product design across Platform operations, Supplier, Agent, and Consumer Web Storefront experiences, collaborating with engineering to implement the main product capabilities.",
-                  "The company later changed its business strategy, so the product did not enter commercial operation.",
+                  "Delivered the core product experience across Platform / Warehouse, Supplier, Agent, and Consumer Web Storefront, covering product architecture, key workflows, system states, and cross-role interfaces. Worked closely with the engineering team to bring the primary product flows into implementation.",
+                  "The product did not proceed to commercial launch following a shift in business strategy. This case therefore focuses on product architecture, system design, and implementation delivery rather than post-launch metrics.",
                 ]
           }
         />

@@ -1,0 +1,2139 @@
+@import "tailwindcss";
+
+:root {
+  --background: #111111;
+  --foreground: #f2f0ec;
+  --surface: #171717;
+  --accent-lavender: #b9a7ff;
+  --accent-yellow: #e7f34b;
+  --motion-duration-micro: 200ms;
+  --motion-duration-discrete: 320ms;
+  --motion-duration-entrance: 560ms;
+  --motion-ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /*
+   * V3 primitives — exact oklch values from the approved Home/Nav/Closing
+   * implementation. These are the Portfolio's authoritative destination;
+   * the older aliases above remain temporarily for unmigrated About/Case
+   * consumers and are not a second source of design authority.
+   */
+  --ink: oklch(0.16 0.008 265);
+  --paper: oklch(0.968 0.012 95);
+  --acid: oklch(0.93 0.19 116);
+  /* Round 14: Angela's explicitly approved exact value (was
+     oklch(0.78 0.11 300) — close but not numerically identical). Updates
+     the one authoritative token in place, not a duplicate: every existing
+     consumer (Hero's "YU", Selected Work's lavender-accent projects,
+     Case dark theme's --cf-accent-2, and now Case/Selected Work light
+     theme's shared accent) inherits this automatically. */
+  --lavender: lab(73.0671% 21.3951 -34.7226);
+  --hairline: oklch(0.16 0.008 265 / 18%);
+
+  /*
+   * Authoritative V3 implementation foundation.
+   *
+   * These semantic tokens preserve the approved Home/Nav/Closing output
+   * exactly while giving later About/Case migrations one destination. Theme
+   * selectors may override color semantics only; typography, frame, radius,
+   * and motion semantics remain rooted here.
+   */
+  --portfolio-font-display: var(--font-archivo), "Noto Sans TC", system-ui, sans-serif;
+  --portfolio-font-body: var(--font-noto-sans-tc), var(--font-archivo), system-ui, sans-serif;
+  /* "Noto Sans TC" fallback matches --portfolio-font-display's existing
+     pattern above: IBM Plex Mono has no CJK (or full punctuation, e.g.
+     em dash) coverage, so a handful of genuinely mixed-language labels
+     (e.g. the Home Hero eyebrow "資深產品設計師 — 複雜系統 / B2B...")
+     rendered a missing-glyph box for "—" once the :lang(zh-Hant) rule
+     below moved into @layer base and stopped blanket-overriding this
+     role's font for its Chinese portion. Latin glyphs IBM Plex Mono does
+     have are unaffected — this only catches what it doesn't. */
+  --portfolio-font-label: var(--font-ibm-plex-mono), "Noto Sans TC", ui-monospace, monospace;
+
+  --portfolio-type-display-size: clamp(2.75rem, 9vw, 8.5rem);
+  --portfolio-type-display-weight: 700;
+  --portfolio-type-display-leading: 0.88;
+  --portfolio-type-display-tracking: 0;
+  --portfolio-type-section-size: clamp(1.75rem, 3.3vw, 3.1rem);
+  --portfolio-type-section-weight: 600;
+  --portfolio-type-section-leading: 0.94;
+  --portfolio-type-section-tracking: 0;
+  --portfolio-type-subheading-size: clamp(1.25rem, 2vw, 2rem);
+  --portfolio-type-subheading-weight: 600;
+  --portfolio-type-subheading-leading: 1.1;
+  --portfolio-type-body-size: clamp(0.9375rem, 1.05vw, 1.0625rem);
+  --portfolio-type-body-leading: 1.85;
+  --portfolio-type-body-tracking: 0.02em;
+  /* ZH-only desktop readability bump (Angela's explicit call): the shared
+     clamp above tops out at 1.0625rem, which read too small for
+     long-form Chinese reading on desktop. Mobile keeps the clamp above
+     untouched; tablet (>=48rem) gets this smaller intermediate step;
+     desktop (>=64rem, this system's existing lg breakpoint) gets the
+     full size. EN never reads these — every consumer is additionally
+     scoped by :lang(zh-Hant), see .type-v3-body/.body-tc below. */
+  --portfolio-type-body-size-zh-tablet: 1.0625rem;
+  --portfolio-type-body-size-zh-desktop: 1.2rem;
+  --portfolio-type-label-size: 0.75rem;
+  --portfolio-type-label-leading: 1.4;
+  --portfolio-type-label-tracking: 0.18em;
+
+  --portfolio-frame-max: 1600px;
+  --portfolio-frame-gutter-mobile: 1.25rem;
+  --portfolio-frame-gutter-tablet: 2.5rem;
+  --portfolio-header-frame-max: 1520px;
+  --portfolio-header-gutter-mobile: 1.5rem;
+  --portfolio-header-gutter-tablet: 2.5rem;
+  --portfolio-header-gutter-desktop: 3.5rem;
+
+  --portfolio-interaction-duration: 300ms;
+  --portfolio-interaction-ease: ease;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-primary: var(--foreground);
+  --color-accent-lavender: var(--accent-lavender);
+  --color-accent-yellow: var(--accent-yellow);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --ease-editorial: var(--motion-ease-editorial);
+
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-acid: var(--acid);
+  --color-lavender: var(--lavender);
+  --color-hairline: var(--hairline);
+  --font-display: var(--portfolio-font-display);
+  --font-label: var(--portfolio-font-label);
+}
+
+/*
+ * Site-wide subtle divider rule: the "primary" text color at 12% opacity
+ * (border-primary/12). Tailwind's opacity modifier works on any theme
+ * color, so this stays a usage convention rather than its own token.
+ */
+
+html {
+  background: var(--background);
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), sans-serif;
+  /* Guards the .case-takeover full-bleed break-out (100vw) from ever
+     introducing a horizontal scrollbar. */
+  overflow-x: hidden;
+}
+
+/*
+ * Language-aware font assignment.
+ * Every Chinese string in the codebase already carries lang="zh-Hant",
+ * so this cascades automatically with no JSX changes: Chinese glyphs render
+ * in Noto Sans TC, and anything Noto Sans TC has no glyph for (nothing,
+ * since it ships full Latin coverage) would otherwise fall through to
+ * Geist. Latin/numeric runs inside Chinese copy are kept in Geist
+ * explicitly via the <MixedText> component instead (see
+ * components/site/MixedText.tsx) — Noto Sans TC's own Latin glyphs are
+ * always present in the font Google serves, so unicode-range alone
+ * can't be used to force fallback for embedded Latin text.
+ *
+ * Wrapped in @layer base (rather than left unlayered) so the explicit
+ * Latin typography roles in @layer components below — .type-v3-label,
+ * .type-v3-display, .cf-h3, .cf-tag, and friends — can win on any element
+ * that genuinely needs them, even inside a ZH-lang subtree. An unlayered
+ * rule always beats a layered one regardless of specificity, which is
+ * what silently forced e.g. the Home Hero's "ANGELA YU" and every case
+ * study's English skill tags into this Chinese fallback instead of their
+ * own Archivo/IBM Plex Mono roles. Tailwind's own `@import "tailwindcss"`
+ * at the top of this file already establishes the base -> components ->
+ * utilities layer order, so this only needs to join the existing "base"
+ * layer, not redeclare the ordering.
+ */
+@layer base {
+  :lang(zh-Hant) {
+    font-family: var(--font-noto-sans-tc), var(--font-geist-sans), sans-serif;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-about-hero-motion="pending"] .about-hero .hero-line-inner {
+    transform: translateY(92%);
+  }
+
+  html[data-about-hero-motion="pending"] .about-hero .about-intro-inner {
+    transform: translateY(35%);
+  }
+}
+
+:where(a, button):focus-visible {
+  outline: 2px solid var(--accent-yellow);
+  outline-offset: 4px;
+}
+
+/* Whole-site QA (2026-09): scrollable evidence frames (case-final
+   diagrams wider than the viewport below `lg`, made keyboard-focusable
+   below) reuse this same visible ring rather than the browser default,
+   so keyboard focus stays visually consistent with the rest of the
+   site. Selector is scoped to .cf-figure-frame specifically — the
+   pre-existing .case-point-chip:focus-visible (outline: none) keeps its
+   own deliberate treatment untouched. */
+.cf-figure-frame:focus-visible,
+.cf-scroll-region:focus-visible {
+  outline: 2px solid var(--accent-yellow);
+  outline-offset: 2px;
+}
+
+/*
+ * ============================================================
+ * Semantic typography system — Phase 1
+ * ============================================================
+ * Six shared tiers (Display, Heading XL, Heading, Body Large, Body,
+ * Meta/Label), each carrying independent values per script rather than
+ * one script's values reused for the other.
+ *
+ * Values below are extracted from CURRENT approved usage — sizes and
+ * line-heights are NOT being redesigned in this phase. Where a tier has
+ * more than one current instance and they diverge, the most representative
+ * instance is used as the token value and the divergent instance is noted
+ * in a comment, left untouched in its own file.
+ *
+ * Only .type-meta-zh is adopted into markup in Phase 1 (it corrects an
+ * accidental bug — Chinese text inheriting English tracking/uppercase).
+ * The rest are established and documented, ready to adopt once Phase 2
+ * (optical size/line-height tuning) is approved, so the font-family change
+ * stays the one isolated, evaluable variable for now.
+ */
+
+/* ---- Display ---- */
+.type-display {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-weight: 500;
+  font-size: 3.2rem;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+}
+@media (min-width: 40rem) {
+  .type-display { font-size: 5.2rem; }
+}
+@media (min-width: 64rem) {
+  .type-display { font-size: 5.5rem; }
+}
+@media (min-width: 80rem) {
+  .type-display { font-size: 7rem; }
+}
+/* Source: About page h1. Case Study h1 uses a close but distinct
+   3rem/5rem base/sm step (same 5.5rem/7rem at lg/xl) — not unified. */
+
+.type-display-zh {
+  font-family: var(--font-noto-sans-tc), var(--font-geist-sans), sans-serif;
+  font-weight: 500;
+  font-size: 2.45rem;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+@media (min-width: 40rem) {
+  .type-display-zh { font-size: 3.5rem; }
+}
+@media (min-width: 48rem) {
+  .type-display-zh { font-size: 4.5rem; }
+}
+@media (min-width: 64rem) {
+  .type-display-zh { font-size: 5.7rem; }
+}
+/* Source: Hero h1. Already uses looser leading and gentler tracking than
+   the English Display tier — someone already intuited CJK shouldn't take
+   Latin display tracking; this tier codifies that. */
+
+/* ---- Heading XL ---- */
+.type-heading-xl {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-weight: 500;
+  font-size: 2.7rem;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+}
+/* Source: Footer "LET'S WORK TOGETHER" h2 (fixed size, no responsive step).
+   The "next project" link on Case Study pages is a second Heading XL-ish
+   usage (2rem/3.5rem/5rem, tracking -0.025em) that diverges — not unified.
+   No current Chinese instance at this tier; no -zh variant defined yet. */
+
+/* ---- Heading ---- */
+.type-heading {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-weight: 500;
+  font-size: 1.65rem;
+  line-height: normal;
+  letter-spacing: -0.02em;
+}
+@media (min-width: 40rem) {
+  .type-heading { font-size: 1.9rem; }
+}
+/* Source: About "What I Do" / "How I Work" h3s. About's "Experience" h3
+   (1.7rem/2rem) and Case Study's decision h3s (1.6rem/2rem) are close
+   variants — not unified. No current Chinese instance at this tier. */
+
+/* ---- Body Large ---- */
+.type-body-lg {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-weight: 400;
+  font-size: 1.35rem;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+}
+@media (min-width: 40rem) {
+  .type-body-lg { font-size: 1.6rem; }
+}
+/* Source: Case Study section body copy. */
+
+.type-body-lg-zh {
+  font-family: var(--font-noto-sans-tc), var(--font-geist-sans), sans-serif;
+  font-weight: 400;
+  font-size: 1.1rem;
+  line-height: 1.75rem;
+  letter-spacing: 0.12em;
+}
+/* Source: Selected Work chineseTitle. Case Study's chineseTitle is a
+   divergent second instance (1.2rem/1.45rem, tracking 0.08em) — not
+   unified. Both already use positive tracking, never negative. */
+
+/* ---- Body ---- */
+.type-body {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 2rem;
+  letter-spacing: normal;
+}
+@media (min-width: 40rem) {
+  .type-body { font-size: 18px; }
+}
+/* Source: About intro paragraph. */
+
+.type-body-zh {
+  font-family: var(--font-noto-sans-tc), var(--font-geist-sans), sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.75rem;
+  letter-spacing: normal;
+}
+@media (min-width: 40rem) {
+  .type-body-zh { font-size: 18px; }
+}
+@media (min-width: 48rem) {
+  .type-body-zh { font-size: 19px; }
+}
+@media (min-width: 64rem) {
+  .type-body-zh { font-size: 20px; }
+}
+/* Source: Hero support paragraph. Project descriptions use the same
+   pattern at a fixed 16px (no responsive scaling defined there). */
+
+/* ---- Meta / Label ---- */
+.type-meta {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+/* Source: nav / tag / eyebrow pattern, the majority tracking value across
+   the site. Section-heading labels use a close but distinct 0.2em/0.22em
+   — not unified. */
+
+.type-meta-zh {
+  /* .type-meta's 12px is below the 14px minimum for readable Chinese UI
+     text — this "中" language-toggle control is the only current usage. */
+  font-size: 14px;
+  letter-spacing: normal;
+  text-transform: none;
+}
+/* Adopted in Phase 1: corrects Chinese UI labels (e.g. the "中文" language
+   toggle) that were inheriting the English Meta tier's uppercase transform
+   and 0.18em tracking — meaningless/harmful on CJK glyphs. Font-family is
+   already handled by the global :lang(zh-Hant) rule above. */
+
+/* ---- Editorial step hierarchy ---- */
+.type-step-title {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 1.65rem;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: -0.02em;
+}
+
+.type-step-title:lang(zh-Hant),
+.type-step-body:lang(zh-Hant) {
+  font-family: var(--font-noto-sans-tc), var(--font-geist-sans), sans-serif;
+}
+
+@media (min-width: 40rem) {
+  .type-step-title {
+    font-size: 1.9rem;
+  }
+}
+
+.type-step-body {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.75rem;
+  letter-spacing: normal;
+}
+
+.type-step-number {
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 0.18em;
+}
+
+.skip-link {
+  position: fixed;
+  top: 1rem;
+  left: 1.5rem;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transform: translateY(calc(-100% - 2rem));
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+
+#selected-work,
+#contact {
+  scroll-margin-top: 5rem;
+}
+
+@media (min-width: 64rem) {
+  #selected-work,
+  #contact {
+    scroll-margin-top: 7rem;
+  }
+}
+
+/*
+ * Everything below is wrapped in Tailwind's "components" layer so any
+ * Tailwind utility class applied alongside these (e.g. flex/justify-*
+ * overriding .link-cta's default inline-flex on the Next Project link)
+ * always wins on equal specificity, regardless of source order — the
+ * whole reason Tailwind v4's layer system exists.
+ */
+@layer components {
+
+/*
+ * ============================================================
+ * Authoritative V3 site frame
+ * ============================================================
+ * .site-frame is the shared outer viewport relationship. The header keeps
+ * its approved optical inset through a documented component variant; page
+ * interiors remain free to define their own grids inside either frame.
+ */
+.site-frame,
+.site-frame-header {
+  width: 100%;
+  margin-inline: auto;
+}
+
+.site-frame {
+  max-width: var(--portfolio-frame-max);
+  padding-inline: var(--portfolio-frame-gutter-mobile);
+}
+
+.site-frame-header {
+  max-width: var(--portfolio-header-frame-max);
+  padding-inline: var(--portfolio-header-gutter-mobile);
+}
+
+@media (min-width: 48rem) {
+  .site-frame {
+    padding-inline: var(--portfolio-frame-gutter-tablet);
+  }
+
+  .site-frame-header {
+    padding-inline: var(--portfolio-header-gutter-tablet);
+  }
+}
+
+@media (min-width: 64rem) {
+  .site-frame-header {
+    padding-inline: var(--portfolio-header-gutter-desktop);
+  }
+}
+
+/*
+ * ============================================================
+ * Global interaction language — nav / destination CTA / media
+ * ============================================================
+ * Two restrained, reusable hover/focus families replace the previous
+ * color-only links and the several near-duplicate arrow rules that used
+ * to live next to each component (.next-project-link, .project-case-link,
+ * etc). Applied consistently across header nav, footer, About's contact
+ * CTA, and every Case Study exit link.
+ *
+ *   .link-nav — secondary/navigation text: an underline draws in on
+ *     hover/focus and retracts back out on leave. Calm and repeatable —
+ *     for links a visitor will hover many times (nav, footer).
+ *   .link-cta — destination links: underline draw + a marker (usually an
+ *     arrow) traveling together, communicating "this leads somewhere"
+ *     rather than just "this is interactive." Reserved for links that
+ *     actually navigate somewhere meaningful.
+ *
+ * Both degrade to an instant color change under reduced motion and both
+ * define a real :active press state so touch input gets feedback a
+ * hover-only design would never give it.
+ */
+
+.link-nav {
+  position: relative;
+}
+
+.link-nav::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.link-nav:is(:hover, :focus-visible)::after,
+.link-nav[data-active="true"]::after {
+  transform: scaleX(1);
+}
+
+.link-nav[data-active="true"] {
+  color: var(--accent-yellow);
+}
+
+/* The actual text-color response — this was the missing piece: the
+   transition property below was declared but no rule ever set the
+   target color for normal (non-reduced) motion, so hover only ever drew
+   an underline and never visibly changed the text itself. */
+.link-nav:is(:hover, :focus-visible) {
+  color: var(--accent-yellow);
+}
+
+.link-nav:active {
+  opacity: 0.7;
+}
+
+.link-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  /* Establishes its own stacking context so a -z-10 descendant (the Next
+     Project link's hover media layer) is contained and compared here,
+     rather than escaping to an ancestor context and painting behind the
+     page's own opaque background. */
+  isolation: isolate;
+}
+
+.link-cta::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* Flush to the box edge (not the usual -2/-3px gap) so it survives
+     .link-cta usages that also need overflow-hidden (e.g. the Next
+     Project link's hover media layer) without getting clipped. */
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.link-cta:is(:hover, :focus-visible)::after {
+  transform: scaleX(1);
+}
+
+.link-cta-label {
+  opacity: 0.82;
+}
+
+.link-cta:is(:hover, :focus-visible) .link-cta-label {
+  opacity: 1;
+}
+
+/* Default: the CTA's resting color is a neutral/white tone (footer's
+   "back to top", the Next Project title). Setting color on the whole
+   .link-cta anchor (not just the label span) lets it cascade to any
+   marker glyph that doesn't set its own explicit color, so the arrow
+   shifts together with the label rather than needing its own rule. This
+   was the same missing-rule bug as .link-nav above — opacity alone on
+   the label was too weak a signal on its own. */
+.link-cta:is(:hover, :focus-visible) {
+  color: var(--accent-yellow);
+}
+
+/* Inverse modifier: for CTAs whose RESTING color is already accent-yellow
+   ("VIEW CASE STUDY", "GET IN TOUCH") — hovering to the same yellow would
+   be invisible, so these shift toward white instead. Add this class
+   alongside .link-cta on that link. */
+.link-cta-inverse:is(:hover, :focus-visible) {
+  color: var(--foreground);
+}
+
+.link-cta-marker {
+  display: inline-block;
+}
+
+.link-cta:is(:hover, :focus-visible) .link-cta-marker-right {
+  transform: translateX(8px);
+}
+
+.link-cta:active .link-cta-marker-right {
+  transform: translateX(4px) scale(0.92);
+}
+
+/* Vertical variant — for markers like the footer's "back to top" arrow,
+   where horizontal travel would point the wrong way. */
+.link-cta:is(:hover, :focus-visible) .link-cta-marker-up {
+  transform: translateY(-6px);
+}
+
+.link-cta:active .link-cta-marker-up {
+  transform: translateY(-3px) scale(0.92);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .link-nav::after,
+  .link-cta::after {
+    transition: transform var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+
+  .link-nav,
+  .link-cta,
+  .link-cta-label {
+    transition: color var(--motion-duration-micro) var(--motion-ease-editorial),
+      opacity var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+
+  .link-cta-marker-right,
+  .link-cta-marker-up {
+    transition: transform var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-nav:is(:hover, :focus-visible),
+  .link-cta:is(:hover, :focus-visible) {
+    color: var(--accent-yellow);
+  }
+}
+
+/*
+ * Media hover response — project imagery gains a very small crop/scale
+ * shift when its containing link/frame is hovered or focused. Never
+ * triggers on its own; always a destination cue, not decoration.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .media-hover-target {
+    transition: transform 600ms var(--motion-ease-editorial);
+  }
+
+  .media-hover-frame:is(:hover, :focus-within) .media-hover-target {
+    transform: scale(1.035);
+  }
+}
+
+/*
+ * ============================================================
+ * Selected Work — coordinated project discovery
+ * ============================================================
+ * ".selected-work-row" wraps a project's entire text + media column so
+ * hovering or focusing ANYWHERE in the project — not just the image —
+ * drives one coordinated response: the media scales and runs a single
+ * scan-line sweep, its number emphasizes, and the CTA arrow nudges
+ * forward even without directly hovering the CTA itself. This is what
+ * makes "the project" read as one destination rather than an image with
+ * an unrelated caption next to it.
+ */
+
+/*
+ * Depth zoom + restrained perspective warp — mouse/trackpad only. Touch
+ * gets a plain press-scale via :active instead of a faked hover (touch
+ * has no pointer position to warp toward). A distinct, more cinematic
+ * treatment than the scan sweep, reserved for one hero-weight image per
+ * context (see ProjectVisual.tsx's depthOnHover prop).
+ */
+.depth-hover {
+  transform: perspective(900px) rotateX(0deg) rotateY(0deg) scale(1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .depth-hover {
+    transition: transform 500ms var(--motion-ease-editorial);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .depth-hover:is(:hover, :focus-within) {
+    transform: perspective(900px) rotateX(var(--depth-rx, 0deg)) rotateY(var(--depth-ry, 0deg))
+      scale(1.045);
+  }
+}
+
+.depth-hover:active {
+  transform: perspective(900px) scale(0.985);
+}
+
+.scan-line {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 42%,
+    color-mix(in oklab, var(--foreground) 30%, transparent) 50%,
+    transparent 58%
+  );
+  transform: translateX(-130%);
+  opacity: 0;
+}
+
+.project-visual-number {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .selected-work-row:is(:hover, :focus-within) .media-hover-target {
+    transform: scale(1.05);
+  }
+
+  .selected-work-row:is(:hover, :focus-within) .scan-line {
+    animation: scan-sweep 900ms ease-out;
+  }
+
+  .project-visual-number,
+  .selected-work-row .link-cta-marker-right {
+    transition: transform var(--motion-duration-discrete) var(--motion-ease-editorial);
+  }
+
+  .selected-work-row:is(:hover, :focus-within) .project-visual-number {
+    transform: scale(1.12);
+  }
+
+  /* :where() keeps this at effectively zero specificity so a direct hover
+     on the CTA itself (.link-cta:hover, defined earlier) always wins its
+     own larger 8px travel instead of this row-level nudge overriding it. */
+  .selected-work-row:where(:hover, :focus-within) .link-cta-marker-right {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes scan-sweep {
+  0% {
+    transform: translateX(-130%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.85;
+  }
+  82% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateX(130%);
+    opacity: 0;
+  }
+}
+
+/*
+ * ============================================================
+ * Route transition curtain
+ * ============================================================
+ * One reused cover/reveal motion for the first page arrival and every
+ * internal navigation afterward, so the site reads as a single continuous
+ * piece rather than pages that happen to share CSS. See
+ * components/site/RouteTransition.tsx. The component itself no-ops under
+ * reduced motion, so this never needs its own reduced-motion guard.
+ */
+.route-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  /* Deliberately NOT var(--background) — a curtain the exact color of the
+     page it's covering is motion with zero visible contrast, which is
+     why V1's transition was reported as imperceptible even though it was
+     animating correctly. --surface reads as a distinct "surface" passing
+     over the page rather than a same-color no-op. */
+  background: var(--surface);
+  pointer-events: none;
+  /* Resting state — always mounted (see RouteTransition.tsx), collapsed
+     to nothing until a phase class is applied via classList. */
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+.route-curtain-hold {
+  transform: scaleY(1);
+  transform-origin: bottom;
+}
+
+.route-curtain-cover {
+  transform-origin: bottom;
+  animation: route-curtain-cover 260ms var(--motion-ease-editorial) forwards;
+}
+
+.route-curtain-reveal {
+  transform-origin: top;
+  animation: route-curtain-reveal 340ms var(--motion-ease-editorial) forwards;
+}
+
+@keyframes route-curtain-cover {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes route-curtain-reveal {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+
+/*
+ * A brief wordmark flash, independent of the curtain panel's own scaleY
+ * transform (a separate fixed layer, not a child of the scaling panel —
+ * a child would visually stretch/squash with the parent's transform).
+ * Self-contained fade in/out so it doesn't need to be precisely
+ * synchronized with the curtain's exact phase timings.
+ */
+.route-curtain-mark {
+  position: fixed;
+  inset: 0;
+  z-index: 201;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--foreground);
+  opacity: 0;
+}
+
+.route-curtain-mark-visible {
+  animation: route-curtain-mark-flash 560ms ease-out forwards;
+}
+
+@keyframes route-curtain-mark-flash {
+  0% { opacity: 0; }
+  35% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/*
+ * ============================================================
+ * Case Study visual system — reusable modules
+ * ============================================================
+ * These read from data that already exists (supportingLine flow strings,
+ * a decision's "principle" line, points lists) rather than new content
+ * fields, so they work today for Complex System's real content and
+ * degrade to plain text/lists for projects still on placeholder data.
+ * See components/case-study/CaseStudyTemplate.tsx.
+ */
+.flow-diagram {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0;
+}
+
+.flow-diagram-stage {
+  border: 1px solid color-mix(in oklab, var(--foreground) 12%, transparent);
+  background: var(--surface);
+  padding: 0.55rem 0.9rem;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: color-mix(in oklab, var(--foreground) 85%, transparent);
+  white-space: nowrap;
+}
+
+.flow-diagram-arrow {
+  color: var(--accent-lavender);
+  padding: 0 0.5rem;
+  font-size: 13px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .flow-diagram-stage {
+    transition: border-color var(--motion-duration-micro) var(--motion-ease-editorial),
+      transform var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+
+  .flow-diagram-stage:hover {
+    border-color: var(--accent-lavender);
+    transform: translateY(-2px);
+  }
+}
+
+/*
+ * Case Study block chips (Role's "Product Architecture / System Thinking /
+ * ..." list, and any other points list) — whole-block color-fill on
+ * hover/focus rather than a border tweak, per Angela's explicit callout
+ * that these looked like controls but behaved like dead boxes. One
+ * coherent fill color (acid-yellow) across every chip, not a different
+ * color per item.
+ */
+.case-point-chip {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid color-mix(in oklab, var(--foreground) 12%, transparent);
+  background: var(--surface);
+  padding: 0.75rem 1rem;
+  color: color-mix(in oklab, var(--foreground) 70%, transparent);
+}
+
+.case-point-chip-marker {
+  opacity: 0;
+  transform: translateX(-4px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .case-point-chip {
+    transition: background-color var(--motion-duration-discrete) var(--motion-ease-editorial),
+      color var(--motion-duration-discrete) var(--motion-ease-editorial),
+      border-color var(--motion-duration-discrete) var(--motion-ease-editorial),
+      transform var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+
+  .case-point-chip-marker {
+    transition: opacity var(--motion-duration-micro) var(--motion-ease-editorial),
+      transform var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+
+  .case-point-chip:active {
+    transform: scale(0.98);
+  }
+}
+
+.case-point-chip:is(:hover, :focus-visible) {
+  background: var(--accent-yellow);
+  border-color: transparent;
+  color: #111111;
+  /* The full acid-yellow fill IS the focus indicator here — clearer than
+     a thin ring, and a same-color ring on top of a same-color fill would
+     be invisible anyway. */
+  outline: none;
+}
+
+.case-point-chip:is(:hover, :focus-visible) .case-point-chip-marker {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.case-pull-quote {
+  border-left: 2px solid var(--accent-lavender);
+  padding-left: 1.25rem;
+  color: var(--accent-lavender);
+  font-size: 1.1rem;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+.case-breathing-space p {
+  max-width: 44rem;
+  font-size: clamp(1.4rem, 3.2vw, 2.4rem);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+}
+
+.case-takeover {
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  width: 100vw;
+}
+
+.case-temp-tag {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1;
+  border: 1px solid color-mix(in oklab, var(--foreground) 24%, transparent);
+  background: color-mix(in oklab, var(--background) 70%, transparent);
+  padding: 0.35rem 0.65rem;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--foreground) 70%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+/*
+ * ============================================================
+ * Ambient background field
+ * ============================================================
+ * Pure CSS drift — no RAF loop, no JS animation cost. Fragments render at
+ * their base position/rotation unconditionally (a static decorative layer
+ * even under reduced motion or if this rule set were ever unavailable);
+ * only the drift keyframe is gated behind motion preference.
+ */
+.ambient-fragment {
+  position: absolute;
+  opacity: var(--ambient-opacity, 0.08);
+  transform: rotate(var(--ambient-rotate, 0deg));
+  will-change: transform;
+}
+
+.ambient-fragment-square {
+  background: currentColor;
+}
+
+.ambient-fragment-dot {
+  background: currentColor;
+  border-radius: 9999px;
+}
+
+.ambient-fragment-line {
+  background: currentColor;
+}
+
+.ambient-fragment-arc {
+  border: 1px solid currentColor;
+  border-radius: 9999px;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  background: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ambient-fragment {
+    animation: ambient-drift var(--ambient-duration, 24s) ease-in-out infinite alternate;
+    animation-delay: var(--ambient-delay, 0s);
+  }
+}
+
+@keyframes ambient-drift {
+  from {
+    transform: rotate(var(--ambient-rotate, 0deg)) translate(0, 0);
+    opacity: var(--ambient-opacity, 0.08);
+  }
+  to {
+    transform: rotate(var(--ambient-rotate, 0deg))
+      translate(var(--ambient-dx, 12px), var(--ambient-dy, -16px));
+    opacity: calc(var(--ambient-opacity, 0.08) * 0.45);
+  }
+}
+
+@media (max-width: 47.999rem) {
+  /* Mobile: fewer visible fragments and calmer motion rather than
+     stripping ambience entirely — density is already lower per call site,
+     this trims the animation range further on top of that. */
+  .ambient-fragment {
+    animation-duration: calc(var(--ambient-duration, 24s) * 1.4) !important;
+  }
+}
+
+/*
+ * ============================================================
+ * Hero SCROLL control
+ * ============================================================
+ * A real button, not decoration: hover/focus extends a line and nudges
+ * the arrow, :active gives touch/click press feedback, and the label
+ * dims slightly so the whole control reads as one responding unit.
+ */
+.hero-scroll-control {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin: -0.5rem;
+}
+
+.hero-scroll-line {
+  width: 1px;
+  height: 14px;
+  background: currentColor;
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-scroll-line,
+  .hero-scroll-arrow,
+  .hero-scroll-label {
+    transition: transform var(--motion-duration-micro) var(--motion-ease-editorial),
+      opacity var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+
+  .hero-scroll-control:is(:hover, :focus-visible) .hero-scroll-line {
+    transform: scaleY(1);
+  }
+
+  .hero-scroll-control:is(:hover, :focus-visible) .hero-scroll-arrow {
+    transform: translateY(4px);
+  }
+
+  .hero-scroll-control:is(:hover, :focus-visible) .hero-scroll-label {
+    opacity: 0.68;
+  }
+
+  .hero-scroll-control:active .hero-scroll-arrow {
+    transform: translateY(2px) scale(0.94);
+  }
+}
+
+/*
+ * ============================================================
+ * VER B port — Hero entrance, nav-line/case-link, language switch,
+ * mobile menu
+ * ============================================================
+ * Ported verbatim (values, timings, easing) from the connected Lovable
+ * project's src/styles.css — this is the visual/interaction source of
+ * truth for V3, not a reinterpretation. Superseded here: the earlier
+ * hero-spatial-*/lang-switch/mobile-nav-list rules from the first V3
+ * pass, now replaced by this port.
+ */
+@keyframes grid-establish {
+  from { transform: scaleY(0); opacity: 0; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+
+@keyframes title-reveal {
+  from { transform: translateY(112%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes detail-resolve {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes plane-enter {
+  from { opacity: 0; clip-path: inset(45% 45% 45% 45%); }
+  to { opacity: 1; clip-path: inset(0); }
+}
+
+.hero-grid-line {
+  transform-origin: top;
+  animation: grid-establish 700ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.hero-title-mask { overflow: hidden; }
+.hero-title-word { animation: title-reveal 800ms cubic-bezier(.16,1,.3,1) 180ms both; }
+.hero-title-word-second { animation-delay: 280ms; }
+.hero-kicker { animation: detail-resolve 500ms ease-out 420ms both; }
+.hero-copy { animation: detail-resolve 600ms ease-out 520ms both; }
+.hero-cta { animation: detail-resolve 600ms ease-out 620ms both; }
+.hero-plane { animation: plane-enter 900ms cubic-bezier(.16,1,.3,1) 360ms both; transition: transform 120ms ease-out; }
+
+/*
+ * ============================================================
+ * Hero isometric cube (Portfolio V1 signature visual)
+ * ============================================================
+ * New authored work, not a Lovable port. Nests inside .hero-plane, which
+ * already provides this element's entrance (plane-enter above) and its
+ * own scroll/pointer transform.
+ *
+ * Static-geometry pass: rebuilt from a CSS 3D (perspective transform)
+ * construction to flat SVG with one hand-computed true-isometric
+ * projection (see HeroCube.tsx) — every vertex, across all three visible
+ * faces, comes from the same formula, so shared edges are mathematically
+ * identical rather than independently-transformed elements that merely
+ * approximate alignment. No animation lives here yet (see HeroCube.tsx's
+ * own header comment); this is deliberately just the static object.
+ *
+ * Hierarchy pass: widened the gap between silhouette and grid (silhouette
+ * up slightly, grid down slightly) rather than just brightening the
+ * silhouette alone, so the object doesn't get heavier overall — one edge
+ * role reads stronger relative to the other, not both reading louder.
+ * .hero-cube-cell--top additionally quiets the top face specifically
+ * (it's the largest, most head-on plane, so its grid was competing with
+ * the silhouette more than the two foreshortened side faces).
+ */
+.hero-cube-cell {
+  fill: none;
+  stroke: currentColor;
+  stroke-opacity: 0.32;
+  stroke-width: 1.1;
+  vector-effect: non-scaling-stroke;
+}
+
+.hero-cube-cell--top {
+  stroke-opacity: 0.22;
+}
+
+.hero-cube-silhouette {
+  fill: none;
+  stroke: currentColor;
+  stroke-opacity: 0.92;
+  stroke-width: 1.85;
+  vector-effect: non-scaling-stroke;
+}
+
+.hero-cube-accent {
+  fill: none;
+  stroke: var(--acid);
+  stroke-opacity: 0.85;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/*
+ * Hero A/B prototype, variant B (HeroBackgroundShapes.tsx) — a sparse
+ * ambient grid of small marks, prototyped alongside the approved cube
+ * (above) for comparison. Same restrained line-weight/opacity convention
+ * as .hero-cube-cell/.hero-cube-silhouette so the two variants read as
+ * the same visual language, not two different projects.
+ */
+.hero-shapes-cell {
+  fill: none;
+  stroke: currentColor;
+  stroke-opacity: 0.55;
+  stroke-width: 1.1;
+  vector-effect: non-scaling-stroke;
+}
+
+.interaction-nav,
+.interaction-destination,
+.nav-line,
+.case-link {
+  position: relative;
+  /* WORK renders as a <button> (it scroll-jumps rather than navigating),
+     ABOUT as an <a> — browsers give <a> a pointer cursor natively but not
+     <button>, so the two read as inconsistently interactive despite
+     sharing this exact role. Setting it once here, on the shared role,
+     fixes every current and future consumer regardless of element type. */
+  cursor: pointer;
+}
+
+.interaction-nav::after,
+.interaction-destination::after,
+.nav-line::after,
+.case-link::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--portfolio-interaction-duration) var(--portfolio-interaction-ease);
+}
+
+.interaction-nav:hover::after,
+.interaction-nav:focus-visible::after,
+.interaction-nav[data-status="active"]::after,
+.interaction-destination:hover::after,
+.interaction-destination:focus-visible::after,
+.nav-line:hover::after,
+.nav-line:focus-visible::after,
+.nav-line[data-status="active"]::after,
+.case-link:hover::after,
+.case-link:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Round 14: destination-style CTAs ("查看案例 →", "VIEW CASE STUDY →",
+   Case's Next Project link) hover to the site's existing theme yellow
+   (--acid) — previously these had no hover color at all, only the
+   underline reveal above. Originally scoped away from .interaction-nav
+   (WORK/ABOUT primary nav) since that wasn't asked for at the time;
+   Angela's later explicit request extended an equivalent treatment to
+   primary nav too — sharing only the transition timing here, not the
+   color rule itself: .interaction-nav uses --hdr-accent (theme-aware,
+   see the header-surface variants above), not a hardcoded --acid,
+   because the header alone flips between a dark and a light surface —
+   .interaction-destination/.case-link never appear on a light surface,
+   so plain --acid stays correct for them unchanged. */
+.interaction-nav,
+.interaction-destination,
+.case-link {
+  transition: color var(--portfolio-interaction-duration) var(--portfolio-interaction-ease);
+}
+
+.interaction-destination:hover,
+.interaction-destination:focus-visible,
+.case-link:hover,
+.case-link:focus-visible {
+  color: var(--acid);
+}
+
+/* Nav hover + current-page state share one color rule: hovering the
+   current page (already yellow) is simply a no-op, same as
+   .interaction-destination's own hover/active pairing elsewhere.
+   [data-status="active"] reuses the exact attribute SiteHeader.tsx
+   already sets from its own route/pathname check — no new active-state
+   detection added. Specificity (class+attribute) beats the plain
+   .header-fg utility the active link also carries, so no JSX change was
+   needed there either. Focus-visible stays visually distinct from this
+   via the sitewide :focus-visible outline (see near the top of this
+   file) — a ring in addition to the color, not a color-only replacement
+   for it. */
+.interaction-nav:hover,
+.interaction-nav:focus-visible,
+.interaction-nav[data-status="active"] {
+  color: var(--hdr-accent);
+}
+
+.work-index-link :is(.interaction-destination, .case-link)::after { transform-origin: left; }
+
+/*
+ * Header surface — theme comes from a per-page `variant` prop
+ * (SiteHeader.tsx). About always passes "dark"; a Case Study page passes
+ * its own fixed theme from caseTheme.ts (currently case01/03/04=dark,
+ * case02=light). Home is the one page where this changes live: its
+ * Selected Work section reports the currently pinned project's own tone
+ * up through a HeaderThemeProvider (see components/site/headerTheme.tsx)
+ * — still never raw scroll position read here, and never a user toggle,
+ * just a different source page for the same fixed-per-moment value.
+ */
+.header-surface[data-header-variant="dark"] {
+  background: var(--ink);
+  --hdr-fg: var(--paper);
+  --hdr-fg-dim: oklch(0.968 0.012 95 / 70%);
+  --hdr-panel-bg: oklch(0.21 0.008 265);
+  --hdr-panel-border: oklch(1 0 0 / 14%);
+  /* Nav hover/active accent — plain --acid measured 1.09:1 against the
+     light variant's --paper background (i.e. functionally invisible),
+     so this is theme-scoped rather than hardcoded, same principle as
+     .case-final's own --cf-accent-2 light/dark split below. Dark keeps
+     the real acid yellow (17.78:1 against --ink, verified elsewhere). */
+  --hdr-accent: var(--acid);
+}
+
+.header-surface[data-header-variant="light"] {
+  background: var(--paper);
+  --hdr-fg: var(--ink);
+  --hdr-fg-dim: oklch(0.16 0.008 265 / 62%);
+  --hdr-panel-bg: oklch(0.99 0.006 95);
+  --hdr-panel-border: oklch(0.16 0.008 265 / 14%);
+  /* Same dark-purple value already vetted as .case-final's light-theme
+     --cf-accent-2 (8.20:1 against --paper, comfortably past WCAG AAA) —
+     reused literally rather than referencing --cf-accent-2 itself, since
+     that token only exists inside .case-final's own scope and the header
+     renders on every page, not just Case Study ones. */
+  --hdr-accent: oklch(0.42 0.13 300);
+}
+
+/* Header finalization: the bar previously had zero visual separation from
+   the content scrolling beneath it (no border, no shadow) — reusing the
+   same --hdr-panel-border token already defined per variant above (and
+   already used for the mobile dropdown's own edge) gives the fixed nav
+   chrome a persistent boundary instead of introducing a new color. On
+   mobile this also gives the header a clearer "this is chrome, not page
+   content" edge against Background Shapes' randomized glyphs drifting
+   just beneath it. */
+.header-surface {
+  border-bottom: 1px solid var(--hdr-panel-border);
+}
+
+/* D1 fix: Home's header can now flip variant mid-page as Selected Work's
+   pinned stage changes. An instant attribute swap read as a hard flicker;
+   a short color-only cross-fade on the properties that actually differ
+   between variants (surface + both foreground roles, plus the hairline
+   above which is also variant-dependent) keeps it subtle without adding
+   any new decorative motion. Case Study / About headers never change
+   variant post-mount, so this transition is simply inert there. */
+@media (prefers-reduced-motion: no-preference) {
+  .header-surface,
+  .header-fg,
+  .header-fg-dim {
+    transition: background-color 260ms ease, color 260ms ease, border-color 260ms ease;
+  }
+}
+
+.header-fg { color: var(--hdr-fg); }
+.header-fg-dim { color: var(--hdr-fg-dim); }
+
+/*
+ * Language switch — rounded capsule (an intentional, sanctioned exception
+ * to the site's sharp-corner rule, same as the nav itself already is).
+ * `language-switch-dark`/`-light` set the tone explicitly (replaces the
+ * earlier ad-hoc "inverse" boolean) so the control reads correctly
+ * whichever surface it sits on — the always-dark mobile menu, or either
+ * header variant.
+ */
+.language-switch {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, 2.75rem);
+  border-radius: 999px;
+  border: 1px solid var(--hairline);
+  color: var(--foreground);
+}
+
+.language-switch-dark {
+  border-color: oklch(1 0 0 / 30%);
+  color: var(--paper);
+}
+
+.language-switch-light {
+  border-color: oklch(0.16 0.008 265 / 22%);
+  color: var(--ink);
+}
+
+.language-switch-thumb {
+  position: absolute;
+  inset: 2px auto 2px 2px;
+  width: calc(50% - 2px);
+  border-radius: 999px;
+  background: var(--acid);
+  transition: transform 360ms cubic-bezier(.2,.8,.2,1);
+}
+
+.language-switch-option {
+  position: relative;
+  z-index: 1;
+  /* display:inline-flex + centering is what actually vertically centers
+     both labels — without it this is a plain inline element, height has
+     no effect on inline boxes, and "中" (whose CJK line-box metrics differ
+     from "EN"'s Latin ones at the same font-size) renders top-aligned/
+     clipped relative to "EN" rather than sharing its center line. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.9rem;
+  min-width: 0;
+  border-radius: 999px;
+  padding: 0;
+  color: inherit;
+  font-family: var(--font-label);
+  font-size: .7rem;
+  letter-spacing: 0;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.language-switch-option[data-active="true"] { color: var(--ink); }
+.language-switch-option:hover { background: transparent; color: inherit; transform: translateY(-2px); }
+.language-switch-option[data-active="true"]:hover { color: var(--ink); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .language-switch-option {
+    transition: transform var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+}
+
+.menu-line {
+  position: absolute;
+  width: 1.35rem;
+  height: 1px;
+  background: currentColor;
+  transition: transform 400ms cubic-bezier(.16,1,.3,1);
+}
+
+/*
+ * Compact website-navigation dropdown — not a full-screen takeover
+ * (Round 3) and not a floating settings/control-panel card (Round 4).
+ * Round 4 correction: flush full-width, attached directly under the
+ * header bar it belongs to, so it reads as one continuous navigation
+ * surface rather than an isolated bordered/rounded card floating over
+ * the page. Still an overlay (occupies only the space its own content
+ * needs, never pushes content down), theme-matched to whichever header
+ * variant it's attached to (--hdr-panel-bg, set alongside --hdr-fg
+ * above) rather than hardcoded dark.
+ */
+.mobile-menu {
+  position: absolute;
+  top: 100%;
+  inset-inline: 0;
+  z-index: 1;
+  background: var(--hdr-panel-bg);
+  color: var(--hdr-fg);
+  border-bottom: 1px solid var(--hdr-panel-border);
+  transform: translateY(-6px);
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mobile-menu {
+    transition: transform 260ms cubic-bezier(.16,1,.3,1), opacity 200ms ease, visibility 260ms;
+  }
+}
+
+.mobile-menu-open {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Scrim behind the open mobile menu (see SiteHeader.tsx) — `fixed` so it
+   covers the full viewport regardless of scroll position; z-index below
+   the (already opaque) menu panel and header bar, both of which keep
+   painting over it. `pointer-events` only turns on while open, so it
+   never intercepts taps on the closed page. */
+.mobile-menu-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: oklch(0 0 0 / 40%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mobile-menu-scrim {
+    transition: opacity 200ms ease, visibility 260ms;
+  }
+}
+
+.mobile-menu-scrim-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.mobile-menu-link,
+.mobile-menu-meta { opacity: 0; transform: translateY(10px); transition: opacity 260ms ease, transform 300ms cubic-bezier(.16,1,.3,1); }
+.mobile-menu-open .mobile-menu-link,
+.mobile-menu-open .mobile-menu-meta { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 767px) {
+  .hero-title { font-size: clamp(3.6rem, 19vw, 6rem); }
+  .hero-plane-wrap { opacity: .58; }
+  .hero-copy { max-width: 34ch; }
+}
+
+/*
+ * ============================================================
+ * VER B ported utilities (Home / Nav / Closing scope only)
+ * ============================================================
+ * Ported verbatim from the connected Lovable project's src/styles.css so
+ * the ported components (Hero, WorkStage/ProjectScene, Closing, nav) can
+ * reuse its exact class vocabulary. scene-dark/scene-light are the
+ * per-project-scene art direction (NOT a site theme) — independent of
+ * --background/--foreground, which the rest of the site still uses.
+ */
+.scene-dark {
+  --scene-bg: var(--ink);
+  --scene-fg: var(--paper);
+  /* Whole-site QA (2026-09): scene-dim-text measured 3.1-3.5:1 in About
+     (Home/About's WhatIDoV2, HowIWorkV2) against WCAG AA's 4.5:1 —
+     several consumers additionally stack a Tailwind opacity utility
+     (e.g. opacity-60) on top of this color, so the base token is bumped
+     with headroom rather than to a bare-minimum pass. */
+  --scene-dim: oklch(0.89 0.01 265);
+  --scene-line: oklch(1 0 0 / 18%);
+  background-color: var(--scene-bg);
+  color: var(--scene-fg);
+}
+
+.scene-light {
+  --scene-bg: var(--paper);
+  --scene-fg: var(--ink);
+  /* Whole-site QA (2026-09): same scene-dim-text contrast issue as
+     .scene-dark above, light-theme side — darkened with the same
+     opacity-stacking headroom in mind. */
+  --scene-dim: oklch(0.36 0.012 265);
+  --scene-line: oklch(0.16 0.008 265 / 16%);
+  background-color: var(--scene-bg);
+  color: var(--scene-fg);
+}
+
+.scene-text {
+  color: var(--scene-fg, var(--foreground));
+}
+
+.scene-dim-text {
+  color: var(--scene-dim, oklch(0.5 0.01 265));
+}
+
+.scene-rule {
+  border-color: var(--scene-line, var(--hairline));
+}
+
+/* Round 14: same rule as Case Final's light-theme accent-text weight
+   (see .case-final[data-theme="light"] .cf-accent below) applied to
+   Selected Work's own light scenes — Angela's shared design-system rule
+   is "all Lavender accent TEXT in light theme renders at weight 500,"
+   not a Case-only rule. Scoped to text-lavender specifically (not
+   bg-lavender, which is a decorative accent bar/line, not text). */
+.scene-light .text-lavender {
+  font-weight: 500;
+}
+
+.type-v3-label,
+.label-mono {
+  font-family: var(--portfolio-font-label);
+  font-size: var(--portfolio-type-label-size);
+  letter-spacing: var(--portfolio-type-label-tracking);
+  text-transform: uppercase;
+  line-height: var(--portfolio-type-label-leading);
+}
+
+.type-v3-display,
+.display-xl {
+  font-family: var(--portfolio-font-display);
+  font-weight: var(--portfolio-type-display-weight);
+  letter-spacing: var(--portfolio-type-display-tracking);
+  line-height: var(--portfolio-type-display-leading);
+  font-size: var(--portfolio-type-display-size);
+}
+
+.type-v3-section-heading {
+  font-family: var(--portfolio-font-display);
+  font-weight: var(--portfolio-type-section-weight);
+  letter-spacing: var(--portfolio-type-section-tracking);
+  line-height: var(--portfolio-type-section-leading);
+  font-size: var(--portfolio-type-section-size);
+}
+
+/* Public-release typography audit (2026-09-15): a role class here sets
+   font-family on the element it's applied to, but several consumers split
+   their actual text into un-classed child <span>s for line-break/reveal
+   markup (Hero's "ANGELA"/"YU" mask spans, the Footer closing statement's
+   line spans) — plain CSS inheritance normally supplies those children's
+   font-family from this parent, but the global :lang(zh-Hant) rule in
+   @layer base (see above) directly matches those same children too, and a
+   directly-matched declaration always wins over an inherited one
+   regardless of which layer either rule lives in (layer order only
+   arbitrates when two rules target the SAME element). Result: those
+   spans silently rendered Chinese-font Latin glyphs instead of
+   Archivo/IBM Plex Mono, even though this class correctly won on their
+   own parent. `font-family: inherit`, declared here in @layer components,
+   directly matches those same children with higher layer priority than
+   :lang(zh-Hant) and simply defers back up to the resolved value on this
+   parent — a one-time, three-selector fix rather than patching every
+   current and future nested span individually. */
+.type-v3-label *,
+.type-v3-display *,
+.type-v3-section-heading *,
+.type-v3-subheading * {
+  font-family: inherit;
+}
+
+/* Homepage Visual Polish V3: Chinese titles at this hierarchy (currently
+   Selected Work's project titles, the sole consumer of this class) read
+   too heavy at the shared Latin-tuned weight/tracking — Angela's
+   requested correction, scoped by :lang so an English title rendered
+   through this same class is never affected. Restrained positive
+   tracking only; CJK glyphs don't want Latin-style negative/zero
+   tracking at display size. */
+.type-v3-section-heading:lang(zh-Hant) {
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+/* Compatibility owner for unmigrated design-sample/prototype consumers. */
+.display-l {
+  font-family: var(--portfolio-font-display);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 0.94;
+  font-size: clamp(2rem, 5.2vw, 4.5rem);
+}
+
+.type-v3-subheading {
+  font-family: var(--portfolio-font-display);
+  font-size: var(--portfolio-type-subheading-size);
+  font-weight: var(--portfolio-type-subheading-weight);
+  line-height: var(--portfolio-type-subheading-leading);
+}
+
+.type-v3-body,
+.body-tc {
+  font-family: var(--portfolio-font-body);
+  font-size: var(--portfolio-type-body-size);
+  line-height: var(--portfolio-type-body-leading);
+  letter-spacing: var(--portfolio-type-body-tracking);
+}
+
+/* ZH desktop readability bump — see --portfolio-type-body-size-zh-* above.
+   Line-height is intentionally left alone: --portfolio-type-body-leading
+   is a bare unitless number (1.85), which already scales proportionally
+   with font-size on its own, so the relative leading ratio is unchanged
+   at every step here. .case-final[data-content-version="case01-v2"]'s
+   own .body-tc override (16px/1.7, a pre-existing per-project exception)
+   has higher specificity than the plain .body-tc:lang(zh-Hant) rule below
+   and would otherwise keep CASE01 alone locked out of this — the second,
+   equally-scoped rule for that exact selector keeps CASE01 consistent
+   with CASE02-04 at tablet/desktop without touching its own mobile/base
+   sizing. */
+@media (min-width: 48rem) {
+  .type-v3-body:lang(zh-Hant),
+  .body-tc:lang(zh-Hant) {
+    font-size: var(--portfolio-type-body-size-zh-tablet);
+  }
+  .case-final[data-content-version="case01-v2"] .body-tc:lang(zh-Hant) {
+    font-size: var(--portfolio-type-body-size-zh-tablet);
+  }
+}
+
+@media (min-width: 64rem) {
+  .type-v3-body:lang(zh-Hant),
+  .body-tc:lang(zh-Hant) {
+    font-size: var(--portfolio-type-body-size-zh-desktop);
+  }
+  /* !important: needed specifically here, nowhere else in this file.
+     CaseStudyPrototype.tsx's opening summary paragraph carries its own
+     inline Tailwind utility for CASE01 only (`text-[17px] md:text-[18px]`,
+     gated by `isCaseOneV2`) which — being a Tailwind utility class rather
+     than an @layer components rule — wins over this selector regardless
+     of specificity, per Tailwind v4's layer order. The tablet (48rem)
+     step above is left as a harmless no-op for this one paragraph: its
+     existing 18px already slightly exceeds this system's own tablet
+     value, so nothing needed forcing there — only the 1.2rem desktop
+     floor actually required this escape hatch. */
+  .case-final[data-content-version="case01-v2"] .body-tc:lang(zh-Hant) {
+    font-size: var(--portfolio-type-body-size-zh-desktop) !important;
+  }
+}
+
+.edge-frame {
+  border: 1px solid var(--scene-line, var(--hairline));
+}
+
+/*
+ * ============================================================
+ * Closing contact-row hover — moving surface, not color-only
+ * ============================================================
+ * Interaction principle taken from re-presentation.jp's service-row
+ * hover (surface enters -> text/value/arrow state changes -> reverses on
+ * leave), adapted into this dark system with a paper surface instead of
+ * copying its black block treatment (Closing is already dark). Pure CSS:
+ * a scaleX(0) surface anchored left, text colors flip once it's behind
+ * them, both driven by the same :hover/:focus-visible transition so they
+ * stay in lockstep and reverse cleanly on leave.
+ */
+.contact-row-surface {
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.contact-row-text {
+  position: relative;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .contact-row-surface {
+    transition: transform 420ms cubic-bezier(.76, 0, .24, 1);
+  }
+
+  .contact-row-text {
+    transition: color 260ms ease;
+  }
+}
+
+.contact-row:is(:hover, :focus-visible) .contact-row-surface {
+  transform: scaleX(1);
+}
+
+.contact-row:is(:hover, :focus-visible) .contact-row-text {
+  color: var(--ink);
+}
+
+/*
+ * ============================================================
+ * Case Study "Final" prototype (dark/light comparison)
+ * ============================================================
+ * Fully scoped to .case-final — does not touch the shared
+ * scene-dark/scene-light tokens Home/Selected Work/Closing already use.
+ * Theme is a fixed per-route prop, not a user toggle: data-theme sets one
+ * CSS custom-property block, every sub-component stays theme-agnostic.
+ *
+ * Light heading/body values are deliberately NOT the site's --ink
+ * (oklch 0.16, near-black) — Angela's own feedback was that near-black
+ * body copy on a light ground reads as tiring over long-form reading.
+ * Deep charcoal/softer gray step down from --ink instead. Dark values
+ * are deliberately not --paper at full strength either, for the same
+ * "avoid pure extremes over long reading" reason.
+ */
+.case-final {
+  background: var(--cf-bg);
+  color: var(--cf-body);
+}
+
+.case-final[data-theme="dark"] {
+  --cf-bg: var(--ink);
+  --cf-heading: oklch(0.95 0.01 90);
+  --cf-body: oklch(0.82 0.012 90);
+  --cf-meta: oklch(0.62 0.014 90);
+  /* Whole-site QA (2026-09): --cf-dim measured 4.16:1 against --cf-bg,
+     under WCAG AA's 4.5:1 for body-size text (unrelated to the
+     documented --lavender-accent exception above — that one stays
+     untouched). Minimal +0.04 lightness bump clears the threshold
+     (verified 4.9:1) without a visually heavier dim role. */
+  --cf-dim: oklch(0.60 0.012 90);
+  --cf-hairline: oklch(1 0 0 / 10%);
+  --cf-accent: var(--acid);
+  --cf-accent-2: var(--lavender);
+  --cf-surface-hover: oklch(1 0 0 / 4%);
+}
+
+.case-final[data-theme="light"] {
+  --cf-bg: var(--paper);
+  --cf-heading: oklch(0.28 0.01 265);
+  --cf-body: oklch(0.42 0.01 265);
+  /* Whole-site QA (2026-09): --cf-meta and --cf-dim measured 4.42:1 and
+     3.94:1 against --cf-bg (paper), under WCAG AA's 4.5:1 for body-size
+     text — unrelated to the documented --lavender-accent exception
+     below, which stays untouched. Minimal darkening clears the
+     threshold (verified 5.0-5.5:1) without reading visually heavier. */
+  --cf-meta: oklch(0.50 0.012 265);
+  --cf-dim: oklch(0.50 0.01 265);
+  --cf-hairline: oklch(0.16 0.008 265 / 10%);
+  /* Round 13 rejected Round 3's exact-hex gold/beige accent (#a3926a)
+     and initially substituted --cf-accent-2's darker light-mode purple
+     here instead of the raw --lavender token, on WCAG contrast grounds
+     (~1.9:1 against --cf-bg). Round 14: Angela explicitly approved using
+     the real --lavender value regardless — "do not substitute a darker
+     purple for accessibility without approval; if contrast is below
+     WCAG AA, record it as a known accessibility note only." Known
+     accessibility note: --lavender on --cf-bg (paper) measures ~1.9:1,
+     under WCAG AA (4.5:1 normal text / 3:1 large text) — accepted
+     per Angela's direction, not fixed here. */
+  --cf-accent: var(--lavender);
+  --cf-accent-2: oklch(0.42 0.13 300);
+  --cf-surface-hover: oklch(0.16 0.008 265 / 4%);
+}
+
+.case-final ::selection {
+  background: var(--cf-accent);
+  color: var(--cf-bg);
+}
+
+/* Was color-only (no font-family at all), so every consumer silently fell
+   through to the global :lang(zh-Hant) base-layer rule for Latin headings
+   (e.g. CASE01's "Lead Product Designer" role value) — the same fallback
+   Noto Sans TC face .type-v3-display/.cf-tag/.cf-meta already exist to
+   avoid. --portfolio-font-display already lists Noto Sans TC as its own
+   fallback, so this renders CJK .cf-heading content (the majority of its
+   usage, e.g. bilingual case section titles) exactly as before via normal
+   per-glyph font fallback — only genuinely Latin content changes face. */
+.cf-heading { color: var(--cf-heading); font-family: var(--portfolio-font-display); }
+.cf-body { color: var(--cf-body); }
+.case-final[data-content-version="case01-v2"] .body-tc {
+  font-size: 16px;
+  line-height: 1.7;
+}
+.cf-meta { color: var(--cf-meta); font-family: var(--font-label); font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; }
+.cf-dim { color: var(--cf-dim); }
+.cf-rule { border-color: var(--cf-hairline); }
+.cf-accent { color: var(--cf-accent); }
+.cf-accent-2 { color: var(--cf-accent-2); }
+
+/* Round 13: Light theme's new Lavender accent text renders at weight 500
+   — Angela's explicit correction, text-only (never the accent-colored
+   rules/lines/backgrounds that share the same --cf-accent variable:
+   .cf-local-rule, .cf-chapter-marker-rule, and ::selection above all
+   stay at their existing weight/thickness, untouched). Scoped to the two
+   actual accent-TEXT roles: .cf-accent itself (eyebrow, section labels,
+   next-project label, decision summary index) and the active chapter
+   rail number, which sets color: var(--cf-accent) directly rather than
+   through the .cf-accent class. Dark theme is untouched — its accent
+   text keeps whatever weight it already inherited. */
+.case-final[data-theme="light"] .cf-accent,
+.case-final[data-theme="light"] .cf-chapter-marker[data-active="true"] {
+  font-weight: 500;
+}
+
+/* Section meta label ("專案概述" etc.) — Round 3: ~16px (was inheriting
+   .cf-meta's 12px base, meant for smaller captions/tags/stats) and never
+   wraps; it needs real width to sit on one line, which the Round 3 grid
+   change (meta above content, not squeezed into a 3-col rail) provides. */
+.cf-section-label {
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+}
+
+/* Case Study H3 — Round 3: weight 500 (was 600, read as too heavy/bold
+   against the screenshots Angela rejected), and a looser line-height on
+   mobile specifically so 2-3 line Chinese headings stay comfortable
+   when they wrap — desktop keeps the tighter 1.08 Lovable Case A
+   target, not loosened globally. */
+.cf-h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
+  font-size: clamp(1.85rem, 3.6vw, 3rem);
+}
+
+@media (max-width: 767px) {
+  .cf-h3 {
+    line-height: 1.3;
+  }
+}
+
+/* Case Opening title — a named composition exception for the Case
+   Opening's two-column project-introduction layout (Round 7). Previously
+   this h1 used .display-xl, which is literally the Home Hero's own
+   type-v3-display scale (clamp up to 8.5rem) — appropriate for a full-
+   width single-column hero, but it overwhelmed a left column that now
+   shares the row with a Project Information block. Sits between cf-h3
+   (subsection scale, too small to stay the case's own dominant element)
+   and display-xl (Home-hero scale). Still inherits cf-heading for color. */
+.cf-opening-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 0.98;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+/* CASE01-04's large ZH title read too tightly packed at the Latin-tuned
+   -0.01em (e.g. "工廠現場與管理操作介面") — same :lang-scoped correction
+   already established for .type-v3-section-heading above, EN untouched
+   since this selector only matches zh-Hant. Weight/size/line-height stay
+   identical; only tracking opens up, and only for the CJK case. */
+.cf-opening-title:lang(zh-Hant) {
+  letter-spacing: 0.02em;
+}
+
+/* Local rule — a short accent line connected to the content it
+   introduces, never a full-width form-style separator. */
+.cf-local-rule {
+  display: block;
+  width: 2.5rem;
+  height: 2px;
+  background: var(--cf-accent);
+}
+
+/* Round 3: all reading-content hover treatment removed per Angela's
+   explicit correction (previously .cf-reading-block/-strong — a tint
+   surface behind paragraphs). Long-form content now stays completely
+   stable while reading; only real interactive controls (links,
+   buttons — .case-link, .contact-row, .cf-chapter-marker, etc.) keep
+   hover/focus states. --cf-surface-hover is intentionally unused now
+   and kept only as a token in case a future interactive (not reading)
+   surface needs it. */
+
+/* Chapter-level rhythm (Round 3): every major chapter group gets
+   generous bottom breathing room; every group after the first also
+   gets top padding plus a subtle hairline seam — producing
+   SECTION -> reading -> media -> breathing space -> divider -> next
+   SECTION, rather than either a huge meaningless void or compressed
+   stacked content. Not applied to the very first chapter (Overview),
+   which sits directly under the opening and needs no seam above it. */
+.cf-section {
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.cf-section-divider {
+  padding-top: clamp(3rem, 6vw, 5rem);
+  border-top: 1px solid var(--cf-hairline);
+}
+
+/* Chapter register — bare numeral only (Round 3 reversal of an earlier
+   "01 / 問題" combined-label treatment); the descriptive label lives
+   with its section's own content, not duplicated in the nav. ~16px, mono. */
+.cf-chapter-marker {
+  position: relative;
+  font-family: var(--font-label);
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  color: var(--cf-dim);
+  opacity: 0.6;
+  padding-bottom: 0.4rem;
+}
+
+.cf-chapter-marker-rule {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1px;
+  width: 100%;
+  background: var(--cf-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cf-chapter-marker {
+    transition: opacity 200ms ease, color 200ms ease;
+  }
+
+  .cf-chapter-marker-rule {
+    transition: transform 260ms ease;
+  }
+}
+
+.cf-chapter-marker[data-active="true"] {
+  color: var(--cf-accent);
+  opacity: 1;
+}
+
+.cf-chapter-marker[data-active="true"] .cf-chapter-marker-rule {
+  transform: scaleX(1);
+}
+
+/* Scan-friendly summary rows (decision breakdowns, role/system
+   responsibilities that carry a real index+label+description) — larger
+   type, generous padding, no card chrome, no hover (read-only content,
+   per Round 3's reading-block removal above). */
+.cf-summary-list {
+  border-top: 1px solid var(--cf-hairline);
+}
+
+.cf-summary-row {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  gap: 1rem;
+  align-items: baseline;
+  padding: 1.1rem 0.75rem;
+  border-bottom: 1px solid var(--cf-hairline);
+  margin: 0 -0.75rem;
+}
+
+.cf-summary-index {
+  font-family: var(--font-label);
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+}
+
+/* Unstructured point lists (plain skill/tool tags with no index or
+   description) get a simple flowing tag treatment instead — a numbered
+   row would imply structure these items don't have. */
+.cf-tag {
+  border: 1px solid var(--cf-hairline);
+  padding: 0.4rem 0.85rem;
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: var(--cf-body);
+}
+
+/* Evidence figures (system/flow-diagram media) — Round 3: static,
+   complete, inspectable images with no hover/spotlight (Angela's
+   explicit correction; see EvidenceFigure.tsx / ShowcaseMedia.tsx,
+   which no longer wrap the image in any interactive treatment). The
+   hairline frame belongs to the image box only (.cf-figure-frame) —
+   the caption sits below it in normal flow, at a fixed, always-legible
+   opacity, never overlaid on top of the image itself. */
+.cf-figure-frame {
+  position: relative;
+  border: 1px solid var(--cf-hairline);
+  overflow: hidden;
+}
+
+.cf-figure-caption {
+  /* Whole-site QA (2026-09): 0.75 opacity on top of --cf-meta measured
+     3.49:1 against --cf-bg, under WCAG AA's 4.5:1 — the dampening was
+     actively working against the caption's own already-compliant base
+     color. 0.94 keeps a touch of visual de-emphasis while clearing the
+     threshold (verified ~4.8:1 dark theme). */
+  opacity: 0.94;
+  font-size: 0.8rem;
+}
+
+/* Showcase media — the one "delight budget" moment. Pointer parallax is
+   applied via JS-set custom properties (see ShowcaseMedia.tsx); this just
+   composes and smooths them. */
+.cf-showcase {
+  transform: perspective(1400px) rotateX(var(--cf-pointer-rx, 0deg)) rotateY(var(--cf-pointer-ry, 0deg));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cf-showcase {
+    transition: transform 200ms ease;
+  }
+}
+
+/* Marquee section breaks — CSS animation (runs off the main thread),
+   never scroll-linked, so it can't jank the reading experience. Chinese
+   and English render at the same size (see SectionMarquee.tsx); the
+   track repeats its unit 8x per half specifically so the combined width
+   safely exceeds any real viewport — with too little content the loop
+   showed bare background before snapping back, reading as a visible
+   jump. Duration is scaled up to match (a longer track at the same
+   speed would otherwise read as frantic, not ambient). */
+.cf-marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.cf-marquee-scale {
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+/*
+ * Round 4 correction: the marquee is a quiet background-level divider
+ * on BOTH themes — flat single color at ~20% opacity, zh and en
+ * identical, no heading/dim two-tone distinction. Round 3 only applied
+ * this on DARK; LIGHT was left at full-opacity cf-heading/cf-dim, which
+ * read as a normal foreground content row rather than a subdued
+ * transition element. Color-only per theme (dark: white; light: ink) —
+ * layout, typography, animation, and dimensions are untouched.
+ */
+.case-final[data-theme="dark"] .cf-marquee-scale {
+  color: white;
+  opacity: 0.2;
+}
+
+.case-final[data-theme="light"] .cf-marquee-scale {
+  color: var(--ink);
+  opacity: 0.2;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* 256s = 32s (Round 1's duration for 1 unit/half) x 8 (this round's
+     repetition count per half) — proportional, so the pace actually
+     matches what Round 1 intended rather than just being "some slower
+     number." */
+  .cf-marquee-track[data-direction="ltr"] {
+    animation: cf-marquee-ltr 256s linear infinite;
+  }
+
+  .cf-marquee-track[data-direction="rtl"] {
+    animation: cf-marquee-rtl 256s linear infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-marquee-track {
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .cf-marquee-track > *:nth-child(n + 2) {
+    display: none;
+  }
+
+  .cf-marquee-track > *:first-child > *:nth-child(n + 2) {
+    display: none;
+  }
+}
+
+@keyframes cf-marquee-ltr {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes cf-marquee-rtl {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+} /* end @layer components */

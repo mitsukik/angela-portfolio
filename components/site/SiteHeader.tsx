@@ -208,7 +208,7 @@ export function SiteHeader({
           aria-expanded={open}
           aria-controls="mobile-navigation"
           onClick={() => setOpen((value) => !value)}
-          className="menu-trigger header-fg relative flex h-11 w-11 items-center justify-center md:hidden"
+          className="menu-trigger header-fg relative z-10 flex h-11 w-11 items-center justify-center md:hidden"
         >
           <span className={`menu-line ${open ? "translate-y-0 rotate-45" : "-translate-y-1"}`} />
           <span className={`menu-line ${open ? "translate-y-0 -rotate-45" : "translate-y-1"}`} />

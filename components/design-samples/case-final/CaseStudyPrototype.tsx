@@ -109,7 +109,7 @@ export function CaseStudyPrototype({
     : isCaseTwoV1
       ? (locale === "zh" ? "品牌與網站體驗" : "Brand & Web Experience")
       : isCaseThreeV1
-        ? (locale === "zh" ? "工廠現場與管理操作介面" : "Manufacturing Operations Interface")
+        ? (locale === "zh" ? "工廠生產與營運管理系統" : "Confidential Manufacturing Operations System")
         : isCaseFourV1
           ? (locale === "zh" ? "匿名行動療癒產品" : "Confidential Mobile Wellness Product")
           : (caseStudy.displayTitle ?? project.title);
@@ -119,14 +119,16 @@ export function CaseStudyPrototype({
   // unnumbered Reflection (9 chapters starting at 01) — unlike Case01-03,
   // whose opening block implicitly owns "01" so their content chapters
   // start at 02. See CaseFourFinalContent.tsx's own comment on Reflection.
-  const chapterCount = isCaseOneV2 ? 11 : isCaseTwoV1 || isCaseThreeV1 ? 7 : isCaseFourV1 ? 9 : CHAPTER_COUNT;
+  const chapterCount = isCaseOneV2 ? 11 : isCaseTwoV1 ? 7 : isCaseThreeV1 ? 6 : isCaseFourV1 ? 9 : CHAPTER_COUNT;
   const chapters: Chapter[] = isCaseOneV2
     ? Array.from({ length: 11 }, (_, i) => ({ number: String(i + 2).padStart(2, "0") }))
-    : isCaseTwoV1 || isCaseThreeV1
+    : isCaseTwoV1
       ? Array.from({ length: 7 }, (_, i) => ({ number: String(i + 2).padStart(2, "0") }))
-      : isCaseFourV1
-        ? Array.from({ length: 9 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
-        : CHAPTERS;
+      : isCaseThreeV1
+        ? Array.from({ length: 6 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
+        : isCaseFourV1
+          ? Array.from({ length: 9 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
+          : CHAPTERS;
   const { active, registerChapter } = useActiveChapter(chapterCount);
   const chapterSectionRefs = useRef<Array<HTMLElement | null>>([]);
 
@@ -222,12 +224,12 @@ export function CaseStudyPrototype({
       : isCaseThreeV1
         ? zhHant
           ? [
-              { label: "角色", value: "UI/UX Designer · Frontend" },
+              { label: "角色", value: "UI/UX & Frontend Designer" },
               { label: "平台", value: "Web · Industrial Tablet" },
               { label: "客戶", value: "機密製造業客戶" },
             ]
           : [
-              { label: "Role", value: "UI/UX Designer · Frontend Implementation" },
+              { label: "Role", value: "UI/UX & Frontend Designer" },
               { label: "Platform", value: "Web · Industrial Tablet" },
               { label: "Client", value: "Confidential Manufacturing Client" },
             ]
@@ -285,7 +287,7 @@ export function CaseStudyPrototype({
                   : isCaseTwoV1
                     ? "02 / BRAND & WEB EXPERIENCE"
                     : isCaseThreeV1
-                      ? "03 / MANUFACTURING OPERATIONS INTERFACE"
+                      ? "03 / CONFIDENTIAL MANUFACTURING OPERATIONS SYSTEM"
                       : isCaseFourV1
                         ? "04 / CONFIDENTIAL MOBILE WELLNESS PRODUCT"
                         : `${project.number} / ${caseStudy.eyebrowTitle ?? displayTitle}`}
@@ -320,26 +322,12 @@ export function CaseStudyPrototype({
                   applied to Cases 02-04's opening, which this task doesn't
                   touch). */}
               {isCaseThreeV1 ? (
-                <div data-open-summary className="mt-6 max-w-[56ch] space-y-4">
-                  {zhHant ? (
-                    <>
-                      <p className="cf-body body-tc">
-                        這是一套供工廠管理人員與現場人員使用的內部作業系統，涵蓋日常生產、庫存、設備狀態與管理資訊。
-                      </p>
-                      <p className="cf-body body-tc">
-                        需求與流程由 PM / System Analyst 定義；我負責將這些複雜規格轉化成實際可操作的 UI，並完成前端實作。
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <p className="cf-body body-tc">
-                        This internal system supports everyday factory work across management and production-floor environments, including production tasks, inventory, equipment status, and operational information.
-                      </p>
-                      <p className="cf-body body-tc">
-                        The workflows and business rules were defined by the PM/System Analyst. My role was to translate those specifications into usable UI, establish consistent interaction patterns, and implement the frontend experience.
-                      </p>
-                    </>
-                  )}
+                <div data-open-summary className="mt-6 max-w-[56ch]">
+                  <p className="cf-body body-tc">
+                    {zhHant
+                      ? "供工廠管理人員與現場人員使用的內部作業系統，涵蓋生產、物料、庫存與品檢等日常營運。"
+                      : "An internal operations system for factory management and shop-floor teams, covering production, materials, inventory, and quality inspection."}
+                  </p>
                 </div>
               ) : isCaseFourV1 ? (
                 <div data-open-summary className="mt-6 max-w-[56ch] space-y-4">

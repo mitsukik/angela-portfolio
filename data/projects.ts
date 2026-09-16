@@ -449,8 +449,8 @@ export const projects: Project[] = [
     accent: "acid",
     year: "2025",
     category: { zh: "製造營運", en: "Manufacturing Operations" },
-    title: "Manufacturing Operations Interface",
-    chineseTitle: "工廠現場與管理操作介面",
+    title: "Confidential Manufacturing Operations System",
+    chineseTitle: "工廠生產與營運管理系統",
     tags: ["Manufacturing", "Operations", "System UX", "Industrial UI"],
     description: [
       "將設備狀態、數據與操作流程整合，",

@@ -461,13 +461,15 @@ export const projects: Project[] = [
       "to make complex information easier to understand and manage.",
     ],
     image: "/images/case03/case03-hero-desktop-tablet.webp",
+    // Homepage / Selected Work card only (see ProjectVisual's
+    // useHomeImage path) — case03-monitoring-dashboard.webp (a
+    // different, unrelated client's asset) must never be reachable from
+    // this project's homepage card, so this entry intentionally has no
+    // homeImages/homeVisual: homeImage alone is enough for the only
+    // code path Selected Work actually uses, and leaving out
+    // homeImages/homeVisual means there is no multi-image collage path
+    // left for this project at all.
     homeImage: "/images/home/case03-home-visual.webp",
-    homeImages: [
-      "/images/case03/case03-hero-desktop-tablet.webp",
-      "/images/case03/case03-operations-collage.webp",
-      "/images/case03/case03-monitoring-dashboard.webp",
-    ],
-    homeVisual: "operations-cover",
     alt: "Manufacturing operations dashboard and industrial tablet interface",
     caseStudy: {
       summary: "A system experience that brings device status, data, and daily operations into one clear workflow.",

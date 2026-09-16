@@ -55,6 +55,8 @@ export type Project = {
   description: string[];
   descriptionEn: string[];
   image: string;
+  /** Approved, production-optimized visual used only by Home / Selected Work. */
+  homeImage?: string;
   alt: string;
   /** Selected Work pinned-stage presentation state — alternating black/white
    * registers (01 dark, 02 light, 03 dark, 04 light) per Angela's V3
@@ -434,6 +436,15 @@ export const projects: Project[] = [
       "to make complex information easier to understand and manage.",
     ],
     image: "/work/case-01.jpeg",
+    // Homepage / Selected Work card only (see ProjectVisual's
+    // useHomeImage path) — case03-monitoring-dashboard.webp (a
+    // different, unrelated client's asset) must never be reachable from
+    // this project's homepage card, so this entry intentionally has no
+    // homeImages/homeVisual: homeImage alone is enough for the only
+    // code path Selected Work actually uses, and leaving out
+    // homeImages/homeVisual means there is no multi-image collage path
+    // left for this project at all.
+    homeImage: "/images/home/case03-home-visual.webp",
     alt: "Manufacturing operations interface project visual",
     caseStudy: {
       summary: "A system experience that brings device status, data, and daily operations into one clear workflow.",

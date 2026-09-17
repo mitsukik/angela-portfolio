@@ -9,7 +9,9 @@
   - Verified in production: responsive QA at 1440/390, all CASE01 evidence images live, Interactive Demo link, Previous/Next nav, no broken images, no 404s, no console errors, no horizontal overflow.
   - **CASE01 is FROZEN.** Do not reopen discovery, redesign, or copy (either locale) without a specific new instruction.
 - **Deployment topology (read before any git/push/deploy task):** this repo's git history is disconnected from the actual GitHub/Vercel repo (`https://github.com/mitsukik/angela-portfolio.git`) — no common commit ancestor, though file content substantially overlaps. The properly-connected clone is `/Users/angela/angela-portfolio-public` (branch `main`, tracks `origin/main`, is what Vercel Production deploys from). Production changes are migrated from this repo's committed snapshots into a clean branch off `origin/main` in that other clone, then merged/pushed from there — not pushed directly from here.
-- **Next portfolio priority: CASE02.**
+- **CASE02 ZH V2 — APPROVED / FROZEN.** Restructured into the 00–08 story architecture; see the CASE02 section below for the full breakdown. Commit: `9ebc104e1a2fba0402709567992e6ab0492c139d` — `feat(case02): restructure and freeze zh case study`.
+  - **English localization NOT yet approved — next task.** `/en/design-samples/case-final-02` currently renders the pre-V2 English copy against the new V2 structure/positions (functional, not redesigned-for, not proofread) — do not treat it as done.
+- **Next portfolio priority: CASE02 English localization for the V2 structure.**
 - Review routes: `/design-samples/case-final-01` (CASE01 ZH), `/en/design-samples/case-final-01` (CASE01 EN), `/design-samples/case-final-02` (CASE02 ZH), `/en/design-samples/case-final-02` (CASE02 EN), `/design-samples/case-final-03` (CASE03 ZH), `/en/design-samples/case-final-03` (CASE03 EN).
 - **Continuity note:** this file was fully rewritten (not appended) to replace stale pre-freeze CASE02 status and a dropped prior history chain. Older history (Homepage Visual Polish V3/V3.1/V3.2, Lavender token checkpoint, About V2, CASE01 Responsive QA) is not reconstructed here — git log and topic branches remain the authoritative record per AGENTS.md's "if documentation conflicts with Git, investigate and report" rule.
 
@@ -26,25 +28,37 @@ CASE02 is **Brand & Web Experience** — a multi-project case covering Shun De X
 
 Core story: **Different business contexts → different information priorities → adapted web experiences.**
 
-## Status: ZH — FROZEN / COMPLETE
+## Status: ZH V2 — APPROVED / FROZEN
 
-Do not change unless a real bug is found, factual information is wrong, an asset is broken, or production integration requires a technical fix.
+Do not change unless a real bug is found, factual information is wrong, an asset is broken, or production integration requires a technical fix. Do not reopen discovery or restructure without a specific new instruction.
 
-Approved structure (do not reorder or restructure): Hero → Overview → Business Needs → Web Structure → SDX Project Story → Charming Clinic Project Story → NATEX Project Story → Shared design principles → Responsive evidence → Contribution matrix → Reflection → section navigation.
+**Story architecture (00–08):**
+- **00 — 專案概覽** (Opening/Hero): establishes 3 real commercial websites across different industries.
+- **01 — 我的角色**: contribution/responsibility matrix, **moved here from its old late position** so recruiters see scope before the stories. Chapter numbering for this case now runs 01–08 (the opening no longer implicitly owns "01" the way V1/other cases do — see the `isCaseTwoV1` branch in `CaseStudyPrototype.tsx`).
+- **02 — 相同是網站，不同的是問題**: new cross-project comparison table (business context / audience need / UX priority / primary action).
+- **03 — 從商業需求到資訊架構**: the existing business-needs → structure chain, reframed with explicit chain intro copy; step content unchanged from V1.
+- **04A/B/C — SDX / Charming Clinic / NATEX**: each rewritten around **問題 → 設計判斷 → 設計結果** (Problem → Design Decision → Design Result). Evidence unchanged (1 video walkthrough + 1 supporting still per project, no galleries).
+- **05 — 不同情境，不同設計判斷**: new cross-project UX-principle comparison table, then **3 shared principles** (清楚的資訊優先順序 / 在決策點建立信任 / 讓下一步清楚可見). Responsive is deliberately **not** listed as a shared principle here (evidence doesn't support it equally across all three — see 06).
+- **06 — 響應式資訊優先順序**: kept **SDX-only**, shortened. Charming/NATEX do not have matching-page-type responsive evidence (only recoverable home-page mobile shots vs. SDX's services-page pair) — do not add a fake 3-project comparison here without new evidence.
+- **07 — 從設計到實際網站**: new section connecting design decisions to delivery. Preserves verified ownership: **SDX = no frontend, Charming = partial/initial frontend support, NATEX = full frontend involvement.** Do not imply identical delivery scope across the three.
+- **08 — 結語 (Takeaway)**: shortened to a concise Business Context → Information Structure → Digital Experience conclusion (two short paragraphs).
 
-Evidence: real screenshots only, official live-site evidence, no fabricated UI/research/metrics. Evidence crops are finalized.
+**QA passed:** ZH copy reviewed line-by-line and approved; TypeScript/targeted ESLint/production build all clean; desktop (1440) and mobile (390) visually verified, no overflow, no regressions; Section 07's 3-column divider/padding rule verified pixel-identical across columns (single shared class, not per-column magic numbers).
 
-Motion: restrained Hero evidence entrance, `SectionHeading` reveal, evidence-unit reveal, `prefers-reduced-motion` support. No parallax / scroll-jacking / complex timelines.
+Evidence: real screenshots only, official live-site evidence, no fabricated UI/research/metrics/interviews/workshops/KPIs.
 
-Main freeze commit: `a09ffdb5143dacc49a315b4326d59f17e1b0210b` — evidence, balance, responsive presentation, and visual structure finalized. Subsequent approved enhancements (links, viewer, EN) layered on top without reopening this.
+Motion: restrained Hero evidence entrance, `SectionHeading` reveal, evidence-unit reveal, `prefers-reduced-motion` support. No parallax / scroll-jacking / complex timelines. Unchanged from V1.
 
-## Status: EN — FROZEN / COMPLETE
+V1 freeze commit (superseded by V2, kept for history): `a09ffdb5143dacc49a315b4326d59f17e1b0210b`.
+**V2 freeze commit: `9ebc104e1a2fba0402709567992e6ab0492c139d`** — `feat(case02): restructure and freeze zh case study`.
 
-Route: `/en/design-samples/case-final-02`. Uses the same frozen CASE02 renderer (`CaseTwoFinalContent.tsx`) via locale-driven content (`locale` prop, `zhHant` branching) — not a separate redesign or duplicate implementation.
+## Status: EN — NOT YET APPROVED (next task)
 
-English copy has been localized and proofread for recruiter readability (natural phrasing, not literal translation). Real project screenshots remain Chinese where the actual live sites are Chinese — do not generate fake translated screenshots.
+Route: `/en/design-samples/case-final-02`. Uses the same renderer (`CaseTwoFinalContent.tsx`) via locale-driven content (`locale` prop, `zhHant` branching) — not a separate implementation.
 
-Commit: `0838c55` — `feat(portfolio): add English CASE02 localization`.
+**This is currently stale relative to V2.** The English branches render functional, direct copy in the new V2 structure/positions (added only so the EN route doesn't break), but this has **not** been localized/proofread the way the old V1 English pass was. Do not treat `/en/design-samples/case-final-02` as reflecting approved English copy. The next task is a dedicated EN localization pass for the V2 structure — same approach as CASE01's EN pass (natural phrasing, not literal translation; recruiter-readable).
+
+Old V1 EN commit (structure now superseded): `0838c55` — `feat(portfolio): add English CASE02 localization`.
 
 ## Project ownership (verified — do not broaden)
 

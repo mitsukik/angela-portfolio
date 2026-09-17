@@ -154,7 +154,7 @@ export function SelectedWork({ locale }: { locale: Locale }) {
                       </span>
                       <span className={`type-v3-label mt-2 block transition-opacity ${isActive ? "scene-text" : "scene-dim-text opacity-60 group-hover:opacity-100"}`}>
                         {project.number}
-                        <span className="ml-2 hidden md:inline">{project.title}</span>
+                        <span className="ml-2 hidden md:inline">{project.railLabel[locale]}</span>
                       </span>
                     </button>
                   </li>

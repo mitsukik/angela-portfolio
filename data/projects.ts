@@ -79,6 +79,12 @@ export type Project = {
   year: string;
   /** Short bilingual category label shown beside the project index number. */
   category: { zh: string; en: string };
+  /** Bilingual label for the Home / Selected Work bottom project rail —
+   * a distinct, deliberately short/compact slot independent of category
+   * and title (their lengths diverge per project: 01/02 read like the
+   * category, 03/04 read like the full title), so it is its own explicit
+   * field rather than reusing either. */
+  railLabel: { zh: string; en: string };
   caseStudy: ProjectCaseStudy;
   caseStudyEn?: ProjectCaseStudy;
 };
@@ -130,17 +136,18 @@ export const projects: Project[] = [
     stageVertical: "top",
     accent: "acid",
     year: "2024",
-    category: { zh: "複雜系統", en: "Complex System" },
-    title: "Complex System",
-    chineseTitle: "媒合銷售平台後台系統",
+    category: { zh: "複雜系統", en: "COMPLEX SYSTEM" },
+    railLabel: { zh: "複雜系統", en: "COMPLEX SYSTEM" },
+    title: "Cross-border Live Commerce Platform",
+    chineseTitle: "跨境寄賣與直播電商平台",
     tags: ["UI/UX Design", "Complex System", "B2B Platform", "Workflow"],
     description: [
-      "整合商品、庫存、訂單、退款與角色權限，",
-      "將複雜營運流程轉化為清晰、可擴展的操作體驗。",
+      "整合跨境入庫、共享庫存、多角色銷售、訂單履約與角色權限，",
+      "將複雜營運流程轉化為清楚、可實作的產品系統。",
     ],
     descriptionEn: [
-      "Bringing products, inventory, orders, refunds, and role permissions together,",
-      "turning complex operations into a clear, scalable experience.",
+      "Turning cross-border receiving, shared inventory, multi-role selling,",
+      "order fulfillment, and permissions into a clear, buildable product system.",
     ],
     image: "/images/case01/evidence/case01-order-list.webp",
     homeImage: "/images/home/case01-home-visual.webp",
@@ -152,9 +159,9 @@ export const projects: Project[] = [
       projectName: "跨境寄賣與直播電商平台",
       summary: "將台灣供應商、越南倉儲、代理公司、直播主與消費者串連在同一套商業流程中，建立從跨境入庫、共享庫存、選品銷售到訂單履約與結算的完整產品體驗。",
       metadata: {
-        "角色": "Lead Product Designer",
-        "平台": "Web Platform",
-        "範疇": "Product Architecture · UX/UI · Interaction Design · State Design",
+        "角色": "LEAD PRODUCT DESIGNER",
+        "平台": "Responsive Web",
+        "範疇": "Product Architecture · System UX · Workflow & State Design",
         "狀態": "Designed & Developed",
       },
       decisionsHeading: "關鍵設計決策",
@@ -272,9 +279,9 @@ export const projects: Project[] = [
       projectName: "Cross-Border Consignment & Live Commerce Platform",
       summary: "Connecting Taiwanese suppliers, Vietnamese warehousing, agencies, streamers, and consumers within one business flow—from cross-border receiving and shared inventory to product selection, sales, order fulfillment, and settlement.",
       metadata: {
-        "Role": "Lead Product Designer",
-        "Platform": "Web Platform",
-        "Scope": "Product Architecture · UX/UI · Interaction Design · State Design",
+        "Role": "LEAD PRODUCT DESIGNER",
+        "Platform": "Responsive Web",
+        "Scope": "Product Architecture · System UX · Workflow & State Design",
         "Status": "Designed & Developed",
       },
       decisionsHeading: "KEY DESIGN DECISIONS",
@@ -397,6 +404,7 @@ export const projects: Project[] = [
     accent: "lavender",
     year: "2025",
     category: { zh: "企業網站", en: "Corporate Website" },
+    railLabel: { zh: "企業網站", en: "CORPORATE WEBSITE" },
     title: "Corporate Website",
     chineseTitle: "企業品牌形象網站",
     tags: ["Web Design", "UI/UX", "Responsive", "Brand"],
@@ -449,6 +457,7 @@ export const projects: Project[] = [
     accent: "acid",
     year: "2025",
     category: { zh: "製造營運", en: "Manufacturing Operations" },
+    railLabel: { zh: "工廠生產與營運管理系統", en: "CONFIDENTIAL MANUFACTURING OPERATIONS SYSTEM" },
     title: "Confidential Manufacturing Operations System",
     chineseTitle: "工廠生產與營運管理系統",
     tags: ["Manufacturing", "Operations", "System UX", "Industrial UI"],
@@ -461,15 +470,15 @@ export const projects: Project[] = [
       "to make complex information easier to understand and manage.",
     ],
     image: "/images/case03/case03-hero-desktop-tablet.webp",
-    // Homepage / Selected Work card only (see ProjectVisual's
-    // useHomeImage path) — case03-monitoring-dashboard.webp (a
-    // different, unrelated client's asset) must never be reachable from
-    // this project's homepage card, so this entry intentionally has no
-    // homeImages/homeVisual: homeImage alone is enough for the only
-    // code path Selected Work actually uses, and leaving out
-    // homeImages/homeVisual means there is no multi-image collage path
-    // left for this project at all.
     homeImage: "/images/home/case03-home-visual.webp",
+    // No homeImages/homeVisual: case03-monitoring-dashboard.webp (the
+    // previous 3rd collage tile) belongs to a different, unrelated
+    // client and must never render for this project. homeImage alone
+    // is enough for ProjectVisual's useHomeImage path (the only one
+    // Selected Work actually uses), and omitting homeVisual/homeImages
+    // means there is no multi-image collage path left for this project
+    // at all — not just an unused one — so that asset can't resurface
+    // here even if a future call site omits useHomeImage.
     alt: "Manufacturing operations dashboard and industrial tablet interface",
     caseStudy: {
       summary: "A system experience that brings device status, data, and daily operations into one clear workflow.",
@@ -499,17 +508,18 @@ export const projects: Project[] = [
     stageVertical: "middle",
     accent: "lavender",
     year: "2026",
-    category: { zh: "行動產品", en: "Mobile Product" },
-    title: "Confidential Mobile Wellness Product",
-    chineseTitle: "匿名行動療癒產品",
+    category: { zh: "行動產品", en: "MOBILE WELLNESS PRODUCT" },
+    railLabel: { zh: "行動療癒產品", en: "MOBILE WELLNESS PRODUCT" },
+    title: "Mobile Wellness Product",
+    chineseTitle: "行動療癒產品",
     tags: ["Mobile", "UI/UX", "Interaction", "User Flow"],
     description: [
       "根據個人資料、當下狀態與偏好，",
-      "生成個人化療癒音樂的機密行動產品。",
+      "生成個人化療癒音樂的行動產品。",
     ],
     descriptionEn: [
       "Generating personalized healing audio from individual data, state, and preference —",
-      "a confidential mobile product.",
+      "a mobile product.",
     ],
     image: "/images/case04/case04-hero-home-v2.webp",
     homeImage: "/images/home/case04-home-visual.webp",
@@ -519,9 +529,9 @@ export const projects: Project[] = [
       "/images/case04/case04-player.webp",
     ],
     homeVisual: "phone-triptych",
-    alt: "Anonymized home, generation, and listening screens from a confidential mobile wellness product",
+    alt: "Home, generation, and listening screens from a mobile wellness product",
     caseStudy: {
-      summary: "A confidential mobile wellness product focused on an intuitive journey and clear interaction patterns.",
+      summary: "A mobile wellness product focused on an intuitive journey and clear interaction patterns.",
       metadata: {
         "角色": "Product Designer",
         "平台": "Mobile Product",
@@ -531,7 +541,7 @@ export const projects: Project[] = [
     // Homepage-card metadata labels only — see the matching comment on
     // CASE02 above.
     caseStudyEn: {
-      summary: "A confidential mobile wellness product focused on an intuitive journey and clear interaction patterns.",
+      summary: "A mobile wellness product focused on an intuitive journey and clear interaction patterns.",
       metadata: {
         Role: "Product Designer",
         Platform: "Mobile Product",

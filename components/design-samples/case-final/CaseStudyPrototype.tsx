@@ -114,7 +114,7 @@ export function CaseStudyPrototype({
       : isCaseThreeV1
         ? (locale === "zh" ? "工廠生產與營運管理系統" : "Confidential Manufacturing Operations System")
         : isCaseFourV1
-          ? (locale === "zh" ? "匿名行動療癒產品" : "Confidential Mobile Wellness Product")
+          ? (locale === "zh" ? "行動療癒產品" : "Mobile Wellness Product")
           : (caseStudy.displayTitle ?? project.title);
   const zhHant = locale === "zh";
   const openingRef = useRef<HTMLDivElement | null>(null);
@@ -296,7 +296,7 @@ export function CaseStudyPrototype({
                     : isCaseThreeV1
                       ? "03 / CONFIDENTIAL MANUFACTURING OPERATIONS SYSTEM"
                       : isCaseFourV1
-                        ? "04 / CONFIDENTIAL MOBILE WELLNESS PRODUCT"
+                        ? "04 / MOBILE WELLNESS PRODUCT"
                         : `${project.number} / ${caseStudy.eyebrowTitle ?? displayTitle}`}
               </p>
               <h1 data-open-title className="cf-heading cf-opening-title mt-5">

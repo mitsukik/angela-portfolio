@@ -122,13 +122,16 @@ export function CaseStudyPrototype({
   // unnumbered Reflection (9 chapters starting at 01) — unlike Case01-03,
   // whose opening block implicitly owns "01" so their content chapters
   // start at 02. See CaseFourFinalContent.tsx's own comment on Reflection.
-  const chapterCount = isCaseOneV3 ? 6 : isCaseOneV2 ? 11 : isCaseTwoV1 ? 7 : isCaseThreeV1 ? 6 : isCaseFourV1 ? 9 : CHAPTER_COUNT;
+  const chapterCount = isCaseOneV3 ? 6 : isCaseOneV2 ? 11 : isCaseTwoV1 ? 8 : isCaseThreeV1 ? 6 : isCaseFourV1 ? 9 : CHAPTER_COUNT;
   const chapters: Chapter[] = isCaseOneV3
     ? Array.from({ length: 6 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
     : isCaseOneV2
     ? Array.from({ length: 11 }, (_, i) => ({ number: String(i + 2).padStart(2, "0") }))
     : isCaseTwoV1
-      ? Array.from({ length: 7 }, (_, i) => ({ number: String(i + 2).padStart(2, "0") }))
+      // V2: the contribution matrix moved into its own early chapter (01),
+      // so unlike V1 the opening no longer implicitly owns "01" — content
+      // chapters now start at 01, not 02.
+      ? Array.from({ length: 8 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
       : isCaseThreeV1
         ? Array.from({ length: 6 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
         : isCaseFourV1
@@ -372,7 +375,7 @@ export function CaseStudyPrototype({
                         : "A multi-sided commerce platform connecting Taiwan Suppliers, a Vietnam Warehouse, Agents (streamer agencies), Streamers, and Consumers — from cross-border receiving and shared inventory to selling, orders, fulfillment, and settlement."
                       : isCaseTwoV1
                         ? zhHant
-                          ? "為企業服務、醫療美容與科技產業品牌，打造清楚且值得信任的數位體驗。"
+                          ? "把不同產業的商業需求，轉化為清楚的資訊架構與可信任的網站體驗。"
                           : "Designing clear, credible digital experiences across corporate, healthcare, and technology brands."
                         : caseStudy.summary}
                   </p>

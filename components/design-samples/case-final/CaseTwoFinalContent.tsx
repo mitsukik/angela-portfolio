@@ -199,16 +199,23 @@ function DetailEvidence({
   );
 }
 
+// V2: optional per-device annotation lists (Section 06's "what changed and
+// why" callouts) — additive only, existing/future callers that don't pass
+// them render exactly as before.
 function ResponsiveEvidence({
   project,
   desktop,
   mobile,
+  desktopNotes,
+  mobileNotes,
   caption,
   zhHant,
 }: {
   project: string;
   desktop: EvidenceAsset;
   mobile: EvidenceAsset;
+  desktopNotes?: string[];
+  mobileNotes?: string[];
   caption: string;
   zhHant: boolean;
 }) {
@@ -219,8 +226,26 @@ function ResponsiveEvidence({
         <p className="cf-meta cf-dim">{zhHant ? "桌面／行動裝置" : "Desktop / Mobile"}</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_16rem] sm:items-start lg:grid-cols-[minmax(0,1fr)_18rem]">
-        <EvidenceImage asset={desktop} />
-        <EvidenceImage asset={mobile} format="portrait" />
+        <div>
+          <EvidenceImage asset={desktop} />
+          {desktopNotes && desktopNotes.length > 0 && (
+            <ul className="mt-3 space-y-1">
+              {desktopNotes.map((note) => (
+                <li key={note} className="cf-dim text-[13px] leading-5">— {note}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div>
+          <EvidenceImage asset={mobile} format="portrait" />
+          {mobileNotes && mobileNotes.length > 0 && (
+            <ul className="mt-3 space-y-1">
+              {mobileNotes.map((note) => (
+                <li key={note} className="cf-dim text-[13px] leading-5">— {note}</li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
       <p className="cf-figure-caption cf-meta mt-4">{caption}</p>
     </article>
@@ -269,7 +294,7 @@ export function CaseTwoHeroEvidence({ locale }: { locale: Locale }) {
         </HeroEvidenceReveal>
       </div>
       <figcaption className="cf-figure-caption cf-meta mt-4">
-        {zhHant ? "三種產業，各自轉化為不同的資訊與信任策略。" : "Three industries, each translated into a distinct information and trust strategy."}
+        {zhHant ? "三種產業，對應三種不同的資訊與信任策略。" : "Three industries, each translated into a distinct information and trust strategy."}
       </figcaption>
     </figure>
   );
@@ -286,6 +311,20 @@ function ProjectStoryHeading({ index, title }: { index: string; title: string })
   );
 }
 
+// Small inline lead-in used inside 04A-C's body copy to make the
+// Problem -> Design Decision -> Result structure explicit without a new
+// component — reuses the same cf-meta/cf-dim label language already used
+// everywhere else in this file (ProjectMeta's <dt>, DetailEvidence's
+// captions), not a new visual language.
+function StoryBeat({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <p className="cf-body body-tc">
+      <span className="cf-meta cf-dim mr-2 align-middle">{label}</span>
+      {children}
+    </p>
+  );
+}
+
 const contributionRows = [
   ["Requirements", "Yes", "Yes", "Yes"],
   ["Information Architecture / Flow", "Yes", "Yes", "Yes"],
@@ -298,7 +337,7 @@ const contributionRows = [
 
 const CONTRIBUTION_VALUE_ZH: Record<string, string> = { Yes: "是", No: "否", Partial: "部分" };
 const CONTRIBUTION_LABEL_ZH: Record<string, string> = {
-  Requirements: "需求",
+  Requirements: "需求釐清",
   "Information Architecture / Flow": "資訊架構／流程",
   "UX/UI Design": "UX/UI 設計",
   "Content Direction": "內容方向",
@@ -307,45 +346,178 @@ const CONTRIBUTION_LABEL_ZH: Record<string, string> = {
   Frontend: "前端實作",
 };
 
+// V2: one reusable cross-project comparison table, used by both 02 (business
+// context) and 05 (UX principle comparison) — same visual language as the
+// existing contribution-matrix table below (cf-scroll-region/cf-rule/
+// cf-meta/cf-heading/cf-body), not a new pattern.
+type ComparisonRow = { label: string; values: readonly [string, string, string] };
+
+function ComparisonTable({
+  rows,
+  rowHeaderLabel,
+  ariaLabel,
+}: {
+  rows: readonly ComparisonRow[];
+  rowHeaderLabel: string;
+  ariaLabel: string;
+}) {
+  return (
+    <div
+      className="cf-scroll-region mt-10 w-full min-w-0 max-w-full overflow-x-auto"
+      tabIndex={0}
+      role="group"
+      aria-label={ariaLabel}
+    >
+      <table className="w-full min-w-[46rem] border-collapse text-left">
+        <thead>
+          <tr className="border-y cf-rule">
+            <th className="cf-meta py-4 pr-6 font-normal">{rowHeaderLabel}</th>
+            <th className="cf-meta py-4 pr-6 font-normal">SDX</th>
+            <th className="cf-meta py-4 pr-6 font-normal">Charming Clinic</th>
+            <th className="cf-meta py-4 font-normal">NATEX</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={row.label} className="border-b cf-rule">
+              <th scope="row" className="cf-heading py-4 pr-6 text-[15px] font-medium">{row.label}</th>
+              {row.values.map((value, index) => (
+                <td key={index} className="cf-body py-4 pr-6 text-[15px]">{value}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export function CaseTwoFinalContent({ register, locale }: { register: RegisterSection; locale: Locale }) {
   const zhHant = locale === "zh";
+
+  // 02 — business-context comparison. Every value is drawn from copy that
+  // already existed in the pre-V2 "business needs" section and ProjectMeta's
+  // focus fields — nothing new is asserted here.
+  const businessComparisonRows: ComparisonRow[] = zhHant
+    ? [
+        { label: "商業情境", values: ["服務橫跨多個業務領域與市場", "涵蓋多樣的醫療與美容服務", "技術能力涵蓋軟體、IoT、資料與工業服務"] },
+        { label: "受眾需求", values: ["快速理解服務範圍與適合的聯絡入口", "找到合適的療程並理解服務", "理解技術能力與應用方向"] },
+        { label: "UX 重點", values: ["服務分類與導覽", "服務探索與信任建立", "技術轉譯與商業可信度"] },
+        { label: "主要行動", values: ["商務洽詢", "預約／聯絡", "B2B 洽詢"] },
+      ]
+    : [
+        { label: "Business Context", values: ["Services span multiple business lines and markets", "A wide range of medical and aesthetic services", "Technical capability across software, IoT, data, and industrial services"] },
+        { label: "Audience Need", values: ["Understand the business", "Find the right treatment", "Understand technical capability"] },
+        { label: "UX Priority", values: ["A clear service structure", "Service information and trust", "Expertise and business credibility"] },
+        { label: "Primary Action", values: ["Contact", "Booking", "Inquiry"] },
+      ];
+
+  // 05 — UX-principle comparison, values as specified.
+  const principleComparisonRows: ComparisonRow[] = zhHant
+    ? [
+        { label: "受眾", values: ["企業 / 商務", "消費者 / 顧客", "B2B / 技術決策者"] },
+        { label: "主要複雜度", values: ["服務範圍廣", "選擇與不確定感", "技術資訊密度高"] },
+        { label: "信任機制", values: ["公司規模 / 企業可信度", "專業 / 安心感", "技術能力 / 專業證明"] },
+        { label: "UX 重點", values: ["分類與導覽", "探索與決策", "理解與判斷"] },
+        { label: "主要行動", values: ["商務洽詢", "預約 / 聯絡", "B2B 洽詢"] },
+      ]
+    : [
+        { label: "Audience", values: ["Corporate / business", "Consumers / patients", "B2B / technical decision-makers"] },
+        { label: "Main Complexity", values: ["Broad service range", "Choice and uncertainty", "High technical information density"] },
+        { label: "Trust Mechanism", values: ["Company scale / corporate credibility", "Expertise / reassurance", "Technical capability / proven expertise"] },
+        { label: "UX Emphasis", values: ["Categorization and navigation", "Exploration and decision-making", "Comprehension and judgment"] },
+        { label: "Primary Action", values: ["Business inquiry", "Booking / contact", "B2B inquiry"] },
+      ];
+
   return (
     <CaseEvidenceViewerProvider>
+      {/* 01 — My Role. Moved from its previous position near the end (see
+          HANDOFF) so the verified contribution/responsibility data reads
+          before the individual project stories, not after them. Table and
+          footnote content unchanged from the pre-V2 version. */}
       <Section index={0} register={register} divider={false}>
         <Reveal>
           <SectionHeading
-            label={zhHant ? "02 — 總覽" : "02 — OVERVIEW"}
-            title={zhHant ? "三個網站，三種不同的商業情境。" : "Three websites. Three different business contexts."}
+            label={zhHant ? "01 — 我的角色" : "01 — MY ROLE"}
+            title={zhHant ? "三個專案，不同的交付範圍" : "Same Design Responsibility, Different Delivery Scope"}
             intro={
               zhHant
-                ? "三個專案橫跨企業服務、醫療美容與科技產業。我從商業需求出發，依各自的受眾與溝通目標整理資訊架構、使用流程與介面層級。"
-                : "Three projects across corporate services, healthcare, and technology. In each case, I started from the business needs and shaped the information architecture, flow, and interface around the audience and communication goals."
+                ? "在進入各專案之前，先說明我在三個專案中實際負責的工作範圍。"
+                : "Before the individual project stories, here's exactly what I was responsible for on each one."
             }
           />
         </Reveal>
-        <ul className="mt-12 grid border-t cf-rule md:grid-cols-3">
-          {[projects.sdx, projects.charming, projects.natex].map((project, index) => (
-            <li
-              key={project.name}
-              className="border-b cf-rule py-6 md:border-r md:px-6 md:first:pl-0 md:last:border-r-0"
-            >
-              <p className="cf-meta cf-accent">0{index + 1}</p>
-              <p className="cf-heading mt-4 text-[18px] font-medium leading-7">{project.name}</p>
-              <p className="cf-dim mt-2 text-[14px] leading-6">{project.role}</p>
-            </li>
-          ))}
-        </ul>
+        <div
+          className="cf-scroll-region mt-10 w-full min-w-0 max-w-full overflow-x-auto"
+          tabIndex={0}
+          role="group"
+          aria-label={zhHant ? "跨專案貢獻範圍表格" : "Contribution table across projects"}
+        >
+          <table className="w-full min-w-[46rem] border-collapse text-left">
+            <thead>
+              <tr className="border-y cf-rule">
+                <th className="cf-meta py-4 pr-6 font-normal">{zhHant ? "貢獻項目" : "Contribution"}</th>
+                <th className="cf-meta py-4 pr-6 font-normal">SDX</th>
+                <th className="cf-meta py-4 pr-6 font-normal">Charming Clinic</th>
+                <th className="cf-meta py-4 font-normal">NATEX</th>
+              </tr>
+            </thead>
+            <tbody>
+              {contributionRows.map(([contribution, sdx, charming, natex]) => (
+                <tr key={contribution} className="border-b cf-rule">
+                  <th scope="row" className="cf-heading py-4 pr-6 text-[15px] font-medium">{zhHant ? CONTRIBUTION_LABEL_ZH[contribution] : contribution}</th>
+                  {[sdx, charming, natex].map((value, index) => (
+                    <td key={`${contribution}-${index}`} className="cf-body py-4 pr-6 text-[15px]">
+                      {zhHant ? CONTRIBUTION_VALUE_ZH[value] : value}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="cf-dim mt-5 max-w-[62ch] text-[14px] leading-6">
+          {zhHant
+            ? "內容方向指辨識體驗所需資訊，並與 PM 或客戶協調取得內容；實際文案製作不在我的工作範圍內。"
+            : "Content Direction refers to identifying the information required for the experience and coordinating with the PM or client to obtain it. Copy production was not part of my role."}
+        </p>
       </Section>
 
+      {/* 02 — the strategic thesis: three websites, three different
+          problems. New comparison table; every value is already-verified
+          copy from the pre-V2 business-needs section, restructured. */}
       <Section index={1} register={register}>
         <Reveal>
           <SectionHeading
-            label={zhHant ? "03 — 從商業需求到網站架構" : "03 — FROM BUSINESS NEEDS TO WEB STRUCTURE"}
+            label={zhHant ? "02 — 相同是網站，不同的是問題" : "02 — SAME MEDIUM, DIFFERENT PROBLEMS"}
+            title={zhHant ? "三個都是網站，但要解決的問題不同" : "Three Websites, Three Different Problems"}
+            intro={
+              zhHant
+                ? "三個專案面對不同的受眾、資訊複雜度與信任需求，因此網站的資訊策略與主要行動也不同。"
+                : "All three are websites, but each one faces a different audience, needs a different kind of trust, and points toward a different final action."
+            }
+          />
+        </Reveal>
+        <ComparisonTable
+          rows={businessComparisonRows}
+          rowHeaderLabel={zhHant ? "面向" : "Dimension"}
+          ariaLabel={zhHant ? "跨專案商業情境比較表格" : "Cross-project business context comparison table"}
+        />
+      </Section>
+
+      {/* 03 — the logic chain from business need to structure. Content
+          (goal + ordered steps per project) is unchanged from the pre-V2
+          "business needs" section — this is a relocation + reframed intro,
+          not new research. */}
+      <Section index={2} register={register}>
+        <Reveal>
+          <SectionHeading
+            label={zhHant ? "03 — 從商業需求到資訊架構" : "03 — FROM BUSINESS NEEDS TO INFORMATION ARCHITECTURE"}
             title={zhHant ? "不同的業務，需要不同的資訊優先順序" : "Different Businesses, Different Information Priorities"}
             intro={
               zhHant
-                ? "我沒有把同一套網站公式套用在三個品牌上，而是先確認使用者需要理解什麼、信任什麼，以及最終要採取什麼行動。"
-                : "Rather than applying one website formula to all three brands, I started by identifying what each audience needed to understand, what would earn their confidence, and what action they were ultimately meant to take."
+                ? "從商業情境出發，先確認使用者最需要理解什麼、在哪些節點需要建立信任，再決定資訊架構與畫面上的優先順序，最後導向明確的下一步。"
+                : "Starting from the business context, I identified what each audience needed to understand and trust, let that decide the information architecture and on-page priority, and pointed everything toward a clear action."
             }
           />
         </Reveal>
@@ -381,23 +553,29 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
         </div>
       </Section>
 
-      <Section index={2} register={register}>
+      {/* 04 — project stories. Structure, evidence components, videos, and
+          stills are all unchanged. Body copy restructured into explicit
+          Problem -> Design Decision -> Result beats; Evidence stays the
+          existing video + supporting still (unchanged). */}
+      <Section index={3} register={register}>
         <p className="cf-meta cf-section-label cf-accent md:whitespace-nowrap">{zhHant ? "04 — 專案故事" : "04 — PROJECT STORIES"}</p>
         <div className="mt-10">
         <ProjectStoryHeading index="04A / SDX" title={zhHant ? "整理龐大的企業服務內容" : "Organizing a Complex Corporate Offering"} />
         <div className="mt-10 grid gap-12 lg:grid-cols-12 lg:items-start">
           <div className="lg:col-span-5">
             <ProjectMeta {...projects.sdx} zhHant={zhHant} />
-            <div className="cf-body body-tc mt-8 space-y-4">
+            <div className="mt-8 space-y-4">
               {zhHant ? (
                 <>
-                  <p>Shun De Xing 的服務橫跨多個業務領域與市場，因此資訊清晰度與結構尤其重要。</p>
-                  <p>我直接向客戶釐清需求、定義頁面流程與資訊層級、完成 UX/UI，並與 PM 協調補齊各區塊所需素材，讓廣泛服務更容易理解。</p>
+                  <StoryBeat label="問題">Shun De Xing 的服務橫跨多個業務領域與市場，資訊量大，容易讓訪客難以快速掌握全貌。</StoryBeat>
+                  <StoryBeat label="設計判斷">我先向客戶釐清服務內容與優先順序，再重新整理頁面流程與資訊層級，把廣泛的業務拆成較容易理解的服務入口，同時保留企業規模與可信度的呈現。</StoryBeat>
+                  <StoryBeat label="設計結果">網站讓訪客可以先理解服務範圍，再逐步找到適合的內容與聯絡入口，而不需要先理解企業內部的組織方式。</StoryBeat>
                 </>
               ) : (
                 <>
-                  <p>Shun De Xing&rsquo;s services span multiple business lines and markets, which made how the information was organized especially important.</p>
-                  <p>I worked directly with the client to clarify requirements, defined the page flow and information structure, and designed the UI/UX. I also identified where content was missing and coordinated with the PM to fill those gaps, making the broad service offering easier to follow.</p>
+                  <StoryBeat label="Problem">Shun De Xing&rsquo;s services span multiple business lines and markets — a lot of information that could easily overwhelm a visitor.</StoryBeat>
+                  <StoryBeat label="Design Decision">I worked directly with the client to clarify requirements, defined the page flow and information structure, designed the UI/UX, and coordinated with the PM to fill missing content gaps.</StoryBeat>
+                  <StoryBeat label="Result">Visitors can grasp the scope of services and find a contact point without first having to understand the company&rsquo;s internal structure.</StoryBeat>
                 </>
               )}
             </div>
@@ -453,16 +631,18 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
           </Reveal>
           <div className="lg:col-span-5">
             <ProjectMeta {...projects.charming} zhHant={zhHant} />
-            <div className="cf-body body-tc mt-8 space-y-4">
+            <div className="mt-8 space-y-4">
               {zhHant ? (
                 <>
-                  <p>Charming Clinic 需要把多樣的醫療與美容服務，整理成容易理解、專業且親近的資訊體驗。</p>
-                  <p>我直接與客戶確認需求、建立服務探索流程、完成 UX/UI 並支援初期前端，讓使用者從找到療程、理解服務逐步前往預約。</p>
+                  <StoryBeat label="問題">Charming Clinic 的醫療與美容服務項目多樣，需要在專業感與親近感之間取得平衡，同時幫助使用者找到合適的療程。</StoryBeat>
+                  <StoryBeat label="設計判斷">我把原本容易形成服務清單的內容，重新整理成「探索療程 → 理解服務 → 建立信任 → 預約」的路徑，並透過資訊層級與明確入口降低選擇時的不確定感。</StoryBeat>
+                  <StoryBeat label="設計結果">使用者可以從療程探索逐步理解服務內容，並在適合的節點直接進入預約。</StoryBeat>
                 </>
               ) : (
                 <>
-                  <p>Charming Clinic needed its many medical and aesthetic services organized into an experience that felt professional, approachable, and easy to follow.</p>
-                  <p>I confirmed requirements directly with the client, built the service-discovery flow, designed the UX/UI, and supported the initial frontend build — guiding users from finding a treatment to booking it.</p>
+                  <StoryBeat label="Problem">Charming Clinic&rsquo;s many medical and aesthetic services needed to feel professional and approachable at once, while still helping visitors find the right treatment.</StoryBeat>
+                  <StoryBeat label="Design Decision">I confirmed requirements directly with the client, built the service-discovery flow, designed the UX/UI, and supported the initial frontend build.</StoryBeat>
+                  <StoryBeat label="Result">Users move in sequence from finding a treatment, to understanding it, to booking it.</StoryBeat>
                 </>
               )}
             </div>
@@ -475,16 +655,18 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
         <div className="mt-10 grid gap-12 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-4">
             <ProjectMeta {...projects.natex} zhHant={zhHant} />
-            <div className="cf-body body-tc mt-8 space-y-4">
+            <div className="mt-8 space-y-4">
               {zhHant ? (
                 <>
-                  <p>NATEX 涵蓋軟體、IoT、資料與工業服務等技術能力，主要挑戰是呈現技術深度，同時不讓商務受眾難以理解或導航。</p>
-                  <p>除內容製作外，我負責需求、資訊架構、UX flow、介面設計、responsive layouts 與 frontend implementation，是 CASE02 中交付範圍最完整的專案。</p>
+                  <StoryBeat label="問題">NATEX 涵蓋軟體、IoT、資料與工業服務等技術能力，挑戰在於呈現技術深度，同時不讓商務受眾難以理解或導航。</StoryBeat>
+                  <StoryBeat label="設計判斷">我將技術內容依能力與應用情境重新分層，先讓商務受眾理解 NATEX 能解決什麼問題，再進一步呈現技術能力、實際應用與專業證明。</StoryBeat>
+                  <StoryBeat label="設計結果">網站讓商務受眾可以先掌握 NATEX 的能力範圍與應用方向，再依需要深入了解技術細節或提出洽詢。</StoryBeat>
                 </>
               ) : (
                 <>
-                  <p>NATEX&rsquo;s technical capabilities span software, IoT, data, and industrial services. The main challenge was presenting that depth without losing business audiences in the navigation.</p>
-                  <p>Outside of content production, I owned requirements, information architecture, UX flow, interface design, responsive layouts, and frontend implementation — the broadest delivery scope across the three projects.</p>
+                  <StoryBeat label="Problem">NATEX&rsquo;s technical capabilities span software, IoT, data, and industrial services — the challenge was presenting that depth without losing business audiences in the navigation.</StoryBeat>
+                  <StoryBeat label="Design Decision">Outside of content production, I owned requirements, information architecture, UX flow, interface design, responsive layouts, and frontend implementation — the broadest delivery scope across the three projects.</StoryBeat>
+                  <StoryBeat label="Result">Business audiences can understand NATEX&rsquo;s scope of capability and submit an inquiry without being buried in technical detail.</StoryBeat>
                 </>
               )}
             </div>
@@ -516,175 +698,230 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
         </div>
       </Section>
 
-      <Section index={3} register={register}>
+      {/* 05 — cross-project UX-principle comparison, then the three shared
+          principles. The 3 existing stills (originally one per project,
+          each its own "principle") are repositioned as supporting evidence
+          under principle 02 specifically (they are all trust-at-decision-
+          point evidence) rather than forced across all three principles. */}
+      <Section index={4} register={register}>
         <Reveal>
           <SectionHeading
-            label={zhHant ? "05 — 同一原則，不同表現" : "05 — ONE PRINCIPLE, DIFFERENT EXPRESSIONS"}
-            title={zhHant ? "同一個設計原則，依品牌目標形成不同表達" : "Shared Principles, Different Expressions"}
+            label={zhHant ? "05 — 不同情境，不同設計判斷" : "05 — DIFFERENT CONTEXTS, DIFFERENT DESIGN DECISIONS"}
+            title={zhHant ? "不同的設計方案，共同的 UX 原則" : "Different Design Decisions, Shared UX Principles"}
             intro={
               zhHant
-                ? "我沒有把同一套視覺公式套用在每個專案上，而是依各自的受眾、產業與溝通目標形塑網站。"
-                : "Rather than applying the same visual formula across projects, each website was shaped around its audience, industry, and communication goals."
+                ? "把三個專案並排比較，可以看出不同產業如何影響資訊架構、信任建立方式與主要行動；但底層仍有幾個一致的 UX 原則。"
+                : "Placed side by side, the three projects show what actually differs behind each design decision — and underneath those differences, three shared UX principles."
             }
           />
         </Reveal>
-        <div className="mt-12 grid gap-10 lg:grid-cols-3">
+        <ComparisonTable
+          rows={principleComparisonRows}
+          rowHeaderLabel={zhHant ? "面向" : "Dimension"}
+          ariaLabel={zhHant ? "跨專案 UX 原則比較表格" : "Cross-project UX principle comparison table"}
+        />
+
+        <div className="mt-16 space-y-12">
           <article>
-            <Reveal>
-              <DetailEvidence
-                asset={{
-                  src: "/images/case02/evidence/sdx-context-desktop.webp",
-                  alt: "Shun De Xing page showing multi-country office locations and established business cooperation",
-                }}
-                caption={
-                  zhHant
-                    ? "多國據點與長期合作紀錄，具體呈現跨市場的營運規模。"
-                    : "Multiple office locations and an established partner history make the cross-market scale of the business concrete."
-                }
-              />
-            </Reveal>
-            <h3 className="cf-heading mt-6 text-[20px] font-medium">{zhHant ? "清楚的架構" : "Clear Structure"}</h3>
-            <p className="cf-body body-tc mt-3">
-              {zhHant ? "協助使用者理解廣泛且跨領域的企業服務。" : "Helps users make sense of a broad, cross-industry set of corporate services."}
+            <p className="cf-meta cf-accent">01</p>
+            <h3 className="cf-heading mt-3 text-[20px] font-medium">{zhHant ? "清楚的資訊優先順序" : "Clear Information Priority"}</h3>
+            <p className="cf-body body-tc mt-3 max-w-[62ch]">
+              {zhHant
+                ? "先決定使用者此刻最需要理解什麼，再依照決策需要安排資訊層級。"
+                : "Users don&rsquo;t need to understand a company&rsquo;s internal structure first to know what matters most right now."}
             </p>
           </article>
+
           <article>
-            <Reveal>
-              <DetailEvidence
-                asset={{
-                  src: "/images/case02/evidence/charming-booking-desktop.webp",
-                  alt: "Charming Clinic contact section showing clinic location, opening hours, and booking action",
-                }}
-                caption={
-                  zhHant
-                    ? "診所位置、營業資訊與直接預約入口共同支撐信任與行動。"
-                    : "Location, hours, and a direct booking link work together to make the next step easy."
-                }
-              />
-            </Reveal>
-            <h3 className="cf-heading mt-6 text-[20px] font-medium">{zhHant ? "建立信任" : "Build Trust"}</h3>
-            <p className="cf-body body-tc mt-3">
-              {zhHant ? "在服務資訊與安心、專業的品牌感受之間取得平衡。" : "Balances service information with a reassuring, professional brand feel."}
+            <p className="cf-meta cf-accent">02</p>
+            <h3 className="cf-heading mt-3 text-[20px] font-medium">{zhHant ? "在決策點建立信任" : "Build Trust at the Decision Point"}</h3>
+            <p className="cf-body body-tc mt-3 max-w-[62ch]">
+              {zhHant
+                ? "不同產業需要不同的信任訊號，但可信度資訊都應該出現在使用者真正需要它的位置。"
+                : "Different industries need different trust signals, but that trust information should always appear exactly where the user needs it."}
             </p>
+            <div className="mt-8 grid gap-6 sm:grid-cols-3">
+              <Reveal>
+                <DetailEvidence
+                  asset={{
+                    src: "/images/case02/evidence/sdx-context-desktop.webp",
+                    alt: "Shun De Xing page showing multi-country office locations and established business cooperation",
+                  }}
+                  caption={
+                    zhHant
+                      ? "多國據點與長期合作紀錄，具體呈現跨市場的營運規模。"
+                      : "Multiple office locations and an established partner history make the cross-market scale of the business concrete."
+                  }
+                />
+              </Reveal>
+              <Reveal>
+                <DetailEvidence
+                  asset={{
+                    src: "/images/case02/evidence/charming-booking-desktop.webp",
+                    alt: "Charming Clinic contact section showing clinic location, opening hours, and booking action",
+                  }}
+                  caption={
+                    zhHant
+                      ? "診所位置、營業資訊與直接預約入口共同支撐信任與行動。"
+                      : "Location, hours, and a direct booking link work together to make the next step easy."
+                  }
+                />
+              </Reveal>
+              <Reveal>
+                <DetailEvidence
+                  asset={{
+                    src: "/images/case02/evidence/natex-credentials-desktop.webp",
+                    alt: "NATEX company section showing expertise, certification, and business credibility",
+                  }}
+                  caption={
+                    zhHant
+                      ? "公司能力、資安認證與合作脈絡建立 B2B 可信度。"
+                      : "Company background, security certifications, and partnership history give B2B visitors reason to take the company seriously."
+                  }
+                />
+              </Reveal>
+            </div>
           </article>
+
           <article>
-            <Reveal>
-              <DetailEvidence
-                asset={{
-                  src: "/images/case02/evidence/natex-credentials-desktop.webp",
-                  alt: "NATEX company section showing expertise, certification, and business credibility",
-                }}
-                caption={
-                  zhHant
-                    ? "公司能力、資安認證與合作脈絡建立 B2B 可信度。"
-                    : "Company background, security certifications, and partnership history give B2B visitors reason to take the company seriously."
-                }
-              />
-            </Reveal>
-            <h3 className="cf-heading mt-6 text-[20px] font-medium">{zhHant ? "傳達專業" : "Communicate Expertise"}</h3>
-            <p className="cf-body body-tc mt-3">
-              {zhHant ? "呈現技術能力，同時避免讓商務受眾承受過多資訊。" : "Presents technical capability without overwhelming a business audience with detail."}
+            <p className="cf-meta cf-accent">03</p>
+            <h3 className="cf-heading mt-3 text-[20px] font-medium">{zhHant ? "讓下一步清楚可見" : "Make the Next Step Visible"}</h3>
+            <p className="cf-body body-tc mt-3 max-w-[62ch]">
+              {zhHant
+                ? "每個重要頁面都應該讓使用者知道下一步可以做什麼——洽詢、預約，或進一步了解。"
+                : "A website isn&rsquo;t just there to inform — it also has to tell users where to go once they understand it."}
             </p>
           </article>
         </div>
       </Section>
 
-      <Section index={4} register={register}>
+      {/* 06 — responsive, kept deliberately compact and SDX-only. Charming
+          and NATEX's recovered mobile assets exist (see HANDOFF) but are
+          not used here: their only available mobile shots are the home
+          page, not the services page SDX is shown on, and mixing page
+          types would weaken rather than strengthen this evidence. */}
+      <Section index={5} register={register}>
         <Reveal>
           <SectionHeading
-            label={zhHant ? "06 — 跨裝置設計" : "06 — DESIGNING BEYOND DESKTOP"}
-            title={zhHant ? "跨裝置保留正確的資訊順序與行動" : "Designing Beyond Desktop"}
+            label={zhHant ? "06 — 響應式資訊優先順序" : "06 — RESPONSIVE INFORMATION PRIORITY"}
+            title={zhHant ? "響應式設計不是把桌面版縮小" : "Responsive Isn't Desktop, Scaled Down."}
             intro={
               zhHant
-                ? "版面不是單純把桌面版縮小，而是依螢幕尺寸重新安排內容層級、閱讀節奏與主要行動，讓每個品牌在較小畫面上仍能傳達正確資訊。"
-                : "These layouts aren’t the desktop version scaled down — content, reading order, and key actions were rearranged for each screen size, so every brand still communicates the right information on a smaller display."
+                ? "在較小的螢幕中，我會重新判斷資訊層級、閱讀順序、內容密度與主要行動的位置，而不是單純縮放桌面版面。"
+                : "On a smaller screen, I re-decide the information hierarchy, reading order, content density, and where the primary action sits — rather than simply scaling down the desktop layout."
             }
           />
         </Reveal>
-        <div className="mt-12">
+        <div className="mt-10">
           <Reveal>
             <ResponsiveEvidence
               zhHant={zhHant}
               project={projects.sdx.name}
               desktop={{ src: "/images/case02/evidence/sdx-service-desktop.webp", alt: "Shun De Xing services page on desktop" }}
               mobile={{ src: "/images/case02/evidence/sdx-service-mobile.webp", alt: "Shun De Xing services page on mobile" }}
+              desktopNotes={zhHant ? ["較多資訊可以同時比較"] : ["More information visible for side-by-side comparison"]}
+              mobileNotes={
+                zhHant
+                  ? ["重新建立閱讀順序", "降低同時出現的資訊密度", "保留主要行動"]
+                  : ["Reading order rebuilt for a single column", "Less information visible at once", "Primary action stays in place"]
+              }
               caption={
                 zhHant
-                  ? "版面調整保留了內容層級與可讀性，適應不同螢幕尺寸。"
-                  : "The layout adjusts to different screen sizes while keeping content order and readability intact."
+                  ? "版面依螢幕尺寸重新安排資訊層級與順序，而不是單純縮放。"
+                  : "The layout re-prioritizes hierarchy and order per screen size, rather than scaling down."
               }
             />
           </Reveal>
         </div>
       </Section>
 
-      <Section index={5} register={register}>
+      {/* 07 — new. Connects the design decisions above to how each project
+          actually reached production, reusing the same verified delivery
+          facts already stated in 04's stories and 01's contribution table
+          (SDX: no frontend / Charming: partial-initial frontend support /
+          NATEX: full frontend) — no new claim is made here. */}
+      <Section index={6} register={register}>
         <Reveal>
           <SectionHeading
-            label={zhHant ? "07 — 我在各專案中的角色" : "07 — MY ROLE ACROSS THE PROJECTS"}
-            title={zhHant ? "相同的設計責任，不同的交付範圍" : "My Role Across the Projects"}
+            label={zhHant ? "07 — 從設計到實際網站" : "07 — FROM DESIGN TO LIVE DELIVERY"}
+            title={zhHant ? "設計決策如何落地，因專案而不同" : "How Each Design Reached Production Differed"}
+            intro={
+              zhHant
+                ? "三個專案都從需求與資訊架構開始，但從設計到實際上線，我參與的交付範圍並不相同。"
+                : "The design process was the same across all three projects; how each design actually reached a live site was not."
+            }
           />
         </Reveal>
-        <div
-          className="cf-scroll-region mt-10 w-full min-w-0 max-w-full overflow-x-auto"
-          tabIndex={0}
-          role="group"
-          aria-label={zhHant ? "跨專案貢獻範圍表格" : "Contribution table across projects"}
-        >
-          <table className="w-full min-w-[46rem] border-collapse text-left">
-            <thead>
-              <tr className="border-y cf-rule">
-                <th className="cf-meta py-4 pr-6 font-normal">{zhHant ? "貢獻項目" : "Contribution"}</th>
-                <th className="cf-meta py-4 pr-6 font-normal">SDX</th>
-                <th className="cf-meta py-4 pr-6 font-normal">Charming Clinic</th>
-                <th className="cf-meta py-4 font-normal">NATEX</th>
-              </tr>
-            </thead>
-            <tbody>
-              {contributionRows.map(([contribution, sdx, charming, natex]) => (
-                <tr key={contribution} className="border-b cf-rule">
-                  <th scope="row" className="cf-heading py-4 pr-6 text-[15px] font-medium">{zhHant ? CONTRIBUTION_LABEL_ZH[contribution] : contribution}</th>
-                  {[sdx, charming, natex].map((value, index) => (
-                    <td key={`${contribution}-${index}`} className="cf-body py-4 pr-6 text-[15px]">
-                      {zhHant ? CONTRIBUTION_VALUE_ZH[value] : value}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="mt-12 grid border-t cf-rule md:grid-cols-3">
+          <article className="border-b cf-rule py-6 md:border-r md:px-6 md:first:pl-0 md:last:border-r-0">
+            <p className="cf-meta cf-accent">01 / SDX</p>
+            <p className="cf-heading mt-4 text-[16px] font-medium leading-6">
+              {zhHant ? "設計完成後，由其他團隊負責前端實作" : "Design handed off; frontend built by others"}
+            </p>
+            <p className="cf-body mt-3 text-[14px] leading-6">
+              {zhHant
+                ? "我負責需求釐清、資訊架構與 UX/UI 設計，前端實作不在我的工作範圍內。"
+                : "I delivered the UX/UI design and information architecture; frontend implementation was not part of my role."}
+            </p>
+          </article>
+          <article className="border-b cf-rule py-6 md:border-r md:px-6 md:first:pl-0 md:last:border-r-0">
+            <p className="cf-meta cf-accent">02 / CHARMING CLINIC</p>
+            <p className="cf-heading mt-4 text-[16px] font-medium leading-6">
+              {zhHant ? "參與初期前端，協助設計落地" : "Supported initial frontend, turning design into pages"}
+            </p>
+            <p className="cf-body mt-3 text-[14px] leading-6">
+              {zhHant
+                ? "除了 UX/UI 設計，我也支援初期前端實作，協助將設計轉化為實際頁面。"
+                : "Beyond UX/UI design, I also supported the initial frontend build, helping turn the design into a live-ready starting point."}
+            </p>
+          </article>
+          <article className="border-b cf-rule py-6 md:border-r md:px-6 md:first:pl-0 md:last:border-r-0">
+            <p className="cf-meta cf-accent">03 / NATEX</p>
+            <p className="cf-heading mt-4 text-[16px] font-medium leading-6">
+              {zhHant ? "從設計到前端實作全程參與" : "Involved end-to-end, including frontend"}
+            </p>
+            <p className="cf-body mt-3 text-[14px] leading-6">
+              {zhHant
+                ? "從資訊架構、UX/UI 設計、響應式版型到前端實作，我皆有參與，是三個專案中交付範圍最完整的一個。"
+                : "From information architecture and UX/UI through responsive layouts and frontend implementation, I was involved end-to-end — the broadest delivery scope of the three."}
+            </p>
+          </article>
         </div>
-        <p className="cf-dim mt-5 max-w-[62ch] text-[14px] leading-6">
-          {zhHant
-            ? "內容方向指辨識體驗所需資訊，並與 PM 或客戶協調取得內容；文案製作不在我的工作範圍內。"
-            : "Content Direction refers to identifying the information required for the experience and coordinating with the PM or client to obtain it. Copy production was not part of my role."}
-        </p>
       </Section>
 
-      <Section index={6} register={register}>
+      {/* 08 — Takeaway. Replaces the previous longer reflection with the
+          explicit Business Context -> Information Structure -> Digital
+          Experience chain, stated once, concisely. Capabilities list kept
+          unchanged. */}
+      <Section index={7} register={register}>
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-8">
             <Reveal>
               <SectionHeading
-                label={zhHant ? "08 — 反思" : "08 — REFLECTION"}
-                title={
-                  zhHant
-                    ? "有效的網頁設計，不是把同一種視覺風格套用在所有地方。"
-                    : "Effective web design isn’t about applying one visual style everywhere."
-                }
+                label={zhHant ? "08 — 結語" : "08 — TAKEAWAY"}
+                title={zhHant ? "商業情境 → 資訊架構 → 數位體驗" : "Business Context → Information Structure → Digital Experience"}
               />
             </Reveal>
-            <p className="cf-body body-tc mt-8 max-w-[62ch]">
-              {zhHant
-                ? "在這些專案中，設計方式隨著商業情境調整——從整理龐大的企業服務，到引導使用者找到合適的療程，再到傳達技術專業。"
-                : "Across these projects, the design approach changed with the business context — from structuring broad corporate services, to guiding treatment discovery, to communicating technical expertise."}
-            </p>
+            {zhHant ? (
+              <div className="mt-8 max-w-[62ch] space-y-4">
+                <p className="cf-body body-tc">
+                  這三個專案共同呈現了一件事：網站不應從套用版型開始，而是先理解企業需要傳達什麼、使用者需要先知道什麼，再把這些判斷轉化為資訊架構與介面的優先順序。
+                </p>
+                <p className="cf-body body-tc">
+                  不同的商業情境，自然會形成不同的數位體驗。
+                </p>
+              </div>
+            ) : (
+              <p className="cf-body body-tc mt-8 max-w-[62ch]">
+                All three sites prove the same point: understand how the business context shapes what users need to know, let that understanding decide the structure and on-page priority, and the digital experience will genuinely serve the business goal — instead of applying one visual formula everywhere.
+              </p>
+            )}
           </div>
 
           <aside className="border-t cf-rule pt-7 lg:col-span-4 lg:mt-0">
             <p className="cf-meta cf-accent">{zhHant ? "能力" : "CAPABILITIES"}</p>
             <ul className="mt-6 flex flex-wrap gap-2">
-              {(zhHant ? ["資訊架構", "客戶溝通", "UX/UI 設計", "品牌適配", "響應式網頁", "前端實作"] : ["Information Architecture", "Client Communication", "UX/UI Design", "Brand Adaptation", "Responsive Web", "Frontend Execution"]).map((item) => (
+              {(zhHant ? ["資訊架構", "客戶溝通", "UX/UI 設計", "品牌溝通", "響應式網頁", "前端實作"] : ["Information Architecture", "Client Communication", "UX/UI Design", "Brand Adaptation", "Responsive Web", "Frontend Execution"]).map((item) => (
                 <li key={item} className="cf-tag">{item}</li>
               ))}
             </ul>

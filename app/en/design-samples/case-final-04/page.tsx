@@ -5,7 +5,7 @@ import { getCaseTheme } from "@/components/design-samples/case-final/caseTheme";
 import { getNextProject, getPreviousProject, getProjectBySlug } from "@/data/projects";
 
 export const metadata: Metadata = {
-  title: "Design Sample — Case 04 (Confidential Mobile Wellness Product) — EN",
+  title: "Design Sample — Case 04 (Mobile Wellness Product) — EN",
   robots: { index: false, follow: false },
 };
 

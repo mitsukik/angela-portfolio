@@ -128,7 +128,6 @@ export function ProjectScene({ project, locale, f, still, compact, holdExit }: P
   // itself (was only on an inner span) so `.type-v3-section-heading:lang(zh-Hant)`
   // can actually match it.
   const primaryTitle = locale === "zh" ? project.chineseTitle : project.title;
-  const secondaryTitle = locale === "zh" ? project.title : project.chineseTitle;
   const Head = (
     <div style={lift(0)}>
       <p className={`type-v3-label cf-section-label whitespace-nowrap ${accentText}`}>
@@ -137,8 +136,13 @@ export function ProjectScene({ project, locale, f, still, compact, holdExit }: P
       <h3 lang={locale === "zh" ? "zh-Hant" : "en"} className="type-v3-section-heading mt-4">
         {locale === "zh" ? <MixedText text={primaryTitle} /> : primaryTitle}
       </h3>
-      <p lang={locale === "zh" ? "en" : "zh-Hant"} className="type-v3-label mt-3 scene-dim-text">
-        {locale === "zh" ? secondaryTitle : <MixedText text={secondaryTitle} />} · {project.year}
+      {/* Intentional sitewide cleanup: this caption used to pair the
+          heading with the OTHER locale's title (e.g. showing the Chinese
+          title as a caption on the English card). Replaced with a
+          consistent CATEGORY · YEAR caption — same value on both locale
+          cards, for every project, same visual slot/styling. */}
+      <p lang="en" className="type-v3-label mt-3 scene-dim-text">
+        {project.category.en} · {project.year}
       </p>
     </div>
   );
@@ -163,7 +167,7 @@ export function ProjectScene({ project, locale, f, still, compact, holdExit }: P
         href={locale === "zh" ? `/design-samples/case-final-${project.number}` : `/en/design-samples/case-final-${project.number}`}
         className="interaction-destination group inline-flex items-center gap-3 border-b border-current/50 pb-2 type-v3-label"
       >
-        {locale === "zh" ? "查看案例" : "VIEW CASE STUDY"}
+        {locale === "zh" ? "查看案例" : "View Case Study"}
         <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">→</span>
       </Link>
     </div>

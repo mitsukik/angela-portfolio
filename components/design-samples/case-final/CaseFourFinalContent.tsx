@@ -118,7 +118,7 @@ export function CaseFourHeroEvidence({ locale }: { locale: Locale }) {
             className="col-span-1 row-start-2 md:col-span-3 md:col-start-2 md:row-start-1 md:translate-y-10"
             asset={{
               src: "/images/case04/case04-generating.webp",
-              alt: "Generating state for a confidential mobile wellness product",
+              alt: "Generating state for a mobile wellness product",
             }}
             caption={zhHant ? "生成中" : "GENERATING"}
             priority
@@ -128,7 +128,7 @@ export function CaseFourHeroEvidence({ locale }: { locale: Locale }) {
             frameClassName="shadow-[0_28px_80px_rgb(0_0_0/0.32)]"
             asset={{
               src: "/images/case04/case04-hero-home-v2.webp",
-              alt: "Home screen of a confidential mobile wellness product, with brand identity masked",
+              alt: "Home screen of a mobile wellness product, with brand identity masked",
             }}
             caption={zhHant ? "首頁／今日" : "HOME / TODAY"}
             priority
@@ -137,7 +137,7 @@ export function CaseFourHeroEvidence({ locale }: { locale: Locale }) {
             className="col-span-1 row-start-2 md:col-span-3 md:col-start-9 md:row-start-1 md:translate-y-16"
             asset={{
               src: "/images/case04/case04-player.webp",
-              alt: "Listening player for a confidential mobile wellness product",
+              alt: "Listening player for a mobile wellness product",
             }}
             caption={zhHant ? "聆聽中" : "LISTENING"}
             priority
@@ -325,7 +325,7 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
             <PhoneEvidence
               asset={{
                 src: `${IMG}/case04-context-login-v2.webp`,
-                alt: "Login context from an early stage of the confidential mobile wellness product, with brand identity masked",
+                alt: "Login context from an early stage of the mobile wellness product, with brand identity masked",
               }}
               caption={zhHant ? "登入情境 / 僅作產品背景說明" : "Login context / for product background only"}
             />

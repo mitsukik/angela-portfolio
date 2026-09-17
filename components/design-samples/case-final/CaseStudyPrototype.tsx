@@ -89,7 +89,7 @@ export function CaseStudyPrototype({
   nextProject: Project;
   previousProject: Project;
   locale: Locale;
-  contentVersion?: "default" | "case01-v2" | "case02-v1" | "case03-v1" | "case04-v1";
+  contentVersion?: "default" | "case01-v2" | "case01-v3" | "case02-v1" | "case03-v1" | "case04-v1";
 }) {
   // Round 11: the ONE place that makes this component locale-aware. Every
   // existing `caseStudy.xxx` reference below now automatically resolves
@@ -100,12 +100,15 @@ export function CaseStudyPrototype({
   // isn't silently showing Chinese to an English visitor even without a
   // dedicated caseStudyEn — see data/projects.ts's placeholderSections).
   const caseStudy = locale === "en" ? (project.caseStudyEn ?? project.caseStudy) : project.caseStudy;
-  const isCaseOneV2 = contentVersion === "case01-v2";
+  const isCaseOneV2 = contentVersion === "case01-v2" || contentVersion === "case01-v3";
+  const isCaseOneV3 = contentVersion === "case01-v3";
   const isCaseTwoV1 = contentVersion === "case02-v1";
   const isCaseThreeV1 = contentVersion === "case03-v1";
   const isCaseFourV1 = contentVersion === "case04-v1";
   const displayTitle = isCaseOneV2
-    ? (locale === "zh" ? "複雜系統設計" : "Complex System Design")
+    ? isCaseOneV3
+      ? (locale === "zh" ? "跨境寄賣與直播\u2060電商\u2060平台" : "Cross-border Live Commerce Platform")
+      : (locale === "zh" ? "複雜系統設計" : "Complex System Design")
     : isCaseTwoV1
       ? (locale === "zh" ? "品牌與網站體驗" : "Brand & Web Experience")
       : isCaseThreeV1
@@ -119,8 +122,10 @@ export function CaseStudyPrototype({
   // unnumbered Reflection (9 chapters starting at 01) — unlike Case01-03,
   // whose opening block implicitly owns "01" so their content chapters
   // start at 02. See CaseFourFinalContent.tsx's own comment on Reflection.
-  const chapterCount = isCaseOneV2 ? 11 : isCaseTwoV1 ? 7 : isCaseThreeV1 ? 6 : isCaseFourV1 ? 9 : CHAPTER_COUNT;
-  const chapters: Chapter[] = isCaseOneV2
+  const chapterCount = isCaseOneV3 ? 6 : isCaseOneV2 ? 11 : isCaseTwoV1 ? 7 : isCaseThreeV1 ? 6 : isCaseFourV1 ? 9 : CHAPTER_COUNT;
+  const chapters: Chapter[] = isCaseOneV3
+    ? Array.from({ length: 6 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
+    : isCaseOneV2
     ? Array.from({ length: 11 }, (_, i) => ({ number: String(i + 2).padStart(2, "0") }))
     : isCaseTwoV1
       ? Array.from({ length: 7 }, (_, i) => ({ number: String(i + 2).padStart(2, "0") }))
@@ -197,15 +202,15 @@ export function CaseStudyPrototype({
     ? zhHant
       ? [
           { label: "角色", value: "Lead Product Designer" },
-          { label: "平台", value: "網頁平台" },
-          { label: "專長", value: "Complex Systems · B2B · Dashboard · Responsive Web" },
-          { label: "狀態", value: "已完成設計與開發" },
+          { label: "團隊", value: "1 UI Designer · 2 Engineers · PM" },
+          { label: "平台", value: "Responsive Web" },
+          { label: "狀態", value: "Designed & Developed" },
         ]
       : [
           { label: "Role", value: "Lead Product Designer" },
-          { label: "Platform", value: "Web Platform" },
-          { label: "Expertise", value: "Complex Systems · B2B · Dashboard · Responsive Web" },
-          { label: "Status", value: "Designed & Implemented with Engineering" },
+          { label: "Team", value: "1 UI Designer · 2 Engineers · PM" },
+          { label: "Platform", value: "Responsive Web" },
+          { label: "Status", value: "Designed & Developed" },
         ]
     : isCaseTwoV1
       ? zhHant
@@ -283,7 +288,9 @@ export function CaseStudyPrototype({
             <div className="md:col-span-7">
               <p data-open-eyebrow className="cf-meta cf-accent">
                 {isCaseOneV2
-                  ? "01 / COMPLEX SYSTEM"
+                  ? isCaseOneV3
+                    ? zhHant ? "00 — 專案總覽" : "00 — PROJECT SNAPSHOT"
+                    : "01 / COMPLEX SYSTEM"
                   : isCaseTwoV1
                     ? "02 / BRAND & WEB EXPERIENCE"
                     : isCaseThreeV1
@@ -293,13 +300,15 @@ export function CaseStudyPrototype({
                         : `${project.number} / ${caseStudy.eyebrowTitle ?? displayTitle}`}
               </p>
               <h1 data-open-title className="cf-heading cf-opening-title mt-5">
-                {displayTitle}
+                {isCaseOneV3 && zhHant ? <><span className="block">跨境寄賣與</span><span className="block">直播電商平台</span></> : displayTitle}
               </h1>
               <p lang={zhHant ? "zh-Hant" : "en"} className="cf-dim mt-4 text-[1.05rem]">
                 <MixedText
                   text={
                     isCaseOneV2
-                      ? (zhHant ? "跨境寄賣與直播電商平台" : "Cross-Border Consignment & Live Commerce Platform")
+                      ? isCaseOneV3
+                        ? "Complex Web System · B2B · Multi-role Workflows"
+                        : (zhHant ? "跨境寄賣與直播電商平台" : "Cross-Border Consignment & Live Commerce Platform")
                       : isCaseTwoV1
                         ? "Shun De Xing · Charming Clinic · NATEX"
                         : isCaseThreeV1
@@ -352,20 +361,32 @@ export function CaseStudyPrototype({
                   )}
                 </div>
               ) : (
-                <p
-                  data-open-summary
-                  className={`cf-body body-tc mt-6 max-w-[56ch] ${isCaseOneV2 ? "text-[17px] md:text-[18px]" : ""}`}
-                >
-                  {isCaseOneV2
-                    ? zhHant
-                      ? "將台灣供應商、越南倉儲、代理公司、直播主與消費者串連在同一套商業流程中，建立從跨境入庫、共享庫存、選品銷售到訂單履約的完整產品體驗。"
-                      : "Connecting Taiwanese Suppliers, a Vietnamese Platform / Warehouse, Agents, Streamers, and Consumers in one business flow—from cross-border receiving and Shared Inventory to product selection, sales, and Order fulfillment."
-                    : isCaseTwoV1
+                <>
+                  <p
+                    data-open-summary
+                    className={`cf-body body-tc mt-6 max-w-[56ch] ${isCaseOneV2 ? "text-[17px] md:text-[18px]" : ""}`}
+                  >
+                    {isCaseOneV2
                       ? zhHant
-                        ? "為企業服務、醫療美容與科技產業品牌，打造清楚且值得信任的數位體驗。"
-                        : "Designing clear, credible digital experiences across corporate, healthcare, and technology brands."
-                      : caseStudy.summary}
-                </p>
+                        ? "將台灣供應商、越南倉庫、代理公司、直播主與消費者串連在同一套商業流程中，建立從跨境入庫、共享庫存、選品銷售到訂單履約的完整產品體驗。"
+                        : "A multi-sided commerce platform connecting Taiwan Suppliers, a Vietnam Warehouse, Agents (streamer agencies), Streamers, and Consumers — from cross-border receiving and shared inventory to selling, orders, fulfillment, and settlement."
+                      : isCaseTwoV1
+                        ? zhHant
+                          ? "為企業服務、醫療美容與科技產業品牌，打造清楚且值得信任的數位體驗。"
+                          : "Designing clear, credible digital experiences across corporate, healthcare, and technology brands."
+                        : caseStudy.summary}
+                  </p>
+                  {isCaseOneV3 && (
+                    <a
+                      href="https://sc-demo.sdxdevelop.com/zh-tw"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="case-link cf-meta cf-dim mt-6 inline-block"
+                    >
+                      {zhHant ? "互動 Demo ↗" : "Interactive Demo ↗"}
+                    </a>
+                  )}
+                </>
               )}
             </div>
 

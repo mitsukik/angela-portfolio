@@ -25,6 +25,29 @@ function parsePoint(point: string, fallbackIndex: number) {
   return { index: String(fallbackIndex + 1).padStart(2, "0"), label: head, description };
 }
 
+function ReadingPoints({ points }: { points: string[] }) {
+  return points.some((point) => point.includes("｜")) ? (
+    <ul className="cf-summary-list mt-8">
+      {points.map((point, index) => {
+        const parsed = parsePoint(point, index);
+        return (
+          <li key={point} className="cf-summary-row">
+            {parsed.index && <span className="cf-summary-index cf-accent">{parsed.index}</span>}
+            <div>
+              <p className="cf-heading text-[1.05rem] font-medium">{parsed.label}</p>
+              {parsed.description && <p className="cf-body mt-1 text-[16px] leading-6">{parsed.description}</p>}
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  ) : (
+    <ul className="mt-7 flex flex-wrap gap-2">
+      {points.map((point) => <li key={point} className="cf-tag">{point}</li>)}
+    </ul>
+  );
+}
+
 /**
  * The recurring meta -> title -> body -> supporting-sentence -> media
  * rhythm, reused across Overview/Challenge/Role/Workflow/Decisions/
@@ -59,6 +82,7 @@ export function ReadingSection({
   points,
   media,
   mediaFullBleed = false,
+  composition = "standard",
   className = "",
 }: {
   label: string;
@@ -68,6 +92,7 @@ export function ReadingSection({
   points?: string[];
   media?: ReactNode;
   mediaFullBleed?: boolean;
+  composition?: "standard" | "background-role";
   className?: string;
 }) {
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -122,56 +147,36 @@ export function ReadingSection({
 
   return (
     <section ref={sectionRef} className={className}>
-      <p ref={labelRef} className="cf-meta cf-section-label cf-accent whitespace-nowrap">
+      <p ref={labelRef} className="cf-meta cf-section-label cf-accent md:whitespace-nowrap">
         {label}
       </p>
-      <div className="mt-4 max-w-[70ch]">
+      <div className={`mt-4 ${composition === "background-role" ? "max-w-none" : "max-w-[70ch]"}`}>
         {/* cf-h3 is a visual size token, not a semantic level — this is a
             top-level section heading (sibling of the page's own h1), same
             precedent as EvidenceSection below. */}
-        {title && <h2 ref={titleRef} className="cf-heading cf-h3">{title}</h2>}
-        <div ref={bodyRef} className={title ? "mt-10 space-y-4" : "space-y-4"}>
-          {paragraphs.map((paragraph) => (
-            <p key={paragraph} className="cf-body body-tc">
-              {paragraph}
-            </p>
-          ))}
-        </div>
-        {supporting && (
-          <div ref={supportingRef} className="mt-7">
-            <span aria-hidden className="cf-local-rule" />
-            <p className="cf-dim mt-3 max-w-[52ch] text-[14px] leading-6 tracking-[0.02em]">{supporting}</p>
+        {title && <h2 ref={titleRef} className="cf-heading cf-h3 max-w-[70ch]">{title}</h2>}
+        {composition === "background-role" ? (
+          <div ref={bodyRef} className="mt-10 grid gap-10 md:grid-cols-12 md:gap-12 lg:gap-16">
+            <div className="md:col-span-5">
+              <p className="cf-body body-tc">{paragraphs[0]}</p>
+              {supporting && (
+                <div ref={supportingRef} className="mt-7">
+                  <span aria-hidden className="cf-local-rule" />
+                  <p className="cf-dim mt-3 max-w-[52ch] text-[14px] leading-6 tracking-[0.02em]">{supporting}</p>
+                </div>
+              )}
+            </div>
+            <div className="md:col-span-7 md:border-l md:pl-12 cf-rule lg:pl-16">
+              <div className="space-y-4">{paragraphs.slice(1).map((paragraph) => <p key={paragraph} className="cf-body body-tc">{paragraph}</p>)}</div>
+              {points && <ReadingPoints points={points} />}
+            </div>
           </div>
-        )}
-        {points && points.some((p) => p.includes("｜")) ? (
-          <ul className="cf-summary-list mt-8">
-            {points.map((point, i) => {
-              const parsed = parsePoint(point, i);
-              return (
-                <li key={point} className="cf-summary-row">
-                  {parsed.index && <span className="cf-summary-index cf-accent">{parsed.index}</span>}
-                  <div>
-                    <p className="cf-heading text-[1.05rem] font-medium">{parsed.label}</p>
-                    {/* CASE01 responsive QA: 15px -> 16px. This description
-                        is real explanatory sentence content (Challenge's
-                        numbered points), not a caption/meta label, so it
-                        falls under the 16px Chinese-body-text floor. */}
-                    {parsed.description && <p className="cf-body mt-1 text-[16px] leading-6">{parsed.description}</p>}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
         ) : (
-          points && (
-            <ul className="mt-7 flex flex-wrap gap-2">
-              {points.map((point) => (
-                <li key={point} className="cf-tag">
-                  {point}
-                </li>
-              ))}
-            </ul>
-          )
+          <>
+            <div ref={bodyRef} className={title ? "mt-10 space-y-4" : "space-y-4"}>{paragraphs.map((paragraph) => <p key={paragraph} className="cf-body body-tc">{paragraph}</p>)}</div>
+            {supporting && <div ref={supportingRef} className="mt-7"><span aria-hidden className="cf-local-rule" /><p className="cf-dim mt-3 max-w-[52ch] text-[14px] leading-6 tracking-[0.02em]">{supporting}</p></div>}
+            {points && <ReadingPoints points={points} />}
+          </>
         )}
       </div>
       {media && (

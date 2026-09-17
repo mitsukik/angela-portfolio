@@ -13,6 +13,7 @@ type FlowEvidenceProps = {
   caption: string;
   aspect?: string;
   className?: string;
+  scrollHint?: string;
 };
 
 /**
@@ -29,7 +30,7 @@ type FlowEvidenceProps = {
  * evidence figure in this file — the shared `Evidence`/`EvidenceMotion`
  * fade still covers everything else, so this stays the exception.
  */
-export function FlowEvidence({ src, alt, caption, aspect = "aspect-[3/2]", className = "" }: FlowEvidenceProps) {
+export function FlowEvidence({ src, alt, caption, aspect = "aspect-[3/2]", className = "", scrollHint }: FlowEvidenceProps) {
   const frameRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
@@ -64,10 +65,13 @@ export function FlowEvidence({ src, alt, caption, aspect = "aspect-[3/2]", class
 
   return (
     <figure className={className}>
-      <div ref={frameRef} className={`cf-figure-frame relative ${aspect} w-full`}>
-        <Image src={src} alt={alt} fill sizes="(max-width: 1024px) 100vw, 1600px" className="object-contain" />
+      <div className="min-w-0 max-w-full overflow-x-auto" tabIndex={0} role="group" aria-label={alt}>
+        <div ref={frameRef} className={`cf-figure-frame relative ${aspect} min-w-[48rem] lg:min-w-0`}>
+          <Image src={src} alt={alt} fill sizes="(max-width: 1023px) 768px, 1600px" className="object-contain" />
+        </div>
       </div>
       <figcaption className="cf-figure-caption cf-meta mt-4">{caption}</figcaption>
+      {scrollHint && <p className="cf-dim mt-2 text-[12px] lg:hidden">{scrollHint}</p>}
     </figure>
   );
 }

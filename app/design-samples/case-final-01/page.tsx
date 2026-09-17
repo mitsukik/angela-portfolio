@@ -21,7 +21,7 @@ export default function CaseFinal01Page() {
       nextProject={getNextProject(project)}
       previousProject={getPreviousProject(project)}
       locale="zh"
-      contentVersion="case01-v2"
+      contentVersion="case01-v3"
     />
   );
 }

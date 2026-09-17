@@ -208,7 +208,7 @@ export function CaseStudyPrototype({
         ]
       : [
           { label: "Role", value: "Lead Product Designer" },
-          { label: "Team", value: "2 Engineers · PM" },
+          { label: "Team", value: "1 UI Designer · 2 Engineers · PM" },
           { label: "Platform", value: "Responsive Web" },
           { label: "Status", value: "Designed & Developed" },
         ]
@@ -307,7 +307,7 @@ export function CaseStudyPrototype({
                   text={
                     isCaseOneV2
                       ? isCaseOneV3
-                        ? "Complex Web System · B2B · Multi Role Workflow"
+                        ? "Complex Web System · B2B · Multi-role Workflows"
                         : (zhHant ? "跨境寄賣與直播電商平台" : "Cross-Border Consignment & Live Commerce Platform")
                       : isCaseTwoV1
                         ? "Shun De Xing · Charming Clinic · NATEX"
@@ -369,7 +369,7 @@ export function CaseStudyPrototype({
                     {isCaseOneV2
                       ? zhHant
                         ? "將台灣供應商、越南倉庫、代理公司、直播主與消費者串連在同一套商業流程中，建立從跨境入庫、共享庫存、選品銷售到訂單履約的完整產品體驗。"
-                        : "Connecting Taiwanese Suppliers, a Vietnamese Platform / Warehouse, Agents, Streamers, and Consumers in one business flow—from cross-border receiving and Shared Inventory to product selection, sales, and Order fulfillment."
+                        : "A multi-sided commerce platform connecting Taiwan Suppliers, a Vietnam Warehouse, Agents (streamer agencies), Streamers, and Consumers — from cross-border receiving and shared inventory to selling, orders, fulfillment, and settlement."
                       : isCaseTwoV1
                         ? zhHant
                           ? "為企業服務、醫療美容與科技產業品牌，打造清楚且值得信任的數位體驗。"

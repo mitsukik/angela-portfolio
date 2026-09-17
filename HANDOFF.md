@@ -2,9 +2,10 @@
 
 - Branch: `feat/case02-en-localization`.
 - Foundation tag: `v3-design-system-foundation`.
-- **CASE01 ZH: FROZEN / APPROVED.** Phases 1–5 plus the positioning, factual, and terminology corrections are complete and approved. Do not reopen CASE01 ZH discovery, redesign, or copy without a specific new instruction. CASE02 (ZH + EN), CASE03 (ZH + EN), and CASE04 ZH V1 remain FROZEN.
-- **CASE01 ZH re-frozen 2026-09-17** after a 04C pricing-rule factual correction (Streamer Selling Price cannot go below the Supplier-defined minimum; equal to the minimum is allowed) — see git log (`fix(case01): clarify pricing floor in frozen Chinese case`) and the "Freeze Commit" section below for detail.
-- **Next: CASE01 English localization based on the frozen Chinese master.** EN currently still reflects the pre-correction state (see "CASE01 UI constraint" below) — the English pass should apply the same positioning, factual model, terminology, and CTA-localization corrections already verified in ZH, not re-derive them from scratch.
+- **CASE01 ZH — FROZEN / APPROVED.**
+- **CASE01 EN — FROZEN / APPROVED.**
+- **CASE01 — COMPLETE.** Both locales frozen. Do not reopen CASE01 discovery, redesign, or copy (either locale) without a specific new instruction.
+- **Next portfolio priority: CASE02.**
 - Review routes: `/design-samples/case-final-01` (CASE01 ZH), `/en/design-samples/case-final-01` (CASE01 EN), `/design-samples/case-final-02` (CASE02 ZH), `/en/design-samples/case-final-02` (CASE02 EN), `/design-samples/case-final-03` (CASE03 ZH), `/en/design-samples/case-final-03` (CASE03 EN).
 - **Continuity note:** this file was fully rewritten (not appended) to replace stale pre-freeze CASE02 status and a dropped prior history chain. Older history (Homepage Visual Polish V3/V3.1/V3.2, Lavender token checkpoint, About V2, CASE01 Responsive QA) is not reconstructed here — git log and topic branches remain the authoritative record per AGENTS.md's "if documentation conflicts with Git, investigate and report" rule.
 
@@ -245,9 +246,16 @@ Commit message: `chore(portfolio): checkpoint validated case-study state` — no
 
 **Validation:** `tsc`, targeted ESLint, and `next build` all passed — both in the real working tree and, more importantly, in the isolated verification worktree with only the committed file set present.
 
-## ZH Re-freeze — Pricing Factual Correction (2026-09-17, same day, ZH only)
+## CASE01 EN Freeze (2026-09-17, same day)
 
-04C's frozen ZH wording only said "must comply with the Suggested Retail Price (SRP) and price-range constraints" — accurate but missing the verified minimum-price floor rule. Corrected to state it explicitly: Streamer Selling Price cannot go below the Supplier-defined minimum Selling Price (equal to the minimum is allowed), in addition to the existing price-range/profitability constraints. Commit: `fix(case01): clarify pricing floor in frozen Chinese case`. Scope: the ZH half of `CaseOneFinalContent.tsx`'s 04C `body` string only — no layout, evidence, or EN copy touched. `tsc`, targeted ESLint, and `next build` all passed. CASE01 ZH remains FROZEN / APPROVED with this correction folded in.
+CASE01 EN localized from the frozen ZH master (`a83f050`, later `51f5872`), not a literal translation, across four passes:
+
+1. **Initial localization.** Section 00 intro rewritten; Section 01 rewritten to 4 paragraphs (was 3 — EN had never received the positioning correction's new constraint paragraph); Section 02 sequence wording tightened (`Cross-border Shipment`, `Receive / Count / Scan`); Section 04 label corrected to `CORE UX DECISIONS & INTERFACE EVIDENCE`; Section 06 gained the missing 3rd paragraph (backend-vs-visual-craft framing); Team metadata corrected to `1 UI Designer · 2 Engineers · PM`.
+2. **Pricing factual correction (EN half).** 04C originally said only "within the Suggested Retail Price (SRP) and price-range constraints" — under-specified. Corrected to state the verified minimum-price floor explicitly: "...but it can't go below the Supplier-defined minimum Selling Price — equal to the minimum is allowed — and must still fall within broader price-range and profitability constraints." (The ZH half of this same fix is documented in the ZH Re-freeze entry above and already committed as `fix(case01): clarify pricing floor in frozen Chinese case`.) Also tightened Section 01's storefront-ownership sentence and Section 06's closing clause per direct instruction.
+3. **Final micro-copy patch.** Subtitle (`Multi Role Workflow` → `Multi-role Workflows`); removed a sentence in Section 01 paragraph 3 that repeated paragraph 2's storefront distinction; lowercased generic nouns throughout prose (product/inventory/order/consumer/shared inventory/web system) while keeping actual UI field labels, named system states (In Stock, Low Stock, etc.), and operational-state terms (Restock/Disposed/Refund/Reshipment) capitalized; Section 02, 04, and 05 titles reworded for concision; 04A/04B/04C/04D bodies tightened; Section 05 intro and sequence copy tightened.
+4. **Freeze.** All four passes validated together — `tsc`, targeted ESLint, and `next build` passed; visually verified full-page at 1440 and 390 (no overflow, no heading collision, no layout/motion/responsive change at any point across all four passes).
+
+CASE01 EN is now **FROZEN / APPROVED**. Commit: `feat(case01): finalize English case study` (see git log for hash). CASE01 is now **COMPLETE** in both locales.
 
 ---
 
@@ -536,8 +544,8 @@ Do not reopen CASE01, CASE02, CASE03, or CASE04 (ZH V1) discovery. Do not ask th
 
 # NEXT ACTION
 
-**CASE01 ZH is FROZEN / APPROVED and committed** (checkpoint commit on `feat/case02-en-localization` — see git log for the hash; see this file's own changelog sections above for what shipped: Phases 1–5, positioning correction, factual correction, final freeze cleanup). `artifacts/case01-v3-phase5-zh-copy-manifest.md` (gitignored, local-only) remains the reference copy record. Do not reopen CASE01 ZH discovery or redesign it without a specific new instruction.
+**CASE01 is COMPLETE — both ZH and EN are FROZEN / APPROVED and committed.** ZH: checkpoint commit + `fix(case01): clarify pricing floor in frozen Chinese case` (pricing re-freeze). EN: `feat(case01): finalize English case study`. See git log for hashes; see this file's own changelog sections above for the full history (Phases 1–5, positioning correction, factual correction, final freeze cleanup, EN localization + pricing + micro-copy passes). `artifacts/case01-v3-phase5-zh-copy-manifest.md` and `artifacts/case01-v3-en-final-copy-manifest.md` (both gitignored, local-only) remain the reference copy records for each locale. **Do not reopen CASE01 discovery, redesign, or copy (either locale) without a specific new instruction.**
 
-**Next action: CASE01 English localization**, based on the frozen Chinese master. EN currently still reflects the pre-correction state — still says "UI Design, Design Direction" prominently in Section 01, still labels Section 04 "CORE UI & DESIGN DECISIONS," still "2 Engineers · PM" with no second designer, still an unlocalized "View Interactive Demo ↗", and hasn't received the terminology normalization either. The English pass should mirror ZH's already-verified positioning, factual model (Team = Lead Product Designer + 1 UI Designer + 2 Engineers + PM; backend-only template constraint; Consumer Web Storefront separately designed), terminology, and CTA localization — not re-derive them from scratch. Per the workflow rule, do not restart CASE01 discovery. CASE02, CASE03, and CASE04 ZH V1 remain complete and frozen. Selected Work later includes a **Foresight Realtors** case.
+**Next portfolio priority: CASE02.** CASE02 ZH + EN are currently FROZEN / COMPLETE (see the CASE02 section above) — "next priority" means whatever Angela specifically requests for CASE02 next (e.g. a responsive/motion/audit pass analogous to what CASE01 just went through), not an instruction to reopen it unprompted. CASE03 and CASE04 ZH V1 remain complete and frozen. Selected Work later includes a **Foresight Realtors** case.
 
 Note: this commit also carried necessary shared case-study infrastructure (Previous/Next cross-navigation, locale-aware a11y labels, small CASE02/03/04 metadata-label localization, a Home-page visual-asset feature) that was already uncommitted and load-bearing for CASE01's own dependency chain — see the commit message and this file's freeze-commit changelog entry for the full file list and reasoning. `AGENTS.md`, `CLAUDE.md`, `app/globals.css`, `SiteHeader.tsx`, `.impeccable/`, and other still-uncommitted files remain genuinely unrelated and were deliberately left out of that commit.

@@ -1,10 +1,14 @@
 # CURRENT STATE
 
-- Branch: `feat/case02-en-localization`.
+- Branch (this repo, `/Users/angela/angela-portfolio`): `feat/case02-en-localization`.
 - Foundation tag: `v3-design-system-foundation`.
-- **CASE01 ZH — FROZEN / APPROVED.**
-- **CASE01 EN — FROZEN / APPROVED.**
-- **CASE01 — COMPLETE.** Both locales frozen. Do not reopen CASE01 discovery, redesign, or copy (either locale) without a specific new instruction.
+- **CASE01 — COMPLETE / PRODUCTION.** Finalized, merged to `main`, deployed to Vercel Production, production smoke QA passed.
+  - Production URL: https://angela-portfolio-phi.vercel.app/
+  - Production SHA: `e7474c674ab92d7401019dff2455dadef3fc8750`
+  - Complete: CASE01 V3 (ZH + EN), Home CASE01 card positioning, CASE04 public naming sync (行動療癒產品 / Mobile Wellness Product — no "Confidential"/"Anonymous" naming remains anywhere public-facing).
+  - Verified in production: responsive QA at 1440/390, all CASE01 evidence images live, Interactive Demo link, Previous/Next nav, no broken images, no 404s, no console errors, no horizontal overflow.
+  - **CASE01 is FROZEN.** Do not reopen discovery, redesign, or copy (either locale) without a specific new instruction.
+- **Deployment topology (read before any git/push/deploy task):** this repo's git history is disconnected from the actual GitHub/Vercel repo (`https://github.com/mitsukik/angela-portfolio.git`) — no common commit ancestor, though file content substantially overlaps. The properly-connected clone is `/Users/angela/angela-portfolio-public` (branch `main`, tracks `origin/main`, is what Vercel Production deploys from). Production changes are migrated from this repo's committed snapshots into a clean branch off `origin/main` in that other clone, then merged/pushed from there — not pushed directly from here.
 - **Next portfolio priority: CASE02.**
 - Review routes: `/design-samples/case-final-01` (CASE01 ZH), `/en/design-samples/case-final-01` (CASE01 EN), `/design-samples/case-final-02` (CASE02 ZH), `/en/design-samples/case-final-02` (CASE02 EN), `/design-samples/case-final-03` (CASE03 ZH), `/en/design-samples/case-final-03` (CASE03 EN).
 - **Continuity note:** this file was fully rewritten (not appended) to replace stale pre-freeze CASE02 status and a dropped prior history chain. Older history (Homepage Visual Polish V3/V3.1/V3.2, Lavender token checkpoint, About V2, CASE01 Responsive QA) is not reconstructed here — git log and topic branches remain the authoritative record per AGENTS.md's "if documentation conflicts with Git, investigate and report" rule.
@@ -544,7 +548,7 @@ Do not reopen CASE01, CASE02, CASE03, or CASE04 (ZH V1) discovery. Do not ask th
 
 # NEXT ACTION
 
-**CASE01 is COMPLETE — both ZH and EN are FROZEN / APPROVED and committed.** ZH: checkpoint commit + `fix(case01): clarify pricing floor in frozen Chinese case` (pricing re-freeze). EN: `feat(case01): finalize English case study`. See git log for hashes; see this file's own changelog sections above for the full history (Phases 1–5, positioning correction, factual correction, final freeze cleanup, EN localization + pricing + micro-copy passes). `artifacts/case01-v3-phase5-zh-copy-manifest.md` and `artifacts/case01-v3-en-final-copy-manifest.md` (both gitignored, local-only) remain the reference copy records for each locale. **Do not reopen CASE01 discovery, redesign, or copy (either locale) without a specific new instruction.**
+**CASE01 is COMPLETE / PRODUCTION.** Both ZH and EN are FROZEN / APPROVED, merged to `main` in the connected clone (`/Users/angela/angela-portfolio-public`), and deployed live at https://angela-portfolio-phi.vercel.app/ (production SHA `e7474c674ab92d7401019dff2455dadef3fc8750`). Production smoke QA passed — see CURRENT STATE above for the checklist. See git log for local commit hashes; see this file's own changelog sections above for the full history (Phases 1–5, positioning correction, factual correction, final freeze cleanup, EN localization + pricing + micro-copy passes, Home/rail/CASE04-naming sync, migration to the connected clone, Production promotion). `artifacts/case01-v3-phase5-zh-copy-manifest.md` and `artifacts/case01-v3-en-final-copy-manifest.md` (both gitignored, local-only) remain the reference copy records for each locale. **Do not reopen CASE01 discovery, redesign, or copy (either locale) without a specific new instruction.**
 
 **Next portfolio priority: CASE02.** CASE02 ZH + EN are currently FROZEN / COMPLETE (see the CASE02 section above) — "next priority" means whatever Angela specifically requests for CASE02 next (e.g. a responsive/motion/audit pass analogous to what CASE01 just went through), not an instruction to reopen it unprompted. CASE03 and CASE04 ZH V1 remain complete and frozen. Selected Work later includes a **Foresight Realtors** case.
 

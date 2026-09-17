@@ -376,7 +376,7 @@ export function CaseStudyPrototype({
                       : isCaseTwoV1
                         ? zhHant
                           ? "把不同產業的商業需求，轉化為清楚的資訊架構與可信任的網站體驗。"
-                          : "Designing clear, credible digital experiences across corporate, healthcare, and technology brands."
+                          : "Translating different business needs into clear information architecture and web experiences that build trust."
                         : caseStudy.summary}
                   </p>
                   {isCaseOneV3 && (

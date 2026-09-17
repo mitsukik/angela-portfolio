@@ -294,7 +294,7 @@ export function CaseTwoHeroEvidence({ locale }: { locale: Locale }) {
         </HeroEvidenceReveal>
       </div>
       <figcaption className="cf-figure-caption cf-meta mt-4">
-        {zhHant ? "三種產業，對應三種不同的資訊與信任策略。" : "Three industries, each translated into a distinct information and trust strategy."}
+        {zhHant ? "三種產業，對應三種不同的資訊與信任策略。" : "Three industries, three different approaches to information and trust."}
       </figcaption>
     </figure>
   );
@@ -407,9 +407,9 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
       ]
     : [
         { label: "Business Context", values: ["Services span multiple business lines and markets", "A wide range of medical and aesthetic services", "Technical capability across software, IoT, data, and industrial services"] },
-        { label: "Audience Need", values: ["Understand the business", "Find the right treatment", "Understand technical capability"] },
-        { label: "UX Priority", values: ["A clear service structure", "Service information and trust", "Expertise and business credibility"] },
-        { label: "Primary Action", values: ["Contact", "Booking", "Inquiry"] },
+        { label: "Audience Need", values: ["Quickly understand the service scope and find the right contact point", "Find the right treatment and understand the service", "Understand the technical capabilities and where they apply"] },
+        { label: "UX Priority", values: ["Service categorization and navigation", "Service discovery and trust", "Technical translation and business credibility"] },
+        { label: "Primary Action", values: ["Business inquiry", "Booking / contact", "B2B inquiry"] },
       ];
 
   // 05 — UX-principle comparison, values as specified.
@@ -439,11 +439,11 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
         <Reveal>
           <SectionHeading
             label={zhHant ? "01 — 我的角色" : "01 — MY ROLE"}
-            title={zhHant ? "三個專案，不同的交付範圍" : "Same Design Responsibility, Different Delivery Scope"}
+            title={zhHant ? "三個專案，不同的交付範圍" : "Three Projects, Different Delivery Scopes"}
             intro={
               zhHant
                 ? "在進入各專案之前，先說明我在三個專案中實際負責的工作範圍。"
-                : "Before the individual project stories, here's exactly what I was responsible for on each one."
+                : "Before diving into the individual projects, here’s what I was responsible for in each."
             }
           />
         </Reveal>
@@ -479,7 +479,7 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
         <p className="cf-dim mt-5 max-w-[62ch] text-[14px] leading-6">
           {zhHant
             ? "內容方向指辨識體驗所需資訊，並與 PM 或客戶協調取得內容；實際文案製作不在我的工作範圍內。"
-            : "Content Direction refers to identifying the information required for the experience and coordinating with the PM or client to obtain it. Copy production was not part of my role."}
+            : "Content Direction means identifying what information the experience needs and coordinating with the PM or client to get it — copywriting itself wasn’t part of my role."}
         </p>
       </Section>
 
@@ -490,11 +490,11 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
         <Reveal>
           <SectionHeading
             label={zhHant ? "02 — 相同是網站，不同的是問題" : "02 — SAME MEDIUM, DIFFERENT PROBLEMS"}
-            title={zhHant ? "三個都是網站，但要解決的問題不同" : "Three Websites, Three Different Problems"}
+            title={zhHant ? "三個都是網站，但要解決的問題不同" : "Same Medium, Different Problems"}
             intro={
               zhHant
                 ? "三個專案面對不同的受眾、資訊複雜度與信任需求，因此網站的資訊策略與主要行動也不同。"
-                : "All three are websites, but each one faces a different audience, needs a different kind of trust, and points toward a different final action."
+                : "Each project faced a different audience, level of complexity, and set of trust requirements — so each site needed its own information strategy and primary action."
             }
           />
         </Reveal>
@@ -517,7 +517,7 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
             intro={
               zhHant
                 ? "從商業情境出發，先確認使用者最需要理解什麼、在哪些節點需要建立信任，再決定資訊架構與畫面上的優先順序，最後導向明確的下一步。"
-                : "Starting from the business context, I identified what each audience needed to understand and trust, let that decide the information architecture and on-page priority, and pointed everything toward a clear action."
+                : "I start with the business context: what does the audience need to understand first, and where does trust need to be established? From there, I shape the information architecture and page hierarchy, then guide users toward a clear next step."
             }
           />
         </Reveal>
@@ -573,9 +573,9 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
                 </>
               ) : (
                 <>
-                  <StoryBeat label="Problem">Shun De Xing&rsquo;s services span multiple business lines and markets — a lot of information that could easily overwhelm a visitor.</StoryBeat>
-                  <StoryBeat label="Design Decision">I worked directly with the client to clarify requirements, defined the page flow and information structure, designed the UI/UX, and coordinated with the PM to fill missing content gaps.</StoryBeat>
-                  <StoryBeat label="Result">Visitors can grasp the scope of services and find a contact point without first having to understand the company&rsquo;s internal structure.</StoryBeat>
+                  <StoryBeat label="Problem">Shun De Xing&rsquo;s services span multiple business lines and markets, making the full offering difficult to grasp at a glance.</StoryBeat>
+                  <StoryBeat label="Design Decision">I worked with the client to clarify priorities, then restructured the page flow and information hierarchy — breaking a broad service offering into clear entry points while still conveying the company&rsquo;s scale and credibility.</StoryBeat>
+                  <StoryBeat label="Design Result">Visitors can first grasp the scope of services, then move toward the right content and contact point without needing to understand the company&rsquo;s internal structure.</StoryBeat>
                 </>
               )}
             </div>
@@ -640,9 +640,9 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
                 </>
               ) : (
                 <>
-                  <StoryBeat label="Problem">Charming Clinic&rsquo;s many medical and aesthetic services needed to feel professional and approachable at once, while still helping visitors find the right treatment.</StoryBeat>
-                  <StoryBeat label="Design Decision">I confirmed requirements directly with the client, built the service-discovery flow, designed the UX/UI, and supported the initial frontend build.</StoryBeat>
-                  <StoryBeat label="Result">Users move in sequence from finding a treatment, to understanding it, to booking it.</StoryBeat>
+                  <StoryBeat label="Problem">Charming Clinic offers a wide range of medical and aesthetic services. The site needed to feel both professional and approachable while still helping visitors find the right treatment.</StoryBeat>
+                  <StoryBeat label="Design Decision">I restructured what could easily have become a flat service list into a clear path — explore treatments, understand the service, build trust, then book — using information hierarchy and clear entry points to reduce uncertainty during service selection.</StoryBeat>
+                  <StoryBeat label="Design Result">The experience guides users from treatment discovery to service understanding, with clear opportunities to book at the right points.</StoryBeat>
                 </>
               )}
             </div>
@@ -664,9 +664,9 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
                 </>
               ) : (
                 <>
-                  <StoryBeat label="Problem">NATEX&rsquo;s technical capabilities span software, IoT, data, and industrial services — the challenge was presenting that depth without losing business audiences in the navigation.</StoryBeat>
-                  <StoryBeat label="Design Decision">Outside of content production, I owned requirements, information architecture, UX flow, interface design, responsive layouts, and frontend implementation — the broadest delivery scope across the three projects.</StoryBeat>
-                  <StoryBeat label="Result">Business audiences can understand NATEX&rsquo;s scope of capability and submit an inquiry without being buried in technical detail.</StoryBeat>
+                  <StoryBeat label="Problem">NATEX&rsquo;s capabilities span software, IoT, data, and industrial services. The challenge was to communicate that depth without overwhelming business audiences or making the site difficult to navigate.</StoryBeat>
+                  <StoryBeat label="Design Decision">I restructured the technical content by capability and use case, leading with the business problems NATEX can solve before introducing technical depth, real applications, and proof of expertise.</StoryBeat>
+                  <StoryBeat label="Design Result">The experience lets business visitors understand NATEX&rsquo;s range of capabilities and application areas first, then explore technical details or make an inquiry as needed.</StoryBeat>
                 </>
               )}
             </div>
@@ -711,7 +711,7 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
             intro={
               zhHant
                 ? "把三個專案並排比較，可以看出不同產業如何影響資訊架構、信任建立方式與主要行動；但底層仍有幾個一致的 UX 原則。"
-                : "Placed side by side, the three projects show what actually differs behind each design decision — and underneath those differences, three shared UX principles."
+                : "Side by side, the three projects show how industry shapes information architecture, trust signals, and primary actions. Underneath those differences, a few UX principles remain consistent."
             }
           />
         </Reveal>
@@ -724,11 +724,11 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
         <div className="mt-16 space-y-12">
           <article>
             <p className="cf-meta cf-accent">01</p>
-            <h3 className="cf-heading mt-3 text-[20px] font-medium">{zhHant ? "清楚的資訊優先順序" : "Clear Information Priority"}</h3>
+            <h3 className="cf-heading mt-3 text-[20px] font-medium">{zhHant ? "清楚的資訊優先順序" : "Clear Information Priorities"}</h3>
             <p className="cf-body body-tc mt-3 max-w-[62ch]">
               {zhHant
                 ? "先決定使用者此刻最需要理解什麼，再依照決策需要安排資訊層級。"
-                : "Users don&rsquo;t need to understand a company&rsquo;s internal structure first to know what matters most right now."}
+                : "Decide what the user most needs to understand right now, then structure the information hierarchy around that."}
             </p>
           </article>
 
@@ -738,7 +738,7 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
             <p className="cf-body body-tc mt-3 max-w-[62ch]">
               {zhHant
                 ? "不同產業需要不同的信任訊號，但可信度資訊都應該出現在使用者真正需要它的位置。"
-                : "Different industries need different trust signals, but that trust information should always appear exactly where the user needs it."}
+                : "Different industries call for different trust signals, but those signals should appear where they matter most in the decision process."}
             </p>
             <div className="mt-8 grid gap-6 sm:grid-cols-3">
               <Reveal>
@@ -789,7 +789,7 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
             <p className="cf-body body-tc mt-3 max-w-[62ch]">
               {zhHant
                 ? "每個重要頁面都應該讓使用者知道下一步可以做什麼——洽詢、預約，或進一步了解。"
-                : "A website isn&rsquo;t just there to inform — it also has to tell users where to go once they understand it."}
+                : "Every key page should make the next step clear — get in touch, book, or learn more."}
             </p>
           </article>
         </div>
@@ -803,12 +803,12 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
       <Section index={5} register={register}>
         <Reveal>
           <SectionHeading
-            label={zhHant ? "06 — 響應式資訊優先順序" : "06 — RESPONSIVE INFORMATION PRIORITY"}
-            title={zhHant ? "響應式設計不是把桌面版縮小" : "Responsive Isn't Desktop, Scaled Down."}
+            label={zhHant ? "06 — 響應式資訊優先順序" : "06 — RESPONSIVE INFORMATION PRIORITIES"}
+            title={zhHant ? "響應式設計不是把桌面版縮小" : "Responsive Design Isn't Just a Scaled-Down Desktop"}
             intro={
               zhHant
                 ? "在較小的螢幕中，我會重新判斷資訊層級、閱讀順序、內容密度與主要行動的位置，而不是單純縮放桌面版面。"
-                : "On a smaller screen, I re-decide the information hierarchy, reading order, content density, and where the primary action sits — rather than simply scaling down the desktop layout."
+                : "On smaller screens, I rethink the information hierarchy, reading order, content density, and placement of the primary action rather than simply scaling down the desktop layout."
             }
           />
         </Reveal>
@@ -828,7 +828,7 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
               caption={
                 zhHant
                   ? "版面依螢幕尺寸重新安排資訊層級與順序，而不是單純縮放。"
-                  : "The layout re-prioritizes hierarchy and order per screen size, rather than scaling down."
+                  : "The layout reorganizes hierarchy and reading order for each screen size rather than simply scaling down."
               }
             />
           </Reveal>
@@ -843,12 +843,12 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
       <Section index={6} register={register}>
         <Reveal>
           <SectionHeading
-            label={zhHant ? "07 — 從設計到實際網站" : "07 — FROM DESIGN TO LIVE DELIVERY"}
-            title={zhHant ? "設計決策如何落地，因專案而不同" : "How Each Design Reached Production Differed"}
+            label={zhHant ? "07 — 從設計到實際網站" : "07 — FROM DESIGN TO LIVE WEBSITE"}
+            title={zhHant ? "設計決策如何落地，因專案而不同" : "Different Paths from Design to Launch"}
             intro={
               zhHant
                 ? "三個專案都從需求與資訊架構開始，但從設計到實際上線，我參與的交付範圍並不相同。"
-                : "The design process was the same across all three projects; how each design actually reached a live site was not."
+                : "All three projects started with requirements and information architecture, but my implementation involvement varied from project to project."
             }
           />
         </Reveal>
@@ -856,34 +856,34 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
           <article className="border-b cf-rule py-6 md:border-r md:px-6 md:first:pl-0 md:last:border-r-0">
             <p className="cf-meta cf-accent">01 / SDX</p>
             <p className="cf-heading mt-4 text-[16px] font-medium leading-6">
-              {zhHant ? "設計完成後，由其他團隊負責前端實作" : "Design handed off; frontend built by others"}
+              {zhHant ? "設計完成後，由其他團隊負責前端實作" : "Design delivered; frontend implemented by another team"}
             </p>
             <p className="cf-body mt-3 text-[14px] leading-6">
               {zhHant
                 ? "我負責需求釐清、資訊架構與 UX/UI 設計，前端實作不在我的工作範圍內。"
-                : "I delivered the UX/UI design and information architecture; frontend implementation was not part of my role."}
+                : "I was responsible for requirements, information architecture, and UX/UI design. Frontend implementation wasn’t part of my role."}
             </p>
           </article>
           <article className="border-b cf-rule py-6 md:border-r md:px-6 md:first:pl-0 md:last:border-r-0">
             <p className="cf-meta cf-accent">02 / CHARMING CLINIC</p>
             <p className="cf-heading mt-4 text-[16px] font-medium leading-6">
-              {zhHant ? "參與初期前端，協助設計落地" : "Supported initial frontend, turning design into pages"}
+              {zhHant ? "參與初期前端，協助設計落地" : "UX/UI design with initial frontend support"}
             </p>
             <p className="cf-body mt-3 text-[14px] leading-6">
               {zhHant
                 ? "除了 UX/UI 設計，我也支援初期前端實作，協助將設計轉化為實際頁面。"
-                : "Beyond UX/UI design, I also supported the initial frontend build, helping turn the design into a live-ready starting point."}
+                : "Beyond UX/UI design, I also supported the initial frontend build, helping turn the design into real pages."}
             </p>
           </article>
           <article className="border-b cf-rule py-6 md:border-r md:px-6 md:first:pl-0 md:last:border-r-0">
             <p className="cf-meta cf-accent">03 / NATEX</p>
             <p className="cf-heading mt-4 text-[16px] font-medium leading-6">
-              {zhHant ? "從設計到前端實作全程參與" : "Involved end-to-end, including frontend"}
+              {zhHant ? "從設計到前端實作全程參與" : "End-to-end from IA through frontend implementation"}
             </p>
             <p className="cf-body mt-3 text-[14px] leading-6">
               {zhHant
                 ? "從資訊架構、UX/UI 設計、響應式版型到前端實作，我皆有參與，是三個專案中交付範圍最完整的一個。"
-                : "From information architecture and UX/UI through responsive layouts and frontend implementation, I was involved end-to-end — the broadest delivery scope of the three."}
+                : "I was involved end-to-end — from information architecture and UX/UI design through responsive layouts and frontend implementation. This was the broadest delivery scope of the three."}
             </p>
           </article>
         </div>
@@ -912,16 +912,21 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
                 </p>
               </div>
             ) : (
-              <p className="cf-body body-tc mt-8 max-w-[62ch]">
-                All three sites prove the same point: understand how the business context shapes what users need to know, let that understanding decide the structure and on-page priority, and the digital experience will genuinely serve the business goal — instead of applying one visual formula everywhere.
-              </p>
+              <div className="mt-8 max-w-[62ch] space-y-4">
+                <p className="cf-body body-tc">
+                  All three projects point to the same idea: a website shouldn&rsquo;t start with a template. It should start with understanding what the business needs to communicate and what users need to know first, then translating those decisions into information architecture and interface priorities.
+                </p>
+                <p className="cf-body body-tc">
+                  Different business contexts naturally produce different digital experiences.
+                </p>
+              </div>
             )}
           </div>
 
           <aside className="border-t cf-rule pt-7 lg:col-span-4 lg:mt-0">
             <p className="cf-meta cf-accent">{zhHant ? "能力" : "CAPABILITIES"}</p>
             <ul className="mt-6 flex flex-wrap gap-2">
-              {(zhHant ? ["資訊架構", "客戶溝通", "UX/UI 設計", "品牌溝通", "響應式網頁", "前端實作"] : ["Information Architecture", "Client Communication", "UX/UI Design", "Brand Adaptation", "Responsive Web", "Frontend Execution"]).map((item) => (
+              {(zhHant ? ["資訊架構", "客戶溝通", "UX/UI 設計", "品牌溝通", "響應式網頁", "前端實作"] : ["Information Architecture", "Client Communication", "UX/UI Design", "Brand Communication", "Responsive Web", "Frontend Implementation"]).map((item) => (
                 <li key={item} className="cf-tag">{item}</li>
               ))}
             </ul>

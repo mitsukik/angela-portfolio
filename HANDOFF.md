@@ -3,6 +3,7 @@
 - Branch: `feat/case02-en-localization`.
 - Foundation tag: `v3-design-system-foundation`.
 - **CASE01 ZH: FROZEN / APPROVED.** Phases 1–5 plus the positioning, factual, and terminology corrections are complete and approved. Do not reopen CASE01 ZH discovery, redesign, or copy without a specific new instruction. CASE02 (ZH + EN), CASE03 (ZH + EN), and CASE04 ZH V1 remain FROZEN.
+- **CASE01 ZH re-frozen 2026-09-17** after a 04C pricing-rule factual correction (Streamer Selling Price cannot go below the Supplier-defined minimum; equal to the minimum is allowed) — see git log (`fix(case01): clarify pricing floor in frozen Chinese case`) and the "Freeze Commit" section below for detail.
 - **Next: CASE01 English localization based on the frozen Chinese master.** EN currently still reflects the pre-correction state (see "CASE01 UI constraint" below) — the English pass should apply the same positioning, factual model, terminology, and CTA-localization corrections already verified in ZH, not re-derive them from scratch.
 - Review routes: `/design-samples/case-final-01` (CASE01 ZH), `/en/design-samples/case-final-01` (CASE01 EN), `/design-samples/case-final-02` (CASE02 ZH), `/en/design-samples/case-final-02` (CASE02 EN), `/design-samples/case-final-03` (CASE03 ZH), `/en/design-samples/case-final-03` (CASE03 EN).
 - **Continuity note:** this file was fully rewritten (not appended) to replace stale pre-freeze CASE02 status and a dropped prior history chain. Older history (Homepage Visual Polish V3/V3.1/V3.2, Lavender token checkpoint, About V2, CASE01 Responsive QA) is not reconstructed here — git log and topic branches remain the authoritative record per AGENTS.md's "if documentation conflicts with Git, investigate and report" rule.
@@ -243,6 +244,10 @@ CASE01 evidence images: 20 new `.webp`/`-focused.png` files under `public/images
 Commit message: `chore(portfolio): checkpoint validated case-study state` — not a CASE01-only message, since the commit's actual diff includes the shared infrastructure above.
 
 **Validation:** `tsc`, targeted ESLint, and `next build` all passed — both in the real working tree and, more importantly, in the isolated verification worktree with only the committed file set present.
+
+## ZH Re-freeze — Pricing Factual Correction (2026-09-17, same day, ZH only)
+
+04C's frozen ZH wording only said "must comply with the Suggested Retail Price (SRP) and price-range constraints" — accurate but missing the verified minimum-price floor rule. Corrected to state it explicitly: Streamer Selling Price cannot go below the Supplier-defined minimum Selling Price (equal to the minimum is allowed), in addition to the existing price-range/profitability constraints. Commit: `fix(case01): clarify pricing floor in frozen Chinese case`. Scope: the ZH half of `CaseOneFinalContent.tsx`'s 04C `body` string only — no layout, evidence, or EN copy touched. `tsc`, targeted ESLint, and `next build` all passed. CASE01 ZH remains FROZEN / APPROVED with this correction folded in.
 
 ---
 

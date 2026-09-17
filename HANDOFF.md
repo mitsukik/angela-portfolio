@@ -10,8 +10,8 @@
   - **CASE01 is FROZEN.** Do not reopen discovery, redesign, or copy (either locale) without a specific new instruction.
 - **Deployment topology (read before any git/push/deploy task):** this repo's git history is disconnected from the actual GitHub/Vercel repo (`https://github.com/mitsukik/angela-portfolio.git`) — no common commit ancestor, though file content substantially overlaps. The properly-connected clone is `/Users/angela/angela-portfolio-public` (branch `main`, tracks `origin/main`, is what Vercel Production deploys from). Production changes are migrated from this repo's committed snapshots into a clean branch off `origin/main` in that other clone, then merged/pushed from there — not pushed directly from here.
 - **CASE02 ZH V2 — APPROVED / FROZEN.** Restructured into the 00–08 story architecture; see the CASE02 section below for the full breakdown. Commit: `9ebc104e1a2fba0402709567992e6ab0492c139d` — `feat(case02): restructure and freeze zh case study`.
-  - **English localization NOT yet approved — next task.** `/en/design-samples/case-final-02` currently renders the pre-V2 English copy against the new V2 structure/positions (functional, not redesigned-for, not proofread) — do not treat it as done.
-- **Next portfolio priority: CASE02 English localization for the V2 structure.**
+- **CASE02 EN V2 — IMPLEMENTED / QA PASSED, not yet frozen.** Full recruiter-facing English localization of the V2 00–08 structure implemented and QA-verified (TypeScript/ESLint/production build clean, desktop + mobile visual QA passed, no layout changes required). Commit: `ed8e46472662679bc42d3f53980fee2ec77133a9` — `feat(case02): implement english v2 localization`. **Final user visual approval is still pending — do not mark EN as FROZEN yet.** See the CASE02 section below for the full breakdown.
+- **Next portfolio priority: Angela's final visual approval of CASE02 EN V2, then freeze it.**
 - Review routes: `/design-samples/case-final-01` (CASE01 ZH), `/en/design-samples/case-final-01` (CASE01 EN), `/design-samples/case-final-02` (CASE02 ZH), `/en/design-samples/case-final-02` (CASE02 EN), `/design-samples/case-final-03` (CASE03 ZH), `/en/design-samples/case-final-03` (CASE03 EN).
 - **Continuity note:** this file was fully rewritten (not appended) to replace stale pre-freeze CASE02 status and a dropped prior history chain. Older history (Homepage Visual Polish V3/V3.1/V3.2, Lavender token checkpoint, About V2, CASE01 Responsive QA) is not reconstructed here — git log and topic branches remain the authoritative record per AGENTS.md's "if documentation conflicts with Git, investigate and report" rule.
 
@@ -52,11 +52,22 @@ Motion: restrained Hero evidence entrance, `SectionHeading` reveal, evidence-uni
 V1 freeze commit (superseded by V2, kept for history): `a09ffdb5143dacc49a315b4326d59f17e1b0210b`.
 **V2 freeze commit: `9ebc104e1a2fba0402709567992e6ab0492c139d`** — `feat(case02): restructure and freeze zh case study`.
 
-## Status: EN — NOT YET APPROVED (next task)
+## Status: EN V2 — IMPLEMENTED / QA PASSED (final user visual approval pending — do NOT mark FROZEN yet)
 
 Route: `/en/design-samples/case-final-02`. Uses the same renderer (`CaseTwoFinalContent.tsx`) via locale-driven content (`locale` prop, `zhHant` branching) — not a separate implementation.
 
-**This is currently stale relative to V2.** The English branches render functional, direct copy in the new V2 structure/positions (added only so the EN route doesn't break), but this has **not** been localized/proofread the way the old V1 English pass was. Do not treat `/en/design-samples/case-final-02` as reflecting approved English copy. The next task is a dedicated EN localization pass for the V2 structure — same approach as CASE01's EN pass (natural phrasing, not literal translation; recruiter-readable).
+Full recruiter-facing English localization of the approved ZH V2 00–08 structure, drafted section-by-section against the frozen Chinese copy, reviewed and refined by Angela through two rounds of wording edits, then implemented. Natural phrasing throughout, not literal translation — same approach as CASE01's EN pass. No metrics, research, interviews, testing, KPIs, or outcomes invented; exact delivery-scope distinctions preserved from the verified ownership facts (see "Project ownership" below).
+
+**Delivery-scope distinctions preserved (Section 07):**
+- **SDX = no frontend ownership** — "Design delivered; frontend implemented by another team."
+- **Charming Clinic = initial frontend support** — "UX/UI design with initial frontend support."
+- **NATEX = full frontend involvement** — "End-to-end from IA through frontend implementation."
+
+**QA passed:** TypeScript (`tsc --noEmit`), targeted ESLint, and production build (`next build`) all clean. Desktop (1440-class) and mobile (375px) visual QA passed — walked all 8 sections on both viewports; no awkward line wraps from the longer English copy; Section 02/05 comparison tables confirmed to scroll horizontally and cleanly on mobile; Section 07's 3-column grid holds on desktop and stacks cleanly on mobile. **No layout or structure changes were required for English** — only text content changed (one exception: Section 08's English body was split into two `<p>` elements to match the ZH's existing two-paragraph pattern, not a new pattern). Chinese copy confirmed byte-identical before/after (every `zhHant ? "…"` string unchanged); CASE01 confirmed untouched.
+
+Commit: `ed8e46472662679bc42d3f53980fee2ec77133a9` — `feat(case02): implement english v2 localization`.
+
+**Final user visual approval is still pending.** Do not mark CASE02 EN as FROZEN until Angela explicitly confirms after her own visual review.
 
 Old V1 EN commit (structure now superseded): `0838c55` — `feat(portfolio): add English CASE02 localization`.
 
@@ -564,6 +575,6 @@ Do not reopen CASE01, CASE02, CASE03, or CASE04 (ZH V1) discovery. Do not ask th
 
 **CASE01 is COMPLETE / PRODUCTION.** Both ZH and EN are FROZEN / APPROVED, merged to `main` in the connected clone (`/Users/angela/angela-portfolio-public`), and deployed live at https://angela-portfolio-phi.vercel.app/ (production SHA `e7474c674ab92d7401019dff2455dadef3fc8750`). Production smoke QA passed — see CURRENT STATE above for the checklist. See git log for local commit hashes; see this file's own changelog sections above for the full history (Phases 1–5, positioning correction, factual correction, final freeze cleanup, EN localization + pricing + micro-copy passes, Home/rail/CASE04-naming sync, migration to the connected clone, Production promotion). `artifacts/case01-v3-phase5-zh-copy-manifest.md` and `artifacts/case01-v3-en-final-copy-manifest.md` (both gitignored, local-only) remain the reference copy records for each locale. **Do not reopen CASE01 discovery, redesign, or copy (either locale) without a specific new instruction.**
 
-**Next portfolio priority: CASE02.** CASE02 ZH + EN are currently FROZEN / COMPLETE (see the CASE02 section above) — "next priority" means whatever Angela specifically requests for CASE02 next (e.g. a responsive/motion/audit pass analogous to what CASE01 just went through), not an instruction to reopen it unprompted. CASE03 and CASE04 ZH V1 remain complete and frozen. Selected Work later includes a **Foresight Realtors** case.
+**Next portfolio priority: CASE02 EN V2 final visual approval.** CASE02 ZH V2 is FROZEN; CASE02 EN V2 is IMPLEMENTED / QA PASSED but **not yet frozen** — pending Angela's own visual review before it can be marked FROZEN (see the CASE02 section above). Do not reopen CASE02 discovery or restructure without a specific new instruction. CASE03 and CASE04 ZH V1 remain complete and frozen. Selected Work later includes a **Foresight Realtors** case.
 
 Note: this commit also carried necessary shared case-study infrastructure (Previous/Next cross-navigation, locale-aware a11y labels, small CASE02/03/04 metadata-label localization, a Home-page visual-asset feature) that was already uncommitted and load-bearing for CASE01's own dependency chain — see the commit message and this file's freeze-commit changelog entry for the full file list and reasoning. `AGENTS.md`, `CLAUDE.md`, `app/globals.css`, `SiteHeader.tsx`, `.impeccable/`, and other still-uncommitted files remain genuinely unrelated and were deliberately left out of that commit.

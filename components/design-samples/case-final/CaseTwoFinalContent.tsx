@@ -4,6 +4,7 @@ import type { Locale } from "@/data/locale";
 import { Reveal } from "../Reveal";
 import { HeroEvidenceReveal } from "./HeroEvidenceReveal";
 import { CaseEvidenceViewerProvider, EvidenceTrigger } from "./CaseEvidenceViewer";
+import { VideoEvidence, type VideoEvidenceAsset } from "./VideoEvidence";
 
 type RegisterSection = (index: number, element: HTMLElement | null) => void;
 
@@ -72,26 +73,35 @@ function ProjectMeta({
   role,
   focus,
   url,
+  zhHant,
 }: {
   name: string;
   role: string;
   focus: string;
   url: string;
+  zhHant: boolean;
 }) {
+  const localizedFocus = zhHant
+    ? ({
+        "Information Architecture · Content Hierarchy · Corporate Communication": "資訊架構 · 內容層級 · 企業溝通",
+        "Service Discovery · Brand Trust · User Flow": "服務探索 · 品牌信任 · 使用流程",
+        "B2B Communication · Technical Content Hierarchy · Responsive Execution": "B2B 溝通 · 技術內容層級 · 響應式實作",
+      } as Record<string, string>)[focus] ?? focus
+    : focus;
   return (
     <>
       <dl className="mt-8 border-t cf-rule">
         <div className="grid gap-2 border-b cf-rule py-4 sm:grid-cols-[7rem_1fr] sm:gap-5">
-          <dt className="cf-meta cf-dim">Project</dt>
+          <dt className="cf-meta cf-dim">{zhHant ? "專案" : "Project"}</dt>
           <dd className="cf-heading text-[16px] leading-7">{name}</dd>
         </div>
         <div className="grid gap-2 border-b cf-rule py-4 sm:grid-cols-[7rem_1fr] sm:gap-5">
-          <dt className="cf-meta cf-dim">Role</dt>
+          <dt className="cf-meta cf-dim">{zhHant ? "角色" : "Role"}</dt>
           <dd className="cf-body text-[15px] leading-7">{role}</dd>
         </div>
         <div className="grid gap-2 border-b cf-rule py-4 sm:grid-cols-[7rem_1fr] sm:gap-5">
-          <dt className="cf-meta cf-dim">Focus</dt>
-          <dd className="cf-body text-[15px] leading-7">{focus}</dd>
+          <dt className="cf-meta cf-dim">{zhHant ? "專注領域" : "Focus"}</dt>
+          <dd className="cf-body text-[15px] leading-7">{localizedFocus}</dd>
         </div>
       </dl>
       <a
@@ -100,7 +110,7 @@ function ProjectMeta({
         rel="noopener noreferrer"
         className="case-link cf-meta cf-dim mt-5 inline-block"
       >
-        Visit Website ↗
+        {zhHant ? "前往網站 ↗" : "Visit Website ↗"}
       </a>
     </>
   );
@@ -142,19 +152,27 @@ function EvidenceImage({
 
 function EvidenceComposition({
   primary,
+  primaryVideo,
   secondary,
   caption,
   className = "",
+  zhHant = false,
 }: {
-  primary: EvidenceAsset;
+  primary?: EvidenceAsset;
+  primaryVideo?: VideoEvidenceAsset;
   secondary: EvidenceAsset;
   caption: string;
   className?: string;
+  zhHant?: boolean;
 }) {
   return (
     <figure className={className}>
       <div className="space-y-3">
-        <EvidenceImage asset={primary} />
+        {primaryVideo ? (
+          <VideoEvidence asset={primaryVideo} zhHant={zhHant} />
+        ) : primary ? (
+          <EvidenceImage asset={primary} />
+        ) : null}
         <div className="ml-auto w-[86%] sm:w-[72%]">
           <EvidenceImage asset={secondary} format="crop" />
         </div>
@@ -186,17 +204,19 @@ function ResponsiveEvidence({
   desktop,
   mobile,
   caption,
+  zhHant,
 }: {
   project: string;
   desktop: EvidenceAsset;
   mobile: EvidenceAsset;
   caption: string;
+  zhHant: boolean;
 }) {
   return (
     <article className="border-t cf-rule pt-7">
       <div className="mb-5 flex items-baseline justify-between gap-5">
         <h3 className="cf-heading text-[18px] font-medium">{project}</h3>
-        <p className="cf-meta cf-dim">Desktop / Mobile</p>
+        <p className="cf-meta cf-dim">{zhHant ? "桌面／行動裝置" : "Desktop / Mobile"}</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_16rem] sm:items-start lg:grid-cols-[minmax(0,1fr)_18rem]">
         <EvidenceImage asset={desktop} />
@@ -207,7 +227,8 @@ function ResponsiveEvidence({
   );
 }
 
-export function CaseTwoHeroEvidence() {
+export function CaseTwoHeroEvidence({ locale }: { locale: Locale }) {
+  const zhHant = locale === "zh";
   return (
     <figure className="mt-12 md:mt-16">
       <div className="cf-figure-frame relative aspect-[4/5] overflow-hidden bg-black/[0.035] sm:aspect-[16/8]">
@@ -248,7 +269,7 @@ export function CaseTwoHeroEvidence() {
         </HeroEvidenceReveal>
       </div>
       <figcaption className="cf-figure-caption cf-meta mt-4">
-        Three industries, each translated into a distinct information and trust strategy.
+        {zhHant ? "三種產業，各自轉化為不同的資訊與信任策略。" : "Three industries, each translated into a distinct information and trust strategy."}
       </figcaption>
     </figure>
   );
@@ -275,6 +296,17 @@ const contributionRows = [
   ["Frontend", "No", "Partial", "Yes"],
 ] as const;
 
+const CONTRIBUTION_VALUE_ZH: Record<string, string> = { Yes: "是", No: "否", Partial: "部分" };
+const CONTRIBUTION_LABEL_ZH: Record<string, string> = {
+  Requirements: "需求",
+  "Information Architecture / Flow": "資訊架構／流程",
+  "UX/UI Design": "UX/UI 設計",
+  "Content Direction": "內容方向",
+  "Content Production": "內容製作",
+  "Responsive Design": "響應式設計",
+  Frontend: "前端實作",
+};
+
 export function CaseTwoFinalContent({ register, locale }: { register: RegisterSection; locale: Locale }) {
   const zhHant = locale === "zh";
   return (
@@ -282,8 +314,8 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
       <Section index={0} register={register} divider={false}>
         <Reveal>
           <SectionHeading
-            label="02 — OVERVIEW"
-            title="Three websites. Three different business contexts."
+            label={zhHant ? "02 — 總覽" : "02 — OVERVIEW"}
+            title={zhHant ? "三個網站，三種不同的商業情境。" : "Three websites. Three different business contexts."}
             intro={
               zhHant
                 ? "三個專案橫跨企業服務、醫療美容與科技產業。我從商業需求出發，依各自的受眾與溝通目標整理資訊架構、使用流程與介面層級。"
@@ -308,7 +340,7 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
       <Section index={1} register={register}>
         <Reveal>
           <SectionHeading
-            label="03 — FROM BUSINESS NEEDS TO WEB STRUCTURE"
+            label={zhHant ? "03 — 從商業需求到網站架構" : "03 — FROM BUSINESS NEEDS TO WEB STRUCTURE"}
             title={zhHant ? "不同的業務，需要不同的資訊優先順序" : "Different Businesses, Different Information Priorities"}
             intro={
               zhHant
@@ -318,11 +350,18 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
           />
         </Reveal>
         <div className="mt-12 grid border-t cf-rule lg:grid-cols-3">
-          {[
-            ["SDX", "Understand the business", ["Broad cross-border services", "Clear service structure", "Corporate credibility", "Contact"]],
-            ["Charming Clinic", "Discover the right service", ["Treatment needs", "Service information", "Trust", "Booking"]],
-            ["NATEX", "Understand technical capability", ["Solutions", "Expertise", "Business credibility", "Inquiry"]],
-          ].map(([name, goal, steps], index) => (
+          {(zhHant
+            ? [
+                ["SDX", "理解企業業務", ["廣泛的跨境服務", "清楚的服務架構", "企業可信度", "聯絡窗口"]],
+                ["Charming Clinic", "找到合適的療程", ["療程需求", "服務資訊", "信任感", "預約"]],
+                ["NATEX", "理解技術能力", ["解決方案", "專業能力", "商業可信度", "詢問"]],
+              ]
+            : [
+                ["SDX", "Understand the business", ["Broad cross-border services", "Clear service structure", "Corporate credibility", "Contact"]],
+                ["Charming Clinic", "Discover the right service", ["Treatment needs", "Service information", "Trust", "Booking"]],
+                ["NATEX", "Understand technical capability", ["Solutions", "Expertise", "Business credibility", "Inquiry"]],
+              ]
+          ).map(([name, goal, steps], index) => (
             <article
               key={name as string}
               className="border-b cf-rule py-8 lg:border-r lg:px-7 lg:first:pl-0 lg:last:border-r-0"
@@ -343,12 +382,12 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
       </Section>
 
       <Section index={2} register={register}>
-        <p className="cf-meta cf-section-label cf-accent md:whitespace-nowrap">04 — PROJECT STORIES</p>
+        <p className="cf-meta cf-section-label cf-accent md:whitespace-nowrap">{zhHant ? "04 — 專案故事" : "04 — PROJECT STORIES"}</p>
         <div className="mt-10">
-        <ProjectStoryHeading index="04A / SDX" title="Organizing a Complex Corporate Offering" />
+        <ProjectStoryHeading index="04A / SDX" title={zhHant ? "整理龐大的企業服務內容" : "Organizing a Complex Corporate Offering"} />
         <div className="mt-10 grid gap-12 lg:grid-cols-12 lg:items-start">
           <div className="lg:col-span-5">
-            <ProjectMeta {...projects.sdx} />
+            <ProjectMeta {...projects.sdx} zhHant={zhHant} />
             <div className="cf-body body-tc mt-8 space-y-4">
               {zhHant ? (
                 <>
@@ -365,9 +404,14 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
           </div>
           <Reveal className="lg:col-span-7">
             <EvidenceComposition
-              primary={{
-                src: "/images/case02/evidence/sdx-home-desktop.webp",
-                alt: "Shun De Xing homepage showing corporate positioning, navigation, and primary action",
+              zhHant={zhHant}
+              primaryVideo={{
+                webm: "/videos/case02/sdx-walkthrough.webm",
+                mp4: "/videos/case02/sdx-walkthrough.mp4",
+                poster: "/images/case02/evidence/sdx-walkthrough-poster.jpg",
+                alt: zhHant
+                  ? "Shun De Xing 官網實際瀏覽紀錄：從首頁滾動至服務架構區塊，再到跨國據點與合作實績。"
+                  : "Live walkthrough of the Shun De Xing website scrolling from the homepage into its service structure, then into its cross-border presence and track record.",
               }}
               secondary={{
                 src: "/images/case02/evidence/sdx-services-desktop.webp",
@@ -383,13 +427,18 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
         </div>
 
         <div className="mt-14 border-t cf-rule pt-10 md:mt-16 md:pt-12">
-        <ProjectStoryHeading index="04B / CHARMING CLINIC" title="Turning Services into a Clear Customer Journey" />
+        <ProjectStoryHeading index="04B / CHARMING CLINIC" title={zhHant ? "把服務轉化為清楚的顧客旅程" : "Turning Services into a Clear Customer Journey"} />
         <div className="mt-10 grid gap-12 lg:grid-cols-12 lg:items-start">
           <Reveal className="lg:col-span-7">
             <EvidenceComposition
-              primary={{
-                src: "/images/case02/evidence/charming-home-desktop.webp",
-                alt: "Charming Clinic homepage showing clinic environment, brand tone, and primary booking action",
+              zhHant={zhHant}
+              primaryVideo={{
+                webm: "/videos/case02/charming-walkthrough.webm",
+                mp4: "/videos/case02/charming-walkthrough.mp4",
+                poster: "/images/case02/evidence/charming-walkthrough-poster.jpg",
+                alt: zhHant
+                  ? "Charming Clinic 官網實際瀏覽紀錄：從首頁滾動至熱門療程區塊，再到診所環境與信任資訊。"
+                  : "Live walkthrough of the Charming Clinic website scrolling from the homepage into its treatment categories, then into the clinic environment and trust information.",
               }}
               secondary={{
                 src: "/images/case02/evidence/charming-services-desktop.webp",
@@ -403,7 +452,7 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
             />
           </Reveal>
           <div className="lg:col-span-5">
-            <ProjectMeta {...projects.charming} />
+            <ProjectMeta {...projects.charming} zhHant={zhHant} />
             <div className="cf-body body-tc mt-8 space-y-4">
               {zhHant ? (
                 <>
@@ -422,10 +471,10 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
         </div>
 
         <div className="mt-14 border-t cf-rule pt-10 md:mt-16 md:pt-12">
-        <ProjectStoryHeading index="04C / NATEX" title="Translating Technical Expertise for Business Users" />
+        <ProjectStoryHeading index="04C / NATEX" title={zhHant ? "把技術專業轉譯給商務受眾" : "Translating Technical Expertise for Business Users"} />
         <div className="mt-10 grid gap-12 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-4">
-            <ProjectMeta {...projects.natex} />
+            <ProjectMeta {...projects.natex} zhHant={zhHant} />
             <div className="cf-body body-tc mt-8 space-y-4">
               {zhHant ? (
                 <>
@@ -442,9 +491,14 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
           </div>
           <Reveal className="lg:col-span-8">
             <EvidenceComposition
-              primary={{
-                src: "/images/case02/evidence/natex-services-desktop.webp",
-                alt: "NATEX services overview showing technical service categories and content hierarchy",
+              zhHant={zhHant}
+              primaryVideo={{
+                webm: "/videos/case02/natex-walkthrough.webm",
+                mp4: "/videos/case02/natex-walkthrough.mp4",
+                poster: "/images/case02/evidence/natex-walkthrough-poster.jpg",
+                alt: zhHant
+                  ? "NATEX 官網實際瀏覽紀錄：從首頁滾動至專業服務分類，再到系統開發流程。"
+                  : "Live walkthrough of the NATEX website scrolling from the homepage into its professional service categories, then into its system development workflow.",
               }}
               secondary={{
                 src: "/images/case02/evidence/natex-showcase-desktop.webp",
@@ -465,9 +519,13 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
       <Section index={3} register={register}>
         <Reveal>
           <SectionHeading
-            label="05 — ONE PRINCIPLE, DIFFERENT EXPRESSIONS"
+            label={zhHant ? "05 — 同一原則，不同表現" : "05 — ONE PRINCIPLE, DIFFERENT EXPRESSIONS"}
             title={zhHant ? "同一個設計原則，依品牌目標形成不同表達" : "Shared Principles, Different Expressions"}
-            intro="Rather than applying the same visual formula across projects, each website was shaped around its audience, industry, and communication goals."
+            intro={
+              zhHant
+                ? "我沒有把同一套視覺公式套用在每個專案上，而是依各自的受眾、產業與溝通目標形塑網站。"
+                : "Rather than applying the same visual formula across projects, each website was shaped around its audience, industry, and communication goals."
+            }
           />
         </Reveal>
         <div className="mt-12 grid gap-10 lg:grid-cols-3">
@@ -485,7 +543,7 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
                 }
               />
             </Reveal>
-            <h3 className="cf-heading mt-6 text-[20px] font-medium">Clear Structure</h3>
+            <h3 className="cf-heading mt-6 text-[20px] font-medium">{zhHant ? "清楚的架構" : "Clear Structure"}</h3>
             <p className="cf-body body-tc mt-3">
               {zhHant ? "協助使用者理解廣泛且跨領域的企業服務。" : "Helps users make sense of a broad, cross-industry set of corporate services."}
             </p>
@@ -504,7 +562,7 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
                 }
               />
             </Reveal>
-            <h3 className="cf-heading mt-6 text-[20px] font-medium">Build Trust</h3>
+            <h3 className="cf-heading mt-6 text-[20px] font-medium">{zhHant ? "建立信任" : "Build Trust"}</h3>
             <p className="cf-body body-tc mt-3">
               {zhHant ? "在服務資訊與安心、專業的品牌感受之間取得平衡。" : "Balances service information with a reassuring, professional brand feel."}
             </p>
@@ -523,7 +581,7 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
                 }
               />
             </Reveal>
-            <h3 className="cf-heading mt-6 text-[20px] font-medium">Communicate Expertise</h3>
+            <h3 className="cf-heading mt-6 text-[20px] font-medium">{zhHant ? "傳達專業" : "Communicate Expertise"}</h3>
             <p className="cf-body body-tc mt-3">
               {zhHant ? "呈現技術能力，同時避免讓商務受眾承受過多資訊。" : "Presents technical capability without overwhelming a business audience with detail."}
             </p>
@@ -534,18 +592,19 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
       <Section index={4} register={register}>
         <Reveal>
           <SectionHeading
-            label="06 — DESIGNING BEYOND DESKTOP"
+            label={zhHant ? "06 — 跨裝置設計" : "06 — DESIGNING BEYOND DESKTOP"}
             title={zhHant ? "跨裝置保留正確的資訊順序與行動" : "Designing Beyond Desktop"}
             intro={
               zhHant
-                ? "版面不是單純把 desktop 縮小，而是依螢幕尺寸重新安排內容層級、閱讀節奏與主要行動，讓每個品牌在較小畫面上仍能傳達正確資訊。"
+                ? "版面不是單純把桌面版縮小，而是依螢幕尺寸重新安排內容層級、閱讀節奏與主要行動，讓每個品牌在較小畫面上仍能傳達正確資訊。"
                 : "These layouts aren’t the desktop version scaled down — content, reading order, and key actions were rearranged for each screen size, so every brand still communicates the right information on a smaller display."
             }
           />
         </Reveal>
-        <div className="mt-12 space-y-14">
+        <div className="mt-12">
           <Reveal>
             <ResponsiveEvidence
+              zhHant={zhHant}
               project={projects.sdx.name}
               desktop={{ src: "/images/case02/evidence/sdx-service-desktop.webp", alt: "Shun De Xing services page on desktop" }}
               mobile={{ src: "/images/case02/evidence/sdx-service-mobile.webp", alt: "Shun De Xing services page on mobile" }}
@@ -556,45 +615,26 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
               }
             />
           </Reveal>
-          <Reveal>
-            <ResponsiveEvidence
-              project={projects.charming.name}
-              desktop={{ src: "/images/case02/evidence/charming-home-desktop.webp", alt: "Charming Clinic desktop homepage" }}
-              mobile={{ src: "/images/case02/evidence/charming-home-mobile.webp", alt: "Charming Clinic mobile homepage" }}
-              caption={
-                zhHant
-                  ? "品牌影像、診所介紹與預約行動在手機上維持清楚的閱讀先後。"
-                  : "Brand imagery, the clinic introduction, and the booking action keep the same reading order on mobile."
-              }
-            />
-          </Reveal>
-          <Reveal>
-            <ResponsiveEvidence
-              project={projects.natex.name}
-              desktop={{ src: "/images/case02/evidence/natex-home-desktop.webp", alt: "NATEX desktop homepage" }}
-              mobile={{ src: "/images/case02/evidence/natex-home-mobile.webp", alt: "NATEX mobile homepage" }}
-              caption={
-                zhHant
-                  ? "版面在手機版重新排列，維持清楚的層級、可讀性與主要操作動線。"
-                  : "The layout rearranges for mobile while keeping content order, readability, and the main action path intact."
-              }
-            />
-          </Reveal>
         </div>
       </Section>
 
       <Section index={5} register={register}>
         <Reveal>
           <SectionHeading
-            label="07 — MY ROLE ACROSS THE PROJECTS"
+            label={zhHant ? "07 — 我在各專案中的角色" : "07 — MY ROLE ACROSS THE PROJECTS"}
             title={zhHant ? "相同的設計責任，不同的交付範圍" : "My Role Across the Projects"}
           />
         </Reveal>
-        <div className="mt-10 w-full min-w-0 max-w-full overflow-x-auto">
+        <div
+          className="cf-scroll-region mt-10 w-full min-w-0 max-w-full overflow-x-auto"
+          tabIndex={0}
+          role="group"
+          aria-label={zhHant ? "跨專案貢獻範圍表格" : "Contribution table across projects"}
+        >
           <table className="w-full min-w-[46rem] border-collapse text-left">
             <thead>
               <tr className="border-y cf-rule">
-                <th className="cf-meta py-4 pr-6 font-normal">Contribution</th>
+                <th className="cf-meta py-4 pr-6 font-normal">{zhHant ? "貢獻項目" : "Contribution"}</th>
                 <th className="cf-meta py-4 pr-6 font-normal">SDX</th>
                 <th className="cf-meta py-4 pr-6 font-normal">Charming Clinic</th>
                 <th className="cf-meta py-4 font-normal">NATEX</th>
@@ -603,9 +643,11 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
             <tbody>
               {contributionRows.map(([contribution, sdx, charming, natex]) => (
                 <tr key={contribution} className="border-b cf-rule">
-                  <th scope="row" className="cf-heading py-4 pr-6 text-[15px] font-medium">{contribution}</th>
+                  <th scope="row" className="cf-heading py-4 pr-6 text-[15px] font-medium">{zhHant ? CONTRIBUTION_LABEL_ZH[contribution] : contribution}</th>
                   {[sdx, charming, natex].map((value, index) => (
-                    <td key={`${contribution}-${index}`} className="cf-body py-4 pr-6 text-[15px]">{value}</td>
+                    <td key={`${contribution}-${index}`} className="cf-body py-4 pr-6 text-[15px]">
+                      {zhHant ? CONTRIBUTION_VALUE_ZH[value] : value}
+                    </td>
                   ))}
                 </tr>
               ))}
@@ -614,7 +656,7 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
         </div>
         <p className="cf-dim mt-5 max-w-[62ch] text-[14px] leading-6">
           {zhHant
-            ? "Content Direction 指辨識體驗所需資訊，並與 PM 或客戶協調取得內容；文案製作不在我的工作範圍內。"
+            ? "內容方向指辨識體驗所需資訊，並與 PM 或客戶協調取得內容；文案製作不在我的工作範圍內。"
             : "Content Direction refers to identifying the information required for the experience and coordinating with the PM or client to obtain it. Copy production was not part of my role."}
         </p>
       </Section>
@@ -624,23 +666,25 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
           <div className="lg:col-span-8">
             <Reveal>
               <SectionHeading
-                label="08 — REFLECTION"
+                label={zhHant ? "08 — 反思" : "08 — REFLECTION"}
                 title={
                   zhHant
-                    ? "Effective web design is not one visual style applied everywhere."
+                    ? "有效的網頁設計，不是把同一種視覺風格套用在所有地方。"
                     : "Effective web design isn’t about applying one visual style everywhere."
                 }
               />
             </Reveal>
             <p className="cf-body body-tc mt-8 max-w-[62ch]">
-              Across these projects, the design approach changed with the business context — from structuring broad corporate services, to guiding treatment discovery, to communicating technical expertise.
+              {zhHant
+                ? "在這些專案中，設計方式隨著商業情境調整——從整理龐大的企業服務，到引導使用者找到合適的療程，再到傳達技術專業。"
+                : "Across these projects, the design approach changed with the business context — from structuring broad corporate services, to guiding treatment discovery, to communicating technical expertise."}
             </p>
           </div>
 
           <aside className="border-t cf-rule pt-7 lg:col-span-4 lg:mt-0">
-            <p className="cf-meta cf-accent">CAPABILITIES</p>
+            <p className="cf-meta cf-accent">{zhHant ? "能力" : "CAPABILITIES"}</p>
             <ul className="mt-6 flex flex-wrap gap-2">
-              {["Information Architecture", "Client Communication", "UX/UI Design", "Brand Adaptation", "Responsive Web", "Frontend Execution"].map((item) => (
+              {(zhHant ? ["資訊架構", "客戶溝通", "UX/UI 設計", "品牌適配", "響應式網頁", "前端實作"] : ["Information Architecture", "Client Communication", "UX/UI Design", "Brand Adaptation", "Responsive Web", "Frontend Execution"]).map((item) => (
                 <li key={item} className="cf-tag">{item}</li>
               ))}
             </ul>

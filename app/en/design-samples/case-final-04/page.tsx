@@ -5,13 +5,13 @@ import { getCaseTheme } from "@/components/design-samples/case-final/caseTheme";
 import { getNextProject, getPreviousProject, getProjectBySlug } from "@/data/projects";
 
 export const metadata: Metadata = {
-  title: "Design Sample — Case 01 (Complex System) — EN",
+  title: "Design Sample — Case 04 (Confidential Mobile Wellness Product) — EN",
   robots: { index: false, follow: false },
 };
 
-const SAMPLE_SLUG = "complex-system";
+const SAMPLE_SLUG = "consumer-product";
 
-export default function CaseFinal01PageEn() {
+export default function CaseFinal04PageEn() {
   const project = getProjectBySlug(SAMPLE_SLUG);
   if (!project) notFound();
   return (
@@ -21,7 +21,7 @@ export default function CaseFinal01PageEn() {
       nextProject={getNextProject(project)}
       previousProject={getPreviousProject(project)}
       locale="en"
-      contentVersion="case01-v3"
+      contentVersion="case04-v1"
     />
   );
 }

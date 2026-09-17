@@ -3,15 +3,19 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { CONTACT_EMAIL, RESUME_URL } from "@/data/contact";
+import { CONTACT_EMAIL, RESUME_URL_EN, RESUME_URL_ZH } from "@/data/contact";
 import type { Locale } from "@/data/locale";
 import { getLenisInstance } from "@/components/site/lenisInstance";
 
 const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
 
+// The email address itself is never shown as visible text — only the
+// mailto: href carries it — so `value` stays empty and each row's arrow
+// (already a separate span appended after {link.value}) is all that
+// renders on the row's right side, same treatment for both links.
 const CONTACT_LINKS = (locale: Locale) => [
-  { label: "Email", value: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` },
-  { label: "Resume", value: locale === "zh" ? "線上履歷" : "Online Resume", href: RESUME_URL },
+  { label: locale === "zh" ? "聯絡我" : "CONTACT ME", value: "", href: `mailto:${CONTACT_EMAIL}` },
+  { label: locale === "zh" ? "線上履歷" : "RESUME", value: "", href: locale === "zh" ? RESUME_URL_ZH : RESUME_URL_EN },
 ];
 
 /**
@@ -27,7 +31,7 @@ const CONTACT_LINKS = (locale: Locale) => [
  * viewports (e.g. 1920x1080), since the content doesn't naturally fill a
  * full viewport height. Generous but fixed vertical padding instead.
  */
-export function SiteFooter({ locale = "zh" }: { locale?: Locale }) {
+export function SiteFooter({ locale = "zh", backToTopLabel }: { locale?: Locale; backToTopLabel?: string }) {
   const closingRef = useRef<HTMLDivElement | null>(null);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
   const detailsRef = useRef<HTMLUListElement | null>(null);
@@ -142,8 +146,18 @@ export function SiteFooter({ locale = "zh" }: { locale?: Locale }) {
       <footer className="scene-dark border-t scene-rule">
         <div className="site-frame flex items-center justify-between gap-6 py-8">
           <p className="type-v3-label scene-dim-text">© ANGELA YU 2026</p>
-          <button type="button" onClick={handleBackToTop} className="group type-v3-label scene-dim-text inline-flex items-center gap-2 transition-colors hover:text-acid focus-visible:text-acid">
-            <span>BACK TO TOP</span>
+          {/* type-v3-label's own font-size/line-height (0.75rem * 1.4) render
+              at exactly ~16.8px tall with zero padding of its own — below
+              the 24px WCAG 2.5.8 (AA) target-size minimum. py-1.5/px-1
+              extend the actual tappable area to ~28.8px; the matching
+              negative margin cancels the layout impact, so the footer row
+              and the label's own rendered size/position are unchanged. */}
+          <button
+            type="button"
+            onClick={handleBackToTop}
+            className="group type-v3-label scene-dim-text -mx-1 -my-1.5 inline-flex cursor-pointer items-center gap-2 px-1 py-1.5 transition-colors hover:text-acid focus-visible:text-acid"
+          >
+            <span>{backToTopLabel ?? "BACK TO TOP"}</span>
             <span aria-hidden className="transition-transform group-hover:-translate-y-1">↑</span>
           </button>
         </div>

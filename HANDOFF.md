@@ -2,7 +2,8 @@
 
 - Branch: `feat/case02-en-localization`.
 - Foundation tag: `v3-design-system-foundation`.
-- Current task: none. **CASE01 (ZH + EN), CASE02 (ZH + EN), CASE03 (ZH + EN), and CASE04 ZH V1 are all FROZEN.** CASE04 ZH V1 uses anonymized high-resolution exports from the 2026-09-12 3× PNG source ZIP; the product itself remains active development, but the portfolio case is frozen.
+- **CASE01 ZH: FROZEN / APPROVED.** Phases 1–5 plus the positioning, factual, and terminology corrections are complete and approved. Do not reopen CASE01 ZH discovery, redesign, or copy without a specific new instruction. CASE02 (ZH + EN), CASE03 (ZH + EN), and CASE04 ZH V1 remain FROZEN.
+- **Next: CASE01 English localization based on the frozen Chinese master.** EN currently still reflects the pre-correction state (see "CASE01 UI constraint" below) — the English pass should apply the same positioning, factual model, terminology, and CTA-localization corrections already verified in ZH, not re-derive them from scratch.
 - Review routes: `/design-samples/case-final-01` (CASE01 ZH), `/en/design-samples/case-final-01` (CASE01 EN), `/design-samples/case-final-02` (CASE02 ZH), `/en/design-samples/case-final-02` (CASE02 EN), `/design-samples/case-final-03` (CASE03 ZH), `/en/design-samples/case-final-03` (CASE03 EN).
 - **Continuity note:** this file was fully rewritten (not appended) to replace stale pre-freeze CASE02 status and a dropped prior history chain. Older history (Homepage Visual Polish V3/V3.1/V3.2, Lavender token checkpoint, About V2, CASE01 Responsive QA) is not reconstructed here — git log and topic branches remain the authoritative record per AGENTS.md's "if documentation conflicts with Git, investigate and report" rule.
 
@@ -75,12 +76,173 @@ Commit: `a2b29c0` — `feat(portfolio): add CASE02 evidence viewer`.
 
 # CASE01 — Complex System
 
-Status: **ZH and EN both FROZEN.** Do not resume polishing without a specific issue from a fresh audit.
+Status: **V3 Phase 2 visual composition complete; pending visual audit.** The approved 00–06 narrative, verified product story, dark editorial identity, typography, and section ownership remain locked. Phase 2 changed only evidence scale, crop, pairing, and hierarchy.
+
+## CASE01 UI constraint (verified — durable project truth, not a one-off note)
+
+**Corrected 2026-09-17 (second pass, same day): the template constraint applies to the BACKEND systems only — Platform Backend, Supplier Backend, Agent Backend. It does NOT apply to the Consumer Web Storefront.** An earlier same-day pass said "the Figma UI" generally, which overstated it — do not use that earlier framing. Never describe the whole CASE01 UI, or the Consumer Web Storefront specifically, as template-constrained.
+
+Engineering planned to use an existing UI template/component framework **for the backend systems**. Backend Figma UI was intentionally simple and primarily served as functional UX/system specification rather than bespoke visual-design exploration. The **Consumer Web Storefront was designed separately** as its own front-end experience/interface — treat its evidence as genuine UX/UI design work, not template-constrained output.
+
+**Future chats/agents must not position CASE01's backend systems as a visual-UI craftsmanship case. This does not extend to the Consumer Web Storefront.**
+
+**CASE01 primary portfolio value:** Complex System UX / Product Architecture / Business Logic / Workflow / State Design / Developer Handoff (backend systems) plus genuine consumer-facing UX/UI design (Consumer Web Storefront).
+
+**Team (verified 2026-09-17):** Lead Product Designer (Angela) + 1 UI Designer + 2 Engineers + PM (PM joined later, QA/coordination support).
+
+**Ownership (verified 2026-09-17):**
+- **Lead Product Designer** — Product Architecture, core UX/system direction, Platform Backend, Supplier Backend, Agent Backend, **and** Consumer Web Storefront.
+- **The other UI Designer** — extended Consumer Mobile and Streamer Backend from the Lead's established architecture, interaction patterns, and design direction.
+
+The correct claim: the designer led the product architecture and UX/system design, created functional interface specifications in Figma within the existing UI-template constraint **for the backend systems**, personally designed the Consumer Web Storefront's front-end experience separately, and collaborated directly with engineers to make the system implementable. This does **not** mean the designer was only a wireframe designer — the project still demonstrates Lead-level ownership of product structure, workflows, states, interaction logic, business rules, UX specification, cross-role consistency, and developer collaboration. `Lead Product Designer` remains the correct title.
+
+Do not accidentally imply the designer created the underlying UI template/framework, built a custom visual-design system for the entire product (backend included), personally designed every visual detail of all surfaces (Consumer Mobile / Streamer Backend belong to the other UI Designer), owned engineering implementation styling, or delivered pixel-perfect production UI — none of that is true and none of it should appear in this case's copy. Equally, do not undersell the Consumer Web Storefront as template-constrained — it wasn't.
+
+This clarification was reflected in ZH copy only (Sections 01, 04, 06 of `CaseOneFinalContent.tsx`, plus the Team metadata row in `CaseStudyPrototype.tsx`) on 2026-09-17, before the CASE01 Chinese freeze. **EN copy still says the pre-correction thing** (prominent "UI Design, Design Direction" in Section 01, "CORE UI & DESIGN DECISIONS" as the Section 04 label, "2 Engineers · PM" team metadata with no second designer, no backend/storefront distinction) — this needs the same correction during the English pass, which has not started. Do not treat the EN route as reflecting any of this positioning yet.
+
+V3 structure is locked to exactly seven narrative sections: 00 Project Snapshot (case opening), 01 Project Background & My Role, 02 Cross-border Commerce Workflow, 03 System Architecture & Key States, 04 Core UI & Design Decisions, 05 Cross-touchpoint States & Exception Handling, and 06 Results & Takeaways. The prior 11 content chapters were consolidated into six body chapters; all existing real evidence remains and is attached directly to the argument it proves. Product status is "Designed & Developed" and explicitly excludes launch or post-launch KPI claims.
+
+Current mapping: Section 03 remains conceptual only (system model + Inventory Status Flow). Section 04 now composes 04A Streamer List as context with a smaller focused filter detail; 04B Inventory Management as primary with a tightly cropped Product Inventory Log; 04C real pricing UI as primary, validation as strong secondary, and the sanitized logic diagram as support; 04D keeps the Order List at full content width with the Supplier Dashboard reduced to secondary context. Section 05 leads with the real Checkout out-of-stock state before the smaller Backend → Consumer Impact diagram, then uses one focused Return / Exchange main crop plus validation and operational-consequence details. Evidence labels use Context, Detail, System State, Validation, and Operational Evidence. Section 00 retains the small `View Interactive Demo ↗` CTA as supporting implementation evidence, never launch evidence.
+
+Recovered source files: `1-2 供貨商 - 商品管理.pdf` from `/Users/angela/Downloads/媒合銷售平台系統後台 - 第一階段.zip`; `1-5 平台方 - 訂單管理.pdf` from `/Users/angela/Desktop/未命名檔案夾 54/媒合銷售平台系統後台 - 第一階段/`. Phase 2 focused assets under `public/images/case01/evidence/`: `case01-inventory-log-focused.png`, `case01-checkout-out-of-stock-focused.png`, `case01-return-exchange-main-focused.png`, and `case01-return-exchange-consequence.png`. These are crops of the original evidence, not generated replacement UI.
+
+Implementation files: `CaseOneFinalContent.tsx`, `ReadingSection.tsx`, the focused evidence assets above, and `artifacts/case01-v3-phase2-visual-composition-zh-1440.png`. The approved 01 section uses an explicit `background-role` composition variant rather than a parallel global typography/layout system.
+
+Latest validation: TypeScript `npx tsc --noEmit` passed; targeted ESLint for the two changed components passed; `npm run build -- --webpack` passed with all routes statically generated. Chinese CASE01 was rendered from the production build and captured after loading all sections and evidence. Screenshot is exactly 1440 × 15,734px, down from the Phase 1 baseline of 1440 × 20,102px (21.7% shorter) through evidence composition/cropping rather than typography reduction or story removal.
 
 Most recent CASE01-specific fix: English evidence-image correction (separate from CASE02 history) — English CASE01 now uses the correct English versions of the CE, ISF, PRL, and BE evidence diagrams instead of the Chinese-labeled originals.
 Commit: `8ef49966fa61ce09772bb9a25436de5f3e315716` — `fix(portfolio): use English evidence images in CASE01`.
 
 Prior CASE01 ZH freeze checklist (Decision 03 terminology aligned to evidenced UI, real pricing evidence, 10-edit copy proofread, responsive QA at 1920/1440/820/390) remains valid — see git log on this file's history for detail if needed.
+
+## Phase 3 — Responsive QA (uncommitted, continues from Codex's partial pass)
+
+Codex started this pass and flagged two risks before hitting its usage limit; this session resumed from that point, fixed both, and found one additional overflow bug during testing. Desktop (1440, the frozen Phase 2 composition) is unchanged — every fix below is scoped to `lg:`-guarded mobile/tablet CSS or a mobile-only initial-scroll effect.
+
+**Risk 1 (confirmed) — Section 02/03 workflow diagrams shrank to illegibility.** `FlowEvidence.tsx` (used for the CE ecosystem diagram and the ISF inventory-state diagram) had no minimum width, so at 390px the diagram rendered at ~290px CSS width with unreadable text. Fixed by wrapping the frame in the same scrollable-evidence pattern already established elsewhere in this file (`overflow-x-auto`, `tabIndex`, `role="group"`, matching `.cf-figure-frame`/`.cf-scroll-region` conventions), with `min-w-[48rem] lg:min-w-0` — legible fixed width below `lg`, byte-identical full-width `object-contain` at `lg`+. A short "scroll to see the full diagram" hint (`lg:hidden`) was added under each caption.
+
+**Risk 2 (confirmed) — shared 64–70rem evidence min-width caused two distinct problems, fixed differently per cause:**
+- *Discoverability:* every `InspectableEvidence`/`TopCropEvidence` figure (Order List, Inventory Log, Pricing Detail, Return/Exchange ×3, Checkout out-of-stock) forces a 64–70rem canvas below `lg`, so mobile shows only a ~35%-wide slice with no visual cue more exists. Added an `lg:hidden` scroll-hint caption to each (`InspectableEvidence` gained an optional `scrollHint` prop). No image assets changed; no aspect ratios changed.
+- *Wasted space:* Order List and Supplier Dashboard specifically are full-page admin screenshots whose left sidebar (~15% of the source image, ~160px in the rendered 70rem canvas) is not the evidence — so the *default* scroll position opened on nav chrome instead of the table/dashboard. New client component `ScrollSkipEvidence.tsx` (a variant of `InspectableEvidence` that sets `scrollLeft` past the sidebar on mount, gated to `<lg` via `matchMedia`) now backs both. Order List opens on Status/Order ID/Customer/Payment and scrolls right to Shipping/Source/Order Date/Actions; Supplier Dashboard opens on the actual dashboard cards instead of the nav rail. No new image crops were generated — same source assets, just a different default `scrollLeft`.
+
+**Additional bug found during this pass (not in Codex's original two, but a direct instance of the Global rule "no horizontal page overflow, no clipped titles"):** `EvidenceSection`'s section label (`CaseOneFinalContent.tsx`) and `ReadingSection`'s label both used unconditional `whitespace-nowrap`, unlike every other CASE02/03/04 section-heading component in this codebase, which already use `md:whitespace-nowrap`. Long English labels (e.g. "05 — CROSS-TOUCHPOINT STATES & EXCEPTION HANDLING") overflowed the 390px viewport (`document.documentElement.scrollWidth` measured 557px against a 390px window). Brought CASE01 in line with the existing shared pattern (`md:whitespace-nowrap`) — wraps to two lines below `md`, single line at `md`+ exactly as before. Verified no `docScrollWidth` overflow remains at 390 on both locales after the fix.
+
+**What was NOT changed:** 04A Streamer List/Filter (TopCropEvidence top-crop already reads reasonably at the 64rem canvas — verified visually, left untouched); 04C Pricing Detail structure/order; Section 05 Return/Exchange's existing context→detail→consequence split (already matches the requested pattern, images already pre-cropped per concern); no copy, no 00–06 structure, no desktop hierarchy, no new image assets, no motion.
+
+**Validation:** `npx tsc --noEmit` passed; targeted ESLint on `CaseOneFinalContent.tsx`, `FlowEvidence.tsx`, `ScrollSkipEvidence.tsx`, `ReadingSection.tsx` passed; `npm run build -- --webpack` passed with all routes statically generated. Verified via the built production server (port 3100) at 1920/1440/820/390 on both `/design-samples/case-final-01` and `/en/design-samples/case-final-01`: no `docScrollWidth` overflow at any width, diagrams legible without scroll on 390 (48rem canvas) and fit fully with no scroll from 820 up, Order List horizontal scroll confirmed to reach Payment/Shipping/Source/Actions, Inventory Log scroll confirmed to reach Role/Timestamp, desktop (1440/1920) pixel-equivalent to pre-Phase-3 (no scroll frames, no hint text, sidebar visible as designed).
+
+**Still uncommitted** — same worktree caveat as before applies (see bottom of this file): these Phase 3 edits sit on top of Codex's earlier uncommitted Phase 2 work in the same two files. Nothing has been committed by this session.
+
+## Phase 4 — Minimal Explanatory Motion (uncommitted, builds on Phase 3)
+
+Scope was explicitly motion-only: no layout, copy, crop, responsive-behavior, section, evidence, or business-logic changes. Two pre-existing motion pieces were already in place before this phase and were left untouched: `FlowEvidence`'s clip-path wipe on the Section 02/03 diagrams, and `EvidenceMotion`'s batched fade for every evidence figure (`data-evidence-entrance`). Phase 4 filled the remaining gap — Sections 02–05 had no entrance motion at all for their own label/title/supporting text, unlike Sections 00/01/06 (`ReadingSection`), which already had a staged label→title reveal.
+
+**New client component `EvidenceHeading.tsx`** replaces the old static `EvidenceSection` helper. It plays the identical label→title timeline `ReadingSection` already uses (same durations, easing, offsets, translateY) so all seven sections settle in with one consistent register — reused existing motion tokens rather than inventing new ones, once, `prefers-reduced-motion`-gated via the same `gsap.matchMedia` pattern used everywhere else in this file.
+
+**New client component `SequenceReveal.tsx`** replaces the old static `Sequence` helper (Section 05's "what happened / why can't I continue / what's next" three-column breakdown) — the case's clearest cause→consequence chain and the brief's named "most useful place for explanatory motion." A short one-time 0.14s stagger across the three existing steps reinforces that reading order; the three-column layout itself is untouched.
+
+**Two plain paragraph/text blocks gained `data-evidence-entrance`** (reusing `EvidenceMotion`'s existing batch-fade rather than writing new motion code): Section 02's workflow-sequence caption below the diagram, and Section 03's two-paragraph intro block (treated as one unit, not animated per-paragraph, since animating every label independently was explicitly out of scope).
+
+**Section 04 required no change** — `EvidenceMotion`'s existing batch stagger already reveals evidence in DOM order (primary before detail: List before Filter, Inventory Management before Log, Pricing before Validation, Order List before Supplier Dashboard), which already satisfies "primary evidence appears first, detail follows slightly after" as a side effect of Phase 2's approved DOM order.
+
+**Section 05's DOM order was deliberately NOT changed** to chase the brief's idealized "explanation before evidence" sequence — Phase 2 approved leading with the real Checkout out-of-stock evidence before the supporting BE diagram (strongest evidence first), and reordering content is a layout decision outside this phase's scope. Motion reinforces the existing, approved order instead of rewriting it.
+
+**Intentionally left static:** 04A–04D evidence content/labels beyond the existing figure fade (no per-label animation); Section 05 Case 02 (Return/Exchange) — the existing generic entrance already reads clearly and a bespoke progression wasn't judged to add comprehension; Section 06's `ScopeSummary` closing grid; the Hero/Section 00 opening (already restrained via `ReadingSection`, untouched).
+
+**Reduced motion:** every new and existing motion path shares one gate — `gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", …)`. When reduced motion is preferred, that callback never registers, so `gsap.set(..., {autoAlpha:0, y:...})` never runs and elements stay at their default (fully visible, no offset) permanently — no staged delay, nothing hidden waiting on motion. Verified by code inspection against the same pattern already carrying Sections 00/01/06 and all evidence figures through Phase 1–3; the available browser tooling in this session has no control for emulating `prefers-reduced-motion` at runtime, so this was not additionally verified via a live toggle.
+
+**Mobile:** no changes to horizontal-scroll evidence behavior, scroll hints, or the Order List/Supplier Dashboard scroll-skip from Phase 3 — verified unchanged at 390px. New entrance motion (section label/title, Section 03 paragraph block, Section 02 caption, Section 05 sequence) is the same lightweight opacity/translateY treatment on both mobile and desktop; nothing new was added that could compete with touch-driven horizontal scrolling.
+
+**Validation:** `npx tsc --noEmit` passed; targeted ESLint on `CaseOneFinalContent.tsx`, `EvidenceHeading.tsx`, `SequenceReveal.tsx` passed; `npm run build -- --webpack` passed with all routes statically generated. Verified visually on the dev server at 1440 and 390 (ZH): label/title reveal on Section 02, mid-stagger and settled states of the Section 05 sequence, Order List/Supplier Dashboard scroll-skip and hints unchanged, no layout shift or overlap.
+
+## Phase 5 — Final Chinese Audit / Freeze Preparation (audit only, no content/layout changes)
+
+Produced two review deliverables, not committed, for the Case Study lead to proofread before a separate freeze-commit request:
+- `artifacts/case01-v3-phase5-zh-copy-manifest.md` — exact rendered Chinese copy (headings, paragraphs, captions, alt text, metadata, CTAs), grouped 00 through 06 plus a closing-nav appendix. Nothing rewritten.
+- `artifacts/case01-v3-phase5-audit-report.md` — terminology audit, claim audit, Interactive Demo audit, structural audit, responsive/motion smoke check, reduced-motion code verification, and validation results.
+
+**Findings (not yet fixed — copy lead's call):**
+- Four terminology inconsistencies: Supplier (供應商 vs 供貨商), Agent (代理商 vs 代理公司), Warehouse (倉庫 vs 倉儲 — Section 00's opening summary vs Sections 01–02's body), and Workflow (04D's own title says 流程, its body says 工作流, one sentence apart).
+- The "View Interactive Demo ↗" CTA (`CaseStudyPrototype.tsx:386`) is hardcoded English-only and doesn't branch on locale like every other CTA in that file — no "互動 Demo" shown on the ZH route. Not a claim-safety issue (doesn't imply Production/Live/Launch), just a localization gap.
+
+**Confirmed clean:** claim audit (no formal-launch/commercial-operation/KPI/usability-test/pixel-perfect overclaims; the required "Designed & Developed, not commercially launched, no post-launch KPI claims" disclaimer is present and correctly worded in both locales); demo link target/behavior/labeling-safety; structural order (00→01→02→03→04A–D→05 Case01/Case02→06, no deprecated V1/V2 sections reachable); responsive/motion smoke check at 1440/820/390 (no overflow, no clipped headings, scroll hints and Order List scroll-skip unchanged); reduced-motion gating (`gsap.matchMedia("(prefers-reduced-motion: no-preference)")` confirmed present in every CASE01 motion file by code inspection — runtime emulation unavailable in this session's tooling, not blocking per instructions).
+
+**Validation:** `tsc`, targeted ESLint, and `next build` all passed.
+
+**STOPPED per instructions — nothing committed.** Next step is the Case Study lead's proofread of the copy manifest; a freeze commit will be requested separately after that.
+
+## Positioning Correction (2026-09-17, before Chinese freeze — copy only, no layout/responsive/motion change)
+
+Designer clarification: engineering had already decided to use an existing UI template/component framework for CASE01, so the Figma UI was intentionally kept simple. The case must present the existing screens as **functional UX / system-design evidence**, not a highly customized visual-design showcase. See "CASE01 UI constraint" above this Phase log for the full, durable statement of this — that section is the one to check in future sessions, not this changelog entry.
+
+**Exact ZH-only changes** (EN intentionally untouched — see the constraint note above; this was explicitly scoped "before CASE01 Chinese freeze," and English copy optimization has a standing hold from Phase 5):
+- Section 01, paragraph 2 (role list): reordered/revised to Product Architecture → Information Architecture → UX Flow → Interaction Design → State Design → Business Rule 定義 → Developer Handoff, with "Design Direction" dropped and UI Design demoted to its own clause ("UI Design 則在既有 Template 與元件架構的限制下進行"). `Lead Product Designer` title kept unchanged.
+- Section 01: one new paragraph inserted (3rd of what is now 4) stating the template constraint and what the design phase actually focused on (product architecture, workflow, IA, System States, Validation, Edge Cases) and that Figma delivered UX/UI specification for engineering.
+- Section 04 label: "核心介面與設計決策" → "核心 UX 決策與介面證據" (the H2 title beneath it was already operations/collaboration/pricing-focused and needed no change).
+- Section 06: one new paragraph inserted (3rd of what is now 4) framing the project's real design challenge as product architecture/Workflow/System States/Business Rules, not a customized visual interface. The existing broader takeaway sentence was retained verbatim, per instructions, immediately after it.
+- Sections 04A–04D and all evidence captions/bodies were reviewed and left untouched — none of that copy currently implies visual-design ownership (captions already say CONTEXT/DETAIL/SYSTEM STATE/VALIDATION/OPERATIONAL EVIDENCE, which was already correctly positioned from Phase 2).
+
+`artifacts/case01-v3-phase5-zh-copy-manifest.md` has been updated in place to reflect all of the above (changed lines marked "(new)"/"(revised)"); the Phase 5 audit report's terminology findings (Supplier/Agent/Warehouse/Workflow word-choice) are untouched by this pass — still the copy lead's call, unrelated to this positioning correction.
+
+**Validation:** `tsc`, targeted ESLint, and `next build` all passed. Verified in the live DOM (not just source) that Section 01 now renders 4 paragraphs in order, Section 04's label reads "04 — 核心 UX 決策與介面證據", and Section 06 renders 4 paragraphs in order with the new sentence third — no overflow, no layout change.
+
+**STOPPED per instructions — nothing committed.**
+
+## Final Factual Correction (2026-09-17, same day, before Chinese freeze — copy only)
+
+Corrects an overstatement in the Positioning Correction above: the template constraint applies to the **backend systems only** (Platform/Supplier/Agent Backend), not the Consumer Web Storefront, which was designed separately. Also adds a previously-missing team member (1 UI Designer) to the Team metadata. See "CASE01 UI constraint" above — now updated to the corrected, precise version — for the durable statement; this entry is the changelog only.
+
+**Exact ZH-only changes** (EN untouched, same standing hold):
+- `CaseStudyPrototype.tsx` Team metadata (ZH row only): "2 Engineers · PM" → "1 UI Designer · 2 Engineers · PM". Role/Platform/Status rows unchanged.
+- Section 01, paragraph 2 (role list): replaced verbatim with the designer-supplied text — same responsibility hierarchy as before, but now explicitly attributes backend UI Design to the template constraint and states the Consumer Web Storefront's front-end experience/interface was designed separately.
+- Section 01, paragraph 3 (constraint statement): replaced verbatim — now says "後台開發端" (backend engineering) specifically, not a general "開發端," and adds an explicit sentence that the Consumer Web Storefront had its own separate front-end UX/UI design process.
+- Section 01, paragraph 4 (ownership): replaced verbatim — "另一位設計師" → "另一位 UI Designer" (matches the new team metadata), "模式" → "Interaction Patterns." Ownership split unchanged (Lead: Platform/Supplier/Agent Backend + Consumer Web Storefront; other UI Designer: Consumer Mobile + Streamer Backend) but now made explicit as a named team role rather than an unspecified "another designer."
+- Section 06: the design-challenge sentence now says "不是替**後台系統**建立一套高度客製化的視覺介面" (backend systems specifically) instead of a general "不是建立一套...視覺介面" — narrows the claim to backend, consistent with the storefront not being template-constrained.
+- Section 04 label: unchanged, per instructions ("核心 UX 決策與介面證據" already correct — backend evidence demonstrates UX/workflow/IA/state/validation, consumer-facing evidence may still read as genuine UX/UI design evidence).
+
+**Consistency audit (item 7):** searched all CASE01-specific "Designer"/"Engineer"/"PM" mentions in both files — no remaining contradiction found. The only other "Designer"/"Team" metadata rows in `CaseStudyPrototype.tsx` belong to CASE03/CASE04 (different `isCaseThreeV1`/`isCaseFourV1` branches), not CASE01.
+
+**Validation:** `tsc`, targeted ESLint, and `next build` all passed. Verified in the live DOM: Team metadata reads "1 UI Designer · 2 Engineers · PM", Section 01 renders the four updated paragraphs in order, Section 06's third paragraph now says "後台系統" — no overflow at 1440 (`scrollWidth` 1425), no layout change.
+
+**STOPPED per instructions — nothing committed. English still untouched.**
+
+## Final Freeze Cleanup (2026-09-17, same day, before Chinese freeze — copy only)
+
+Last ZH pass before freeze. Two kinds of fixes: removed a duplicate sentence, and normalized the four terminology inconsistencies the Phase 5 audit flagged (none of which required a factual correction — pure word-choice consistency).
+
+- **Section 01, paragraph 3:** removed the trailing "Consumer Web Storefront 則依照消費者購物流程另外進行前台 UX/UI 設計" sentence — paragraph 2 already establishes that distinction, so it was redundant. Also dropped "確定" from "後台開發端確定採用" → "後台開發端採用" (tightened, no meaning change).
+- **Terminology normalized** (all four Phase 5 findings resolved):
+  - Supplier: 供貨商 → 供應商, at `CaseOneFinalContent.tsx` (Section 02 sequence caption, and the Supplier Dashboard alt text in 04D). 3 occurrences now read 供應商 consistently.
+  - Agent: 代理商 → 代理公司, at `CaseOneFinalContent.tsx` (Section 01 paragraph 1, Section 02 sequence caption) — now matches `CaseStudyPrototype.tsx`'s existing Section 00 usage.
+  - Warehouse: 越南倉儲 → 越南倉庫 at `CaseStudyPrototype.tsx` (Section 00 opening summary) — that usage is a system-role reference (paired with Supplier/Agent/Streamer/Consumer in a role list), not a warehousing-process reference, so per the rule (倉庫 = physical location/system role, 倉儲 = process only) it takes 倉庫. This was the only 倉儲 occurrence in CASE01; the term no longer appears anywhere in the case.
+  - Workflow: 工作流 → 工作流程 at `CaseOneFinalContent.tsx` (04D body) — matches the "as Chinese prose" rule; DecisionBlock/Section labels using "流程" (Section 02, 04D's own title) were correct already and untouched.
+- **Demo CTA localized:** `CaseStudyPrototype.tsx`'s CTA now reads `{zhHant ? "互動 Demo ↗" : "Interactive Demo ↗"}` — was hardcoded English-only before. Link target/`target`/`rel` unchanged.
+
+**Consistency re-check:** no remaining factual or terminology contradiction found across CASE01 ZH copy.
+
+**Validation:** `tsc`, targeted ESLint, and `next build` all passed. Verified in the live DOM on both locales: ZH CTA reads "互動 Demo ↗", EN CTA still reads "Interactive Demo ↗" (unaffected), all four terminology fixes render correctly, no overflow at 1440 (`scrollWidth` 1425).
+
+`artifacts/case01-v3-phase5-zh-copy-manifest.md` is now the **FINAL** version — rewritten (not just patch-annotated) to the current, freeze-ready state, with a revision log at the bottom for context. This is the file for the Case Study lead's proofread.
+
+**STOPPED per instructions — nothing committed. English still untouched.**
+
+## Freeze Commit (2026-09-17, same day)
+
+CASE01 ZH formally approved and frozen. Before committing, `git status`/`git diff` review found the working tree was not a clean CASE01-only diff — three files (`CaseStudyPrototype.tsx`, `ChapterRegister.tsx`, `data/projects.ts`) mixed my CASE01 edits with other already-uncommitted work. Isolated-worktree testing (not the real repo) showed that work — a Previous/Next cross-navigation feature, locale-aware accessibility labels, small CASE02/03/04 metadata-label localization, and a Home-page visual-asset feature — was load-bearing: `CaseStudyPrototype`'s `previousProject` prop is non-optional, so every one of the ten case-study route files needs it; `ChapterRegister`, `CaseTwoHeroEvidence`, and `CaseFourHeroEvidence` already require a `locale` prop; `SiteFooter` already requires `backToTopLabel`. Reverting only the 3 originally-flagged files would have broken the type graph. Angela chose to include the full validated cascade rather than force an artificial split.
+
+**Files committed** (verified via a throwaway `git worktree` checked out at the prior HEAD, with only this exact file set copied in — `tsc`, targeted ESLint, and `next build` all passed standalone, confirming the set is both necessary and sufficient):
+
+CASE01-exclusive: `CaseOneFinalContent.tsx`, `FlowEvidence.tsx`, `ScrollSkipEvidence.tsx` (new), `EvidenceHeading.tsx` (new), `SequenceReveal.tsx` (new), `ReadingSection.tsx`, `app/design-samples/case-final-01/page.tsx`, `app/en/design-samples/case-final-01/page.tsx`, CASE01 evidence images (see below).
+
+Shared infrastructure required by the above: `CaseStudyPrototype.tsx`, `ChapterRegister.tsx`, `CaseTwoFinalContent.tsx`, `CaseFourFinalContent.tsx`, `VideoEvidence.tsx` (new), `components/site/SiteFooter.tsx`, `data/projects.ts`, `data/contact.ts`, and the remaining case-study route files (`app/design-samples/case-final-{02,03,04,dark,light}/page.tsx`, `app/en/design-samples/case-final-{02,03,04}/page.tsx` — the last is a new file/directory).
+
+CASE01 evidence images: 20 new `.webp`/`-focused.png` files under `public/images/case01/` replacing 15 deleted `.png` originals (the `.webp` migration from Phase 2/3); 2 unreferenced leftover crop files (`evidence/case01-inventory-log.png`, `evidence/case01-return-exchange-detail.png`) were deliberately excluded — not referenced by any current source. CASE02 also needed 3 new poster images (`charming-walkthrough-poster.jpg`, `natex-walkthrough-poster.jpg`, `sdx-walkthrough-poster.jpg`) referenced by `VideoEvidence.tsx`/`CaseTwoFinalContent.tsx`.
+
+**Deliberately excluded** (genuinely unrelated, confirmed by inspection, not needed for the build to pass): `AGENTS.md`, `CLAUDE.md`, `.gitignore` (a separate private/public-history housekeeping decision), `app/globals.css` (large, broad site-wide CSS work — the handful of classes CASE01 needs already exist at the prior HEAD; only a cosmetic keyboard-focus-outline enhancement is missing in isolation), `SiteHeader.tsx`, About V2, Home Hero, `.impeccable/`, `tmp/`, `public/videos/`, `public/brand/`, `public/images/about/`, `public/images/home/*.webp`, other CASE02 image churn not required by the code above, and `artifacts/` (already gitignored).
+
+Commit message: `chore(portfolio): checkpoint validated case-study state` — not a CASE01-only message, since the commit's actual diff includes the shared infrastructure above.
+
+**Validation:** `tsc`, targeted ESLint, and `next build` all passed — both in the real working tree and, more importantly, in the isolated verification worktree with only the committed file set present.
 
 ---
 
@@ -369,6 +531,8 @@ Do not reopen CASE01, CASE02, CASE03, or CASE04 (ZH V1) discovery. Do not ask th
 
 # NEXT ACTION
 
-No active task. CASE01, CASE02, CASE03 (ZH + EN), and **CASE04 ZH V1 are all complete and frozen** (product itself remains ACTIVE / IN DEVELOPMENT; only the portfolio case is frozen). Portfolio V1 coverage (all four case studies) is now complete. Selected Work later includes a **Foresight Realtors** case. A whole-site audit may now proceed.
+**CASE01 ZH is FROZEN / APPROVED and committed** (checkpoint commit on `feat/case02-en-localization` — see git log for the hash; see this file's own changelog sections above for what shipped: Phases 1–5, positioning correction, factual correction, final freeze cleanup). `artifacts/case01-v3-phase5-zh-copy-manifest.md` (gitignored, local-only) remains the reference copy record. Do not reopen CASE01 ZH discovery or redesign it without a specific new instruction.
 
-Note: the worktree has unrelated uncommitted changes (`AGENTS.md`, `CLAUDE.md`, `app/globals.css`, `ReadingSection.tsx`, `SiteHeader.tsx`, `.impeccable/`, `artifacts/case01-*.png`) and untracked `case-final-04`/`en/case-final-04` scaffolding, none of which were reviewed or authored as part of the CASE01/CASE02/CASE03 work recorded above. A future session should run `git status`/`git diff` to assess their state before treating them as either in-progress work or safe to discard.
+**Next action: CASE01 English localization**, based on the frozen Chinese master. EN currently still reflects the pre-correction state — still says "UI Design, Design Direction" prominently in Section 01, still labels Section 04 "CORE UI & DESIGN DECISIONS," still "2 Engineers · PM" with no second designer, still an unlocalized "View Interactive Demo ↗", and hasn't received the terminology normalization either. The English pass should mirror ZH's already-verified positioning, factual model (Team = Lead Product Designer + 1 UI Designer + 2 Engineers + PM; backend-only template constraint; Consumer Web Storefront separately designed), terminology, and CTA localization — not re-derive them from scratch. Per the workflow rule, do not restart CASE01 discovery. CASE02, CASE03, and CASE04 ZH V1 remain complete and frozen. Selected Work later includes a **Foresight Realtors** case.
+
+Note: this commit also carried necessary shared case-study infrastructure (Previous/Next cross-navigation, locale-aware a11y labels, small CASE02/03/04 metadata-label localization, a Home-page visual-asset feature) that was already uncommitted and load-bearing for CASE01's own dependency chain — see the commit message and this file's freeze-commit changelog entry for the full file list and reasoning. `AGENTS.md`, `CLAUDE.md`, `app/globals.css`, `SiteHeader.tsx`, `.impeccable/`, and other still-uncommitted files remain genuinely unrelated and were deliberately left out of that commit.

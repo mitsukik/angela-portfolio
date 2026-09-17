@@ -44,6 +44,7 @@ export type ProjectStageColumn = "text-left" | "media-left";
  * its own choreography without changing the locked column rhythm above. */
 export type ProjectStageVertical = "top" | "middle" | "bottom";
 export type ProjectAccent = "acid" | "lavender";
+export type ProjectHomeVisual = "system-cover" | "web-collage" | "operations-cover" | "phone-triptych";
 
 export type Project = {
   id: string;
@@ -57,6 +58,9 @@ export type Project = {
   image: string;
   /** Approved, production-optimized visual used only by Home / Selected Work. */
   homeImage?: string;
+  /** Approved real evidence used by the Home / Selected Work scene. */
+  homeImages?: string[];
+  homeVisual?: ProjectHomeVisual;
   alt: string;
   /** Selected Work pinned-stage presentation state — alternating black/white
    * registers (01 dark, 02 light, 03 dark, 04 light) per Angela's V3
@@ -138,8 +142,10 @@ export const projects: Project[] = [
       "Bringing products, inventory, orders, refunds, and role permissions together,",
       "turning complex operations into a clear, scalable experience.",
     ],
-    image: "/work/case-01.jpeg",
-    alt: "Complex System project visual",
+    image: "/images/case01/evidence/case01-order-list.webp",
+    homeImage: "/images/home/case01-home-visual.webp",
+    homeVisual: "system-cover",
+    alt: "Order management interface from the Complex System case study",
     caseStudy: {
       displayTitle: "複雜系統設計",
       eyebrowTitle: "COMPLEX SYSTEM",
@@ -402,14 +408,33 @@ export const projects: Project[] = [
       "Bringing brand positioning, content structure, and visual design together",
       "to create a clear, consistent digital presence.",
     ],
-    image: "/work/case-01.jpeg",
-    alt: "Corporate Website project visual",
+    image: "/images/case02/evidence/sdx-home-desktop.webp",
+    homeImage: "/images/home/case02-home-visual.webp",
+    homeImages: [
+      "/images/case02/evidence/sdx-home-desktop.webp",
+      "/images/case02/evidence/charming-home-desktop.webp",
+      "/images/case02/evidence/natex-home-desktop.webp",
+    ],
+    homeVisual: "web-collage",
+    alt: "Three responsive brand websites from the Brand and Web Experience case study",
     caseStudy: {
       summary: "A responsive brand experience shaped around clear content and a consistent digital presence.",
       metadata: {
-        role: "Product Designer",
-        timeline: "To be added",
-        platform: "Responsive Web",
+        "角色": "Product Designer",
+        "平台": "Responsive Web",
+      },
+      ...placeholderSections,
+    },
+    // Homepage-card metadata labels only (see ProjectScene.tsx) — this
+    // project's real case content lives in CaseTwoFinalContent.tsx, not
+    // here; this object exists solely so the /en homepage card doesn't
+    // fall back to the zh dict's Chinese keys as literal English-route
+    // labels, same fix already applied to CASE01's existing caseStudyEn.
+    caseStudyEn: {
+      summary: "A responsive brand experience shaped around clear content and a consistent digital presence.",
+      metadata: {
+        Role: "Product Designer",
+        Platform: "Responsive Web",
       },
       ...placeholderSections,
     },
@@ -435,23 +460,32 @@ export const projects: Project[] = [
       "Bringing device status, data, and operational workflows together",
       "to make complex information easier to understand and manage.",
     ],
-    image: "/work/case-01.jpeg",
-    // Homepage / Selected Work card only (see ProjectVisual's
-    // useHomeImage path) — case03-monitoring-dashboard.webp (a
-    // different, unrelated client's asset) must never be reachable from
-    // this project's homepage card, so this entry intentionally has no
-    // homeImages/homeVisual: homeImage alone is enough for the only
-    // code path Selected Work actually uses, and leaving out
-    // homeImages/homeVisual means there is no multi-image collage path
-    // left for this project at all.
+    image: "/images/case03/case03-hero-desktop-tablet.webp",
     homeImage: "/images/home/case03-home-visual.webp",
-    alt: "Manufacturing operations interface project visual",
+    // No homeImages/homeVisual: case03-monitoring-dashboard.webp (the
+    // previous 3rd collage tile) belongs to a different, unrelated
+    // client and must never render for this project. homeImage alone
+    // is enough for ProjectVisual's useHomeImage path (the only one
+    // Selected Work actually uses), and omitting homeVisual/homeImages
+    // means there is no multi-image collage path left for this project
+    // at all — not just an unused one — so that asset can't resurface
+    // here even if a future call site omits useHomeImage.
+    alt: "Manufacturing operations dashboard and industrial tablet interface",
     caseStudy: {
       summary: "A system experience that brings device status, data, and daily operations into one clear workflow.",
       metadata: {
-        role: "Product Designer",
-        timeline: "To be added",
-        platform: "Web · Industrial Tablet",
+        "角色": "Product Designer",
+        "平台": "Web · Industrial Tablet",
+      },
+      ...placeholderSections,
+    },
+    // Homepage-card metadata labels only — see the matching comment on
+    // CASE02 above.
+    caseStudyEn: {
+      summary: "A system experience that brings device status, data, and daily operations into one clear workflow.",
+      metadata: {
+        Role: "Product Designer",
+        Platform: "Web · Industrial Tablet",
       },
       ...placeholderSections,
     },
@@ -465,26 +499,42 @@ export const projects: Project[] = [
     stageVertical: "middle",
     accent: "lavender",
     year: "2026",
-    category: { zh: "消費者產品", en: "Consumer Product" },
-    title: "Consumer Product",
-    chineseTitle: "行動產品與使用者體驗",
+    category: { zh: "行動產品", en: "Mobile Product" },
+    title: "Confidential Mobile Wellness Product",
+    chineseTitle: "匿名行動療癒產品",
     tags: ["Mobile", "UI/UX", "Interaction", "User Flow"],
     description: [
-      "從使用流程與互動情境出發，",
-      "設計直覺且易於使用的行動產品體驗。",
+      "根據個人資料、當下狀態與偏好，",
+      "生成個人化療癒音樂的機密行動產品。",
     ],
     descriptionEn: [
-      "Starting from usage flows and interaction context,",
-      "designing an intuitive, easy-to-use mobile product experience.",
+      "Generating personalized healing audio from individual data, state, and preference —",
+      "a confidential mobile product.",
     ],
-    image: "/work/case-01.jpeg",
-    alt: "Consumer Product project visual",
+    image: "/images/case04/case04-hero-home-v2.webp",
+    homeImage: "/images/home/case04-home-visual.webp",
+    homeImages: [
+      "/images/case04/case04-generating.webp",
+      "/images/case04/case04-hero-home-v2.webp",
+      "/images/case04/case04-player.webp",
+    ],
+    homeVisual: "phone-triptych",
+    alt: "Anonymized home, generation, and listening screens from a confidential mobile wellness product",
     caseStudy: {
-      summary: "A mobile product experience focused on an intuitive journey and clear interaction patterns.",
+      summary: "A confidential mobile wellness product focused on an intuitive journey and clear interaction patterns.",
       metadata: {
-        role: "Product Designer",
-        timeline: "To be added",
-        platform: "Mobile Product",
+        "角色": "Product Designer",
+        "平台": "Mobile Product",
+      },
+      ...placeholderSections,
+    },
+    // Homepage-card metadata labels only — see the matching comment on
+    // CASE02 above.
+    caseStudyEn: {
+      summary: "A confidential mobile wellness product focused on an intuitive journey and clear interaction patterns.",
+      metadata: {
+        Role: "Product Designer",
+        Platform: "Mobile Product",
       },
       ...placeholderSections,
     },
@@ -498,4 +548,9 @@ export function getProjectBySlug(slug: string) {
 export function getNextProject(project: Project) {
   const currentIndex = projects.findIndex((item) => item.slug === project.slug);
   return projects[(currentIndex + 1) % projects.length];
+}
+
+export function getPreviousProject(project: Project) {
+  const currentIndex = projects.findIndex((item) => item.slug === project.slug);
+  return projects[(currentIndex - 1 + projects.length) % projects.length];
 }

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CaseStudyPrototype } from "@/components/design-samples/case-final/CaseStudyPrototype";
 import { getCaseTheme } from "@/components/design-samples/case-final/caseTheme";
-import { getNextProject, getProjectBySlug } from "@/data/projects";
+import { getNextProject, getPreviousProject, getProjectBySlug } from "@/data/projects";
 
 export const metadata: Metadata = {
   title: "Design Sample — Case 03 (Confidential Manufacturing Operations System) — EN",
@@ -19,6 +19,7 @@ export default function CaseFinal03PageEn() {
       theme={getCaseTheme(SAMPLE_SLUG)}
       project={project}
       nextProject={getNextProject(project)}
+      previousProject={getPreviousProject(project)}
       locale="en"
       contentVersion="case03-v1"
     />

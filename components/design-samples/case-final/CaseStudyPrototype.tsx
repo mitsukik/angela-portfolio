@@ -346,16 +346,16 @@ export function CaseStudyPrototype({
                         一個根據個人資料、當下狀態與偏好生成個人化療癒音樂的行動應用。系統需要處理多種輸入與生成邏輯，但使用者不需要理解這些複雜機制。
                       </p>
                       <p className="cf-body body-tc">
-                        我在早期功能流程與初步工程實作完成後接手 UX/UI，重新檢視既有體驗，優先處理最影響操作的問題，並建立一致的行動裝置 UI 系統。
+                        我在早期功能流程與初步工程實作完成後接手 UX/UI，重新檢視既有體驗，優先處理最影響操作的問題，並建立一致的行動裝置介面語言與可重用的互動模式。
                       </p>
                     </>
                   ) : (
                     <>
                       <p className="cf-body body-tc">
-                        A mobile app that generates personalized healing audio from personal data, current state, and preferences. The system handles a range of inputs and generation logic that the user never needs to see.
+                        A mobile app that generates personalized healing audio from personal data, current state, and preferences. The system handles a range of inputs and generation logic that the user doesn&apos;t need to understand.
                       </p>
                       <p className="cf-body body-tc">
-                        I took over UX/UI after the early functional flow and initial engineering build were in place, reviewed the existing experience, prioritized the issues that affected usability most, and built a consistent mobile UI system.
+                        I took over UX/UI after the early functional flow and initial engineering build were in place, reviewed the existing experience, prioritized the issues that affected usability most, and built a consistent mobile interface language with reusable interaction patterns.
                       </p>
                     </>
                   )}

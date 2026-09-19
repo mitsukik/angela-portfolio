@@ -61,3 +61,7 @@ next-env.d.ts
 
 # design source
 /.stitch/
+
+# superseded/unsafe CASE04 evidence derivatives — kept locally for
+# continuity, never served from public/
+/private-archive/

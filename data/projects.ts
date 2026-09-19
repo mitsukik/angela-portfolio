@@ -409,12 +409,12 @@ export const projects: Project[] = [
     chineseTitle: "企業品牌形象網站",
     tags: ["Web Design", "UI/UX", "Responsive", "Brand"],
     description: [
-      "整合品牌定位、內容架構與視覺設計，",
-      "打造清晰且一致的企業數位體驗。",
+      "三個真實商業網站，涵蓋資訊架構、UX/UI 設計與不同程度的前端實作，",
+      "皆已正式上線。",
     ],
     descriptionEn: [
-      "Bringing brand positioning, content structure, and visual design together",
-      "to create a clear, consistent digital presence.",
+      "Three real commercial websites spanning information architecture, UX/UI design,",
+      "and varying levels of frontend implementation — all live.",
     ],
     image: "/images/case02/evidence/sdx-home-desktop.webp",
     homeImage: "/images/home/case02-home-visual.webp",
@@ -430,6 +430,7 @@ export const projects: Project[] = [
       metadata: {
         "角色": "Product Designer",
         "平台": "Responsive Web",
+        "狀態": "3 個商業網站已上線",
       },
       ...placeholderSections,
     },
@@ -443,6 +444,7 @@ export const projects: Project[] = [
       metadata: {
         Role: "Product Designer",
         Platform: "Responsive Web",
+        Status: "3 Live Commercial Websites",
       },
       ...placeholderSections,
     },
@@ -462,12 +464,12 @@ export const projects: Project[] = [
     chineseTitle: "工廠生產與營運管理系統",
     tags: ["Manufacturing", "Operations", "System UX", "Industrial UI"],
     description: [
-      "將設備狀態、數據與操作流程整合，",
-      "讓複雜資訊更容易理解與管理。",
+      "整合工廠現場與管理端的操作流程，",
+      "並正式導入實際工廠使用。",
     ],
     descriptionEn: [
-      "Bringing device status, data, and operational workflows together",
-      "to make complex information easier to understand and manage.",
+      "Bringing shop-floor and management workflows into one system,",
+      "formally deployed for use in a real factory.",
     ],
     image: "/images/case03/case03-hero-desktop-tablet.webp",
     homeImage: "/images/home/case03-home-visual.webp",
@@ -485,6 +487,7 @@ export const projects: Project[] = [
       metadata: {
         "角色": "Product Designer",
         "平台": "Web · Industrial Tablet",
+        "狀態": "正式導入",
       },
       ...placeholderSections,
     },
@@ -495,6 +498,7 @@ export const projects: Project[] = [
       metadata: {
         Role: "Product Designer",
         Platform: "Web · Industrial Tablet",
+        Status: "In Production",
       },
       ...placeholderSections,
     },

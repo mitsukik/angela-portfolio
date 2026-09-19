@@ -1360,6 +1360,21 @@ export function CaseThreeFinalContent({ register, locale }: { register: Register
             centerLine2={zhHant ? "持續迭代循環" : "Continuous Improvement Cycle"}
           />
         </div>
+        {/* Concrete example grounding the loop above — same text-card
+            pattern as Section 06's results list (cf-meta label, cf-heading
+            headline, cf-dim body), used standalone since this is one real
+            instance, not a repeating list. */}
+        <div className="mt-10 border-t cf-rule pt-10">
+          <p className="cf-meta cf-accent">{zhHant ? "實際案例" : "EXAMPLE"}</p>
+          <p className="cf-heading mt-3 max-w-[62ch] text-[1.4rem] font-medium leading-8">
+            {zhHant ? "正式使用後的平板操作優化" : "Post-launch tablet workflow refinement"}
+          </p>
+          <p className="cf-dim mt-3 max-w-[62ch] text-[1.2rem]" style={{ lineHeight: 1.8 }}>
+            {zhHant
+              ? "系統導入後，現場以平板操作時發現原本部分按鈕的位置不順手。依實際使用回饋，我重新調整主要操作按鈕的位置，並將原流程拆分、新增頁面，讓每一步的操作更單純、流程更直覺。這次調整是在正式使用後持續進行的 UX 優化，而非只停留在 Prototype 階段。"
+              : "After deployment, real tablet use revealed that some action buttons were not positioned comfortably for the workflow. Based on actual usage feedback, I repositioned the primary actions and split the original flow by adding an additional page, making each step simpler and easier to follow. This was part of ongoing UX refinement after deployment, rather than iteration limited to the prototype stage."}
+          </p>
+        </div>
       </Section>
 
       {/* 06 — Results & Takeaways */}

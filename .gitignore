@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# CASE04 confidentiality cleanup (2026-09-19 final ZH release review):
+# obsolete Home-evidence derivatives that exposed the unmasked "我的能量
+# 結構" Five-Element/personalization card (and, for the v2 pair, an
+# additional undisclosed "療癒計劃" feature) — moved out of public/ because
+# an unreferenced file under public/ is still reachable by direct URL.
+# Never staged; this directory only ever exists locally. Do not restage.
+/private-archive/

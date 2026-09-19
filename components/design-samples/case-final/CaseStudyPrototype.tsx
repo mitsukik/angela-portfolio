@@ -201,13 +201,13 @@ export function CaseStudyPrototype({
   const openingInfoRows = isCaseOneV2
     ? zhHant
       ? [
-          { label: "角色", value: "Lead Product Designer" },
+          { label: "角色", value: "UI/UX Designer" },
           { label: "團隊", value: "1 UI Designer · 2 Engineers · PM" },
           { label: "平台", value: "Responsive Web" },
           { label: "狀態", value: "Designed & Developed" },
         ]
       : [
-          { label: "Role", value: "Lead Product Designer" },
+          { label: "Role", value: "UI/UX Designer" },
           { label: "Team", value: "1 UI Designer · 2 Engineers · PM" },
           { label: "Platform", value: "Responsive Web" },
           { label: "Status", value: "Designed & Developed" },
@@ -243,13 +243,13 @@ export function CaseStudyPrototype({
             ? [
                 { label: "角色", value: "UI/UX Designer" },
                 { label: "團隊", value: "PM · Full-stack Engineer · UI/UX Designer" },
-                { label: "平台", value: "Android · iOS" },
+                { label: "平台", value: "Android 優先（iOS 共用核心方向）" },
                 { label: "狀態", value: "開發中" },
               ]
             : [
                 { label: "Role", value: "UI/UX Designer" },
                 { label: "Team", value: "PM · Full-stack Engineer · UI/UX Designer" },
-                { label: "Platform", value: "Android · iOS" },
+                { label: "Platform", value: "Android-first (Shared iOS Direction)" },
                 { label: "Status", value: "In Development" },
               ]
           : [

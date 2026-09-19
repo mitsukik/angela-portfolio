@@ -135,7 +135,7 @@ export const projects: Project[] = [
     stageColumn: "text-left",
     stageVertical: "top",
     accent: "acid",
-    year: "2024",
+    year: "2025–2026",
     category: { zh: "複雜系統", en: "COMPLEX SYSTEM" },
     railLabel: { zh: "複雜系統", en: "COMPLEX SYSTEM" },
     title: "Cross-border Live Commerce Platform",
@@ -159,7 +159,7 @@ export const projects: Project[] = [
       projectName: "跨境寄賣與直播電商平台",
       summary: "將台灣供應商、越南倉儲、代理公司、直播主與消費者串連在同一套商業流程中，建立從跨境入庫、共享庫存、選品銷售到訂單履約與結算的完整產品體驗。",
       metadata: {
-        "角色": "LEAD PRODUCT DESIGNER",
+        "角色": "UI/UX DESIGNER",
         "平台": "Responsive Web",
         "範疇": "Product Architecture · System UX · Workflow & State Design",
         "狀態": "Designed & Developed",
@@ -197,7 +197,7 @@ export const projects: Project[] = [
       },
       role: {
         heading: "我的角色",
-        title: "Lead Product Designer",
+        title: "UI/UX Designer",
         body: [
           "我主導此產品從早期需求梳理到開發落地的 UX/UI Design，負責建立整體產品架構、核心操作流程與設計方向。",
           "專案初期主要只有商業概念與工程端整理的功能草稿，許多實際 Workflow、Interaction、System States、Validation 與 Edge Cases 尚未被完整定義。",
@@ -279,7 +279,7 @@ export const projects: Project[] = [
       projectName: "Cross-Border Consignment & Live Commerce Platform",
       summary: "Connecting Taiwanese suppliers, Vietnamese warehousing, agencies, streamers, and consumers within one business flow—from cross-border receiving and shared inventory to product selection, sales, order fulfillment, and settlement.",
       metadata: {
-        "Role": "LEAD PRODUCT DESIGNER",
+        "Role": "UI/UX DESIGNER",
         "Platform": "Responsive Web",
         "Scope": "Product Architecture · System UX · Workflow & State Design",
         "Status": "Designed & Developed",
@@ -317,7 +317,7 @@ export const projects: Project[] = [
       },
       role: {
         heading: "MY ROLE",
-        title: "Lead Product Designer",
+        title: "UI/UX Designer",
         body: [
           "I led UX/UI Design from early requirement definition through development, establishing the overall Product Architecture, core workflows, and design direction.",
           "At the outset, the project consisted mainly of a business concept and engineering-led feature drafts. Many practical Workflows, Interactions, System States, Validation rules, and Edge Cases were still undefined.",
@@ -455,7 +455,7 @@ export const projects: Project[] = [
     stageColumn: "text-left",
     stageVertical: "middle",
     accent: "acid",
-    year: "2025",
+    year: "2023",
     category: { zh: "製造營運", en: "Manufacturing Operations" },
     railLabel: { zh: "工廠生產與營運管理系統", en: "CONFIDENTIAL MANUFACTURING OPERATIONS SYSTEM" },
     title: "Confidential Manufacturing Operations System",

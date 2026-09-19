@@ -11,7 +11,7 @@ type RegisterSection = (index: number, element: HTMLElement | null) => void;
 const projects = {
   sdx: {
     name: "Shun De Xing / SDX",
-    role: "UX/UI Designer",
+    role: "UX/UI Designer · Frontend Support",
     focus: "Information Architecture · Content Hierarchy · Corporate Communication",
     url: "https://sdxdevelop.com/",
   },
@@ -291,9 +291,9 @@ const contributionRows = [
   ["Information Architecture / Flow", "Yes", "Yes", "Yes"],
   ["UX/UI Design", "Yes", "Yes", "Yes"],
   ["Content Direction", "Yes", "Yes", "Yes"],
-  ["Content Production", "No", "No", "No"],
+  ["Content Production", "Partial", "No", "No"],
   ["Responsive Design", "Yes", "Yes", "Yes"],
-  ["Frontend", "No", "Partial", "Yes"],
+  ["Frontend", "Partial", "Partial", "Yes"],
 ] as const;
 
 const CONTRIBUTION_VALUE_ZH: Record<string, string> = { Yes: "是", No: "否", Partial: "部分" };
@@ -656,8 +656,8 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
         </div>
         <p className="cf-dim mt-5 max-w-[62ch] text-[14px] leading-6">
           {zhHant
-            ? "內容方向指辨識體驗所需資訊，並與 PM 或客戶協調取得內容；文案製作不在我的工作範圍內。"
-            : "Content Direction refers to identifying the information required for the experience and coordinating with the PM or client to obtain it. Copy production was not part of my role."}
+            ? "內容方向指辨識體驗所需資訊，並與 PM 或客戶協調取得內容。SDX 另包含部分內容製作——我整理、調整並實際編排了客戶提供的素材與文案，但並非所有內容的原始撰寫者；Charming Clinic 與 NATEX 則不包含內容製作。"
+            : "Content Direction refers to identifying the information required for the experience and coordinating with the PM or client to obtain it. SDX also included partial Content Production — I organized, refined, and assembled the copy and materials the client provided, though I wasn’t the original writer of all of it; Content Production was not part of the role for Charming Clinic or NATEX."}
         </p>
       </Section>
 

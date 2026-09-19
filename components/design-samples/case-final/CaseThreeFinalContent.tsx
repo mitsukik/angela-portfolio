@@ -128,6 +128,11 @@ export function CaseThreeHeroEvidence({ locale }: { locale: Locale }) {
           ? "因專案保密需求，本案例不公開客戶與工廠名稱，並已移除敏感營運資料。"
           : "Client and facility identity are withheld, and sensitive operational data has been removed, in line with this project's confidentiality requirements."}
       </p>
+      {/* Round 2 recruiter-scanability: moved here from the end of Section
+          04 (not duplicated) so this implementation evidence is visible
+          before the reader scrolls through three sections of process and
+          architecture content. */}
+      <DemoCTA zhHant={zhHant} />
     </figure>
   );
 }
@@ -1330,7 +1335,6 @@ export function CaseThreeFinalContent({ register, locale }: { register: Register
             }
           />
         </div>
-        <DemoCTA zhHant={zhHant} />
       </Section>
 
       {/* 05 — Post-launch UX Iteration */}

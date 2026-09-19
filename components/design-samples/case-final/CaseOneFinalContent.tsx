@@ -63,19 +63,41 @@ export function CaseOneFinalContent({ register, locale }: { register: RegisterSe
   const zh = locale === "zh";
   return <EvidenceMotion><>
     <Section index={0} register={register} divider={false}>
+      {/* Round 2 recruiter-scanability: compact scope signal, ahead of the
+          reading section, so system scale doesn't wait until Section 06's
+          ScopeSummary. Two labeled cf-tag rows (same chip role CASE03/04
+          already use) instead of one flat list, so it cannot read as
+          Angela personally designing all six surfaces — the second row is
+          explicitly the other designer's scope. */}
+      <div className="mb-10 space-y-4">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-2">
+          <span className="cf-meta cf-dim">{zh ? "主要設計範疇" : "Primary Design Scope"}</span>
+          <ul className="flex flex-wrap gap-2">
+            {["Platform Backend", "Supplier Backend", "Agent Backend", "Consumer Web Storefront"].map((item) => (
+              <li key={item} className="cf-tag">{item}</li>
+            ))}
+          </ul>
+        </div>
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-2">
+          <span className="cf-meta cf-dim">{zh ? "協作與設計審閱範疇" : "Collaboration & Design Review"}</span>
+          <ul className="flex flex-wrap gap-2">
+            {["Consumer Mobile", "Streamer Backend"].map((item) => (
+              <li key={item} className="cf-tag">{item}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
       <ReadingSection
         label={zh ? "01 — 專案背景與我的角色" : "01 — PROJECT BACKGROUND & MY ROLE"}
         title={zh ? "把零散需求整理成可開發的多角色產品系統" : "Turning Fragmented Requirements into a Buildable Multi-role Product System"}
         paragraphs={zh ? [
           "這不是單一後台，而是一套串連台灣供應商、越南平台／倉庫、代理公司、直播主與消費者的跨境商業系統。商品、庫存、價格、訂單與售後彼此連動，也需要依角色提供不同權限與資訊。",
-          "我擔任 UI/UX Designer，主導 Product Architecture、Information Architecture、UX Flow、Interaction Design、State Design、Business Rules 定義與 Developer Handoff，並直接與 2 位工程師協作。後台系統的 UI Design 在既有 UI template 與元件架構下進行；Consumer Web Storefront 則另外進行前台體驗與介面設計。PM 後期加入，主要支援 QA 與協調。",
-          "後台開發端採用既有 UI template 與元件架構，因此後台設計的重點不是建立高度客製化的視覺系統，而是定義產品架構、操作流程、資訊層級、System States、Validation 與 Edge Cases，並透過 Figma 提供工程團隊可直接理解並用於實作的 UX/UI specification。",
-          "我親自設計 Platform Backend、Supplier Backend、Agent Backend 與 Consumer Web Storefront；另一位 UI Designer 後續沿用既有架構、Interaction Patterns 與設計方向，延伸 Consumer Mobile 與 Streamer Backend。",
+          "我擔任 UI/UX Designer，主導 Product Architecture、Information Architecture、UX Flow、Interaction Design、State Design、Business Rules 定義與 Developer Handoff，並直接與 2 位工程師協作；PM 後期加入，主要支援 QA 與協調。我主要負責 Platform Backend、Supplier Backend、Agent Backend 與 Consumer Web Storefront 的 UX/UI 設計，並與 PM、工程師協作釐清需求、技術限制與落地方式；Consumer Mobile 與 Streamer Backend 主要由另一位 UI Designer 負責，我協助設計方向與跨介面一致性 review。",
+          "後台開發端採用既有 UI template 與元件架構，因此後台設計的重點不是建立高度客製化的視覺系統，而是定義產品架構、操作流程、資訊層級、System States、Validation 與 Edge Cases，並透過 Figma 提供工程團隊可直接理解並用於實作的 UX/UI specification；Consumer Web Storefront 則不受此限制，是另外進行的前台體驗與介面設計。",
         ] : [
           "This wasn't a single admin backend — it was a cross-border commerce system connecting Taiwan Suppliers, a Vietnam Platform / Warehouse, Agents, Streamers, and Consumers. Products, inventory, pricing, orders, and after-sales were all interdependent, with role-specific permissions and information needs.",
-          "As UI/UX Designer, I led the product architecture, information architecture, UX flows, interaction design, state design, business rules, and developer handoff, working directly with two engineers. UI design for the backend systems followed an existing UI template and component framework; the Consumer Web Storefront was designed separately as a consumer-facing UX/UI experience. The PM joined later, mainly supporting QA and coordination.",
-          "Because the backend ran on an existing UI template and component framework, the design effort focused on product structure, workflows, information hierarchy, system states, validation, and edge cases — and on delivering implementation-ready UX/UI specifications in Figma — rather than a bespoke visual system.",
-          "I personally designed the Platform, Supplier, and Agent backends, as well as the Consumer Web Storefront. Another UI Designer later extended the established architecture, interaction patterns, and design direction to the Consumer Mobile experience and Streamer Backend.",
+          "As UI/UX Designer, I led the product architecture, information architecture, UX flows, interaction design, state design, business rules, and developer handoff, working directly with two engineers; the PM joined later, mainly supporting QA and coordination. I was the primary designer for the Platform, Supplier, and Agent Backends and the Consumer Web Storefront, working with the PM and engineers to clarify requirements, technical constraints, and implementation. Consumer Mobile and the Streamer Backend were primarily handled by another UI Designer, while I supported design direction and cross-surface consistency reviews.",
+          "Because the backend ran on an existing UI template and component framework, the design effort focused on product structure, workflows, information hierarchy, system states, validation, and edge cases — and on delivering implementation-ready UX/UI specifications in Figma — rather than a bespoke visual system. The Consumer Web Storefront wasn't under that constraint — it was designed separately as its own consumer-facing UX/UI experience.",
         ]}
         points={["Product Architecture", "System & State Design", "Multi-role Workflows", "Responsive Web", "Engineer Collaboration"]}
         supporting={zh ? "核心挑戰：如何把跨境實體商品、共享庫存與多角色銷售流程，整合成一套清楚、可操作的網頁系統？" : "Core challenge: How might we bring cross-border physical goods, shared inventory, and multi-role sales workflows into one clear, operable web system?"}
@@ -118,7 +140,7 @@ export function CaseOneFinalContent({ register, locale }: { register: RegisterSe
             <div className="lg:grid lg:grid-cols-12 lg:items-start lg:gap-8"><InspectableEvidence src="/images/case01/evidence/case01-pricing-detail.webp" alt={zh ? "商品定價頁面" : "Product pricing page"} caption={zh ? "OPERATIONAL EVIDENCE — 商品定價 · 成本、SRP、預估利潤與調價紀錄" : "OPERATIONAL EVIDENCE — Product Pricing · Decision Context"} aspect="aspect-[2600/2313]" className="lg:col-span-8" scrollHint={zh ? "→ 左右滑動查看完整內容" : "→ Scroll to see the full evidence"} /><Evidence src="/images/case01/evidence/case01-pricing-invalid-state.webp" alt={zh ? "定價試算的無效狀態" : "Invalid pricing calculation state"} caption={zh ? "VALIDATION — 即時定價驗證 · 已移除敏感資訊" : "VALIDATION — Real-time Pricing Validation · Sanitized"} aspect="aspect-[1600/2666]" className="mt-8 lg:col-span-4 lg:mt-0" /></div>
             <Evidence src={zh ? "/images/case01/case01_PRL_chi01.webp" : "/images/case01/case01_PRL_eng01.webp"} alt={zh ? "已移除敏感參數的定價與收益邏輯圖" : "Sanitized pricing and revenue logic diagram"} caption={zh ? "CONTEXT — 定價與收益邏輯 · 已移除敏感資訊" : "CONTEXT — Pricing & Revenue Logic · Sanitized"} className="lg:w-2/3" />
           </DecisionBlock>
-          <DecisionBlock label="04D — DATA-HEAVY OPERATIONAL WORKFLOW" title={zh ? "資料密集的營運流程" : "Data-heavy Operational Workflow"} body={zh ? "Search、Filter、Status View、Payment、Shipping、Source 與 Row Actions 共同把高密度訂單表格轉化為可執行的營運工作流程。" : "Search, filters, status, payment, shipping, source, and row-level actions turn a dense order table into an operational workflow."} principle={zh ? "高密度資料必須直接支持判斷與操作。" : "Dense data must directly support decisions and actions."}>
+          <DecisionBlock label="04D — DATA-HEAVY OPERATIONAL WORKFLOW" title={zh ? "資料密集的營運流程" : "Data-heavy Operational Workflow"} body={zh ? "訂單清單資料量大、狀態多變，使用者需要在不失去脈絡的情況下，快速判斷每筆訂單的狀態、篩選出真正需要處理的項目，並直接執行對應動作。因此 Search、Filter 與 Status View 放在同一層級，讓使用者能先縮小範圍；Payment、Shipping、Source 等關鍵欄位維持同時可見以提供脈絡，Row Actions 則讓使用者在確認狀態後就地操作，不需離開頁面重新定位。" : "With a large, fast-changing order list, users need to quickly judge each record's state, narrow down to what actually needs attention, and act on it — all without losing their place. Search, Filter, and Status View sit at the same level so users can narrow the set first; Payment, Shipping, and Source stay visible together for context, and Row Actions let users act on a record in place instead of navigating away and losing their spot."} principle={zh ? "高密度資料必須直接支持判斷與操作。" : "Dense data must directly support decisions and actions."}>
             <ScrollSkipEvidence src="/images/case01/evidence/case01-order-list.webp" alt={zh ? "平台訂單管理列表" : "Platform order management list"} caption={zh ? "OPERATIONAL EVIDENCE — Order List · 搜尋、篩選、狀態與列操作" : "OPERATIONAL EVIDENCE — Order List · Search, Filters, States, and Actions"} aspect="aspect-[2048/1565]" initialScrollPx={165} scrollHint={zh ? "→ 左右滑動查看 Payment、Shipping、Source 與操作" : "→ Scroll to see Payment, Shipping, Source, and Actions"} />
             <ScrollSkipEvidence src="/images/case01/evidence/case01-supplier-dashboard.webp" alt={zh ? "供應商營運儀表板" : "Supplier operations dashboard"} caption={zh ? "CONTEXT — Supplier Dashboard · 次要營運總覽" : "CONTEXT — Supplier Dashboard · Management Overview"} aspect="aspect-[1900/1700]" className="lg:ml-auto lg:w-2/3" initialScrollPx={160} scrollHint={zh ? "→ 左右滑動查看完整內容" : "→ Scroll to see the full evidence"} />
           </DecisionBlock>

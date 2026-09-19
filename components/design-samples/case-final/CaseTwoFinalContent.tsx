@@ -11,7 +11,7 @@ type RegisterSection = (index: number, element: HTMLElement | null) => void;
 const projects = {
   sdx: {
     name: "Shun De Xing / SDX",
-    role: "UX/UI Designer",
+    role: "UX/UI Designer · Frontend Support",
     focus: "Information Architecture · Content Hierarchy · Corporate Communication",
     url: "https://sdxdevelop.com/",
   },
@@ -330,9 +330,9 @@ const contributionRows = [
   ["Information Architecture / Flow", "Yes", "Yes", "Yes"],
   ["UX/UI Design", "Yes", "Yes", "Yes"],
   ["Content Direction", "Yes", "Yes", "Yes"],
-  ["Content Production", "No", "No", "No"],
+  ["Content Production", "Partial", "No", "No"],
   ["Responsive Design", "Yes", "Yes", "Yes"],
-  ["Frontend", "No", "Partial", "Yes"],
+  ["Frontend", "Partial", "Partial", "Yes"],
 ] as const;
 
 const CONTRIBUTION_VALUE_ZH: Record<string, string> = { Yes: "是", No: "否", Partial: "部分" };
@@ -478,8 +478,8 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
         </div>
         <p className="cf-dim mt-5 max-w-[62ch] text-[14px] leading-6">
           {zhHant
-            ? "內容方向指辨識體驗所需資訊，並與 PM 或客戶協調取得內容；實際文案製作不在我的工作範圍內。"
-            : "Content Direction means identifying what information the experience needs and coordinating with the PM or client to get it — copywriting itself wasn’t part of my role."}
+            ? "內容方向指辨識體驗所需資訊，並與 PM 或客戶協調取得內容。SDX 另包含部分內容製作——我整理、調整並實際編排了客戶提供的素材與文案，但並非所有內容的原始撰寫者；Charming Clinic 與 NATEX 則不包含內容製作。"
+            : "Content Direction means identifying what information the experience needs and coordinating with the PM or client to get it. SDX also included partial Content Production — I organized, refined, and assembled the copy and materials the client provided, though I wasn’t the original writer of all of it; Content Production wasn’t part of the role for Charming Clinic or NATEX."}
         </p>
       </Section>
 
@@ -838,8 +838,8 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
       {/* 07 — new. Connects the design decisions above to how each project
           actually reached production, reusing the same verified delivery
           facts already stated in 04's stories and 01's contribution table
-          (SDX: no frontend / Charming: partial-initial frontend support /
-          NATEX: full frontend) — no new claim is made here. */}
+          (SDX: partial frontend support / Charming: partial-initial frontend
+          support / NATEX: full frontend) — no new claim is made here. */}
       <Section index={6} register={register}>
         <Reveal>
           <SectionHeading
@@ -856,12 +856,12 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
           <article className="border-b cf-rule py-6 md:border-r md:px-6 md:first:pl-0 md:last:border-r-0">
             <p className="cf-meta cf-accent">01 / SDX</p>
             <p className="cf-heading mt-4 text-[16px] font-medium leading-6">
-              {zhHant ? "設計完成後，由其他團隊負責前端實作" : "Design delivered; frontend implemented by another team"}
+              {zhHant ? "內容編排與部分前端，協助設計落地" : "Content assembly and partial frontend involvement"}
             </p>
             <p className="cf-body mt-3 text-[14px] leading-6">
               {zhHant
-                ? "我負責需求釐清、資訊架構與 UX/UI 設計，前端實作不在我的工作範圍內。"
-                : "I was responsible for requirements, information architecture, and UX/UI design. Frontend implementation wasn’t part of my role."}
+                ? "我規劃各頁內容需求與資訊結構，向客戶取得所需素材與文案後進行整理、調整與頁面編排，並實際建立網站內容，同時參與部分前端實作。"
+                : "I defined the content requirements and structure for each page, gathered source materials from the client, organized and refined the copy, assembled the page content, and supported part of the frontend implementation."}
             </p>
           </article>
           <article className="border-b cf-rule py-6 md:border-r md:px-6 md:first:pl-0 md:last:border-r-0">

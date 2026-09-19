@@ -75,9 +75,11 @@ Old V1 EN commit (structure now superseded): `0838c55` — `feat(portfolio): add
 
 ## Project ownership (verified — do not broaden)
 
-**SDX** — Role: UX/UI Designer.
-Verified: direct client requirement discovery, flow/UX, information structure, UI/UX design, identified missing content, coordinated with PM to obtain required content.
-Did NOT own: frontend implementation, copy production.
+**SDX** — Role: UX/UI Designer · Frontend Support.
+Verified: direct client requirement discovery, flow/UX, information structure, UI/UX design, decided what content each page needed, requested required content/materials from the client, organized/refined/arranged and assembled that content into the site (Content Production: Partial — not the sole original copywriter, much of the source content came from the client), partial frontend involvement (same tier as Charming — not end-to-end like NATEX).
+Did NOT own: full/sole content authorship.
+
+**Corrected 2026-09-19 (fact-audit pass, two rounds):** SDX was previously documented as having no frontend involvement and no content-production involvement at all. Both were wrong. Round 1 corrected frontend to "Partial" (matching Charming's tier) across `CaseTwoFinalContent.tsx` (contribution table, Section 07 delivery-scope copy, `projects.sdx.role`) and `HANDOFF.md`. Round 2 corrected Content Production from "No" to "Partial" (SDX only — Charming and NATEX remain "No") in the same table, plus the Section 01 footnote and Section 07 SDX copy, to reflect that SDX's scope included deciding page-level content needs, requesting materials from the client, and organizing/assembling the copy into the site — without claiming sole/original authorship of all content. Content Direction (identifying needed content, coordinating with PM/client) was already correctly attributed to SDX in Round 1 and needed no change.
 
 **Charming Clinic** — Role: UX/UI Designer · Frontend Support.
 Verified: direct client requirement discovery, flow/UX, UI/UX design, identified/requested required content directly from client, initial frontend support.
@@ -121,13 +123,15 @@ Engineering planned to use an existing UI template/component framework **for the
 
 **CASE01 primary portfolio value:** Complex System UX / Product Architecture / Business Logic / Workflow / State Design / Developer Handoff (backend systems) plus genuine consumer-facing UX/UI design (Consumer Web Storefront).
 
-**Team (verified 2026-09-17):** Lead Product Designer (Angela) + 1 UI Designer + 2 Engineers + PM (PM joined later, QA/coordination support).
+**Team (verified 2026-09-17; title corrected 2026-09-19):** UI/UX Designer (Angela) + 1 UI Designer + 2 Engineers + PM (PM joined later, QA/coordination support).
 
 **Ownership (verified 2026-09-17):**
-- **Lead Product Designer** — Product Architecture, core UX/system direction, Platform Backend, Supplier Backend, Agent Backend, **and** Consumer Web Storefront.
-- **The other UI Designer** — extended Consumer Mobile and Streamer Backend from the Lead's established architecture, interaction patterns, and design direction.
+- **Angela (UI/UX Designer)** — Product Architecture, core UX/system direction, Platform Backend, Supplier Backend, Agent Backend, **and** Consumer Web Storefront.
+- **The other UI Designer** — extended Consumer Mobile and Streamer Backend from Angela's established architecture, interaction patterns, and design direction.
 
-The correct claim: the designer led the product architecture and UX/system design, created functional interface specifications in Figma within the existing UI-template constraint **for the backend systems**, personally designed the Consumer Web Storefront's front-end experience separately, and collaborated directly with engineers to make the system implementable. This does **not** mean the designer was only a wireframe designer — the project still demonstrates Lead-level ownership of product structure, workflows, states, interaction logic, business rules, UX specification, cross-role consistency, and developer collaboration. `Lead Product Designer` remains the correct title.
+The correct claim: the designer led the product architecture and UX/system design, created functional interface specifications in Figma within the existing UI-template constraint **for the backend systems**, personally designed the Consumer Web Storefront's front-end experience separately, and collaborated directly with engineers to make the system implementable. This does **not** mean the designer was only a wireframe designer — the project still demonstrates substantial ownership of product structure, workflows, states, interaction logic, business rules, UX specification, cross-role consistency, and developer collaboration. Final product/business authority was not Angela's alone, so the formal public title is `UI/UX Designer`, not `Lead Product Designer`, `Product Design Lead`, or any other Lead-implying title.
+
+**Corrected 2026-09-19 (fact-audit pass):** `Lead Product Designer` was used throughout as CASE01's formal title (opening metadata rows on both `/design-samples/case-final-01` and its EN route, the Home Selected Work card via `data/projects.ts`'s `caseStudy`/`caseStudyEn.metadata`, and Section 01 body copy). This overstated Angela's formal role — she had substantial design ownership but not a formal Lead title, and final product/business authority was not hers alone. Corrected to `UI/UX Designer` everywhere the title appeared; the underlying description of what she actually did (architecture, flows, states, business rules, developer handoff) is unchanged and remains accurate. Project year was also corrected from `2024` to `2025–2026` (this project belongs to the current company period, not the 2023/12–2024/06 education-platform job).
 
 Do not accidentally imply the designer created the underlying UI template/framework, built a custom visual-design system for the entire product (backend included), personally designed every visual detail of all surfaces (Consumer Mobile / Streamer Backend belong to the other UI Designer), owned engineering implementation styling, or delivered pixel-perfect production UI — none of that is true and none of it should appear in this case's copy. Equally, do not undersell the Consumer Web Storefront as template-constrained — it wasn't.
 

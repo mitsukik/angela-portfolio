@@ -36,7 +36,8 @@ const skillGroupItems = {
   ],
   designTools: ["Figma", "Photoshop", "Illustrator", "After Effects"],
   webImplementation: ["HTML", "CSS", "Bootstrap", "JavaScript"],
-  // Intentionally kept separate from core skills — not proficient/core yet.
+  // Kept separate from core design skills — active workflow tools, not a
+  // frontend-engineering proficiency claim.
   currentlyExploring: ["React", "Next.js", "Tailwind CSS", "Git", "AI-assisted Development"],
 };
 
@@ -96,7 +97,7 @@ export const aboutContent: Record<Locale, AboutContent> = {
       { label: "Product & UX", items: skillGroupItems.productUx },
       { label: "Design Tools", items: skillGroupItems.designTools },
       { label: "Web & Implementation", items: skillGroupItems.webImplementation },
-      { label: "Currently Exploring", items: skillGroupItems.currentlyExploring },
+      { label: "Technical Workflow", items: skillGroupItems.currentlyExploring },
     ],
     beyondHeading: "Beyond Product Design",
     beyondParagraphs: [
@@ -123,7 +124,7 @@ export const aboutContent: Record<Locale, AboutContent> = {
       [{ text: "運作。", highlight: true }],
     ],
     introParagraphs: [
-      "我是 Angela，一名擁有 9 年以上 UI/UX 與數位產品設計經驗的 Product Designer，目前居住於台中。",
+      "我是 Angela，一名目前居住於台中的 UI/UX Designer，具近 9 年 Web、UI/UX 與前端實作相關經驗。",
       "我的設計背景橫跨 UI/UX、網頁與視覺設計。從早期的網頁設計與前端實作，到後來參與 B2B 後台、IoT 系統、教育服務平台與各類數位產品，我逐漸把設計的重心從「畫面如何呈現」，延伸到「產品如何被理解與使用」。",
       "面對複雜的需求，我習慣先釐清問題，整理資訊、流程、角色與不同狀態之間的關係，再開始設計介面。比起只完成一個畫面，我更在意整個流程是否合理、不同情境是否被考慮，以及設計最後能不能真正落地。",
     ],
@@ -172,12 +173,12 @@ export const aboutContent: Record<Locale, AboutContent> = {
       { label: "產品與體驗", items: skillGroupItems.productUx },
       { label: "設計工具", items: skillGroupItems.designTools },
       { label: "網頁與實作", items: skillGroupItems.webImplementation },
-      { label: "持續學習中", items: skillGroupItems.currentlyExploring },
+      { label: "Technical Workflow", items: skillGroupItems.currentlyExploring },
     ],
     beyondHeading: "產品設計之外",
     beyondParagraphs: [
       "除了產品設計，我也長期持續進行插畫創作。對構圖、光影與視覺敘事的探索，也影響了我處理介面細節、視覺層次與整體體驗的方式。",
-      "我對新的工具與工作方式一直保持好奇，最近也開始探索 AI-assisted development，以及設計師如何更直接地參與從設計到實作的過程。",
+      "我也持續將 AI 輔助工具運用於 UX 檢視、需求拆解、React 互動原型、流程驗證與 Responsive／State QA，並協助與工程端確認實作可行性；UX 取捨、設計方向與最終驗收仍由我負責。",
     ],
     contactHeading: "有適合的機會，或想一起合作？",
     contactBody:

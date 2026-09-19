@@ -87,20 +87,24 @@ function buildSkillGroups(locale: Locale): V2SkillGroup[] {
 // VER2-only English copy — concise, natural adaptations rather than
 // VER1's originals (or a literal translation), written directly for this
 // page rather than reused from data/about.ts. Straight apostrophes only.
+// Trailing space on the first line is deliberate — the two lines render as
+// separate display:block spans (see OpeningV2.tsx), so without it the
+// plain-text/accessibility-tree content reads "screens —I care..." with no
+// space, even though the visual line break is unaffected either way.
 const EN_HEADLINE_LINES: HeadlineSegment[][] = [
-  [{ text: "I design more than screens —" }],
+  [{ text: "I design more than screens — " }],
   [{ text: "I care about how products " }, { text: "work", highlight: true }, { text: "." }],
 ];
 
 const EN_INTRO_PARAGRAPHS: string[] = [
-  "I'm Angela, a Product Designer based in Taichung with 9+ years of experience across UI/UX, web, and digital products.",
+  "I'm Angela, a UI/UX Designer based in Taichung with nearly 9 years of experience across web, UI/UX, and frontend implementation.",
   "I started in web design and front-end implementation, then moved into B2B platforms, IoT, education, and other digital products. Over time, my focus shifted from how interfaces look to how products are structured, understood, and used.",
   "For complex products, I start by clarifying the problem and mapping how information, flows, roles, and states connect. I care about the experience as a whole — not just individual screens — and whether the design can actually be built.",
 ];
 
 const EN_BEYOND_PARAGRAPHS: string[] = [
   "Outside product design, I also work as an illustrator. Exploring composition, lighting, and visual storytelling has shaped how I think about hierarchy, detail, and the overall experience.",
-  "I'm also interested in new tools and ways of working, including AI-assisted development and more direct ways for designers to move from design into implementation.",
+  "I use AI-assisted tools for UX review, requirement breakdown, interactive React prototyping, flow validation, and responsive/state QA, as well as implementation feasibility checks with engineering. UX trade-offs, design direction, and final design acceptance remain my responsibility.",
 ];
 
 export const aboutV2Content: Record<Locale, AboutV2Content> = {

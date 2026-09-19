@@ -9,8 +9,8 @@ import { MixedText } from "@/components/site/MixedText";
 const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
 
 const META_LINE: Record<Locale, string> = {
-  zh: "PRODUCT DESIGNER · TAICHUNG, TAIWAN · 9+ YEARS",
-  en: "PRODUCT DESIGNER · TAICHUNG, TAIWAN · 9+ YEARS",
+  zh: "SENIOR UI/UX DESIGNER · TAICHUNG, TAIWAN · 近 9 年",
+  en: "SENIOR UI/UX DESIGNER · TAICHUNG, TAIWAN · NEARLY 9 YEARS",
 };
 
 export function OpeningV2({

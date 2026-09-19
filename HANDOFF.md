@@ -13,8 +13,9 @@
   - ZH V2 freeze commit: `9ebc104e1a2fba0402709567992e6ab0492c139d` — `feat(case02): restructure and freeze zh case study`.
   - EN V2 implementation commit: `ed8e46472662679bc42d3f53980fee2ec77133a9` — `feat(case02): implement english v2 localization`. Final user visual approval passed.
   - **CASE02 is FROZEN.** Do not make further CASE02 edits (copy, layout, or assets, either locale) unless explicitly reopened.
-- **Next portfolio priority: whatever Angela specifically requests next (e.g. CASE03/04 follow-up, a new case, or a site-wide pass) — not an instruction to reopen CASE02.**
-- Review routes: `/design-samples/case-final-01` (CASE01 ZH), `/en/design-samples/case-final-01` (CASE01 EN), `/design-samples/case-final-02` (CASE02 ZH), `/en/design-samples/case-final-02` (CASE02 EN), `/design-samples/case-final-03` (CASE03 ZH), `/en/design-samples/case-final-03` (CASE03 EN).
+- **CASE04 — V3 APPROVED (ZH + EN), committed locally, not yet pushed.** Implementation commit `a4eb701`. See the CASE04 section below for the full story architecture, positioning, and confidentiality rules. **CASE04 is a living case study** — do not reopen the ZH/EN copy or restructure without a specific release-blocking issue, but don't treat it as permanently frozen like CASE01/02 either.
+- **Next portfolio priority: whatever Angela specifically requests next — not an instruction to reopen CASE02 or CASE04.**
+- Review routes: `/design-samples/case-final-01` (CASE01 ZH), `/en/design-samples/case-final-01` (CASE01 EN), `/design-samples/case-final-02` (CASE02 ZH), `/en/design-samples/case-final-02` (CASE02 EN), `/design-samples/case-final-03` (CASE03 ZH), `/en/design-samples/case-final-03` (CASE03 EN), `/design-samples/case-final-04` (CASE04 ZH), `/en/design-samples/case-final-04` (CASE04 EN).
 - **Continuity note:** this file was fully rewritten (not appended) to replace stale pre-freeze CASE02 status and a dropped prior history chain. Older history (Homepage Visual Polish V3/V3.1/V3.2, Lavender token checkpoint, About V2, CASE01 Responsive QA) is not reconstructed here — git log and topic branches remain the authoritative record per AGENTS.md's "if documentation conflicts with Git, investigate and report" rule.
 
 ---
@@ -343,237 +344,48 @@ Final polish commit: `f7b570e` — `fix(portfolio): polish CASE03 copy and namin
 
 ---
 
-# CASE04 — LABO65
+# CASE04 — Mobile Wellness Product
 
-Product status: **ACTIVE / IN DEVELOPMENT.** Portfolio status: **ZH V1 FROZEN / APPROVED (2026-09-12).** Do not make further design, copy, layout, hierarchy, asset, or motion changes without a specific issue from a fresh audit. Do not claim release impact or metrics; this section remains the evidence authority for future updates.
+Public identity — ZH: 行動療癒產品 · EN: Mobile Wellness Product. Never expose the real internal product name or any proprietary/commercial detail (see Confidentiality below).
 
-## Freeze — 2026-09-12
+**Portfolio status: V3 APPROVED — ZH and EN both passed final GPT + Angela review** (lead UI/UX review, recruiter/HR review, responsive QA, confidentiality QA, TypeScript/ESLint/build all PASS). Implementation commit: `a4eb701` — `feat(case04): ship v3 mobile product case study`.
 
-CASE04 ZH V1 approved and frozen. Narrative order (Hero → Team & Role → Taking Over → UX Challenge → Design Principles → Guided Input → Async States & Recovery → Product Continuity → Stable/Flexible Brand Layer → Reflection), copy, evidence set, and hierarchy are locked.
+Product status: **design and development ongoing.** Do not claim launch, usage, or business metrics. This is a living case study (see below) — do not reopen ZH/EN copy or restructure the story without a specific release-blocking issue.
 
-**Confidentiality corrections made before freeze:** two issues found during final visual QA and fixed at the source-image level (no copy/layout changes required):
-- A daily generation-quota counter ("成生數量 01/03") was visible in the Home screen header in 3 evidence instances (Hero, Async "Ready" state, Product Continuity "Home" state) — re-masked via in-place blur on the underlying assets.
-- The login screen's brand-mask was a crude, hard-edged patch leaving a legible logo ghost — redone from the pristine 3× source with a cleaner in-place blur; now fully illegible.
-- As a side effect, the Hero now uses the genuine not-yet-generated Home screen (previously an accidental byte-identical duplicate of the "Ready" evidence) — two distinct real screens instead of one reused twice.
+## Evidence sources
 
-Public evidence lives only under `public/images/case04/` (14 anonymized WebP files). Raw/high-res source PNGs (including client-identifying filenames and the no-credit/quota source) are archived outside the public and Git-tracked tree — do not restage them.
+- Latest product evidence: `LABO65 APP_20260919` (current source of truth; superseded `_20260916` batch).
+- Historical Before evidence: `screenshots-20260908-AppUI截圖` — confirmed engineer-built pre-redesign UI, used only in Section 02's Before/After.
 
-## Positioning
+## Current public story (V3, 00–08 + Closing)
 
-A mobile product UX/UI redesign taken over during active development.
+00 Hero / Product · 01 Context & Role · 02 From Existing Version to a Guided Flow · 03 Interaction Decisions · 04 State-Aware Product · 05 State & Recovery Design · 06 Product Continuity · 07 Reusable Patterns & Key Trade-offs · 08 Current Outcome · Closing.
 
-Current recruiter-facing direction: "Restructuring an early-stage mobile product into a clearer, lighter, and more app-native experience while development was already in progress."
+Do not add, remove, reorder, or rename sections without a specific instruction.
 
-## Core design principle
+## Core positioning
 
-少讀、少打、少滑、少等、不強迫
-EN shorthand: Less reading. Less typing. Less scrolling. Less waiting. No forced steps.
+Angela joined after an early functional product already existed (built by a full-stack engineer from the client's concept). Her contribution is the UX/UI redesign and product-design layer on top of that foundation: UX restructuring, information hierarchy, interaction design, state design, recovery handling, preservation of user effort/progress, product continuity, reusable interaction patterns, and engineering-feasibility alignment. Do not claim she originated the product concept from scratch.
 
-## Project context
+Core design principle: 少讀、少打、少滑、少等、不強迫 (less reading, less typing, less scrolling, less waiting, no forced steps).
 
-- Engineering had already been developing the product for roughly 1–2 weeks before UX/UI ownership was handed over.
-- Existing technical foundations and some functional flows already existed.
-- The design approach is not to restart the product from zero.
-- UX/UI changes should prioritise usability impact, implementation feasibility, and development speed.
-- Product is not yet released.
+Strongest proof point (Section 05): generation failure preserves questionnaire input; playback failure preserves soundscape/playback progress. Same underlying principle — recovery protects effort the user already invested — demonstrated at two different product stages.
 
-## Ownership boundaries
+## Confidentiality (binding on all future CASE04 work, either locale)
 
-Do not claim: original product requirements defined from scratch by Angela; backend architecture; payment infrastructure / payment integration engineering; engineering implementation owned by Angela unless specifically confirmed; user research that did not happen.
+Never publicly expose: LABO65 (the real product name); Five-Element / 五行; 能量結構 / 命理結構; chakra / 脈輪; Hz mappings; quota / generation allowance; pricing; subscription / membership tiers; monetization; payment; proprietary personalization/generation logic. The Step 04 intermediate-result/mapping screen is confirmed NOT public evidence. Friends & Family is confirmed NOT part of the public story (ownership unconfirmed, third-party personal data) — interview-only material.
 
-Current confirmed design ownership: UX/UI redesign; flow restructuring where applicable; information hierarchy; app-native interaction direction; onboarding/registration simplification; questionnaire UX; generation/loading/failure/recovery states; Today/Home experience; player/listening-state UX; shared design system; Android-first UI with consistent iOS presentation; design decisions prepared for engineering implementation; feasibility discussion/collaboration with engineering.
+`public/images/case04/` has been cleaned to contain only the files the current ZH/EN page actually references (verified by whole-repo grep, not assumption). Superseded and unsafe derivatives live in the gitignored `private-archive/` outside `public/` — do not restore them into `public/` casually; if a future pass needs one, re-verify it's actually safe first.
 
-## Ownership & scope clarification — 2026-09-11 (flow provenance update)
+## Living-case-study rule
 
-Source-of-truth clarification layered on top of the existing Project context / Ownership boundaries above — does not replace them.
-
-### Team
-
-Active product team:
-- PM
-- 1 full-stack engineer
-- Angela as UI/UX Designer
-
-### Role boundaries
-
-**Client / PM** — product concept and business direction; requirements and scope coordination; project communication / prioritization.
-
-**Full-stack Engineer** — translated the early client concept into the first functional UX flow / early build; owns technical implementation; frontend/backend engineering; existing technical foundations; payment integration / payment infrastructure; other engineering work unless explicitly confirmed otherwise.
-
-**Angela — UI/UX Designer** — took over UX/UI after an early functional flow/build already existed; UX review of the existing experience; restructuring key flows where needed; information hierarchy; interaction design; app-native mobile direction; onboarding/profile setup simplification; questionnaire UX; generation/waiting/failure/recovery states; Today/Home; player/listening-state UX; shared design system; Android-first UI with consistent iOS presentation; direct feasibility collaboration with the full-stack engineer.
-
-**Do not claim** Angela created the original product flow from scratch.
-
-Approved framing: "The initial functional flow had already been translated from the client concept into an early build by the full-stack engineer. Angela took over the UX/UI work to simplify that experience, restructure key interactions, and build a more coherent mobile system around it."
-
-### Early product scope
-
-The earliest LABO65 concept was much broader and included: Home, personal energy analysis, personalized audio, healing plans, crystal-related experiences, physical LABO65 experiences, reading/knowledge content, subscription, member center.
-
-### Product scope evolution
-
-Crystal-related features are now removed from the current product direction. Do NOT claim Angela personally removed the crystal scope unless explicitly confirmed.
-
-Approved framing: "The product scope evolved during development, with earlier concepts such as the crystal-related experience removed from the current app direction."
-
-### Current product focus
-
-The current app is increasingly focused around: account entry; personal / birth profile setup; daily state input; personalized audio generation; waiting / recovery states; listening; feedback / completion; listening history; repeat-use continuity.
-
-### UX problem context
-
-The product requires a substantial amount of personal input to generate personalized audio. Current source logic includes inputs such as: birth information, current needs/state, desired outcome, scene preference, natural sounds, instrument preference, other preference inputs. The system performs internal mapping/generation logic behind the scenes.
-
-Portfolio implication: the user should not feel like they are configuring a complex AI engine or filling out one long technical form.
-
-Approved problem statement: "LABO65 needed enough personal input to generate a meaningful result, but collecting that information risked turning the mobile experience into a long questionnaire."
-
-Approved design challenge: "Make that complexity feel lighter without removing the information the system still needed."
-
-Core principle unchanged: 少讀、少打、少滑、少等、不強迫
-
-### Portfolio story direction
-
-Complex product logic underneath → early functional flow/build → UX friction becomes visible → Angela takes over UX/UI → simplify input and interaction → add clear async / failure / recovery states → connect Home, generation, playback and history → establish a consistent mobile UI system.
-
-Recruiter takeaway: "Angela took over an early functional product with complex input requirements, simplified how users move through it, designed missing states around asynchronous generation, and built a consistent mobile UI system in close collaboration with engineering."
-
-### Status (reaffirmed)
-
-CASE04 remains ACTIVE / IN DEVELOPMENT. Do not freeze final narrative yet. Do not claim release impact / metrics.
-
-## Current UX problems identified
-
-- Forms/flows too long
-- Too much reading
-- Too much scrolling
-- Too much manual input
-- Keyboard can cover fields/actions
-- Experience feels too much like responsive web rather than a mobile app
-- Generation waiting feels too passive
-- Progression should not require unnecessary forced completion
-- Recovery / leave-and-return states need to be clear
-
-## Evidence log (evolving — not final section order)
-
-1. Before / early engineering build
-2. Onboarding and first-profile setup
-3. Questionnaire simplification
-4. Generating / in-progress / failed / ready states
-5. Player / listening / completed states
-6. Today / Home
-7. Design system / shared components
-8. Engineering constraints / feasibility decisions
-9. Before → After comparisons
-10. New screens and decisions added during ongoing development
-
-**Evidence rule:** for every meaningful new design decision, record what existed before, what problem was identified, who defined the requirement, what Angela changed, why it was changed, any engineering constraint, and what was actually approved/implemented. Do not turn routine production details into portfolio evidence unless they demonstrate a meaningful UX/UI decision.
-
-## Evidence update — 2026-09-11 (confirmed current product coverage)
-
-Confirmed design/evidence update. This is a historical coverage snapshot; the current ZH V1 narrative and section selection are now implemented and FROZEN (see "Freeze — 2026-09-12" above).
-
-**Current product coverage:**
-
-01 — Account Entry
-- Login
-- Guest entry
-- Login error
-- Reset password
-- Check-email confirmation
-- Unregistered-email state
-- Registration
-- Account-created state
-- Duplicate-email error
-- Password validation
-- Offline state
-
-02 — Personal / Birth Profile Setup
-- 4-step guided setup: Birth date → Time zone → Gender → Confirmation
-- Building state
-- Completed state
-- Failed state
-- Edit path exists
-
-03 — Home
-- Signed-in / not-yet-generated state
-- Signed-in / today's soundscape available
-- No-credit state
-- Guest Home
-
-04 — Today / Monthly Soundscape
-- 6-step choice-based questionnaire
-- Generating
-- User can leave while generation continues
-- Generation failure
-- Offline failure
-- Retry / later paths
-- Player
-- Pause / loop playback
-- Post-listening feedback
-- Listening completed
-- Listening history
-
-**Updated portfolio signals — CASE04 now has evidence for:**
-1. Simplifying input-heavy flows
-2. Guided multi-step task design
-3. Async generation / waiting UX
-4. Failure and recovery states
-5. Guest / member / constrained product states
-6. Playback and post-completion UX
-7. Repeat-use continuity through listening history
-8. A full product loop rather than isolated UI screens
-
-**Current case story direction:**
-Early engineering build → UX/UI takeover → simplify heavy and linear flows → establish guided interactions and state handling → connect onboarding, Home, generation, playback and history into a coherent mobile experience.
-
-Core principle unchanged: 少讀、少打、少滑、少等、不強迫
-
-Do not claim final product impact or release results yet. Product remains ACTIVE / IN DEVELOPMENT. CASE04 ZH V1 is built and FROZEN; its section structure should not be reopened without a specific issue.
-
-## Product copy QA note (tracked — not actioned)
-
-For later cleanup only; no product copy was changed as part of this evidence update. Check typo/terminology consistency across all current screens before any copy is finalized for CASE04 evidence use. Examples observed in current evidence: 成生/生成 inconsistency, 回来/回來 (simplified/traditional mixing), duplicated punctuation, and English annotation spelling. Resolve at copy-finalization time, not now.
-
-## Delivery / brand constraint — 2026-09-11
-
-Current delivery context: the product is moving quickly toward release, and UI/UX work needs to keep engineering moving rather than wait for a fully finalized visual brand — the client's final branding/art direction is still evolving.
-
-Current visual-production approach: UX structure, interaction patterns, states, layout rules, tokens and components remain the stable layer. Some decorative/branded imagery is currently treated as a flexible, replaceable layer — AI-generated visuals may be used as provisional starting points to accelerate production, and Angela manually reviews, edits and refines those assets to fit the LABO65 UI system. Do not frame AI as owning the product design or final branding.
-
-Approved framing: "Because the product was moving toward release before the brand direction was fully defined, I used AI-generated visuals as provisional production assets, then manually refined them to fit the evolving UI system and speed up delivery."
-
-Design principle: "The product structure needed to stay stable even while the brand layer was still evolving."
-
-Portfolio signal: decision-making under uncertainty / pragmatic delivery under time and branding constraints.
-
-Do not claim: final brand ownership; completed brand strategy; that AI generated the app design; that current provisional imagery is final brand work.
-
-CASE04 remains ACTIVE / IN DEVELOPMENT.
-
-## Commercial confidentiality — 2026-09-11
-
-Some LABO65 business/commercial strategy is confidential and must not appear in the public portfolio.
-
-Default rule: if a detail is commercially sensitive and has not been explicitly approved for public use, exclude it.
-
-Do not publicly disclose unless explicitly approved: pricing strategy; subscription/monetization strategy; credit/quota business rules; conversion targets; acquisition/go-to-market plans; commercial roadmap; unreleased business features; internal prioritization rationale tied to business strategy; proprietary market positioning/competitive strategy; client confidential commercial decisions; commercially sensitive logic inferred from internal documents.
-
-Public CASE04 content should focus on: high-level product context; user-facing UX problems; UX/UI restructuring; interaction design; async/failure/recovery states; design-system work; app-native mobile experience; delivery constraints; collaboration with PM and engineering.
-
-Treat internal product documents as research/source-of-truth only, not automatically public case-study content. Do not infer publishable business strategy from internal source documents or UI states. If uncertain whether a detail is business-sensitive, omit it from the public portfolio until Angela explicitly approves it.
-
-CASE04 remains ACTIVE / IN DEVELOPMENT.
-
-## Next action (CASE04-specific)
-
-CASE04 ZH V1 is frozen. Future product updates should be added to this evidence log only when they are portfolio-worthy; do not expose confidential commercial strategy or claim release impact. Reopen the frozen case only for a real bug, factual error, confidentiality issue, or regression.
+Future product screenshots may update evidence, but do not rewrite the story merely because UI visuals changed. Only update the public narrative when new evidence materially changes the problem, a design decision, ownership, a trade-off, or the outcome. CASE04 V3 is the current approved/frozen **portfolio** checkpoint — the underlying product itself is not being marked finished or released.
 
 ---
 
 # WORKFLOW RULE
 
-Do not reopen CASE01, CASE02, CASE03, or CASE04 (ZH V1) discovery. Do not ask the user to repeat ownership, positioning, evidence strategy, project roles, or cross-case differentiation — the sections above are source of truth. Preserve all four cases unless a genuine bug or factual issue appears.
+Do not reopen CASE01, CASE02, CASE03, or CASE04 (V3) discovery. Do not ask the user to repeat ownership, positioning, evidence strategy, project roles, or cross-case differentiation — the sections above are source of truth. Preserve all four cases unless a genuine bug, factual issue, or (CASE04 only) materially new evidence appears.
 
 ---
 
@@ -581,6 +393,6 @@ Do not reopen CASE01, CASE02, CASE03, or CASE04 (ZH V1) discovery. Do not ask th
 
 **CASE01 is COMPLETE / PRODUCTION.** Both ZH and EN are FROZEN / APPROVED, merged to `main` in the connected clone (`/Users/angela/angela-portfolio-public`), and deployed live at https://angela-portfolio-phi.vercel.app/ (production SHA `e7474c674ab92d7401019dff2455dadef3fc8750`). Production smoke QA passed — see CURRENT STATE above for the checklist. See git log for local commit hashes; see this file's own changelog sections above for the full history (Phases 1–5, positioning correction, factual correction, final freeze cleanup, EN localization + pricing + micro-copy passes, Home/rail/CASE04-naming sync, migration to the connected clone, Production promotion). `artifacts/case01-v3-phase5-zh-copy-manifest.md` and `artifacts/case01-v3-en-final-copy-manifest.md` (both gitignored, local-only) remain the reference copy records for each locale. **Do not reopen CASE01 discovery, redesign, or copy (either locale) without a specific new instruction.**
 
-**CASE02 is COMPLETE.** Both ZH V2 and EN V2 are APPROVED / FROZEN (see the CASE02 section above). Do not reopen CASE02 discovery, restructure, or copy (either locale) without a specific new instruction. **Next portfolio priority:** whatever Angela specifically requests next. CASE03 and CASE04 ZH V1 remain complete and frozen. Selected Work later includes a **Foresight Realtors** case.
+**CASE02 is COMPLETE.** Both ZH V2 and EN V2 are APPROVED / FROZEN (see the CASE02 section above). Do not reopen CASE02 discovery, restructure, or copy (either locale) without a specific new instruction. **CASE04 V3 is APPROVED** (ZH + EN, both locales, implementation commit `a4eb701` — see the CASE04 section above); treat as a living case study, not a permanent freeze like CASE01/02. **Next portfolio priority:** whatever Angela specifically requests next. CASE03 remains complete and frozen. Selected Work later includes a **Foresight Realtors** case.
 
 Note: this commit also carried necessary shared case-study infrastructure (Previous/Next cross-navigation, locale-aware a11y labels, small CASE02/03/04 metadata-label localization, a Home-page visual-asset feature) that was already uncommitted and load-bearing for CASE01's own dependency chain — see the commit message and this file's freeze-commit changelog entry for the full file list and reasoning. `AGENTS.md`, `CLAUDE.md`, `app/globals.css`, `SiteHeader.tsx`, `.impeccable/`, and other still-uncommitted files remain genuinely unrelated and were deliberately left out of that commit.

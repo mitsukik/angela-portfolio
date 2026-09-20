@@ -6,8 +6,8 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { HeaderThemeProvider } from "@/components/site/headerTheme";
 
 export const metadata: Metadata = {
-  title: "Angela Yu | 產品設計師",
-  description: "常駐台灣的產品設計師 Angela Yu 的作品集首頁。",
+  title: "Angela Yu | 資深 UI/UX 設計師",
+  description: "資深 UI/UX 設計師 Angela Yu 的作品集，聚焦複雜系統、B2B 與企業產品的 UX/UI 設計與落地。",
   alternates: {
     languages: {
       "zh-Hant": "/",

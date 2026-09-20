@@ -6,8 +6,8 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { HeaderThemeProvider } from "@/components/site/headerTheme";
 
 export const metadata: Metadata = {
-  title: "Angela Yu | Product Designer",
-  description: "Minimal product designer portfolio landing page.",
+  title: "Angela Yu | Senior UI/UX Designer",
+  description: "Portfolio of Senior UI/UX Designer Angela Yu, focused on complex systems, B2B, and enterprise UX/UI design and delivery.",
   alternates: {
     languages: {
       "zh-Hant": "/",

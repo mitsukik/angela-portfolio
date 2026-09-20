@@ -673,3 +673,119 @@ If newer evidence conflicts with this file:
 3. only then update HANDOFF
 
 Do not silently resurrect obsolete plans from old chats.
+
+---
+
+# 13. COPY / "AI-LIKE" LANGUAGE NOTE
+
+Known non-blocking issue:
+
+Some portfolio copy can feel slightly AI-polished / overly structured.
+
+This is primarily a WRITING issue, not a visual-design issue.
+
+Current assessment:
+- overall AI feel is low/moderate, not severe
+- the portfolio does NOT visually look like a generic AI-generated website
+- the main signal comes from copy that is too tidy, abstract, or repeatedly uses polished UX terminology
+
+Patterns to watch:
+
+- repeated abstract terms such as:
+  - 清楚
+  - 流程
+  - 狀態
+  - 體驗
+  - 一致性
+  - 轉譯
+  - 可操作
+  - 可實作
+  - context
+  - validation
+  - system state
+  - key trade-off
+
+- overly perfect section-label language
+- several consecutive sentences using the same:
+  Problem → Decision → Outcome
+  rhythm
+- generic senior-design language that could apply to many projects
+- copy that explains UX theory instead of describing what Angela actually saw and did
+
+CASE04 is currently the most likely case to feel slightly AI-polished because its structure and section language are especially systematic.
+
+CASE01 / CASE03 generally feel more grounded because they contain more concrete operational constraints, implementation details, and real project evidence.
+
+## IMPORTANT
+
+This is NOT currently a release blocker.
+
+Do NOT reopen:
+- layout
+- evidence
+- motion
+- case architecture
+- responsive design
+- visual design
+
+solely because of this note.
+
+Portfolio remains:
+
+PRODUCTION / VERIFIED / FROZEN
+
+Only perform a language polish pass when:
+- recruiter/hiring-manager feedback indicates it matters
+- Angela deliberately starts a copy-humanization pass
+- a specific section reads unnaturally during interview preparation
+
+## FUTURE COPY-HUMANIZATION RULE
+
+If reopened, revise only the weakest ~10–20% of copy.
+
+Do NOT rewrite the whole portfolio.
+
+Preferred writing pattern:
+
+「我看到什麼問題」
+→
+「我怎麼處理」
+→
+「為什麼這樣做」
+
+Use concrete project language before UX terminology.
+
+Prefer:
+
+「原本所有選項都放在同一頁，第一次使用時很難知道要先看哪裡。」
+
+over:
+
+「重新建立清晰且具一致性的資訊層級與引導式體驗。」
+
+Prefer:
+
+「生成失敗後，不讓使用者重新填一次問卷。」
+
+over:
+
+「透過 resilient recovery pattern 保護使用者投入的 effort。」
+
+UX terminology can remain where useful, but it should support the evidence rather than replace it.
+
+Angela's natural explanation should be the source voice.
+AI may help:
+- shorten
+- proofread
+- organize
+- translate
+
+but should not replace Angela's own reasoning with generic UX language.
+
+After any future language pass:
+- preserve all factual claims
+- preserve ownership boundaries
+- preserve confidentiality rules
+- preserve approved evidence
+- QA ZH/EN parity
+- freeze again after review

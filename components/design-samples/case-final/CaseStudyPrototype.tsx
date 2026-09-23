@@ -16,7 +16,7 @@ import { ShowcaseMedia } from "./ShowcaseMedia";
 import { SectionMarquee } from "./SectionMarquee";
 import { CaseTransitionLink } from "./CaseTransitionLink";
 import { getDecisionFigure, getOverviewFigure, getShowcaseFigure } from "./caseFinalMedia";
-import { CaseOneFinalContent } from "./CaseOneFinalContent";
+import { CaseOneDemoLinks, CaseOneFinalContent } from "./CaseOneFinalContent";
 import { CaseTwoFinalContent, CaseTwoHeroEvidence } from "./CaseTwoFinalContent";
 import { CaseThreeFinalContent, CaseThreeHeroEvidence } from "./CaseThreeFinalContent";
 import { CaseFourFinalContent, CaseFourHeroEvidence } from "./CaseFourFinalContent";
@@ -122,9 +122,9 @@ export function CaseStudyPrototype({
   // six content chapters (01-06, The Challenge & My Role through
   // Delivery) — the old 01-08 + unnumbered Reflection (9 chapters) is
   // gone; Reflection was folded into Delivery. See CaseFourFinalContent.tsx.
-  const chapterCount = isCaseOneV3 ? 6 : isCaseOneV2 ? 11 : isCaseTwoV1 ? 7 : isCaseThreeV1 ? 6 : isCaseFourV1 ? 6 : CHAPTER_COUNT;
+  const chapterCount = isCaseOneV3 ? 5 : isCaseOneV2 ? 11 : isCaseTwoV1 ? 7 : isCaseThreeV1 ? 6 : isCaseFourV1 ? 6 : CHAPTER_COUNT;
   const chapters: Chapter[] = isCaseOneV3
-    ? Array.from({ length: 6 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
+    ? Array.from({ length: 5 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
     : isCaseOneV2
     ? Array.from({ length: 11 }, (_, i) => ({ number: String(i + 2).padStart(2, "0") }))
     : isCaseTwoV1
@@ -198,7 +198,23 @@ export function CaseStudyPrototype({
   // metadata dict already defines (角色/平台/範疇/狀態 for this project).
   // No field is invented; a project without extra metadata just shows
   // fewer rows rather than fabricated ones.
-  const openingInfoRows = isCaseOneV2
+  const openingInfoRows = isCaseOneV3
+    ? zhHant
+      ? [
+          { label: "角色", value: "Lead Product Designer" },
+          { label: "時程", value: "2025.05 — 2026.04 · 12 個月" },
+          { label: "範疇", value: "Product Architecture · Information Architecture · UX Flow · Interaction Design · UI Design · Prototype · Developer Handoff" },
+          { label: "團隊", value: "1 UI Designer · 2 Engineers · PM（2025.10 加入）" },
+          { label: "狀態", value: "Designed & Developed" },
+        ]
+      : [
+          { label: "Role", value: "Lead Product Designer" },
+          { label: "Timeline", value: "May 2025 — Apr 2026 · 12 months" },
+          { label: "Scope", value: "Product Architecture · Information Architecture · UX Flow · Interaction Design · UI Design · Prototype · Developer Handoff" },
+          { label: "Team", value: "1 UI Designer · 2 Engineers · PM (joined Oct 2025)" },
+          { label: "Status", value: "Designed & Developed" },
+        ]
+    : isCaseOneV2
     ? zhHant
       ? [
           { label: "角色", value: "UI/UX Designer" },
@@ -309,7 +325,9 @@ export function CaseStudyPrototype({
                   text={
                     isCaseOneV2
                       ? isCaseOneV3
-                        ? "Complex Web System · B2B · Multi-role Workflows"
+                        ? (zhHant
+                          ? "將 Client 的商業構想，轉換成一套可實際運作的多角色電商平台"
+                          : "Turning a client-funded business concept into a working multi-role commerce platform")
                         : (zhHant ? "跨境寄賣與直播電商平台" : "Cross-Border Consignment & Live Commerce Platform")
                       : isCaseTwoV1
                         ? "Shun De Xing · Charming Clinic · NATEX"
@@ -388,6 +406,28 @@ export function CaseStudyPrototype({
                     </a>
                   </div>
                 </div>
+              ) : isCaseOneV3 ? (
+                <div data-open-summary className="mt-6 max-w-[56ch]">
+                  <div className="space-y-4">
+                    {(zhHant
+                      ? [
+                          "Client 希望建立一套跨境寄賣與直播電商平台，串接台灣供應商、越南當地倉儲、銷售角色與消費者。",
+                          "產品需要涵蓋從商品入庫、共享庫存、定價與販售，到訂單、履約與後續結算的完整流程，並支援不同角色的操作需求。",
+                          "我的工作是將 Client 的商業需求整理成清楚的產品架構、操作流程、互動邏輯與介面，讓工程團隊能進一步實作。",
+                        ]
+                      : [
+                          "The client wanted to build a cross-border consignment and live-commerce platform connecting suppliers in Taiwan with warehouse operations, sellers, and consumers in Vietnam.",
+                          "The product needed to support the full journey from product intake and shared inventory to pricing, selling, ordering, fulfillment, and settlement across multiple roles.",
+                          "My role was to translate the business concept and client requirements into a clear product structure, workflows, interaction logic, and interfaces that the engineering team could implement.",
+                        ]
+                    ).map((paragraph, i) => (
+                      <p key={paragraph} className={`cf-body body-tc ${i === 0 ? "text-[17px] md:text-[18px]" : ""}`}>
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                  <CaseOneDemoLinks locale={locale} className="mt-8" />
+                </div>
               ) : (
                 <>
                   <p
@@ -404,16 +444,6 @@ export function CaseStudyPrototype({
                           : "Designing clear, credible digital experiences across corporate, healthcare, and technology brands."
                         : caseStudy.summary}
                   </p>
-                  {isCaseOneV3 && (
-                    <a
-                      href="https://sc-demo.sdxdevelop.com/zh-tw"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="case-link cf-meta cf-dim mt-6 inline-block"
-                    >
-                      {zhHant ? "互動 Demo ↗" : "Interactive Demo ↗"}
-                    </a>
-                  )}
                 </>
               )}
             </div>

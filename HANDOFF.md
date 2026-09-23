@@ -1,6 +1,6 @@
 # PORTFOLIO HANDOFF — CURRENT STATE
 
-Last updated: 2026-09-20
+Last updated: 2026-09-23
 Status: PRODUCTION / VERIFIED / FROZEN
 
 This file is the source of truth for the current portfolio state.
@@ -131,46 +131,35 @@ It may be added later as an optional social-sharing/SEO enhancement.
 
 # 4. CASE STATUS
 
-## CASE01 — FROZEN
+## CASE01 — CONTENT REWRITE COMPLETE (2026-09-23)
+
+Status: content pass committed; next = visual length review (image reduction / flow carousel) — not started.
 
 Positioning:
-Complex B2B / product-system / workflow design.
+Business Rules → Product Architecture → Multi-role IA → Workflow → State / Validation → Engineering Implementation.
 
-Purpose in portfolio:
-Proves ability to handle:
-- complex systems
-- B2B workflows
-- dashboard / back-office UX
-- information architecture
-- product logic
-- multi-role interfaces
+Structure (ZH + EN, `CaseOneFinalContent.tsx` + CASE01 hero in `CaseStudyPrototype.tsx`):
+Hero/Overview → 01 The Challenge → 02 The Approach → 03 Designing the System → 04 From Design to Delivery → 05 Outcome.
+Images/evidence kept in original order; image reduction + flow carousel NOT yet done (next pass).
 
-Public demo:
-https://sc-demo.sdxdevelop.com/zh-tw
+Locked facts:
+- Role: Lead Product Designer. Timeline: May 2025 — Apr 2026 · 12 months.
+- Team: Angela + 1 UI Designer + 2 Engineers; PM joined Oct 2025 (later-stage coordination + QA only). NO SA — never mention one.
+- Requirements came from Client meetings/verbal explanation — no PRD.
+- Angela designed Platform / Supplier / Agent Backends + Consumer Web Storefront; the other UI Designer extended the system into Consumer Mobile + Streamer Backend.
+- Payment delay = local payment partner slow (not a checkout/API redesign). Local registration completed; category restrictions reduced listable items.
+- Outcome: Designed & Developed, working frontend + backend delivered; Client changed business strategy → no commercial operation. No KPIs.
 
-Important:
-Demo is supporting implementation evidence only.
+CTAs (hero, repeated in Outcome):
+- Original Engineering Demo: https://sc-demo.sdxdevelop.com/zh-tw (engineers' original implementation, used by PM/Client for review)
+- Portfolio Prototype (`~/case01-admin`, reconstructed for portfolio): NO verified public URL yet — rendered without href, note reads "· In development / · 製作中"; set `PORTFOLIO_PROTOTYPE_URL` in `CaseOneFinalContent.tsx` once deployed (suffix drops automatically).
 
-The public demo implementation does NOT fully match the original Figma design.
-Portfolio/Figma remains the primary design evidence.
+Data:
+`data/projects.ts` CASE01 `caseStudy` / `caseStudyEn` condensed to the confirmed facts (still serialized into page source).
+Its `metadata` dict also drives the Home Selected Work card: CASE01 Role = Lead Product Designer (Angela, 2026-09-23 — factual Home/Hero consistency outranks uniform card role text; CASE02–04 cards stay UI/UX DESIGNER).
 
-Product did not proceed into full commercial operation due to business-direction changes.
-
-Do not imply:
-- full commercial launch
-- production adoption metrics
-- complete Figma-to-code fidelity
-
-STATUS:
-COMPLETE / PRODUCTION / FROZEN
-
-Do not reopen unless:
-- factual error found
-- confidentiality issue found
-- broken production implementation
-- meaningful recruiter/interview feedback requires change
-
----
+Uncommitted-diff note:
+`CaseStudyPrototype.tsx` also contains a PRE-EXISTING, unrelated CASE04 info-row change (週期 / 上架準備中 / Preparing for release) — not part of the CASE01 rewrite; stage separately.
 
 ## CASE02 — FROZEN
 

@@ -535,6 +535,42 @@ The Step04 proprietary intermediate result is NOT public evidence.
 
 Do not casually restore archived CASE04 assets into `/public`.
 
+## Approved narrow exception (2026-09-23): two public prototype links
+
+Angela explicitly approved a **limited** confidentiality exception — do not
+generalize it and do not treat it as blocking the same two URLs again in a
+future session.
+
+> LABO65 may be disclosed only through the approved public prototype links
+> and within those prototype destinations. The CASE04 portfolio itself
+> remains anonymized as 行動療癒產品 / Mobile Wellness Product.
+
+**Publicly linked** (added to the CASE04 Hero/opening area, both locales):
+
+- App Prototype — `https://labo65-app.vercel.app/`
+- Landing Page Prototype — `https://labo65-landing.vercel.app/`
+
+Angela explicitly accepted that:
+- `labo65` is visible in the URL / href / browser status-bar preview
+- the external prototype sites themselves may show LABO65 branding
+- clicking either link reveals the product name
+
+**The exception is scoped to these two URLs/hrefs only.** It does NOT permit:
+- renaming CASE04 to LABO65 anywhere in the portfolio
+- adding "LABO65" to CASE04 body copy, headings, or captions
+- adding "LABO65" to portfolio metadata (page `<title>`, description, etc.)
+- adding LABO65 branding to portfolio screenshots/evidence (separate approval required)
+- restoring previously anonymized LABO65 portfolio assets
+- assuming any other CASE04 confidentiality restriction has been lifted — Five-Element/五行, chakra/脈輪, Hz mapping, quota/generation allowance, pricing, subscription/membership, monetization, payment logic, and commercially sensitive strategy all remain in force unchanged
+
+Public CASE04 identity remains unchanged: ZH 行動療癒產品 · EN Mobile Wellness Product.
+
+Implementation: two compact `case-link` CTAs in the CASE04 Hero/opening
+summary (`CaseStudyPrototype.tsx`, `isCaseFourV1` branch) — App Prototype
+(`cf-accent`, primary) and Landing Page Prototype (`cf-dim`, secondary),
+`target="_blank"` + `rel="noopener noreferrer"`. No new prototype section,
+no CASE04 architecture/copy/evidence change beyond these two links.
+
 ---
 
 # 7. CASE04 PUBLIC-ASSET STATUS

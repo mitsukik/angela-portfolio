@@ -14,6 +14,9 @@ type FlowEvidenceProps = {
   aspect?: string;
   className?: string;
   scrollHint?: string;
+  /** false = static figure, for panels whose parent owns the entrance
+   * (e.g. a tab panel that may be display:none when triggers are measured). */
+  reveal?: boolean;
 };
 
 /**
@@ -30,12 +33,12 @@ type FlowEvidenceProps = {
  * evidence figure in this file — the shared `Evidence`/`EvidenceMotion`
  * fade still covers everything else, so this stays the exception.
  */
-export function FlowEvidence({ src, alt, caption, aspect = "aspect-[3/2]", className = "", scrollHint }: FlowEvidenceProps) {
+export function FlowEvidence({ src, alt, caption, aspect = "aspect-[3/2]", className = "", scrollHint, reveal = true }: FlowEvidenceProps) {
   const frameRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
     const frame = frameRef.current;
-    if (!frame) return;
+    if (!frame || !reveal) return;
 
     gsap.registerPlugin(ScrollTrigger);
     const media = gsap.matchMedia();
@@ -61,7 +64,7 @@ export function FlowEvidence({ src, alt, caption, aspect = "aspect-[3/2]", class
       media.revert();
       context.revert();
     };
-  }, []);
+  }, [reveal]);
 
   return (
     <figure className={className}>

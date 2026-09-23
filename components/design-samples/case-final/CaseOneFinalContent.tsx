@@ -4,36 +4,22 @@ import type { Locale } from "@/data/locale";
 import { EvidenceHeading } from "./EvidenceHeading";
 import { EvidenceMotion } from "./EvidenceMotion";
 import { FlowEvidence } from "./FlowEvidence";
+import { FlowTabs } from "./FlowTabs";
 import { ReadingSection } from "./ReadingSection";
-import { ScrollSkipEvidence } from "./ScrollSkipEvidence";
-import { SequenceReveal } from "./SequenceReveal";
 
 type RegisterSection = (index: number, element: HTMLElement | null) => void;
-type EvidenceProps = { src: string; alt: string; caption: string; aspect?: string; className?: string };
-
-function Evidence({ src, alt, caption, aspect = "aspect-[3/2]", className = "" }: EvidenceProps) {
-  return <figure data-evidence-entrance className={className}>
-    <div className={`cf-figure-frame relative ${aspect} w-full`}><Image src={src} alt={alt} fill sizes="(max-width: 1024px) 100vw, 1600px" className="object-contain" /></div>
-    <figcaption className="cf-figure-caption cf-meta mt-4">{caption}</figcaption>
-  </figure>;
-}
-
-function InspectableEvidence({ src, alt, caption, aspect, className = "", scrollHint }: EvidenceProps & { aspect: string; scrollHint?: string }) {
-  return <figure data-evidence-entrance className={`min-w-0 max-w-full ${className}`}>
+/*
+ * One screenshot. Below lg the frame scrolls horizontally at a legible
+ * minimum width (the existing CASE01 inspectable-evidence pattern); at lg+
+ * it fits its column. Aspect ratio comes from the asset's real pixels.
+ */
+function Shot({ src, alt, size, minW, caption, scrollHint }: { src: string; alt: string; size: [number, number]; minW: string; caption?: string; scrollHint?: string }) {
+  return <figure className="min-w-0 max-w-full">
     <div className="cf-figure-frame min-w-0 max-w-full overflow-x-auto" tabIndex={0} role="group" aria-label={alt}>
-      <div className={`relative ${aspect} min-w-[70rem] lg:min-w-0`}><Image src={src} alt={alt} fill sizes="(max-width: 1023px) 1120px, 1600px" className="object-contain" /></div>
+      <div className={`relative ${minW} lg:min-w-0`} style={{ aspectRatio: `${size[0]} / ${size[1]}` }}><Image src={src} alt={alt} fill sizes="(max-width: 1023px) 960px, 1210px" className="object-contain" /></div>
     </div>
-    <figcaption className="cf-figure-caption cf-meta mt-4">{caption}</figcaption>
+    {caption && <figcaption className="cf-figure-caption cf-meta mt-3">{caption}</figcaption>}
     {scrollHint && <p className="cf-dim mt-2 text-[12px] lg:hidden">{scrollHint}</p>}
-  </figure>;
-}
-
-function TopCropEvidence({ src, alt, caption, aspect = "aspect-[16/10]", className = "" }: EvidenceProps) {
-  return <figure data-evidence-entrance className={`min-w-0 max-w-full ${className}`}>
-    <div className="cf-figure-frame min-w-0 max-w-full overflow-x-auto" tabIndex={0} role="group" aria-label={alt}>
-      <div className={`relative ${aspect} min-w-[64rem] lg:min-w-0`}><Image src={src} alt={alt} fill sizes="(max-width: 1023px) 1024px, 1600px" className="object-cover object-top" /></div>
-    </div>
-    <figcaption className="cf-figure-caption cf-meta mt-4">{caption}</figcaption>
   </figure>;
 }
 
@@ -41,22 +27,26 @@ function Section({ index, register, children, divider = true }: { index: number;
   return <div ref={(element) => register(index, element)} className={`cf-section${divider ? " cf-section-divider" : ""}`}>{children}</div>;
 }
 
-function DecisionBlock({ label, title, body, principle, children }: { label: string; title: string; body: string; principle?: string; children: ReactNode }) {
-  return <article className="border-t cf-rule pt-8">
-    <div className="max-w-[70ch]"><p className="cf-meta cf-accent">{label}</p><h3 className="cf-heading mt-3 text-[clamp(1.35rem,2.4vw,2rem)] font-medium">{title}</h3><p className="cf-body body-tc mt-4">{body}</p></div>
-    <div className="mt-8 space-y-8">{children}</div>
-    {principle && <p className="mt-8 border-t cf-rule pt-5"><span className="cf-heading text-[clamp(1rem,1.7vw,1.3rem)] font-medium">{principle}</span></p>}
-  </article>;
-}
+/*
+ * Curated evidence group: label + one sentence + the screenshot(s). Each
+ * group proves one capability; widths are set per group by the caller so
+ * no screenshot becomes another full-width hero.
+ */
+const GROUP_SPLIT = {
+  stacked: ["", "mt-6"],
+  "4/8": ["lg:col-span-4", "mt-6 lg:col-span-8 lg:mt-0"],
+  "3/9": ["lg:col-span-3", "mt-6 lg:col-span-9 lg:mt-0"],
+} as const;
 
-function ScopeSummary() {
-  const groups = [
-    ["Platform / Warehouse", "Operations · Inventory · Orders · Fulfillment"],
-    ["Supplier", "Dashboard · Product Management · Pricing"],
-    ["Agent / Streamer", "Selection · Collaboration · Sales Workflow"],
-    ["Consumer", "Storefront · Checkout · Order Experience"],
-  ];
-  return <ul className="grid border-t cf-rule sm:grid-cols-2 lg:grid-cols-4">{groups.map(([label, items]) => <li key={label} className="border-b cf-rule py-6 lg:border-r lg:px-6 lg:first:pl-0 lg:last:border-r-0"><p className="cf-meta cf-accent">{label}</p><p className="cf-dim mt-3 text-[14px] leading-6">{items}</p></li>)}</ul>;
+function EvidenceGroup({ label, note, split = "stacked", children }: { label: string; note: string; split?: keyof typeof GROUP_SPLIT; children: ReactNode }) {
+  const [textCol, mediaCol] = GROUP_SPLIT[split];
+  return <article data-evidence-entrance className={`border-t cf-rule pt-8 ${split === "stacked" ? "" : "lg:grid lg:grid-cols-12 lg:gap-12"}`}>
+    <div className={textCol}>
+      <p className="cf-meta cf-accent">{label}</p>
+      <p className="cf-dim mt-3 max-w-[70ch] text-[14px] leading-6">{note}</p>
+    </div>
+    <div className={mediaCol}>{children}</div>
+  </article>;
 }
 
 /*
@@ -154,7 +144,7 @@ export function CaseOneFinalContent({ register, locale }: { register: RegisterSe
             ]).map((paragraph) => <p key={paragraph} className="cf-body body-tc">{paragraph}</p>)}
           </div>
           <div>
-        <FlowEvidence src={zh ? "/images/case01/case01_CE_chi01.webp" : "/images/case01/case01_CE_eng01.webp"} alt={zh ? "跨境直播電商生態系統，呈現供應、銷售與消費端的角色及流程" : "Cross-border live commerce ecosystem diagram showing the roles and flow across supply, sales, and consumer touchpoints"} caption={zh ? "FIG. 01 — 跨境直播電商生態系" : "FIG. 01 — Cross-border Live Commerce Ecosystem"} scrollHint={zh ? "→ 左右滑動查看完整流程圖" : "→ Scroll to see the full diagram"} />
+        <FlowEvidence src={zh ? "/images/case01/case01_CE_chi02.webp" : "/images/case01/case01_CE_eng02.webp"} alt={zh ? "跨境直播電商生態系統，呈現供應、銷售與消費端的角色及流程" : "Cross-border live commerce ecosystem diagram showing the roles and flow across supply, sales, and consumer touchpoints"} caption={zh ? "FIG. 01 — 跨境直播電商生態系" : "FIG. 01 — Cross-border Live Commerce Ecosystem"} scrollHint={zh ? "→ 左右滑動查看完整流程圖" : "→ Scroll to see the full diagram"} />
         <p data-evidence-entrance className="cf-body body-tc mt-8 max-w-[70ch] border-t cf-rule pt-6">{zh ? "供應商 → 跨境運輸 → 越南倉庫 → 驗收／掃描 → 商品啟用 → 共享庫存 → 代理公司／直播主 → 銷售活動／商店頁 → 消費者 → 訂單 → 履約" : "Supplier → Cross-border Shipment → Vietnam Warehouse → Receive / Count / Scan → Active Product → Shared Inventory → Agent / Streamer → Campaign / Storefront → Consumer → Order → Fulfillment"}</p>
           </div>
         </div>
@@ -210,42 +200,57 @@ export function CaseOneFinalContent({ register, locale }: { register: RegisterSe
               "These rules were translated into the Product, Inventory, Pricing, Order, and operational interfaces used across the platform.",
             ]).map((paragraph) => <p key={paragraph} className="cf-body body-tc">{paragraph}</p>)}
           </div>
-          <FlowEvidence src={zh ? "/images/case01/case01_ISF_chi01.webp" : "/images/case01/case01_ISF_eng01.webp"} alt={zh ? "庫存狀態流程，呈現實體到貨、驗收、數位庫存與消費端影響" : "Inventory status flow showing physical arrival, inspection, digital inventory, and consumer-facing impact"} caption={zh ? "FIG. 02 — 實體入庫與數位庫存狀態" : "FIG. 02 — Physical Receiving and Digital Inventory States"} scrollHint={zh ? "→ 左右滑動查看完整流程圖" : "→ Scroll to see the full diagram"} />
-          <div className="space-y-16">
-          <DecisionBlock label="03A — MULTI-ROLE COLLABORATION" title={zh ? "多角色協作" : "Multi-role Collaboration"} body={zh ? "直播主名單不是單純資料表；搜尋、直播時段、專長、合作狀態與多條件篩選共同支援 Supplier 與營運端找到合適合作對象。" : "The Streamer list is more than a data table. Search and filters for schedule, specialty, and collaboration status help Suppliers and operators identify suitable partners."} principle="Shared data, role-specific actions.">
-            <div className="grid gap-8 lg:grid-cols-12 lg:items-start">
-              <TopCropEvidence src="/images/case01/evidence/case01-streamer-list.webp" alt={zh ? "直播主名單與合作狀態" : "Streamer list and collaboration status"} caption={zh ? "CONTEXT — 直播主名單 · 搜尋、狀態與合作脈絡" : "CONTEXT — Streamer List · Discovery, Status, and Collaboration"} className="lg:col-span-8" />
-              <TopCropEvidence src="/images/case01/evidence/case01-streamer-filter.webp" alt={zh ? "直播主名單的展開篩選狀態" : "Expanded streamer filters"} caption={zh ? "DETAIL — 多條件篩選與合作狀態" : "DETAIL — Multi-filter Controls and Collaboration State"} aspect="aspect-[4/5]" className="lg:col-span-4 lg:mt-12" />
-            </div>
-          </DecisionBlock>
-          <DecisionBlock label="03B — PHYSICAL INVENTORY × DIGITAL COMMERCE" title={zh ? "實體庫存 × 數位商務" : "Physical Inventory × Digital Commerce"} body={zh ? "Inventory Management 呈現目前可操作的庫存狀態；Inventory Log 則記錄每次異動、Changed By、Role 與 Timestamp，讓實體庫存與數位商品狀態保持可追蹤。" : "Inventory Management makes the current stock state clear. The Inventory Log records every change with Changed By, Role, and Timestamp, keeping physical inventory and digital product states traceable."} principle={zh ? "目前狀態必須清楚，每次異動也必須可追溯。" : "The current state must be clear, and every change must remain traceable."}>
-            <div className="grid gap-8 lg:grid-cols-12 lg:items-start">
-              <Evidence src="/images/case01/case01_inventory_showcase_sample.webp" alt={zh ? "庫存管理後台介面，包含商品列表、庫存狀態與篩選" : "Inventory management interface including product list, inventory status, and filters"} caption={zh ? "OPERATIONAL EVIDENCE — Inventory Management · 目前庫存狀態" : "OPERATIONAL EVIDENCE — Inventory Management · Current State"} className="lg:col-span-7" />
-              <InspectableEvidence src="/images/case01/evidence/case01-inventory-log-focused.png" alt={zh ? "商品庫存異動紀錄，呈現狀態、操作者、角色、異動內容與時間" : "Product Inventory Log showing status, Changed By, Role, change details, and Timestamp"} caption={zh ? "SYSTEM STATE — Product Inventory Log · 異動歷史與可追蹤性" : "SYSTEM STATE — Product Inventory Log · Traceability"} aspect="aspect-[2500/920]" className="lg:col-span-5 lg:mt-10" scrollHint={zh ? "→ 左右滑動查看 Role 與 Timestamp" : "→ Scroll to see Role and Timestamp"} />
-            </div>
-          </DecisionBlock>
-          <DecisionBlock label="03C — FLEXIBLE PRICING × BUSINESS RULES" title={zh ? "彈性定價 × 商業規則" : "Flexible Pricing × Business Rules"} body={zh ? "直播主可自行設定售價，但售價不得低於供應商設定的最低售價（可等於最低售價），且須符合價格區間與獲利限制。介面把成本、SRP、預估利潤、調價紀錄與即時驗證放在同一決策脈絡中。" : "Streamers can set their own selling price, but it cannot fall below the Supplier-defined minimum. Matching the minimum is allowed, and the price must also stay within the configured range and profitability constraints. The interface brings cost, SRP, Estimated Profit, pricing history, and real-time validation into a single decision context."} principle={zh ? "在不破壞商業模式的前提下，保留使用彈性。" : "Give users flexibility without breaking the business model."}>
-            <div className="lg:grid lg:grid-cols-12 lg:items-start lg:gap-8"><InspectableEvidence src="/images/case01/evidence/case01-pricing-detail.webp" alt={zh ? "商品定價頁面" : "Product pricing page"} caption={zh ? "OPERATIONAL EVIDENCE — 商品定價 · 成本、SRP、預估利潤與調價紀錄" : "OPERATIONAL EVIDENCE — Product Pricing · Decision Context"} aspect="aspect-[2600/2313]" className="lg:col-span-8" scrollHint={zh ? "→ 左右滑動查看完整內容" : "→ Scroll to see the full evidence"} /><Evidence src="/images/case01/evidence/case01-pricing-invalid-state.webp" alt={zh ? "定價試算的無效狀態" : "Invalid pricing calculation state"} caption={zh ? "VALIDATION — 即時定價驗證 · 已移除敏感資訊" : "VALIDATION — Real-time Pricing Validation · Sanitized"} aspect="aspect-[1600/2666]" className="mt-8 lg:col-span-4 lg:mt-0" /></div>
-            <Evidence src={zh ? "/images/case01/case01_PRL_chi01.webp" : "/images/case01/case01_PRL_eng01.webp"} alt={zh ? "已移除敏感參數的定價與收益邏輯圖" : "Sanitized pricing and revenue logic diagram"} caption={zh ? "CONTEXT — 定價與收益邏輯 · 已移除敏感資訊" : "CONTEXT — Pricing & Revenue Logic · Sanitized"} className="lg:w-2/3" />
-          </DecisionBlock>
-          <DecisionBlock label="03D — DATA-HEAVY OPERATIONAL WORKFLOW" title={zh ? "資料密集的營運流程" : "Data-heavy Operational Workflow"} body={zh ? "訂單資料量大、狀態多變。Search、Filter 與 Status View 放在同一層級，讓使用者先縮小範圍；Payment、Shipping 與 Source 同時可見，Row Actions 則讓使用者確認狀態後就地處理。" : "Orders are high-volume and change state often. Search, Filter, and Status View sit at the same level so users can narrow the set first; Payment, Shipping, and Source stay visible together, and Row Actions let users act in place once the state is clear."} principle={zh ? "高密度資料必須直接支持判斷與操作。" : "Dense data must directly support decisions and actions."}>
-            <ScrollSkipEvidence src="/images/case01/evidence/case01-order-list.webp" alt={zh ? "平台訂單管理列表" : "Platform order management list"} caption={zh ? "OPERATIONAL EVIDENCE — Order List · 搜尋、篩選、狀態與列操作" : "OPERATIONAL EVIDENCE — Order List · Search, Filters, States, and Actions"} aspect="aspect-[2048/1565]" initialScrollPx={165} scrollHint={zh ? "→ 左右滑動查看 Payment、Shipping、Source 與操作" : "→ Scroll to see Payment, Shipping, Source, and Actions"} />
-            <ScrollSkipEvidence src="/images/case01/evidence/case01-supplier-dashboard.webp" alt={zh ? "供應商營運儀表板" : "Supplier operations dashboard"} caption={zh ? "CONTEXT — Supplier Dashboard · 次要營運總覽" : "CONTEXT — Supplier Dashboard · Management Overview"} aspect="aspect-[1900/1700]" className="lg:ml-auto lg:w-2/3" initialScrollPx={160} scrollHint={zh ? "→ 左右滑動查看完整內容" : "→ Scroll to see the full evidence"} />
-          </DecisionBlock>
-            <DecisionBlock label="03E — STATE CHANGES ACROSS ROLES" title={zh ? "跨端狀態與例外處理" : "Cross-touchpoint States & Exceptions"} body={zh ? "共享庫存可能在消費者結帳期間改變；退換貨也必須把數量、處理方式與後續訂單／庫存狀態連結起來。" : "Shared inventory can change while a consumer is checking out, and returns and exchanges must connect quantity, resolution, and the resulting order and inventory states."}>
-              <div className="space-y-10">
-          <div className="max-w-[70ch] border-t cf-rule pt-8"><p className="cf-meta cf-accent">CASE 01 — STOCK CHANGE DURING CHECKOUT</p></div>
-          <InspectableEvidence src="/images/case01/evidence/case01-checkout-out-of-stock-focused.png" alt={zh ? "消費者結帳確認頁的缺貨狀態，呈現警告訊息、數量歸零商品與停用的 Checkout 按鈕" : "Consumer checkout confirmation page in an out-of-stock state, showing a warning, a zeroed-out product quantity, and a disabled Checkout button"} caption={zh ? "SYSTEM STATE — 真實 Checkout 缺貨狀態 · 警告與阻擋" : "SYSTEM STATE — Real Checkout Out-of-stock · Warning and Blocked Action"} aspect="aspect-[4320/5500]" className="lg:mx-auto lg:w-4/5" scrollHint={zh ? "→ 左右滑動查看完整內容" : "→ Scroll to see the full evidence"} />
-          <Evidence src={zh ? "/images/case01/case01_BE_chi01.webp" : "/images/case01/case01_BE_eng01.webp"} alt={zh ? "後台庫存狀態如何影響消費者結帳流程" : "How backend inventory state affects consumer checkout"} caption={zh ? "CONTEXT — 後台狀態如何影響消費者體驗" : "CONTEXT — How Backend State Impacts the Consumer Experience"} className="lg:w-2/3" />
-          <SequenceReveal items={zh ? [["發生了什麼？", "商品庫存已在結帳過程中改變。"], ["為什麼不能繼續？", "目前訂單內容已不再有效。"], ["下一步怎麼做？", "更新購物車後重新確認可購買商品。"]] : [["What happened?", "Product availability changed during Checkout."], ["Why can’t I continue?", "The current order is no longer valid."], ["What can I do next?", "Update the cart and confirm available products before continuing."]]} />
-          <div className="max-w-[70ch] border-t cf-rule pt-8"><p className="cf-meta cf-accent">CASE 02 — RETURN / EXCHANGE</p><p className="cf-body body-tc mt-4">{zh ? "退換貨流程驗證申請數量，依商品狀況決定 Restock / Disposed，並以 Refund / Reshipment 完成處理，同步更新 Order 與 Inventory 狀態。" : "The return and exchange flow validates quantity, determines Restock / Disposed based on item condition, resolves the case through Refund / Reshipment, and updates the resulting order and inventory states."}</p></div>
-          <InspectableEvidence src="/images/case01/evidence/case01-return-exchange-main-focused.png" alt={zh ? "退換貨管理介面，呈現退貨追蹤資訊、退貨日期與退貨商品清單" : "Return and exchange management showing tracking information, return date, and returned items"} caption={zh ? "OPERATIONAL EVIDENCE — Return / Exchange Detail" : "OPERATIONAL EVIDENCE — Return / Exchange Detail"} aspect="aspect-[28/13]" scrollHint={zh ? "→ 左右滑動查看完整內容" : "→ Scroll to see the full evidence"} />
-          <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
-            <InspectableEvidence src="/images/case01/evidence/case01-return-exchange-validation.png" alt={zh ? "換貨商品與數量驗證介面，提示換貨數量不得超過原訂單數量" : "Exchange item and quantity validation stating that the exchange quantity cannot exceed the original order quantity"} caption={zh ? "VALIDATION — Exchange Quantity · 原訂單數量限制" : "VALIDATION — Exchange Quantity · Original-order Limit"} aspect="aspect-[2550/1650]" scrollHint={zh ? "→ 左右滑動查看完整內容" : "→ Scroll to see the full evidence"} />
-            <InspectableEvidence src="/images/case01/evidence/case01-return-exchange-consequence.png" alt={zh ? "退貨商品的 Restock 或 Disposed 狀態，以及 Refund 與 Reshipment 處理欄位" : "Returned items showing Restock or Disposed status plus Refund and Reshipment controls"} caption={zh ? "SYSTEM STATE — Restock / Disposed · Refund / Reshipment" : "SYSTEM STATE — Restock / Disposed · Refund / Reshipment"} aspect="aspect-[28/15]" scrollHint={zh ? "→ 左右滑動查看完整內容" : "→ Scroll to see the full evidence"} />
-          </div>
+          <FlowTabs
+            label={zh ? "系統流程" : "System flows"}
+            slides={[
+              {
+                label: zh ? "庫存狀態流程" : "Inventory Status Flow",
+                src: zh ? "/images/case01/case01_ISF_chi02.webp" : "/images/case01/case01_ISF_eng02.webp",
+                alt: zh ? "庫存狀態流程，呈現實體到貨、驗收、數位庫存決策與消費端影響" : "Inventory status flow showing physical arrival, verification, digital inventory decisions, and consumer-facing impact",
+                caption: zh ? "FIG. 02 — 庫存狀態流程" : "FIG. 02 — Inventory Status Flow",
+                note: zh ? "商品經倉庫驗收後才進入可售庫存，可控超賣則作為系統支援的商業規則。" : "Warehouse verification before stock goes live, with controlled overselling as a business rule.",
+                scrollHint: zh ? "→ 左右滑動查看完整流程圖" : "→ Scroll to see the full diagram",
+              },
+              {
+                label: zh ? "定價與收益邏輯" : "Pricing & Revenue Logic",
+                src: zh ? "/images/case01/case01_PRL_chi02.webp" : "/images/case01/case01_PRL_eng02.webp",
+                alt: zh ? "已移除敏感數值的定價與收益邏輯圖，呈現最低售價規則、價格驗證與多方結算" : "Sanitized pricing and revenue logic diagram showing the minimum-price rule, price validation, and multi-party settlement",
+                caption: zh ? "FIG. 03 — 定價與收益邏輯 · 已移除敏感資訊" : "FIG. 03 — Pricing & Revenue Logic · Sanitized",
+                note: zh ? "Supplier 最低售價、銷售端定價彈性，以及已移除敏感數值的多方結算邏輯。" : "Supplier minimum price, seller flexibility above it, and sanitized multi-party settlement logic.",
+                scrollHint: zh ? "→ 左右滑動查看完整流程圖" : "→ Scroll to see the full diagram",
+              },
+            ]}
+          />
+          <div className="space-y-12">
+            <EvidenceGroup label={zh ? "庫存管理" : "Inventory Management"} note={zh ? "目前庫存與超賣數量，搭配可追溯的異動紀錄。" : "Current stock and oversold quantity, with a traceable change history."}>
+              <div className="space-y-8">
+                <Shot src="/images/case01/evidence/case01-inventory-list.webp" size={[1330, 467]} minW="min-w-[56rem]" alt={zh ? "商品庫存列表，呈現庫存、超賣數量與商品狀態" : "Product inventory list showing stock, oversold quantity, and product status"} caption={zh ? "目前庫存狀態" : "Current inventory state"} scrollHint={zh ? "→ 左右滑動查看完整內容" : "→ Scroll to see the full evidence"} />
+                <div className="lg:w-5/6">
+                  <Shot src="/images/case01/evidence/case01-inventory-log-focused.png" size={[2500, 920]} minW="min-w-[56rem]" alt={zh ? "商品庫存異動紀錄，呈現狀態、操作者、角色、異動內容與時間" : "Product Inventory Log showing status, Changed By, Role, change details, and Timestamp"} caption={zh ? "庫存異動紀錄" : "Operational history"} scrollHint={zh ? "→ 左右滑動查看 Role 與 Timestamp" : "→ Scroll to see Role and Timestamp"} />
+                </div>
               </div>
-            </DecisionBlock>
+            </EvidenceGroup>
+            <EvidenceGroup label={zh ? "Agent 與 Streamer 協作" : "Agent–Streamer Collaboration"} note={zh ? "協作狀態讓 Agent 快速理解 Streamer 目前是可邀請、已送出邀請、合作中或已結束合作。" : "Collaboration states help Agents understand whether a Streamer is available, invited, active or no longer collaborating."} split="4/8">
+              <div>
+                <Shot src="/images/case01/evidence/case01-streamer-collaboration.webp" size={[1652, 1542]} minW="min-w-[40rem]" alt={zh ? "直播主名單卡片，呈現送出合作邀請、已送出邀請、合作中與結束合作等狀態" : "Streamer list cards showing Send Cooperation Request, Request Sent, In Collaboration, and End Collaboration states"} scrollHint={zh ? "→ 左右滑動查看完整內容" : "→ Scroll to see the full evidence"} />
+              </div>
+            </EvidenceGroup>
+            <EvidenceGroup label={zh ? "訂單管理" : "Order Management"} note={zh ? "在同一營運視圖中整合訂單狀態、銷售來源與待處理操作。" : "Order states, seller source, and required actions are brought together in one operational view."} split="4/8">
+              <div>
+                <Shot src="/images/case01/evidence/case01-order-list.webp" size={[2048, 1565]} minW="min-w-[48rem]" alt={zh ? "平台訂單管理列表，呈現訂單與付款狀態、Agent／直播主來源與列操作" : "Platform order list showing order and payment states, Agent / Streamer source, and row actions"} scrollHint={zh ? "→ 左右滑動查看 Payment、Source 與操作" : "→ Scroll to see Payment, Source, and Actions"} />
+              </div>
+            </EvidenceGroup>
+            <EvidenceGroup label={zh ? "售後狀態處理" : "After-sales State Handling"} note={zh ? "退貨結果會重新影響庫存與履約狀態，包括重新入庫、報廢、退款與重新出貨。" : "Return outcomes feed back into inventory and fulfillment states, including restock, disposal, refund and reshipment."} split="3/9">
+              <div>
+                <Shot src="/images/case01/evidence/case01-after-sales-states.webp" size={[1722, 1143]} minW="min-w-[48rem]" alt={zh ? "退貨詳情，呈現退貨商品的 Restock 與 Disposed 狀態，以及退款方式與重新出貨追蹤欄位" : "Return detail showing Restock and Disposed item states, refund type and method, and reshipment tracking"} scrollHint={zh ? "→ 左右滑動查看完整內容" : "→ Scroll to see the full evidence"} />
+              </div>
+            </EvidenceGroup>
+            <EvidenceGroup label={zh ? "消費者結帳狀態" : "Consumer Checkout State"} note={zh ? "當商品在結帳時已無法購買，前台會提示缺貨、將商品數量歸零並停用 Checkout。" : "When an item is unavailable at checkout, the storefront warns the user, sets the quantity to zero, and disables Checkout."} split="4/8">
+              <div className="space-y-6">
+                <Shot src="/images/case01/evidence/case01-checkout-warning.webp" size={[3510, 748]} minW="min-w-[40rem]" alt={zh ? "結帳確認頁的缺貨警告：所選商品剛剛售完，請先更新購物車" : "Checkout confirmation warning that a selected item just went out of stock and the cart must be updated"} caption={zh ? "缺貨提示" : "Out-of-stock warning"} />
+                <Shot src="/images/case01/evidence/case01-checkout-blocked.webp" size={[3510, 1920]} minW="min-w-[40rem]" alt={zh ? "數量歸零的缺貨商品，以及停用的 Checkout 按鈕" : "Out-of-stock item at quantity 0 and the disabled Checkout button"} caption={zh ? "數量歸零與停用的 Checkout" : "Zero quantity and disabled Checkout"} scrollHint={zh ? "→ 左右滑動查看完整內容" : "→ Scroll to see the full evidence"} />
+              </div>
+            </EvidenceGroup>
           </div>
         </div>
       </EvidenceHeading>
@@ -288,7 +293,7 @@ export function CaseOneFinalContent({ register, locale }: { register: RegisterSe
           "The Client later changed its business strategy, so the product did not formally enter commercial operation.",
           "For that reason, this case does not claim post-launch KPIs. The evidence is the completed product architecture, multi-role workflows, UX/UI decisions, working engineering implementation, and delivered system.",
         ]}
-        media={<div className="space-y-12"><CaseOneDemoLinks locale={locale} /><ScopeSummary /></div>}
+        media={<CaseOneDemoLinks locale={locale} />}
         mediaFullBleed
       />
     </Section>

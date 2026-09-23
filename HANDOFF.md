@@ -131,16 +131,29 @@ It may be added later as an optional social-sharing/SEO enhancement.
 
 # 4. CASE STATUS
 
-## CASE01 — CONTENT REWRITE COMPLETE (2026-09-23)
+## CASE01 — CONTENT + VISUAL CURATION COMPLETE (2026-09-23)
 
-Status: content pass committed; next = visual length review (image reduction / flow carousel) — not started.
+Status: content rewrite and visual curation committed. No open CASE01 task.
 
 Positioning:
 Business Rules → Product Architecture → Multi-role IA → Workflow → State / Validation → Engineering Implementation.
 
 Structure (ZH + EN, `CaseOneFinalContent.tsx` + CASE01 hero in `CaseStudyPrototype.tsx`):
 Hero/Overview → 01 The Challenge → 02 The Approach → 03 Designing the System → 04 From Design to Delivery → 05 Outcome.
-Images/evidence kept in original order; image reduction + flow carousel NOT yet done (next pass).
+
+Curated evidence (7 visual blocks; old 03A–03E feature gallery, principle lines, Q&A block and Outcome scope strip removed — do not restore):
+1. 01 — Ecosystem diagram, standalone, always visible
+2. 03 — Flow switcher: Inventory Status Flow ↔ Pricing & Revenue Logic (`FlowTabs.tsx`: md+ tap/click tabs with Arrow/Home/End; mobile stacks both diagrams, no nested swipe)
+3. Inventory Management — inventory list + inventory log
+4. Agent–Streamer Collaboration
+5. Order Management
+6. After-sales State Handling (return detail: Restock / Disposed / refund / reshipment)
+7. Consumer Checkout State (warning + zero-quantity / disabled Checkout excerpts)
+Sections 02 / 04 / 05 carry no images. EN desktop height 16,721px → 11,243px (−32.8%), approved as-is — do not shrink further at the cost of legibility.
+
+Diagrams: public versions are the corrected `case01_{CE,ISF,PRL}_{eng,chi}02.webp` (no "KEY DESIGN DECISION"/case eyebrows, no "seamless"/一站式, no WMS module corner, overselling not framed as prevented, minimum price "Set by Supplier" / 由供應商設定, rule ≥ 最低售價). Removed from the page: Backend-state → Consumer diagram (inaccurate overselling / concurrency claims), Supplier dashboard (placeholder KPI-like figures), pricing form, invalid-pricing screenshot, streamer filters, exchange-validation screenshot.
+
+Known issue: the old `*01.webp` diagrams (incl. `case01_BE_*`) and `case01_inventory_showcase_sample.webp` are still in `/public` because `caseFinalMedia.ts` references them for the legacy (non-v3) branch of `CaseStudyPrototype`, which the noindexed `/design-samples/case-final-dark` and `/case-final-light` routes still render. Retire those routes or repoint that file before deleting the assets.
 
 Locked facts:
 - Role: Lead Product Designer. Timeline: May 2025 — Apr 2026 · 12 months.

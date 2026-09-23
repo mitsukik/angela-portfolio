@@ -428,7 +428,7 @@ export const projects: Project[] = [
     caseStudy: {
       summary: "A responsive brand experience shaped around clear content and a consistent digital presence.",
       metadata: {
-        "角色": "Product Designer",
+        "角色": "UI/UX DESIGNER",
         "平台": "Responsive Web",
         "狀態": "3 個商業網站已上線",
       },
@@ -442,7 +442,7 @@ export const projects: Project[] = [
     caseStudyEn: {
       summary: "A responsive brand experience shaped around clear content and a consistent digital presence.",
       metadata: {
-        Role: "Product Designer",
+        Role: "UI/UX DESIGNER",
         Platform: "Responsive Web",
         Status: "3 Live Commercial Websites",
       },
@@ -485,7 +485,7 @@ export const projects: Project[] = [
     caseStudy: {
       summary: "A system experience that brings device status, data, and daily operations into one clear workflow.",
       metadata: {
-        "角色": "Product Designer",
+        "角色": "UI/UX DESIGNER",
         "平台": "Web · Industrial Tablet",
         "狀態": "正式導入",
       },
@@ -496,7 +496,7 @@ export const projects: Project[] = [
     caseStudyEn: {
       summary: "A system experience that brings device status, data, and daily operations into one clear workflow.",
       metadata: {
-        Role: "Product Designer",
+        Role: "UI/UX DESIGNER",
         Platform: "Web · Industrial Tablet",
         Status: "In Production",
       },
@@ -537,7 +537,7 @@ export const projects: Project[] = [
     caseStudy: {
       summary: "A mobile wellness product focused on an intuitive journey and clear interaction patterns.",
       metadata: {
-        "角色": "Product Designer",
+        "角色": "UI/UX DESIGNER",
         "平台": "Mobile Product",
       },
       ...placeholderSections,
@@ -547,7 +547,7 @@ export const projects: Project[] = [
     caseStudyEn: {
       summary: "A mobile wellness product focused on an intuitive journey and clear interaction patterns.",
       metadata: {
-        Role: "Product Designer",
+        Role: "UI/UX DESIGNER",
         Platform: "Mobile Product",
       },
       ...placeholderSections,

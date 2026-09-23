@@ -11,19 +11,19 @@ type RegisterSection = (index: number, element: HTMLElement | null) => void;
 const projects = {
   sdx: {
     name: "Shun De Xing / SDX",
-    role: "UX/UI Designer · Frontend Support",
+    role: "UI/UX Designer · Frontend Support",
     focus: "Information Architecture · Content Hierarchy · Corporate Communication",
     url: "https://sdxdevelop.com/",
   },
   charming: {
     name: "Charming Clinic",
-    role: "UX/UI Designer · Frontend Support",
+    role: "UI/UX Designer · Frontend Support",
     focus: "Service Discovery · Brand Trust · User Flow",
     url: "https://charmingvip.com/",
   },
   natex: {
     name: "NATEX",
-    role: "UX/UI Designer · Frontend",
+    role: "UI/UX Designer · Frontend",
     focus: "B2B Communication · Technical Content Hierarchy · Responsive Execution",
     url: "https://www.natex.com.tw/",
   },

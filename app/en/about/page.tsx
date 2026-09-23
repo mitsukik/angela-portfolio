@@ -5,7 +5,7 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 
 export const metadata: Metadata = {
   title: "About | Angela Yu",
-  description: "About Angela Yu, a Product Designer based in Taiwan.",
+  description: "About Senior UI/UX Designer Angela Yu, her experience, and her approach to complex systems, B2B, and enterprise product design.",
   alternates: {
     languages: {
       "zh-Hant": "/about",

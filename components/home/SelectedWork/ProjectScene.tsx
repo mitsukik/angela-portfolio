@@ -112,11 +112,9 @@ export function ProjectScene({ project, locale, f, still, compact, holdExit, sta
   const role = metadataEntries[0]?.[1];
   const facts = metadataEntries.slice(1, 4).map(([k, v]) => ({ k, v }));
   const mediaAspect =
-    project.id === "01"
-      ? "aspect-[1122/1402]"
-      : project.id === "04"
-        ? "aspect-[971/1619]"
-        : "aspect-[941/1672]";
+    project.id === "01" || project.id === "04"
+      ? "aspect-[1086/1448]"
+      : "aspect-[941/1672]";
   const mobileMediaHeight =
     project.id === "01"
       ? "h-[13rem]"

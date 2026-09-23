@@ -153,7 +153,7 @@ Sections 02 / 04 / 05 carry no images. EN desktop height 16,721px → 11,243px (
 
 Diagrams: public versions are the corrected `case01_{CE,ISF,PRL}_{eng,chi}02.webp` (no "KEY DESIGN DECISION"/case eyebrows, no "seamless"/一站式, no WMS module corner, overselling not framed as prevented, minimum price "Set by Supplier" / 由供應商設定, rule ≥ 最低售價). Removed from the page: Backend-state → Consumer diagram (inaccurate overselling / concurrency claims), Supplier dashboard (placeholder KPI-like figures), pricing form, invalid-pricing screenshot, streamer filters, exchange-validation screenshot.
 
-Known issue: the old `*01.webp` diagrams (incl. `case01_BE_*`) and `case01_inventory_showcase_sample.webp` are still in `/public` because `caseFinalMedia.ts` references them for the legacy (non-v3) branch of `CaseStudyPrototype`, which the noindexed `/design-samples/case-final-dark` and `/case-final-light` routes still render. Retire those routes or repoint that file before deleting the assets.
+Legacy routes: the noindexed `/design-samples/case-final-dark` and `/case-final-light` render the legacy (non-v3) branch via `caseFinalMedia.ts`, which now points to the same corrected `*02` diagrams (decision 0 Shared inventory → ISF, decision 1 Pricing rules → PRL; the old Backend-state diagram is unmapped). The old `*01.webp` diagrams are deleted. `case01_inventory_showcase_sample.webp` is still referenced there as the legacy showcase figure (not factually incorrect; has a baked-in portfolio headline).
 
 Locked facts:
 - Role: Lead Product Designer. Timeline: May 2025 — Apr 2026 · 12 months.
@@ -170,9 +170,6 @@ CTAs (hero, repeated in Outcome):
 Data:
 `data/projects.ts` CASE01 `caseStudy` / `caseStudyEn` condensed to the confirmed facts (still serialized into page source).
 Its `metadata` dict also drives the Home Selected Work card: CASE01 Role = Lead Product Designer (Angela, 2026-09-23 — factual Home/Hero consistency outranks uniform card role text; CASE02–04 cards stay UI/UX DESIGNER).
-
-Uncommitted-diff note:
-`CaseStudyPrototype.tsx` also contains a PRE-EXISTING, unrelated CASE04 info-row change (週期 / 上架準備中 / Preparing for release) — not part of the CASE01 rewrite; stage separately.
 
 ## CASE02 — FROZEN
 

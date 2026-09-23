@@ -1823,7 +1823,7 @@ body {
 
 /* Was color-only (no font-family at all), so every consumer silently fell
    through to the global :lang(zh-Hant) base-layer rule for Latin headings
-   (e.g. CASE01's "Lead Product Designer" role value) — the same fallback
+   (e.g. CASE01's "UI/UX Designer" role value) — the same fallback
    Noto Sans TC face .type-v3-display/.cf-tag/.cf-meta already exist to
    avoid. --portfolio-font-display already lists Noto Sans TC as its own
    fallback, so this renders CJK .cf-heading content (the majority of its

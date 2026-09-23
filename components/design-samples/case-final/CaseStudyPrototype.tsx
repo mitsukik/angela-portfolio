@@ -201,14 +201,14 @@ export function CaseStudyPrototype({
   const openingInfoRows = isCaseOneV3
     ? zhHant
       ? [
-          { label: "角色", value: "Lead Product Designer" },
+          { label: "角色", value: "UI/UX Designer" },
           { label: "時程", value: "2025.05 — 2026.04 · 12 個月" },
           { label: "範疇", value: "Product Architecture · Information Architecture · UX Flow · Interaction Design · UI Design · Prototype · Developer Handoff" },
           { label: "團隊", value: "1 UI Designer · 2 Engineers · PM（2025.10 加入）" },
           { label: "狀態", value: "Designed & Developed" },
         ]
       : [
-          { label: "Role", value: "Lead Product Designer" },
+          { label: "Role", value: "UI/UX Designer" },
           { label: "Timeline", value: "May 2025 — Apr 2026 · 12 months" },
           { label: "Scope", value: "Product Architecture · Information Architecture · UX Flow · Interaction Design · UI Design · Prototype · Developer Handoff" },
           { label: "Team", value: "1 UI Designer · 2 Engineers · PM (joined Oct 2025)" },

@@ -158,14 +158,14 @@ export const projects: Project[] = [
     // still serialized into the case page, so they mirror the same
     // confirmed facts in condensed form. `metadata` is ALSO what the Home
     // Selected Work card renders (role + 3 facts); its Role is the actual
-    // project role, matching the case page hero (Lead Product Designer).
+    // project role, matching the case page hero (UI/UX Designer).
     caseStudy: {
       displayTitle: "複雜系統設計",
       eyebrowTitle: "COMPLEX SYSTEM",
       projectName: "跨境寄賣與直播電商平台",
       summary: "將 Client 的商業構想，轉換成一套可實際運作的多角色電商平台。",
       metadata: {
-        "角色": "Lead Product Designer",
+        "角色": "UI/UX DESIGNER",
         "平台": "Responsive Web",
         "範疇": "Product Architecture · System UX · Workflow & State Design",
         "狀態": "Designed & Developed",
@@ -181,7 +181,7 @@ export const projects: Project[] = [
           "Client 希望建立一套跨境寄賣與直播電商平台，串接台灣供應商、越南當地倉儲、銷售角色與消費者。",
           "我的工作是將 Client 的商業需求整理成清楚的產品架構、操作流程、互動邏輯與介面，讓工程團隊能進一步實作。",
         ],
-        supportingLine: "Lead Product Designer · 2025.05 — 2026.04 · 12 個月",
+        supportingLine: "UI/UX Designer · 2025.05 — 2026.04 · 12 個月",
       },
       challenge: {
         heading: "The Challenge",
@@ -193,7 +193,7 @@ export const projects: Project[] = [
       },
       role: {
         heading: "My Role",
-        title: "Lead Product Designer",
+        title: "UI/UX Designer",
         body: [
           "我主導 Product Architecture、Information Architecture、UX Flow、Interaction Design、State Design 與 Developer Handoff，並親自設計 Platform、Supplier、Agent Backend 與 Consumer Web Storefront。",
           "另一位 UI Designer 依既有系統延伸 Consumer Mobile 與 Streamer Backend；我與 2 位工程師直接協作，PM 於 2025 年 10 月加入，協助後期專案協調與 QA。",
@@ -237,7 +237,7 @@ export const projects: Project[] = [
       projectName: "Cross-Border Consignment & Live Commerce Platform",
       summary: "Turning a client-funded business concept into a working multi-role commerce platform.",
       metadata: {
-        "Role": "Lead Product Designer",
+        "Role": "UI/UX DESIGNER",
         "Platform": "Responsive Web",
         "Scope": "Product Architecture · System UX · Workflow & State Design",
         "Status": "Designed & Developed",
@@ -253,7 +253,7 @@ export const projects: Project[] = [
           "The client wanted to build a cross-border consignment and live-commerce platform connecting suppliers in Taiwan with warehouse operations, sellers, and consumers in Vietnam.",
           "My role was to translate the business concept and client requirements into a clear product structure, workflows, interaction logic, and interfaces that the engineering team could implement.",
         ],
-        supportingLine: "Lead Product Designer · May 2025 — Apr 2026 · 12 months",
+        supportingLine: "UI/UX Designer · May 2025 — Apr 2026 · 12 months",
       },
       challenge: {
         heading: "THE CHALLENGE",
@@ -265,7 +265,7 @@ export const projects: Project[] = [
       },
       role: {
         heading: "MY ROLE",
-        title: "Lead Product Designer",
+        title: "UI/UX Designer",
         body: [
           "I led product architecture, information architecture, UX flows, interaction design, state design, and developer handoff, and personally designed the Platform, Supplier, and Agent Backends and the Consumer Web Storefront.",
           "Another UI Designer extended the established system into Consumer Mobile and the Streamer Backend. I worked directly with two engineers; a PM joined in October 2025 to support later-stage coordination and QA.",

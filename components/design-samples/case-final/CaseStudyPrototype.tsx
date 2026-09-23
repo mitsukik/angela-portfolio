@@ -118,11 +118,11 @@ export function CaseStudyPrototype({
           : (caseStudy.displayTitle ?? project.title);
   const zhHant = locale === "zh";
   const openingRef = useRef<HTMLDivElement | null>(null);
-  // CASE04's own copy numbers its content chapters 01-08 plus an
-  // unnumbered Reflection (9 chapters starting at 01) — unlike Case01-03,
-  // whose opening block implicitly owns "01" so their content chapters
-  // start at 02. See CaseFourFinalContent.tsx's own comment on Reflection.
-  const chapterCount = isCaseOneV3 ? 6 : isCaseOneV2 ? 11 : isCaseTwoV1 ? 7 : isCaseThreeV1 ? 6 : isCaseFourV1 ? 9 : CHAPTER_COUNT;
+  // V4 restructure (2026-09-23): CASE04's own copy now numbers exactly
+  // six content chapters (01-06, The Challenge & My Role through
+  // Delivery) — the old 01-08 + unnumbered Reflection (9 chapters) is
+  // gone; Reflection was folded into Delivery. See CaseFourFinalContent.tsx.
+  const chapterCount = isCaseOneV3 ? 6 : isCaseOneV2 ? 11 : isCaseTwoV1 ? 7 : isCaseThreeV1 ? 6 : isCaseFourV1 ? 6 : CHAPTER_COUNT;
   const chapters: Chapter[] = isCaseOneV3
     ? Array.from({ length: 6 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
     : isCaseOneV2
@@ -132,7 +132,7 @@ export function CaseStudyPrototype({
       : isCaseThreeV1
         ? Array.from({ length: 6 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
         : isCaseFourV1
-          ? Array.from({ length: 9 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
+          ? Array.from({ length: 6 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
           : CHAPTERS;
   const { active, registerChapter } = useActiveChapter(chapterCount);
   const chapterSectionRefs = useRef<Array<HTMLElement | null>>([]);
@@ -244,13 +244,15 @@ export function CaseStudyPrototype({
                 { label: "角色", value: "UI/UX Designer" },
                 { label: "團隊", value: "PM · Full-stack Engineer · UI/UX Designer" },
                 { label: "平台", value: "Android 優先（iOS 共用核心方向）" },
-                { label: "狀態", value: "開發中" },
+                { label: "週期", value: "約 1–2 個月" },
+                { label: "狀態", value: "上架準備中" },
               ]
             : [
                 { label: "Role", value: "UI/UX Designer" },
                 { label: "Team", value: "PM · Full-stack Engineer · UI/UX Designer" },
-                { label: "Platform", value: "Android-first (Shared iOS Direction)" },
-                { label: "Status", value: "In Development" },
+                { label: "Platform", value: "Android-first (shared core direction with iOS)" },
+                { label: "Timeline", value: "Approx. 1–2 months" },
+                { label: "Status", value: "Preparing for release" },
               ]
           : [
               { label: zhHant ? "類別" : "Category", value: zhHant ? project.category.zh : project.category.en },
@@ -343,19 +345,19 @@ export function CaseStudyPrototype({
                   {zhHant ? (
                     <>
                       <p className="cf-body body-tc">
-                        一個根據個人資料、當下狀態與偏好生成個人化療癒音樂的行動應用。系統需要處理多種輸入與生成邏輯，但使用者不需要理解這些複雜機制。
+                        這是一款根據個人資料與每日輸入內容，產生個人化聲音體驗的行動產品。
                       </p>
                       <p className="cf-body body-tc">
-                        我在早期功能流程與初步工程實作完成後接手 UX/UI，重新檢視既有體驗，優先處理最影響操作的問題，並建立一致的行動裝置介面語言與可重用的互動模式。
+                        我加入專案時，工程師已完成一版可運作的早期產品。我接手後負責 UX/UI 重整，重新梳理核心流程、定義互動與錯誤恢復狀態，並建立可重複使用的介面規則，作為 Android-first 行動體驗的設計基礎。
                       </p>
                     </>
                   ) : (
                     <>
                       <p className="cf-body body-tc">
-                        A mobile app that generates personalized healing audio from personal data, current state, and preferences. The system handles a range of inputs and generation logic that the user doesn&apos;t need to understand.
+                        A mobile wellness product that generates personalized audio experiences from personal profile information and daily inputs.
                       </p>
                       <p className="cf-body body-tc">
-                        I took over UX/UI after the early functional flow and initial engineering build were in place, reviewed the existing experience, prioritized the issues that affected usability most, and built a consistent mobile interface language with reusable interaction patterns.
+                        When I joined, an early functional version had already been built by the engineer. I took over the UX/UI redesign, restructuring the core journey, defining interaction and recovery states, and establishing a reusable interface system for an Android-first mobile experience.
                       </p>
                     </>
                   )}

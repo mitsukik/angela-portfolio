@@ -156,7 +156,7 @@ Diagrams: public versions are the corrected `case01_{CE,ISF,PRL}_{eng,chi}02.web
 Legacy routes: the noindexed `/design-samples/case-final-dark` and `/case-final-light` render the legacy (non-v3) branch via `caseFinalMedia.ts`, which now points to the same corrected `*02` diagrams (decision 0 Shared inventory → ISF, decision 1 Pricing rules → PRL; the old Backend-state diagram is unmapped). The old `*01.webp` diagrams are deleted. `case01_inventory_showcase_sample.webp` is still referenced there as the legacy showcase figure (not factually incorrect; has a baked-in portfolio headline).
 
 Locked facts:
-- Role: Lead Product Designer. Timeline: May 2025 — Apr 2026 · 12 months.
+- Role: UI/UX Designer (corrected by Angela 2026-09-23 — never use a "Lead" title for CASE01). Timeline: May 2025 — Apr 2026 · 12 months.
 - Team: Angela + 1 UI Designer + 2 Engineers; PM joined Oct 2025 (later-stage coordination + QA only). NO SA — never mention one.
 - Requirements came from Client meetings/verbal explanation — no PRD.
 - Angela designed Platform / Supplier / Agent Backends + Consumer Web Storefront; the other UI Designer extended the system into Consumer Mobile + Streamer Backend.
@@ -169,7 +169,7 @@ CTAs (hero, repeated in Outcome):
 
 Data:
 `data/projects.ts` CASE01 `caseStudy` / `caseStudyEn` condensed to the confirmed facts (still serialized into page source).
-Its `metadata` dict also drives the Home Selected Work card: CASE01 Role = Lead Product Designer (Angela, 2026-09-23 — factual Home/Hero consistency outranks uniform card role text; CASE02–04 cards stay UI/UX DESIGNER).
+Its `metadata` dict also drives the Home Selected Work card: CASE01 Role = UI/UX DESIGNER, matching the CASE01 Hero and the CASE02–04 cards.
 
 ## CASE02 — FROZEN
 

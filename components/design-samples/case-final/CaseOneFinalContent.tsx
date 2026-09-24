@@ -57,8 +57,8 @@ function EvidenceGroup({ label, note, split = "stacked", children }: { label: st
  * reconstruction made for portfolio presentation, not the original UI.
  * The prototype is the public case01-admin deployment (supporting
  * implementation evidence, not the shipped product). Reuses the existing
- * .case-link / cf-meta roles (same accent-vs-dim emphasis grammar as
- * CASE04's prototype links).
+ * .case-link / cf-meta roles; both destinations are live, so both links
+ * share cf-accent while their notes stay cf-dim.
  */
 const ENGINEERING_DEMO_URL = "https://sc-demo.sdxdevelop.com/zh-tw";
 const PORTFOLIO_PROTOTYPE_URL: string | null = "https://case01-admin.vercel.app/";
@@ -79,7 +79,7 @@ export function CaseOneDemoLinks({ locale, className = "" }: { locale: Locale; c
       note: zh
         ? `為作品集展示重新建構${PORTFOLIO_PROTOTYPE_URL ? "" : " · 製作中"}`
         : `Reconstructed for portfolio presentation${PORTFOLIO_PROTOTYPE_URL ? "" : " · In development"}`,
-      tone: "cf-dim",
+      tone: "cf-accent",
     },
   ];
   return <ul className={`flex flex-col gap-5 sm:flex-row sm:gap-10 ${className}`}>

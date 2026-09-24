@@ -55,13 +55,13 @@ function EvidenceGroup({ label, note, split = "stacked", children }: { label: st
  * engineers' real implementation from the project (used by the PM and
  * Client to review requirements); the Portfolio Prototype is a separate
  * reconstruction made for portfolio presentation, not the original UI.
- * The prototype has no verified public URL yet, so it renders without an
- * href rather than a guessed one — add PORTFOLIO_PROTOTYPE_URL once the
- * deployment exists. Reuses the existing .case-link / cf-meta roles (same
- * accent-vs-dim emphasis grammar as CASE04's prototype links).
+ * The prototype is the public case01-admin deployment (supporting
+ * implementation evidence, not the shipped product). Reuses the existing
+ * .case-link / cf-meta roles (same accent-vs-dim emphasis grammar as
+ * CASE04's prototype links).
  */
 const ENGINEERING_DEMO_URL = "https://sc-demo.sdxdevelop.com/zh-tw";
-const PORTFOLIO_PROTOTYPE_URL: string | null = null;
+const PORTFOLIO_PROTOTYPE_URL: string | null = "https://case01-admin.vercel.app/";
 
 export function CaseOneDemoLinks({ locale, className = "" }: { locale: Locale; className?: string }) {
   const zh = locale === "zh";
@@ -74,9 +74,8 @@ export function CaseOneDemoLinks({ locale, className = "" }: { locale: Locale; c
     },
     {
       href: PORTFOLIO_PROTOTYPE_URL,
-      label: zh ? "查看作品集 Prototype →" : "View Portfolio Prototype →",
-      // No deployed URL yet: the note states the non-clickable reason
-      // explicitly. Drop the suffix once PORTFOLIO_PROTOTYPE_URL is set.
+      label: zh ? "操作後台原型 ↗" : "Open Admin Prototype ↗",
+      // Without a URL the item renders non-clickable and the note says why.
       note: zh
         ? `為作品集展示重新建構${PORTFOLIO_PROTOTYPE_URL ? "" : " · 製作中"}`
         : `Reconstructed for portfolio presentation${PORTFOLIO_PROTOTYPE_URL ? "" : " · In development"}`,

@@ -165,7 +165,7 @@ Locked facts:
 
 CTAs (hero, repeated in Outcome):
 - Original Engineering Demo: https://sc-demo.sdxdevelop.com/zh-tw (engineers' original implementation, used by PM/Client for review)
-- Portfolio Prototype (`~/case01-admin`, reconstructed for portfolio): NO verified public URL yet — rendered without href, note reads "· In development / · 製作中"; set `PORTFOLIO_PROTOTYPE_URL` in `CaseOneFinalContent.tsx` once deployed (suffix drops automatically).
+- Public Admin Prototype: `https://case01-admin.vercel.app/` (`PORTFOLIO_PROTOTYPE_URL` in `CaseOneFinalContent.tsx`; source `~/case01-admin`). Label "操作後台原型 ↗ / Open Admin Prototype ↗", note "為作品集展示重新建構 / Reconstructed for portfolio presentation". Shown in both Hero and Outcome (intentional). Status: publicly accessible; portfolio reconstruction / interactive prototype; supporting evidence only. Never present it as the original production deployment, and never imply full Figma-to-code fidelity or commercial launch/adoption.
 
 Data:
 `data/projects.ts` CASE01 `caseStudy` / `caseStudyEn` condensed to the confirmed facts (still serialized into page source).

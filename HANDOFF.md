@@ -16,7 +16,7 @@ Before making portfolio recommendations or code changes:
 
 Explicitly authorized by Angela (autonomous task). Hero reopened for
 interaction only — copy, typography, composition unchanged. Production commits
-`83d694a` + `5e73944` on the public repo (`~/angela-portfolio-public`) `main`; code NOT
+`83d694a` + `5e73944` + `b777667` on the public repo (`~/angela-portfolio-public`) `main`; code NOT
 mirrored into this work repo (it holds unrelated uncommitted WIP in the
 same files) — migrate from the public repo before any further work here.
 
@@ -38,9 +38,11 @@ What exists now (do not regress):
   -edge wipe (incoming covers outgoing), styles written from one
   ScrollTrigger (no per-scroll React state). Mobile stacked (no pin); reduced motion = pinned stage
   with instant switches. Hero track 170svh → 135svh (mobile 115svh).
-- `SystemResolveField.tsx` (Home Hero only) — System Resolve: brief
-  activity → left-to-right resolve → lattice rest, single scheduler that
-  stops. Text clear zones (`data-glyph-clear`, measured per text node).
+- Home Hero background RESTORED to pre-upgrade (commit `b777667`,
+  Angela's request): `Hero.tsx` is identical to `f0daf81` except the
+  shorter track (115/135svh) and renders the original
+  `<HeroBackgroundShapes fill />`. System Resolve was removed entirely
+  (it was that background). Do not re-apply it to the Hero.
 - About background RESTORED to pre-upgrade (commit `5e73944`, Angela's
   request): `HeroBackgroundShapes.tsx` + `AboutV2.tsx` are byte-identical
   to `f0daf81` (continuous per-cell re-rolls, full strength). Do not apply

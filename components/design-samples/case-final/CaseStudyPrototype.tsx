@@ -387,10 +387,9 @@ export function CaseStudyPrototype({
                       exception (see HANDOFF.md CASE04 section): these two
                       URLs carry the real product name in their domain, but
                       the portfolio's own copy/metadata stay anonymized —
-                      only the outbound href exposes it. App Prototype gets
-                      cf-accent (stronger) vs Landing Page's cf-dim
-                      (secondary) to express emphasis with existing text-
-                      color roles rather than inventing a new CTA style. */}
+                      only the outbound href exposes it. Both prototype links
+                      share the same case-link + cf-accent role (Angela's
+                      call, 2026-09-27) — no new CTA style. */}
                   <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-2">
                     <a
                       href="https://labo65-app.vercel.app/"
@@ -404,7 +403,7 @@ export function CaseStudyPrototype({
                       href="https://labo65-landing.vercel.app/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="case-link cf-meta cf-dim"
+                      className="case-link cf-meta cf-accent"
                     >
                       {zhHant ? "查看 Landing Page 原型 ↗" : "View Landing Page Prototype ↗"}
                     </a>

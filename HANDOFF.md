@@ -15,8 +15,8 @@ Before making portfolio recommendations or code changes:
 # 0. LATEST COMPLETION — INTERACTION & MOTION UPGRADE (2026-09-27)
 
 Explicitly authorized by Angela (autonomous task). Hero reopened for
-interaction only — copy, typography, composition unchanged. Production commit
-`83d694a` on the public repo (`~/angela-portfolio-public`) `main`; code NOT
+interaction only — copy, typography, composition unchanged. Production commits
+`83d694a` + `5e73944` on the public repo (`~/angela-portfolio-public`) `main`; code NOT
 mirrored into this work repo (it holds unrelated uncommitted WIP in the
 same files) — migrate from the public repo before any further work here.
 
@@ -36,13 +36,20 @@ What exists now (do not regress):
   control + sheet (hides while scrolling down, returns on pause/scroll up).
 - Selected Work — `SCENE_VH` 70 per project (track 575vh → 352vh), single
   -edge wipe (incoming covers outgoing), styles written from one
-  ScrollTrigger (no per-scroll React state). Header/chrome tone follows
-  the wipe edge. Mobile stacked (no pin); reduced motion = pinned stage
+  ScrollTrigger (no per-scroll React state). Mobile stacked (no pin); reduced motion = pinned stage
   with instant switches. Hero track 170svh → 135svh (mobile 115svh).
-- `HeroBackgroundShapes.tsx` — System Resolve: brief activity →
-  left-to-right resolve → lattice rest, single scheduler that stops. Text
-  clear zones (`data-glyph-clear`, measured per text node). About uses
-  `clearBand` [0, .62] (whole width on phones) and rest opacity .35.
+- `SystemResolveField.tsx` (Home Hero only) — System Resolve: brief
+  activity → left-to-right resolve → lattice rest, single scheduler that
+  stops. Text clear zones (`data-glyph-clear`, measured per text node).
+- About background RESTORED to pre-upgrade (commit `5e73944`, Angela's
+  request): `HeroBackgroundShapes.tsx` + `AboutV2.tsx` are byte-identical
+  to `f0daf81` (continuous per-cell re-rolls, full strength). Do not apply
+  System Resolve / clear bands / dimming to About.
+- Home header tone RESTORED to the pre-upgrade rule (`SelectedWork.tsx`
+  header-tone note): header takes the next project's tone 0.03 scene
+  units before its wipe; mobile stacked list flips per project again via
+  the original formula (progress × 4.35 + 0.25). Stage chrome (label /
+  rail) still follows the wipe edge.
 - About How I Work panels play once to their rest frame, replay on hover;
   Beyond chain builds once in view and stays built.
 - `RouteTransition.tsx` — single 300ms CSS reveal (was ~670ms), wordmark on

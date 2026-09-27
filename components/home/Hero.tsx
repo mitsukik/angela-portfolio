@@ -8,6 +8,7 @@ import type { Locale } from "@/data/locale";
 import { getLenisInstance } from "@/components/site/lenisInstance";
 import { HeroCube } from "./HeroCube";
 import { HeroBackgroundShapes } from "./HeroBackgroundShapes";
+import { SystemResolveField } from "./SystemResolveField";
 
 // A/B/C prototype switch only — see HeroBackgroundShapes.tsx's own header
 // comment. HeroCube ("cube") and the boxed Background Shapes ("shapes")
@@ -194,7 +195,7 @@ export function Hero({ locale }: { locale: Locale }) {
             can't leak into Selected Work or the Footer. */}
         {HERO_VISUAL === "shapes-full" && (
           <div aria-hidden className="fixed inset-0 pointer-events-none">
-            <HeroBackgroundShapes fill clearSelector="[data-glyph-clear]" />
+            <SystemResolveField fill clearSelector="[data-glyph-clear]" />
           </div>
         )}
 

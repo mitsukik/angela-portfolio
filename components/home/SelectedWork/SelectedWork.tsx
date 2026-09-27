@@ -7,10 +7,32 @@ import type { Locale } from "@/data/locale";
 import { projects } from "@/data/projects";
 import { getLenisInstance } from "@/components/site/lenisInstance";
 import { useSyncHeaderVariant } from "@/components/site/headerTheme";
-import { SCENE_SPAN, TRACK_HEIGHT_VH, clamp, handoverPoint, sceneFrame, useMedia } from "./motion";
+import { SCENE_SPAN, TRACK_HEIGHT_VH, WIPE, clamp, handoverPoint, sceneFrame, useMedia } from "./motion";
 import { ProjectScene, sceneStyles } from "./ProjectScene";
 
 const COUNT = projects.length;
+
+/*
+ * Shared header tone — restored to the pre-83d694a behavior.
+ * Before the interaction upgrade the Home header took the NEXT project's
+ * tone slightly ahead of that project's own arrival:
+ *   current = clamp(floor(sceneP + 0.25)), sceneP = progress * 4.35
+ * i.e. 0.03 scene units before its wipe window (f = -0.22) opened, on the
+ * pinned stage AND on the mobile stacked list alike.
+ * - Stacked (mobile): the stacked list is unchanged from then, so the
+ *   original formula is used verbatim (LEGACY_SPAN / LEGACY_LEAD).
+ * - Pinned: the same relationship to the wipe, on the new wipe window —
+ *   the header flips HEADER_LEAD before WIPE[0].
+ */
+const LEGACY_SPAN = 4.35;
+const LEGACY_LEAD = 0.25;
+const HEADER_LEAD = 0.03;
+const headerIndexPinned = (sceneP: number) => {
+  let index = 0;
+  for (let i = 1; i < COUNT; i += 1) if (sceneP >= i + WIPE[0] - HEADER_LEAD) index = i;
+  return index;
+};
+const headerIndexStacked = (progress: number) => clamp(Math.floor(progress * LEGACY_SPAN + LEGACY_LEAD), 0, COUNT - 1);
 const lastNumber = String(COUNT).padStart(2, "0");
 
 /** Scene-unit span of each project's progress-rail segment. */
@@ -37,15 +59,40 @@ export function SelectedWork({ locale }: { locale: Locale }) {
   const [current, setCurrent] = useState(0);
   const [headerTone, setHeaderTone] = useState(projects[0].stageBackground);
 
-  // Report the tone under the header to the shared SiteHeader so it never
-  // reads dark over a light stage (see components/site/headerTheme.tsx).
-  useSyncHeaderVariant(stacked ? "dark" : headerTone);
+  // Report the Home header tone to the shared SiteHeader (see
+  // components/site/headerTheme.tsx and the header-tone note above).
+  useSyncHeaderVariant(headerTone);
 
   // The compact/pinned choice settles after the first client render and
   // changes document height; triggers created meanwhile (e.g. the
   // Closing reveal) must re-measure against the corrected layout.
   useEffect(() => {
     ScrollTrigger.refresh();
+  }, [stacked]);
+
+  // Stacked (mobile) header tone — the original progress formula; the
+  // state only changes at the three hand-overs, never per scroll frame.
+  useLayoutEffect(() => {
+    if (!stacked) return;
+    const track = trackRef.current;
+    if (!track) return;
+    gsap.registerPlugin(ScrollTrigger);
+    let last = -1;
+    const sync = (progress: number) => {
+      const index = headerIndexStacked(progress);
+      if (index === last) return;
+      last = index;
+      setHeaderTone(projects[index].stageBackground);
+    };
+    const trigger = ScrollTrigger.create({
+      trigger: track,
+      start: "top top",
+      end: "bottom bottom",
+      onUpdate: (self) => sync(self.progress),
+      onRefresh: (self) => sync(self.progress),
+    });
+    sync(trigger.progress);
+    return () => trigger.kill();
   }, [stacked]);
 
   useLayoutEffect(() => {
@@ -77,6 +124,7 @@ export function SelectedWork({ locale }: { locale: Locale }) {
     let lastCurrent = -1;
     let lastTop = -1;
     let lastBottom = -1;
+    let lastHeader = -1;
 
     const render = (progress: number) => {
       const sceneP = progress * SCENE_SPAN;
@@ -95,13 +143,14 @@ export function SelectedWork({ locale }: { locale: Locale }) {
       });
 
       // `current` (counter, aria-current, rail label) hands over at the
-      // wipe midpoint. Tone follows the wipe edge instead: for a vertical
-      // wipe the bottom rail re-tones as soon as the edge passes it, the
-      // top chrome and the shared header only once the edge reaches the
-      // top — so no chrome ever sits in the wrong tone over a scene.
+      // wipe midpoint. Stage chrome tone follows the wipe edge: for a
+      // vertical wipe the bottom rail re-tones as soon as the edge passes
+      // it, the top chrome once the edge reaches the top. The shared
+      // header keeps its original lead (headerIndexPinned).
       let next = 0;
       let topTone = 0;
       let bottomTone = 0;
+      const headerIndex = headerIndexPinned(sceneP);
       for (let i = 1; i < COUNT; i += 1) {
         const enter = sceneFrame(i, COUNT, sceneP, still).enter;
         const horizontal = projects[i].id === "03";
@@ -115,8 +164,11 @@ export function SelectedWork({ locale }: { locale: Locale }) {
       }
       if (topTone !== lastTop) {
         lastTop = topTone;
-        setHeaderTone(projects[topTone].stageBackground);
         retone(topChrome, topTone);
+      }
+      if (headerIndex !== lastHeader) {
+        lastHeader = headerIndex;
+        setHeaderTone(projects[headerIndex].stageBackground);
       }
       if (bottomTone !== lastBottom) {
         lastBottom = bottomTone;

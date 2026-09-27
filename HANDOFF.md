@@ -12,6 +12,57 @@ Before making portfolio recommendations or code changes:
 
 ---
 
+# 0. LATEST COMPLETION — INTERACTION & MOTION UPGRADE (2026-09-27)
+
+Explicitly authorized by Angela (autonomous task). Hero reopened for
+interaction only — copy, typography, composition unchanged. Production commit
+`83d694a` on the public repo (`~/angela-portfolio-public`) `main`; code NOT
+mirrored into this work repo (it holds unrelated uncommitted WIP in the
+same files) — migrate from the public repo before any further work here.
+
+Motion grammar (keep): Resolve / Connect / Reveal / Switch / Track / Rest.
+Tokens in `app/globals.css :root` (`--motion-duration-instant…emphasis/exit`,
+`--motion-distance-*`). Budget: max 1 primary + 1 supporting motion; every
+animation ends in a stable state; no endless loops.
+
+What exists now (do not regress):
+- `CaseEvidenceViewer.tsx` — ONE global evidence viewer (provider in
+  `CaseStudyPrototype`), used by `Shot`, `FlowEvidence`, CASE02 images,
+  CASE03 images, CASE04 phone/composed evidence, State Scrubber. Fit /
+  actual-size, Escape, focus return, focus trap, Lenis stopped while open.
+- `ChapterRegister.tsx` — numeral rail opens into labelled index on
+  hover/focus (labels read from each section's `.cf-section-label`, no
+  second copy source); active rule = reading progress; mobile `03 / 05`
+  control + sheet (hides while scrolling down, returns on pause/scroll up).
+- Selected Work — `SCENE_VH` 70 per project (track 575vh → 352vh), single
+  -edge wipe (incoming covers outgoing), styles written from one
+  ScrollTrigger (no per-scroll React state). Header/chrome tone follows
+  the wipe edge. Mobile stacked (no pin); reduced motion = pinned stage
+  with instant switches. Hero track 170svh → 135svh (mobile 115svh).
+- `HeroBackgroundShapes.tsx` — System Resolve: brief activity →
+  left-to-right resolve → lattice rest, single scheduler that stops. Text
+  clear zones (`data-glyph-clear`, measured per text node). About uses
+  `clearBand` [0, .62] (whole width on phones) and rest opacity .35.
+- About How I Work panels play once to their rest frame, replay on hover;
+  Beyond chain builds once in view and stays built.
+- `RouteTransition.tsx` — single 300ms CSS reveal (was ~670ms), wordmark on
+  first arrival only, timeout fallback so content is never left covered.
+  Language switch (`navigationIntent.ts`) skips the curtain and restores
+  the same heading/figure offset (or Selected Work track progress).
+- `StateScrubber.tsx` — CASE04 §03 recovery sequence (Generating → Failed,
+  answers preserved → Playback error, progress preserved) as WAI-ARIA tabs.
+  CASE01 not given a scrubber: its inventory states exist only as columns
+  in one screenshot (would fabricate states).
+- Case footer — larger Next entry (number, title, description, preview,
+  stretched CTA); Previous stays quiet.
+- Removed: legacy-only marquee loop (static label now), ShowcaseMedia
+  pointer parallax, language-option hover jitter, CASE04 scene-card
+  opacity (contrast fix). Light-surface focus ring = ink.
+
+Known accepted a11y note unchanged: CASE02 lavender-on-paper (~1.9:1).
+
+---
+
 # 1. GLOBAL PORTFOLIO STATUS
 
 Current production portfolio has passed final QA.

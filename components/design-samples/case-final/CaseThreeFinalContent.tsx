@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import type { Locale } from "@/data/locale";
 import { Reveal } from "../Reveal";
 import { EvidenceMotion } from "./EvidenceMotion";
+import { EvidenceTrigger } from "./CaseEvidenceViewer";
 import { Shot } from "./EvidenceShot";
 import { ReadingSection } from "./ReadingSection";
 
@@ -58,15 +59,17 @@ export function CaseThreeHeroEvidence({ locale }: { locale: Locale }) {
     <figure className="mt-12 md:mt-16">
       <Reveal>
         <div className="cf-figure-frame relative aspect-[16/9] overflow-hidden bg-white">
-          <Image
-            src="/images/case03/case03-hero-desktop-tablet.webp"
-            alt={zh ? "管理端 Desktop 儀表板，旁邊是現場工業平板的作業選單" : "Management desktop dashboard alongside the shop-floor industrial tablet's task menu"}
-            fill
-            unoptimized
-            loading="eager"
-            sizes="(min-width: 1024px) 70vw, 100vw"
-            className="object-contain"
-          />
+          <EvidenceTrigger asset={{ src: "/images/case03/case03-hero-desktop-tablet.webp", alt: zh ? "管理端 Desktop 儀表板，旁邊是現場工業平板的作業選單" : "Management desktop dashboard alongside the shop-floor industrial tablet's task menu" }}>
+            <Image
+              src="/images/case03/case03-hero-desktop-tablet.webp"
+              alt=""
+              fill
+              unoptimized
+              loading="eager"
+              sizes="(min-width: 1024px) 70vw, 100vw"
+              className="object-contain"
+            />
+          </EvidenceTrigger>
         </div>
       </Reveal>
       <figcaption className="cf-dim mt-4 max-w-[62ch] text-[13px] leading-6">
@@ -224,14 +227,16 @@ export function CaseThreeFinalContent({ register, locale }: { register: Register
               </div>
               <figure data-evidence-entrance className="mt-10 lg:col-span-7 lg:mt-0">
                 <div className="cf-figure-frame relative aspect-[16/9]">
-                  <Image
-                    src="/images/case03/case03-operations-collage.webp"
-                    alt={zh ? "多個現場作業畫面，共用相同的篩選、表格、表單與確認模式" : "Several shop-floor task screens sharing the same filter, table, form, and confirmation patterns"}
-                    fill
-                    unoptimized
-                    sizes="(min-width: 1024px) 50vw, 100vw"
-                    className="object-contain"
-                  />
+                  <EvidenceTrigger asset={{ src: "/images/case03/case03-operations-collage.webp", alt: zh ? "多個現場作業畫面，共用相同的篩選、表格、表單與確認模式" : "Several shop-floor task screens sharing the same filter, table, form, and confirmation patterns" }}>
+                    <Image
+                      src="/images/case03/case03-operations-collage.webp"
+                      alt=""
+                      fill
+                      unoptimized
+                      sizes="(min-width: 1024px) 50vw, 100vw"
+                      className="object-contain"
+                    />
+                  </EvidenceTrigger>
                 </div>
                 <figcaption className="cf-figure-caption cf-meta mt-3">
                   {zh ? "不同作業畫面沿用相同的篩選、表格、表單與確認模式。" : "Different operational screens reuse the same filtering, table, form, and confirmation patterns."}

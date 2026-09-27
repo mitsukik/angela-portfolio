@@ -2,43 +2,37 @@
 
 import { usePathname } from "next/navigation";
 import { useLayoutEffect, useRef } from "react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { getLenisInstance } from "./lenisInstance";
+import { consumeLanguageSwitch, restoreTarget } from "./navigationIntent";
 
-const COVER_MS = 260;
-const HOLD_MS = 70;
-const REVEAL_MS = 340;
-
-type Phase = "hold" | "cover" | "reveal" | null;
+// Total visible transition for ordinary navigation (P0.7): the curtain
+// covers the new route's first frame and reveals it over REVEAL_MS — no
+// cover phase, no hold, no wordmark after the first arrival. Opening
+// several cases in a row must never feel like a tax. Must match
+// .route-curtain-reveal in globals.css.
+const REVEAL_MS = 300;
 
 /**
- * A single reused cover/reveal "curtain" for the first page arrival and
- * every internal navigation afterward — one mechanism, not a different
- * theatrical transition per route, so Home → Case Study → About reads as
- * one designed website rather than pages that happen to share CSS.
+ * One reused reveal "curtain" for the first page arrival and every
+ * internal navigation, so the site reads as one designed piece.
  *
  * Purely cosmetic: Next.js has already swapped the route's content by the
- * time this fires, so it never delays or blocks navigation — it only
- * covers, then reveals what's already there. Fully skipped under
- * prefers-reduced-motion. Driven entirely through direct ref/classList
- * manipulation rather than React state — this is a fire-and-forget DOM
- * animation, not something that should trigger extra renders.
+ * time this fires, so it never delays navigation. The reveal is a single
+ * CSS keyframe animation whose first keyframe is "covered" (fill-mode
+ * both), started before the new route paints — no rAF hand-off that a
+ * background tab could stall, and a timeout always clears it, so content
+ * can never be left covered. Language switches skip the curtain entirely
+ * and keep the reader's place (see navigationIntent.ts). Fully skipped
+ * under prefers-reduced-motion.
  */
 export function RouteTransition() {
   const pathname = usePathname();
   const previousPathname = useRef(pathname);
-  // Sentinel is set to true only once the entry reveal has actually
-  // *completed* — not at the start of the attempt. React Strict Mode
-  // (dev only) mounts every effect twice (mount -> cleanup -> mount): if
-  // this flipped true up front, the first attempt's cleanup would cancel
-  // its pending requestAnimationFrame, the second invocation would see
-  // "already done" and skip re-running it, and the curtain would be
-  // stranded in its fully-covering "hold" state forever. Gating on actual
-  // completion means an interrupted first attempt is simply retried by
-  // Strict Mode's second invocation instead of silently abandoned.
   const hasRevealed = useRef(false);
   const curtainRef = useRef<HTMLDivElement | null>(null);
   const markRef = useRef<HTMLDivElement | null>(null);
   const timeouts = useRef<number[]>([]);
-  const rafId = useRef<number | null>(null);
 
   useLayoutEffect(() => {
     const curtain = curtainRef.current;
@@ -48,73 +42,55 @@ export function RouteTransition() {
     const clearPending = () => {
       timeouts.current.forEach((id) => window.clearTimeout(id));
       timeouts.current = [];
-      if (rafId.current !== null) {
-        window.cancelAnimationFrame(rafId.current);
-        rafId.current = null;
-      }
     };
 
-    const setPhase = (phase: Phase) => {
-      curtain.classList.remove(
-        "route-curtain-hold",
-        "route-curtain-cover",
-        "route-curtain-reveal",
-      );
-      if (phase) curtain.classList.add(`route-curtain-${phase}`);
+    const restart = (el: HTMLElement, className: string) => {
+      el.classList.remove(className);
+      void el.offsetWidth;
+      el.classList.add(className);
+      timeouts.current.push(window.setTimeout(() => el.classList.remove(className), REVEAL_MS + 60));
     };
 
-    // Restart the mark's fade in/out even if it's already mid-flash from a
-    // previous navigation — removing then re-adding the class doesn't
-    // restart a CSS animation on its own unless the browser is forced to
-    // notice the removal first (a reflow read does that).
-    const flashMark = () => {
-      mark.classList.remove("route-curtain-mark-visible");
-      void mark.offsetWidth;
-      mark.classList.add("route-curtain-mark-visible");
-    };
-
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (!hasRevealed.current) {
-      if (reducedMotion) {
-        hasRevealed.current = true;
-        return;
-      }
-
-      // Paint fully-covered first (no transition class yet), then defer to
-      // the next frame before switching to the reveal animation — without
-      // this the "hold" and "reveal" states could land in the same paint
-      // and the browser would skip straight to the end value.
-      setPhase("hold");
-      flashMark();
-      rafId.current = window.requestAnimationFrame(() => {
-        setPhase("reveal");
-        timeouts.current.push(
-          window.setTimeout(() => {
-            setPhase(null);
-            hasRevealed.current = true;
-          }, REVEAL_MS),
-        );
-      });
+      hasRevealed.current = true;
+      if (reducedMotion) return;
+      restart(curtain, "route-curtain-reveal");
+      restart(mark, "route-curtain-mark-visible");
       return clearPending;
     }
 
     if (previousPathname.current === pathname) return;
     previousPathname.current = pathname;
-    if (reducedMotion) return;
-
     clearPending();
-    setPhase("cover");
-    flashMark();
-    timeouts.current.push(
-      window.setTimeout(() => {
-        setPhase("reveal");
-        timeouts.current.push(window.setTimeout(() => setPhase(null), REVEAL_MS));
-      }, COVER_MS + HOLD_MS),
-    );
+    mark.classList.remove("route-curtain-mark-visible");
 
+    const languageSwitch = consumeLanguageSwitch(pathname);
+    if (languageSwitch) {
+      curtain.classList.remove("route-curtain-reveal");
+      // Same page, other language: no curtain. Restore the reader's place
+      // once the new tree — including layout-effect state such as Selected
+      // Work's pinned/stacked mode — has settled.
+      timeouts.current.push(
+        window.setTimeout(() => {
+          ScrollTrigger.refresh();
+          const top = restoreTarget(languageSwitch);
+          const lenis = getLenisInstance();
+          if (lenis) {
+            lenis.resize();
+            lenis.scrollTo(top, { immediate: true, force: true });
+          } else {
+            window.scrollTo(0, top);
+          }
+          ScrollTrigger.update();
+        }, 60),
+      );
+      return clearPending;
+    }
+
+    if (reducedMotion) return;
+    restart(curtain, "route-curtain-reveal");
     return clearPending;
   }, [pathname]);
 

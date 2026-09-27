@@ -7,8 +7,14 @@ import { HowIWorkV2 } from "./HowIWorkV2";
 import { SkillsV2 } from "./SkillsV2";
 import { BeyondV2 } from "./BeyondV2";
 
-// VISUAL EXPERIMENT — page-level Background Shapes field, not yet an
-// approved direction. Reuses HeroBackgroundShapes exactly as Home does
+// Page-level Background Shapes field. It now runs the same System Resolve
+// lifecycle as Home (brief activity -> ordered lattice -> rest, no timers
+// left running) and, because page content scrolls over this fixed layer,
+// keeps the left reading band (62% of the width; the whole width on
+// phones) empty at rest and eases to 35% opacity once resolved, so it
+// never competes with body copy.
+//
+// Originally a visual experiment. Reuses HeroBackgroundShapes exactly as Home does
 // (same weighted kind/color tables, same independent per-cell timers,
 // same reduced-motion gate, same undistorted uniform scaling) — no props
 // beyond `fill` and a calmer gridCols/gridRows than Home's own default,
@@ -53,7 +59,7 @@ export function AboutV2({ locale }: { locale: Locale }) {
           pointer-events-none so this purely decorative layer can never
           intercept a click, even over any gap between sections. */}
       <div aria-hidden className="fixed inset-0 pointer-events-none">
-        <HeroBackgroundShapes fill gridCols={ABOUT_GRID_COLS} gridRows={ABOUT_GRID_ROWS} />
+        <HeroBackgroundShapes fill gridCols={ABOUT_GRID_COLS} gridRows={ABOUT_GRID_ROWS} clearBand={[0, 0.62]} compactClearBand={[0, 1]} restOpacity={0.35} />
       </div>
 
       {/* Contrast-only overlay, fixed like the shapes layer so it never

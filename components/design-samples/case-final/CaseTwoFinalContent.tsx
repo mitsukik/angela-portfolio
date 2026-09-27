@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import type { Locale } from "@/data/locale";
 import { Reveal } from "../Reveal";
 import { HeroEvidenceReveal } from "./HeroEvidenceReveal";
-import { CaseEvidenceViewerProvider, EvidenceTrigger } from "./CaseEvidenceViewer";
+import { EvidenceTrigger } from "./CaseEvidenceViewer";
 import { VideoEvidence, type VideoEvidenceAsset } from "./VideoEvidence";
 
 type RegisterSection = (index: number, element: HTMLElement | null) => void;
@@ -310,7 +310,7 @@ const CONTRIBUTION_LABEL_ZH: Record<string, string> = {
 export function CaseTwoFinalContent({ register, locale }: { register: RegisterSection; locale: Locale }) {
   const zhHant = locale === "zh";
   return (
-    <CaseEvidenceViewerProvider>
+    <>
       <Section index={0} register={register} divider={false}>
         <Reveal>
           <SectionHeading
@@ -691,6 +691,6 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
           </aside>
         </div>
       </Section>
-    </CaseEvidenceViewerProvider>
+    </>
   );
 }

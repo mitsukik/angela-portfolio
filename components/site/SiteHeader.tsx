@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { Locale } from "@/data/locale";
 import { getLenisInstance } from "@/components/site/lenisInstance";
 import { useHeaderThemeContext } from "@/components/site/headerTheme";
+import { captureLanguageSwitch, recentLanguageSwitchFrom } from "@/components/site/navigationIntent";
 
 // "case" is a non-nav page (Case Study) — neither WORK nor ABOUT should
 // read as active there; existing "home"/"about" behavior is unchanged.
@@ -103,6 +104,7 @@ export function SiteHeader({
   const router = useRouter();
   const pathname = usePathname();
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const headerRef = useRef<HTMLElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const themeCtx = useHeaderThemeContext();
   const resolvedVariant = themeCtx?.variant ?? variant;
@@ -130,6 +132,28 @@ export function SiteHeader({
     };
   }, [open]);
 
+  // Switch grammar: after a language switch the new page's control slides
+  // its thumb from the old language to the new one (the header remounts
+  // with each page, so this replays the move instead of snapping).
+  useLayoutEffect(() => {
+    const from = recentLanguageSwitchFrom();
+    if (!from || from === locale || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const thumbs = headerRef.current?.querySelectorAll<HTMLElement>(".language-switch-thumb") ?? [];
+    thumbs.forEach((thumb) => {
+      const target = thumb.style.transform;
+      thumb.style.transition = "none";
+      thumb.style.transform = `translateX(${from === "en" ? "100%" : "0"})`;
+      void thumb.offsetWidth;
+      thumb.style.transition = "";
+      thumb.style.transform = target;
+    });
+  }, [locale]);
+
+  const handleLanguageSwitch = () => {
+    setOpen(false);
+    captureLanguageSwitch(switchHref, locale);
+  };
+
   const handleWorkClick = () => {
     setOpen(false);
     const target = document.getElementById("selected-work");
@@ -151,12 +175,12 @@ export function SiteHeader({
       {locale === "zh" ? (
         <span lang="zh-Hant" className="language-switch-option" data-active="true" aria-current="true">中</span>
       ) : (
-        <Link href={switchHref} lang="zh-Hant" className="language-switch-option">中</Link>
+        <Link href={switchHref} scroll={false} onClick={handleLanguageSwitch} lang="zh-Hant" className="language-switch-option" aria-label="切換為中文">中</Link>
       )}
       {locale === "en" ? (
         <span lang="en" className="language-switch-option" data-active="true" aria-current="true">EN</span>
       ) : (
-        <Link href={switchHref} lang="en" className="language-switch-option">EN</Link>
+        <Link href={switchHref} scroll={false} onClick={handleLanguageSwitch} lang="en" className="language-switch-option" aria-label="Switch to English">EN</Link>
       )}
     </div>
   );
@@ -167,7 +191,7 @@ export function SiteHeader({
   ];
 
   return (
-    <header data-header-variant={resolvedVariant} className="header-surface sticky top-0 z-50">
+    <header ref={headerRef} data-header-variant={resolvedVariant} className="header-surface sticky top-0 z-50">
       <div className="site-frame-header flex h-14 items-center justify-between md:h-20">
         {/* lang="en" keeps this pure-Latin wordmark in the intended mono
             label font: without it, the global :lang(zh-Hant) rule (see

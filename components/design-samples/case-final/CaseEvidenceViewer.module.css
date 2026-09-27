@@ -1,8 +1,7 @@
-/* CASE02 evidence viewer — isolated component-scoped styling.
-   Deliberately not touching app/globals.css (unrelated dirty shared file)
-   or any shared token; every rule here is scoped to this module via CSS
-   Modules' local class hashing, so nothing here can leak onto or be
-   affected by other pages. */
+/* Global case-study evidence viewer — component-scoped styling (CSS
+   Modules local hashing), so nothing here leaks onto other surfaces.
+   Colors are fixed (not case-theme tokens) on purpose: the viewer is its
+   own neutral dark inspection surface on both light and dark cases. */
 
 .trigger {
   position: absolute;
@@ -14,67 +13,88 @@
   border: 0;
   background: transparent;
   cursor: zoom-in;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.trigger :global(img) {
-  transition: transform 200ms ease-out;
+/* Corner affordance. Fine pointers: appears on hover/focus only, so rows
+   of evidence stay calm while reading. Touch: always faintly visible,
+   because there is no hover to discover it with. */
+.hint {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  color: #f2f0ec;
+  background: rgb(17 17 17 / 0.72);
+  opacity: 0;
+  pointer-events: none;
 }
 
-.trigger:hover :global(img) {
-  transform: scale(1.01);
+@media (hover: none), (pointer: coarse) {
+  .hint {
+    opacity: 0.85;
+  }
+}
+
+.trigger:is(:hover, :focus-visible) .hint {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hint {
+    transition: opacity var(--motion-duration-micro, 200ms) var(--motion-ease-editorial, ease);
+  }
 }
 
 .trigger:focus-visible {
   outline: none;
 }
 
-/* Inset ring instead of the site's default outset outline: the trigger
-   fills a .cf-figure-frame that has overflow:hidden, so an outset
-   outline-offset ring would be clipped at the frame edge and effectively
-   invisible. Same accent color as the global focus ring, just inset. */
+/* Inset ring: triggers fill frames with overflow:hidden, where an outset
+   ring would be clipped. Immediate (no transition) per the focus rule. */
 .trigger:focus-visible::after {
   content: "";
   position: absolute;
   inset: 3px;
   border: 2px solid var(--accent-yellow, #e7f34b);
+  box-shadow: 0 0 0 2px rgb(17 17 17 / 0.9);
   pointer-events: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .trigger :global(img),
-  .trigger:hover :global(img) {
-    transition: none;
-    transform: none;
-  }
 }
 
 .dialog {
   border: none;
   padding: 0;
+  margin: 0;
   background: transparent;
-  max-width: 96vw;
-  max-height: 96vh;
-  /* Explicit centering rather than relying on the UA stylesheet's own
-     dialog:modal defaults, which left the box pinned to the top-left
-     corner instead of centered once max-width/max-height were set. */
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
   position: fixed;
   inset: 0;
-  margin: auto;
+  color: #f2f0ec;
+  overscroll-behavior: contain;
 }
 
 .dialog::backdrop {
-  background: rgba(0, 0, 0, 0.86);
+  background: rgb(10 10 10 / 0.95);
 }
 
 .content {
-  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 0.5rem;
-  max-width: 94vw;
-  max-height: 92vh;
-  animation: case-evidence-viewer-in 160ms ease-out;
+  width: 100%;
+  height: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .content {
+    animation: case-evidence-viewer-in 180ms var(--motion-ease-editorial, ease-out);
+  }
 }
 
 @keyframes case-evidence-viewer-in {
@@ -88,52 +108,137 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .content {
-    animation: none;
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  flex: none;
+}
+
+@media (min-width: 768px) {
+  .toolbar {
+    padding: 1rem 1.5rem;
   }
 }
 
+.caption {
+  min-width: 0;
+  margin: 0;
+  font-family: var(--font-label, ui-monospace, monospace);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+  color: rgb(242 240 236 / 0.78);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: none;
+}
+
+.control,
 .close {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  flex: none;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(0, 0, 0, 0.55);
-  color: #fff;
-  font-size: 1.1rem;
-  line-height: 1;
+  min-height: 2.75rem;
+  border: 1px solid rgb(255 255 255 / 0.3);
+  background: rgb(0 0 0 / 0.55);
+  color: #f2f0ec;
   cursor: pointer;
-  transition: background-color 150ms ease, border-color 150ms ease;
 }
 
+.control {
+  padding: 0 1rem;
+  border-radius: 999px;
+  font-family: var(--font-label, ui-monospace, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.control[aria-pressed="true"] {
+  border-color: var(--accent-yellow, #e7f34b);
+  color: var(--accent-yellow, #e7f34b);
+}
+
+.close {
+  width: 2.75rem;
+  border-radius: 999px;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .control,
+  .close {
+    transition: background-color var(--motion-duration-micro, 200ms) ease, border-color var(--motion-duration-micro, 200ms) ease;
+  }
+}
+
+.control:hover,
 .close:hover {
-  background: rgba(0, 0, 0, 0.7);
-  border-color: rgba(255, 255, 255, 0.55);
+  background: rgb(255 255 255 / 0.08);
+  border-color: rgb(255 255 255 / 0.6);
 }
 
+.control:active,
+.close:active {
+  transform: scale(0.97);
+}
+
+.control:focus-visible,
 .close:focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid var(--accent-yellow, #e7f34b);
   outline-offset: 2px;
 }
 
-.imageWrap {
-  max-width: 92vw;
-  max-height: 84vh;
+/* The stage is the scroll container: in "fit" it centres the image, in
+   "actual" it pans the full-resolution asset with native scrolling
+   (wheel, trackpad, touch). */
+.stage {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: auto;
   display: flex;
+  padding: 0 1rem 1rem;
+  overscroll-behavior: contain;
+}
+
+@media (min-width: 768px) {
+  .stage {
+    padding: 0 1.5rem 1.5rem;
+  }
 }
 
 .image {
   display: block;
-  max-width: 92vw;
-  max-height: 84vh;
+  margin: auto;
+  user-select: none;
+}
+
+.image[data-mode="fit"] {
+  max-width: 100%;
+  max-height: 100%;
   width: auto;
   height: auto;
   object-fit: contain;
-  margin: auto;
+}
+
+.image[data-mode="actual"] {
+  max-width: none;
+  max-height: none;
+  cursor: zoom-out;
+}
+
+.image[data-mode="fit"][data-zoomable="true"] {
+  cursor: zoom-in;
 }

@@ -5,97 +5,34 @@ import type { Locale } from "@/data/locale";
 import type { Project } from "@/data/projects";
 import { ProjectVisual } from "@/components/site/ProjectVisual";
 import { MixedText } from "@/components/site/MixedText";
-import { clamp, easeOut, mapRange, mix } from "./motion";
+import { sceneFrame, type SceneFrame } from "./motion";
 
 type Props = {
   project: Project;
   locale: Locale;
-  f: number; // relative progress: 0 = arriving, 1 = fully gone
-  still: boolean; // reduced motion
-  compact: boolean; // mobile
-  // The track's own trailing "tail" (see SPAN in SelectedWork.tsx) gives
-  // the LAST project extra scroll after it would normally have exited, so
-  // the pin doesn't release the instant it's gone. Root cause of the
-  // "dead scroll" bug: exit is a *gradual* clip-path/opacity wind-down,
-  // designed to be masked by the next project's content filling in during
-  // the same window — for every other project that's true, but the last
-  // project has no next project, so the same gradual exit just visibly
-  // shrinks/crops the content away against a static, otherwise-empty
-  // background for however long the window lasts. Retiming the window
-  // (tried first) doesn't fix that — it only moves the empty gap later.
-  // Skipping exit entirely is the actual fix: the last project holds at
-  // its fully-settled resting state for the whole tail, and the handoff
-  // to Closing happens via the ordinary sticky-release + native scroll
-  // once the pin ends, not via this scroll-driven exit animation.
-  holdExit?: boolean;
-  // Mobile-only alternate render: a normal stacked block (own document
-  // height, no absolute positioning, no scroll-driven opacity/clipPath/
-  // transform choreography, always visible) instead of the pinned-stage
-  // crossfade scene below. See SelectedWork.tsx's compact branch — the
-  // pinned scene's fixed 100svh budget structurally cannot fit a real
-  // hero-weight image (native ratio, near-full width) alongside full copy
-  // for these projects' actual aspect ratios, which is what made CASE01/03
-  // render as tiny letterboxed posters; a normal-height stacked block has
-  // no such ceiling.
+  /** Position in the Selected Work sequence (drives choreography only). */
+  index: number;
+  count: number;
+  /** Mobile alternate render: a normal stacked block (own document
+   * height, no pin, no scroll-driven clip/transform) — the pinned stage's
+   * single-viewport budget cannot fit a real hero-weight image alongside
+   * full copy on a phone. */
   stacked?: boolean;
 };
 
-// Scroll-rhythm fix (index-scroll-rhythm-v1): mobile gets a wider
-// enter/exit window than desktop — not a naive isMobile * factor of the
-// desktop numbers, but its own deliberately larger overlap so the
-// incoming/outgoing crossfade has more physical scroll distance to
-// resolve across on a fast mobile flick, reading as a continuous wipe
-// rather than a snap. Desktop values are unchanged from the original
-// Lovable "VER B" port.
-const ENTER_WINDOW = { desktop: [-0.22, 0.16] as const, mobile: [-0.3, 0.22] as const };
-const EXIT_START = 0.78;
-const EXIT_END = 1.02;
-const LIVE_BUFFER = 0.04;
-
 /**
- * One project's resolved presentation state inside the shared pinned
- * Selected Work stage. Ported from the connected Lovable "VER B" project's
- * src/components/site/ProjectScene.tsx — same enter/exit windows, same
- * clip-path wipe axis (project 03 is the one horizontal wipe among four
- * otherwise-vertical ones), same bespoke per-project media transform.
+ * One project inside the Selected Work stage. Pinned (desktop/tablet): an
+ * absolutely-stacked scene whose wipe/settle frames come from
+ * sceneStyles() (project 03 keeps the one horizontal wipe among four
+ * otherwise-vertical ones). Stacked (mobile): a normal static block.
  */
-export function ProjectScene({ project, locale, f, still, compact, holdExit, stacked }: Props) {
-  const depth = compact ? 0.55 : 1;
-  const [enterStart, enterEnd] = compact ? ENTER_WINDOW.mobile : ENTER_WINDOW.desktop;
-  const enter = easeOut(mapRange(f, enterStart, enterEnd));
-  const exit = holdExit ? 0 : easeOut(mapRange(f, EXIT_START, EXIT_END));
-  const live = holdExit ? f > enterStart - 0.1 : f > enterStart - 0.1 && f < EXIT_END + LIVE_BUFFER;
+export function ProjectScene({ project, locale, index, count, stacked }: Props) {
+  // First paint (SSR included) matches the stage at scroll progress 0;
+  // SelectedWork then drives every later frame imperatively through the
+  // same sceneStyles() so there is one source of choreography truth.
+  const initial = sceneStyles(project, sceneFrame(index, count, 0));
 
-  const opacity = still ? (f >= -0.05 && (holdExit || f < 0.95) ? 1 : 0) : clamp(enter * (1 - exit) * 2.4);
-
-  const wrapStyle: React.CSSProperties = still
-    ? { opacity }
-    : {
-        opacity,
-        clipPath:
-          project.id === "03"
-            ? `inset(0% ${(1 - enter) * 100}% 0% ${exit * 100}%)`
-            : `inset(${(1 - enter) * 100}% 0% ${exit * 100}% 0%)`,
-      };
-
-  const mediaStyle: React.CSSProperties = still
-    ? {}
-    : project.id === "01"
-      ? { transform: `translate3d(0, ${(1 - enter) * 42 - exit * 70}px, 0) scale(${mix(1.14, 1, enter) + exit * 0.05})` }
-      : project.id === "02"
-        ? { clipPath: `inset(0 ${(1 - enter) * 82}% 0 0)`, transform: `scale(${1.06 - enter * 0.06 - exit * 0.04})` }
-        : project.id === "03"
-          ? { transform: `translate3d(${exit * 80}px, ${(0.5 - clamp(f)) * 8}px, 0) scale(${1.035 - enter * 0.035})` }
-          : { transform: `translate3d(${mix(-90, 0, enter) - exit * 45}px, 0, 0) scale(${mix(1.1, 1, enter)})` };
-
-  const lift = (delay: number): React.CSSProperties =>
-    still
-      ? {}
-      : {
-          transform: `translate3d(0, ${(mix(34, 0, easeOut(mapRange(f, -0.16 + delay, 0.24 + delay))) - exit * 56) * depth}px, 0)`,
-          opacity: clamp(mapRange(f, -0.16 + delay, 0.28 + delay) * (1 - exit * 1.6)),
-        };
-
+  const caseHref = locale === "zh" ? `/design-samples/case-final-${project.number}` : `/en/design-samples/case-final-${project.number}`;
   const accentText = project.accent === "acid" ? "text-acid" : "text-lavender";
   const accentBg = project.accent === "acid" ? "bg-acid" : "bg-lavender";
   const tone = project.stageBackground === "dark" ? "scene-dark" : "scene-light";
@@ -156,7 +93,7 @@ export function ProjectScene({ project, locale, f, still, compact, holdExit, sta
   // can actually match it.
   const primaryTitle = locale === "zh" ? project.chineseTitle : project.title;
   const Head = (
-    <div style={stacked ? undefined : lift(0)}>
+    <div data-scene-text="0" style={stacked ? undefined : initial.text[0]}>
       <p className={`type-v3-label cf-section-label whitespace-nowrap ${accentText}`}>
         {project.number} — {project.category[locale]}
       </p>
@@ -175,7 +112,7 @@ export function ProjectScene({ project, locale, f, still, compact, holdExit, sta
   );
 
   const Body = (
-    <div style={stacked ? undefined : lift(0.06)} className="space-y-4">
+    <div data-scene-text="1" style={stacked ? undefined : initial.text[1]} className="space-y-4">
       <p lang={locale === "zh" ? "zh-Hant" : "en"} className="type-v3-body max-w-[44ch]">
         {summary}
       </p>
@@ -191,31 +128,35 @@ export function ProjectScene({ project, locale, f, still, compact, holdExit, sta
           Round 11: locale-prefixed (same /en convention as Home/About)
           so English Home opens the English Case, not the Chinese one. */}
       <Link
-        href={locale === "zh" ? `/design-samples/case-final-${project.number}` : `/en/design-samples/case-final-${project.number}`}
-        className="interaction-destination group inline-flex items-center gap-3 border-b border-current/50 pb-2 type-v3-label"
+        href={caseHref}
+        className="work-scene-cta interaction-destination group inline-flex items-center gap-3 border-b border-current/50 pb-2 type-v3-label"
       >
         {locale === "zh" ? "查看案例" : "View Case Study"}
-        <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+        <span aria-hidden className="work-scene-arrow">→</span>
       </Link>
     </div>
   );
 
   const Media = (
     <div
-      className={`relative w-auto max-w-full overflow-hidden edge-frame md:h-auto md:w-full ${mediaAspect} ${mobileMediaHeight} lg:aspect-auto lg:h-full`}
+      className={`work-scene-media relative w-auto max-w-full overflow-hidden edge-frame md:h-auto md:w-full ${mediaAspect} ${mobileMediaHeight} lg:aspect-auto lg:h-full`}
     >
-      <div className="absolute inset-0" style={mediaStyle}>
+      <div data-scene-media className="absolute inset-0" style={initial.media}>
         <ProjectVisual
           project={project}
           priority={project.id === "01"}
           useHomeImage
-          className="absolute inset-0"
+          className="work-scene-image absolute inset-0"
         />
       </div>
+      {/* The whole image is a pointer shortcut into the case; the labelled
+          CTA stays the one keyboard / screen-reader stop. */}
+      <Link href={caseHref} tabIndex={-1} aria-hidden className="absolute inset-0" />
       <span
         aria-hidden
-        className={`absolute left-0 top-0 h-8 w-px ${accentBg}`}
-        style={{ transform: `scaleY(${enter})`, transformOrigin: "top" }}
+        data-scene-accent
+        className={`pointer-events-none absolute left-0 top-0 h-8 w-px ${accentBg}`}
+        style={initial.accent}
       />
     </div>
   );
@@ -290,9 +231,10 @@ export function ProjectScene({ project, locale, f, still, compact, holdExit, sta
 
   return (
     <article
-      className={`absolute inset-0 ${tone}`}
-      style={{ ...wrapStyle, visibility: live ? "visible" : "hidden" }}
-      aria-hidden={!live || opacity < 0.4}
+      data-scene={index}
+      className={`work-scene absolute inset-0 ${tone}`}
+      style={{ ...initial.wrap, zIndex: index + 1 }}
+      aria-hidden={initial.hidden}
     >
       <div className="site-frame flex h-full flex-col overflow-hidden pb-24 pt-28 md:pb-32 md:pt-32">
         <div className={`grid h-full min-h-0 grid-cols-1 gap-6 md:grid-cols-12 md:grid-rows-none md:gap-10 ${rowsClass}`}>
@@ -318,4 +260,42 @@ export function ProjectScene({ project, locale, f, still, compact, holdExit, sta
       </div>
     </article>
   );
+}
+
+type SceneStyles = {
+  wrap: React.CSSProperties;
+  text: [React.CSSProperties, React.CSSProperties];
+  media: React.CSSProperties;
+  accent: React.CSSProperties;
+  hidden: boolean;
+};
+
+/**
+ * One frame of a pinned project scene, as plain style objects. Used for
+ * the server/first render and — via Object.assign onto element.style —
+ * for every scroll frame, without a React render. Motion stays inside the
+ * token budget: copy travels 24px, media 24px along the wipe axis and
+ * scales 1.04 -> 1.
+ */
+export function sceneStyles(project: Project, frame: SceneFrame): SceneStyles {
+  const { enter, visible } = frame;
+  const horizontal = project.id === "03";
+  const clip = enter >= 1 ? "none" : horizontal ? `inset(0% ${(1 - enter) * 100}% 0% 0%)` : `inset(${(1 - enter) * 100}% 0% 0% 0%)`;
+  const lift = (t: number): React.CSSProperties => ({
+    transform: t >= 1 ? "none" : `translate3d(0, ${((1 - t) * 24).toFixed(2)}px, 0)`,
+    opacity: t >= 1 ? "" : t.toFixed(3),
+  });
+  const travel = (1 - enter) * 24;
+  return {
+    wrap: { clipPath: clip, visibility: visible ? "visible" : "hidden" },
+    text: [lift(frame.text(0)), lift(frame.text(0.06))],
+    media: {
+      transform:
+        enter >= 1
+          ? "none"
+          : `translate3d(${horizontal ? travel.toFixed(2) : 0}px, ${horizontal ? 0 : travel.toFixed(2)}px, 0) scale(${(1.04 - 0.04 * enter).toFixed(4)})`,
+    },
+    accent: { transform: `scaleY(${enter.toFixed(3)})`, transformOrigin: "top" },
+    hidden: !visible || enter < 0.5,
+  };
 }

@@ -75,7 +75,8 @@ export function FlowTabs({ slides, label }: { slides: FlowSlide[]; label: string
             role="tabpanel"
             id={`${baseId}-panel-${index}`}
             aria-labelledby={`${baseId}-tab-${index}`}
-            className={active === index ? "" : "md:hidden"}
+            data-active={active === index}
+            className={`cf-flow-panel ${active === index ? "" : "md:hidden"}`}
           >
             <p className="cf-meta cf-accent mb-4 md:hidden">
               {String(index + 1).padStart(2, "0")} {slide.label}

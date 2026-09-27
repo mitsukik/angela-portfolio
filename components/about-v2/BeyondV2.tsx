@@ -10,45 +10,38 @@ import { MixedText } from "@/components/site/MixedText";
 const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
-// Ambient build-up loop: dim resting -> item 0 lights -> arrow 0 lights ->
-// item 1 lights -> ... -> item N lights -> hold the complete chain briefly
-// -> soft reset -> repeat. `stepIndex` counts how many of the interleaved
-// [item, arrow, item, arrow, ..., item] segments are lit so far (cumulative
-// — once lit, a segment stays lit until the reset), driven by a GSAP
-// timeline's .call() at each step so the timing is a real authored
-// sequence rather than a hand-rolled setTimeout chain. Hover/focus/click
-// still work as an independent one-off preview (existing behavior),
-// layered on top via a simple OR with the loop's own lit state.
+// Build-up sequence: dim resting -> item 0 lights -> arrow 0 lights ->
+// item 1 lights -> ... -> the complete chain, then REST — it plays once,
+// when the chain first scrolls into view, and stays fully built so the
+// finished relationship is what the reader sees while reading (no loop,
+// no reset). `stepIndex` counts how many of the interleaved
+// [item, arrow, ..., item] segments are lit. Hover/focus/click still work
+// as an independent one-off preview layered on top.
 function Chain({ items, accent }: { items: string[]; accent: "acid" | "lavender" }) {
   const [hovered, setHovered] = useState<number | null>(null);
-  const [stepIndex, setStepIndex] = useState(0);
   const totalSegments = items.length * 2 - 1;
+  const [stepIndex, setStepIndex] = useState(totalSegments);
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
-    const reducedQuery = window.matchMedia(REDUCED_MOTION_QUERY);
+    const root = rootRef.current;
+    if (!root || window.matchMedia(REDUCED_MOTION_QUERY).matches) return;
     let timeline: gsap.core.Timeline | null = null;
-
-    const start = () => {
-      timeline?.kill();
-      if (reducedQuery.matches) {
-        // Reduced motion: show the fully-built, readable end state — no loop.
-        setStepIndex(totalSegments);
-        timeline = null;
-        return;
-      }
-      setStepIndex(0);
-      timeline = gsap.timeline({ repeat: -1, repeatDelay: 1.3 });
-      for (let step = 1; step <= totalSegments; step += 1) {
-        timeline.call(() => setStepIndex(step), [], "+=0.5");
-      }
-      timeline.to({}, { duration: 1.2 }); // hold the completed sequence
-      timeline.call(() => setStepIndex(0));
-    };
-
-    start();
-    reducedQuery.addEventListener("change", start);
+    setStepIndex(0);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        timeline = gsap.timeline({ delay: 0.3 });
+        for (let step = 1; step <= totalSegments; step += 1) {
+          timeline.call(() => setStepIndex(step), [], step === 1 ? 0 : "+=0.35");
+        }
+      },
+      { threshold: 0.6 },
+    );
+    observer.observe(root);
     return () => {
-      reducedQuery.removeEventListener("change", start);
+      observer.disconnect();
       timeline?.kill();
     };
   }, [totalSegments]);
@@ -56,7 +49,7 @@ function Chain({ items, accent }: { items: string[]; accent: "acid" | "lavender"
   const accentClass = accent === "acid" ? "text-acid" : "text-lavender";
 
   return (
-    <div className="flex flex-wrap items-center gap-x-2 gap-y-3" role="list">
+    <div ref={rootRef} className="flex flex-wrap items-center gap-x-2 gap-y-3" role="list">
       {items.map((item, i) => {
         const itemLit = stepIndex > i * 2 || hovered === i;
         const arrowLit = stepIndex > i * 2 + 1;
@@ -70,10 +63,7 @@ function Chain({ items, accent }: { items: string[]; accent: "acid" | "lavender"
               onBlur={() => setHovered(null)}
               onClick={() => setHovered((prev) => (prev === i ? null : i))}
               // Reflects only the user-driven toggle (click/hover/focus),
-              // not the ambient auto-play loop that also drives `itemLit`
-              // visually — exposing the decorative loop's own state here
-              // too would announce this button as changing "pressed" on
-              // its own every second, for items the user never touched.
+              // not the one-time build-up that also drives `itemLit`.
               aria-pressed={hovered === i}
               className={`type-v3-label rounded-none px-1 py-0.5 transition-colors duration-700 ${itemLit ? accentClass : "scene-dim-text"}`}
             >

@@ -6,10 +6,28 @@
   --surface: #171717;
   --accent-lavender: #b9a7ff;
   --accent-yellow: #e7f34b;
+  /* Motion tokens — the one timing scale for the Resolve grammar
+     (Resolve / Connect / Reveal / Switch / Track / Rest). GSAP code
+     uses the same values in seconds.
+     instant  press / immediate feedback
+     micro    hover and focus-adjacent response
+     discrete tabs, state switches
+     entrance section / evidence reveal
+     emphasis signature moments only (Hero resolve, state scrubber)
+     exit     always shorter than the matching entrance */
+  --motion-duration-instant: 100ms;
   --motion-duration-micro: 200ms;
   --motion-duration-discrete: 320ms;
   --motion-duration-entrance: 560ms;
+  --motion-duration-emphasis: 900ms;
+  --motion-duration-exit: 180ms;
   --motion-ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  /* Travel distances: micro nudges, text, larger blocks. Nothing moves
+     further than ~32px; scale stays within 0.98-1.02. */
+  --motion-distance-micro: 4px;
+  --motion-distance-text: 14px;
+  --motion-distance-block: 24px;
 
   /*
    * V3 primitives — exact oklch values from the approved Home/Nav/Closing
@@ -117,6 +135,12 @@ html {
   background: var(--background);
 }
 
+/* Evidence viewer open (CaseEvidenceViewer.tsx): the page behind the
+   modal must not scroll while a screenshot is being inspected. */
+html.evidence-viewer-open {
+  overflow: hidden;
+}
+
 body {
   margin: 0;
   background: var(--background);
@@ -170,6 +194,16 @@ body {
 :where(a, button):focus-visible {
   outline: 2px solid var(--accent-yellow);
   outline-offset: 4px;
+}
+
+/* Acid yellow has almost no contrast on the light surfaces (CASE02's
+   paper theme, light Selected Work stages, the light header variant), so
+   the same immediate ring switches to ink there — same shape and timing,
+   color-only, like every other Dark/Light difference. */
+.case-final[data-theme="light"] :where(a, button):focus-visible,
+.scene-light :where(a, button):focus-visible,
+[data-header-variant="light"] :where(a, button):focus-visible {
+  outline-color: var(--ink);
 }
 
 /* Whole-site QA (2026-09): scrollable evidence frames (case-final
@@ -779,28 +813,12 @@ body {
   transform-origin: bottom;
 }
 
-.route-curtain-hold {
-  transform: scaleY(1);
-  transform-origin: bottom;
-}
-
-.route-curtain-cover {
-  transform-origin: bottom;
-  animation: route-curtain-cover 260ms var(--motion-ease-editorial) forwards;
-}
-
 .route-curtain-reveal {
   transform-origin: top;
-  animation: route-curtain-reveal 340ms var(--motion-ease-editorial) forwards;
-}
-
-@keyframes route-curtain-cover {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
+  /* 300ms total (RouteTransition.tsx REVEAL_MS) — an arrival cue, never
+     a toll on repeated case-to-case browsing. Fill-mode both: the first
+     frame is fully covered, so no separate "hold" state is needed. */
+  animation: route-curtain-reveal 300ms var(--motion-ease-editorial) both;
 }
 
 @keyframes route-curtain-reveal {
@@ -835,8 +853,9 @@ body {
   opacity: 0;
 }
 
+/* First arrival only. */
 .route-curtain-mark-visible {
-  animation: route-curtain-mark-flash 560ms ease-out forwards;
+  animation: route-curtain-mark-flash 300ms ease-out both;
 }
 
 @keyframes route-curtain-mark-flash {
@@ -1404,7 +1423,12 @@ body {
   width: calc(50% - 2px);
   border-radius: 999px;
   background: var(--acid);
-  transition: transform 360ms cubic-bezier(.2,.8,.2,1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .language-switch-thumb {
+    transition: transform var(--motion-duration-discrete) var(--motion-ease-editorial);
+  }
 }
 
 .language-switch-option {
@@ -1430,13 +1454,18 @@ body {
   text-decoration: none;
 }
 
+/* Segmented control, not a text link: the inactive option is quieter at
+   rest and comes up to full strength on hover — color/opacity only, no
+   travel (no text jitter). */
+.language-switch-option:not([data-active="true"]) { opacity: 0.72; }
 .language-switch-option[data-active="true"] { color: var(--ink); }
-.language-switch-option:hover { background: transparent; color: inherit; transform: translateY(-2px); }
+.language-switch-option:hover { background: transparent; color: inherit; opacity: 1; }
 .language-switch-option[data-active="true"]:hover { color: var(--ink); }
+.language-switch-option:active { opacity: 0.6; }
 
 @media (prefers-reduced-motion: no-preference) {
   .language-switch-option {
-    transition: transform var(--motion-duration-micro) var(--motion-ease-editorial);
+    transition: opacity var(--motion-duration-micro) ease;
   }
 }
 
@@ -1579,6 +1608,67 @@ body {
    bg-lavender, which is a decorative accent bar/line, not text). */
 .scene-light .text-lavender {
   font-weight: 500;
+}
+
+/*
+ * Selected Work stage (SelectedWork.tsx / ProjectScene.tsx) — named
+ * exception for the pinned stage's own chrome and discovery states.
+ * Chrome text re-tones at each project handover with a short color
+ * transition instead of a hard snap; the chrome never paints its own
+ * surface over the scenes.
+ */
+.work-stage-chrome {
+  background-color: transparent;
+}
+
+.work-rail-label {
+  opacity: 0.6;
+}
+
+.work-rail-label[data-active="true"],
+.work-rail-item:is(:hover, :focus-visible) .work-rail-label {
+  opacity: 1;
+}
+
+.work-scene-arrow {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .work-stage-chrome,
+  .work-stage-chrome :is(.scene-text, .scene-dim-text, .scene-rule) {
+    transition: color var(--motion-duration-discrete) ease, border-color var(--motion-duration-discrete) ease;
+  }
+
+  .work-stage-counter {
+    transition: transform var(--motion-duration-discrete) var(--motion-ease-editorial);
+  }
+
+  .work-rail-label {
+    transition: opacity var(--motion-duration-micro) ease;
+  }
+
+  .work-scene-arrow {
+    transition: transform var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+
+  .work-scene-cta:is(:hover, :focus-visible) .work-scene-arrow,
+  .work-scene:has(.work-scene-media:hover) .work-scene-arrow {
+    transform: translateX(var(--motion-distance-micro));
+  }
+}
+
+/* Fine pointers only: the project image answers the pointer with a 1.02
+   scale — a destination cue for the clickable image, never ambient. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .work-scene-image {
+    transition: transform var(--motion-duration-entrance) var(--motion-ease-editorial);
+  }
+
+  .work-scene-media:hover .work-scene-image,
+  .work-scene:has(.work-scene-cta:is(:hover, :focus-visible)) .work-scene-image {
+    transform: scale(1.02);
+  }
 }
 
 .type-v3-label,
@@ -1943,17 +2033,59 @@ body {
   border-top: 1px solid var(--cf-hairline);
 }
 
-/* Chapter register — bare numeral only (Round 3 reversal of an earlier
-   "01 / 問題" combined-label treatment); the descriptive label lives
-   with its section's own content, not duplicated in the nav. ~16px, mono. */
+/* Chapter navigator (ChapterRegister.tsx). Resting state is the bare
+   numeral rail (Angela's standing decision); hover or keyboard focus opens
+   it into a labelled index over the page — labels are never permanently
+   shown beside the content. The active numeral's rule is a reading-
+   progress meter for the current chapter (--chapter-progress, written by
+   one rAF-throttled scroll listener). */
+.cf-chapter-nav {
+  --chapter-progress: 0;
+}
+
+.cf-chapter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: max-content;
+  /* Negative margin + matching padding: the panel surface can appear on
+     open without moving the numerals by a single pixel. */
+  margin: -0.75rem -1.25rem -0.75rem -0.75rem;
+  padding: 0.75rem 1.25rem 0.75rem 0.75rem;
+  border: 1px solid transparent;
+  background: transparent;
+}
+
+.cf-chapter-nav:is(:hover, :focus-within) .cf-chapter-list {
+  background: var(--cf-bg);
+  border-color: var(--cf-hairline);
+}
+
 .cf-chapter-marker {
-  position: relative;
+  display: grid;
+  grid-template-columns: 2.25rem 0fr;
+  align-items: baseline;
+  padding: 0.3rem 0;
+  text-align: left;
   font-family: var(--font-label);
   font-size: 1rem;
   letter-spacing: 0.06em;
   color: var(--cf-dim);
-  opacity: 0.6;
+}
+
+.cf-chapter-nav:is(:hover, :focus-within) .cf-chapter-marker {
+  grid-template-columns: 2.25rem 1fr;
+}
+
+.cf-chapter-number {
+  position: relative;
+  justify-self: start;
   padding-bottom: 0.4rem;
+  opacity: 0.6;
+}
+
+.cf-chapter-marker:hover .cf-chapter-number {
+  opacity: 1;
 }
 
 .cf-chapter-marker-rule {
@@ -1967,23 +2099,454 @@ body {
   transform-origin: left;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .cf-chapter-marker {
-    transition: opacity 200ms ease, color 200ms ease;
-  }
+.cf-chapter-label {
+  min-width: 0;
+  overflow: hidden;
+}
 
-  .cf-chapter-marker-rule {
-    transition: transform 260ms ease;
-  }
+.cf-chapter-label-text {
+  display: block;
+  padding-left: 0.75rem;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cf-body);
+  opacity: 0;
+  transform: translateX(calc(var(--motion-distance-micro) * -1));
+}
+
+.cf-chapter-nav:is(:hover, :focus-within) .cf-chapter-label-text {
+  opacity: 1;
+  transform: none;
+}
+
+.cf-chapter-marker:hover .cf-chapter-label-text {
+  color: var(--cf-heading);
 }
 
 .cf-chapter-marker[data-active="true"] {
   color: var(--cf-accent);
+}
+
+.cf-chapter-marker[data-active="true"] .cf-chapter-number {
   opacity: 1;
 }
 
+.cf-chapter-marker[data-active="true"] .cf-chapter-label-text {
+  color: var(--cf-accent);
+}
+
 .cf-chapter-marker[data-active="true"] .cf-chapter-marker-rule {
+  transform: scaleX(max(0.15, var(--chapter-progress)));
+}
+
+.cf-chapter-marker:active .cf-chapter-number {
+  opacity: 0.8;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cf-chapter-list {
+    transition: background-color var(--motion-duration-micro) var(--motion-ease-editorial),
+      border-color var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+
+  .cf-chapter-marker {
+    transition: grid-template-columns var(--motion-duration-discrete) var(--motion-ease-editorial),
+      color var(--motion-duration-micro) ease;
+  }
+
+  .cf-chapter-number {
+    transition: opacity var(--motion-duration-micro) ease;
+  }
+
+  .cf-chapter-label-text {
+    transition: opacity var(--motion-duration-micro) var(--motion-ease-editorial),
+      transform var(--motion-duration-discrete) var(--motion-ease-editorial),
+      color var(--motion-duration-micro) ease;
+  }
+
+  .cf-chapter-marker-rule {
+    transition: transform 120ms linear;
+  }
+}
+
+/* Mobile chapter control — the same index behind one compact, rounded
+   navigation control (rounded corners are reserved for interactive
+   navigation). Hidden while reading downward, back on pause / scroll up. */
+.cf-chapter-pill {
+  position: fixed;
+  right: 1rem;
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  max-width: calc(100vw - 2rem);
+}
+
+.cf-chapter-pill[data-visible="false"] {
+  opacity: 0;
+  transform: translateY(var(--motion-distance-text));
+  pointer-events: none;
+}
+
+.cf-chapter-pill-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.75rem;
+  max-width: 100%;
+  padding: 0 1rem;
+  border: 1px solid var(--cf-hairline);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--cf-bg) 90%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: var(--cf-heading);
+  font-family: var(--font-label);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cf-chapter-pill-count {
+  flex: none;
+  color: var(--cf-accent);
+}
+
+.cf-chapter-pill-total {
+  color: var(--cf-dim);
+}
+
+.cf-chapter-pill-label {
+  min-width: 0;
+  max-width: 11rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cf-chapter-pill-chevron {
+  flex: none;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 5px solid currentColor;
+}
+
+.cf-chapter-pill-chevron[data-open="true"] {
+  transform: rotate(180deg);
+}
+
+.cf-chapter-pill-trigger:active {
+  transform: scale(0.98);
+}
+
+.cf-chapter-sheet {
+  width: min(20rem, calc(100vw - 2rem));
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 0.35rem 0;
+  border: 1px solid var(--cf-hairline);
+  background: var(--cf-bg);
+}
+
+.cf-chapter-sheet-item {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  align-items: baseline;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.7rem 1rem;
+  text-align: left;
+  font-family: var(--font-label);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cf-body);
+}
+
+.cf-chapter-sheet-number {
+  color: var(--cf-dim);
+}
+
+.cf-chapter-sheet-item[data-active="true"],
+.cf-chapter-sheet-item[data-active="true"] .cf-chapter-sheet-number {
+  color: var(--cf-accent);
+}
+
+.cf-chapter-sheet-item:active {
+  background: var(--cf-surface-hover);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cf-chapter-pill {
+    transition: opacity var(--motion-duration-micro) var(--motion-ease-editorial),
+      transform var(--motion-duration-discrete) var(--motion-ease-editorial);
+  }
+
+  .cf-chapter-pill-chevron {
+    transition: transform var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+
+  .cf-chapter-pill-trigger {
+    transition: transform var(--motion-duration-instant) ease;
+  }
+
+  .cf-chapter-sheet {
+    animation: cf-chapter-sheet-in var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+}
+
+@keyframes cf-chapter-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* Case footer continuity (CaseStudyPrototype.tsx). The Next entry's CTA
+   is stretched over the whole block (::before), so the preview, title and
+   copy are all one click target with one keyboard stop. Directional
+   feedback only: the arrow travels 4px, the preview scales to 1.02. */
+.case-next-cta {
+  cursor: pointer;
+}
+
+.case-next-cta::before {
+  content: "";
+  position: absolute;
+  inset: -0.75rem;
+  z-index: 1;
+}
+
+.case-next-cta:focus-visible {
+  outline: none;
+}
+
+.case-next-cta:focus-visible::before {
+  outline: 2px solid var(--accent-yellow);
+  outline-offset: 2px;
+}
+
+.case-final[data-theme="light"] .case-next-cta:focus-visible::before {
+  outline-color: var(--ink);
+}
+
+.case-next-label {
+  position: relative;
+}
+
+.case-next-label::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -0.35rem;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+}
+
+.case-next-cta:is(:hover, :focus-visible) {
+  color: var(--acid);
+}
+
+.case-final[data-theme="light"] .case-next-cta:is(:hover, :focus-visible) {
+  color: var(--cf-accent-2);
+}
+
+.case-next-cta:is(:hover, :focus-visible) .case-next-label::after {
   transform: scaleX(1);
+  transform-origin: left;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .case-next-cta {
+    transition: color var(--motion-duration-micro) ease;
+  }
+
+  .case-next-label::after {
+    transition: transform var(--portfolio-interaction-duration) var(--portfolio-interaction-ease);
+  }
+}
+
+.case-next-arrow,
+.case-prev-arrow {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .case-next-arrow,
+  .case-prev-arrow {
+    transition: transform var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+
+  .case-next-image {
+    transition: transform var(--motion-duration-entrance) var(--motion-ease-editorial);
+  }
+
+  .case-next-cta:is(:hover, :focus-visible) .case-next-arrow {
+    transform: translateX(var(--motion-distance-micro));
+  }
+
+  .case-prev:is(:hover, :focus-visible) .case-prev-arrow {
+    transform: translateX(calc(var(--motion-distance-micro) * -1));
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .case-next:has(.case-next-cta:hover) .case-next-image {
+    transform: scale(1.02);
+  }
+}
+
+/* Destination links hover to --acid, which disappears on the light
+   (paper) case theme; there they take the theme's darker accent. */
+.case-final[data-theme="light"] :is(.case-link, .interaction-destination):is(:hover, :focus-visible) {
+  color: var(--cf-accent-2);
+}
+
+/* CASE01 system-flow tabs (FlowTabs.tsx): the newly shown diagram fades
+   in on the discrete token (Switch grammar) instead of snapping — a CSS
+   animation restarts whenever a panel goes from display:none to shown. */
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .cf-flow-panel[data-active="true"] {
+    animation: cf-flow-panel-in var(--motion-duration-discrete) var(--motion-ease-editorial);
+  }
+}
+
+@keyframes cf-flow-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--motion-distance-micro));
+  }
+}
+
+/* State Scrubber (StateScrubber.tsx) — named exception for the one
+   steppable product-state story (CASE04 recovery). A list of real states
+   on the left, the state's real screen on the right; the selected state
+   carries the case's existing accent-rule marker (same left rule the
+   CASE04 role row uses). Switch grammar: the screen crossfades on the
+   discrete token; reduced motion swaps instantly. */
+.state-scrubber-tab {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  width: 100%;
+  padding: 1.15rem 0.5rem 1.15rem 1rem;
+  border-bottom: 1px solid var(--cf-hairline);
+  text-align: left;
+  cursor: pointer;
+}
+
+.state-scrubber-tab::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -1px;
+  bottom: -1px;
+  width: 2px;
+  background: var(--cf-accent);
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+.state-scrubber-tab[data-selected="true"]::before {
+  transform: scaleY(1);
+}
+
+.state-scrubber-tab:active {
+  background: var(--cf-surface-hover);
+}
+
+.state-scrubber-index {
+  padding-top: 0.2rem;
+  color: var(--cf-dim);
+}
+
+.state-scrubber-tab[data-selected="true"] .state-scrubber-index {
+  color: var(--cf-accent);
+}
+
+.state-scrubber-name {
+  display: block;
+  font-size: 1.06rem;
+  font-weight: 500;
+  line-height: 1.45;
+  opacity: 0.72;
+}
+
+.state-scrubber-tab[data-selected="true"] .state-scrubber-name,
+.state-scrubber-tab:hover .state-scrubber-name {
+  opacity: 1;
+}
+
+.state-scrubber-detail {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+.state-scrubber-protects {
+  display: inline-block;
+  margin-top: 0.65rem;
+  font-size: 0.68rem;
+  color: var(--cf-dim);
+}
+
+.state-scrubber-tab[data-selected="true"] .state-scrubber-protects {
+  color: var(--cf-accent);
+}
+
+/* Phones: the list stays scannable (every state name and what it
+   protects), the longer behavior line shows for the selected state. */
+@media (max-width: 767px) {
+  .state-scrubber-tab:not([data-selected="true"]) .state-scrubber-detail {
+    display: none;
+  }
+}
+
+.state-scrubber-screen {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.state-scrubber-screen[data-active="true"] {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .state-scrubber-tab::before {
+    transition: transform var(--motion-duration-discrete) var(--motion-ease-editorial);
+  }
+
+  .state-scrubber-name,
+  .state-scrubber-index,
+  .state-scrubber-protects {
+    transition: opacity var(--motion-duration-micro) ease, color var(--motion-duration-micro) ease;
+  }
+
+  .state-scrubber-screen {
+    transition: opacity var(--motion-duration-discrete) var(--motion-ease-editorial),
+      visibility 0s linear var(--motion-duration-discrete);
+  }
+
+  .state-scrubber-screen[data-active="true"] {
+    transition: opacity var(--motion-duration-discrete) var(--motion-ease-editorial), visibility 0s;
+  }
+}
+
+/* Chapter jump target: focus moves here for keyboard/screen-reader
+   continuity, but the whole section must not draw a ring. */
+.cf-section:focus {
+  outline: none;
 }
 
 /* Scan-friendly summary rows (decision breakdowns, role/system
@@ -2045,18 +2608,6 @@ body {
   font-size: 0.8rem;
 }
 
-/* Showcase media — the one "delight budget" moment. Pointer parallax is
-   applied via JS-set custom properties (see ShowcaseMedia.tsx); this just
-   composes and smooths them. */
-.cf-showcase {
-  transform: perspective(1400px) rotateX(var(--cf-pointer-rx, 0deg)) rotateY(var(--cf-pointer-ry, 0deg));
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .cf-showcase {
-    transition: transform 200ms ease;
-  }
-}
 
 /* Marquee section breaks — CSS animation (runs off the main thread),
    never scroll-linked, so it can't jank the reading experience. Chinese
@@ -2097,33 +2648,21 @@ body {
   opacity: 0.2;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  /* 256s = 32s (Round 1's duration for 1 unit/half) x 8 (this round's
-     repetition count per half) — proportional, so the pace actually
-     matches what Round 1 intended rather than just being "some slower
-     number." */
-  .cf-marquee-track[data-direction="ltr"] {
-    animation: cf-marquee-ltr 256s linear infinite;
-  }
-
-  .cf-marquee-track[data-direction="rtl"] {
-    animation: cf-marquee-rtl 256s linear infinite;
-  }
+/* Motion audit (Rest grammar): the endless marquee loop is retired — it
+   only ever appeared on the unlinked, noindexed legacy case samples and
+   read as showreel decoration rather than storytelling. Every viewer now
+   gets the former reduced-motion treatment: one static, centred label. */
+.cf-marquee-track {
+  transform: none;
+  animation: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .cf-marquee-track {
-    transform: none !important;
-    animation: none !important;
-  }
+.cf-marquee-track > *:nth-child(n + 2) {
+  display: none;
+}
 
-  .cf-marquee-track > *:nth-child(n + 2) {
-    display: none;
-  }
-
-  .cf-marquee-track > *:first-child > *:nth-child(n + 2) {
-    display: none;
-  }
+.cf-marquee-track > *:first-child > *:nth-child(n + 2) {
+  display: none;
 }
 
 @keyframes cf-marquee-ltr {

@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { EvidenceTrigger } from "./CaseEvidenceViewer";
 
 const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
 
@@ -68,9 +69,11 @@ export function FlowEvidence({ src, alt, caption, aspect = "aspect-[3/2]", class
 
   return (
     <figure className={className}>
-      <div className="min-w-0 max-w-full overflow-x-auto" tabIndex={0} role="group" aria-label={alt}>
+      <div className="min-w-0 max-w-full overflow-x-auto">
         <div ref={frameRef} className={`cf-figure-frame relative ${aspect} min-w-[48rem] lg:min-w-0`}>
-          <Image src={src} alt={alt} fill sizes="(max-width: 1023px) 768px, 1600px" className="object-contain" />
+          <EvidenceTrigger asset={{ src, alt, caption }}>
+            <Image src={src} alt="" fill sizes="(max-width: 1023px) 768px, 1600px" className="object-contain" />
+          </EvidenceTrigger>
         </div>
       </div>
       <figcaption className="cf-figure-caption cf-meta mt-4">{caption}</figcaption>

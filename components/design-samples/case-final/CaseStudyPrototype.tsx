@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
-import type { Project } from "@/data/projects";
+import { projects, type Project } from "@/data/projects";
 import type { Locale } from "@/data/locale";
 import { MixedText } from "@/components/site/MixedText";
 import { ProjectVisual } from "@/components/site/ProjectVisual";
@@ -15,6 +15,7 @@ import { EvidenceFigure } from "./EvidenceFigure";
 import { ShowcaseMedia } from "./ShowcaseMedia";
 import { SectionMarquee } from "./SectionMarquee";
 import { CaseTransitionLink } from "./CaseTransitionLink";
+import { CaseEvidenceViewerProvider } from "./CaseEvidenceViewer";
 import { getDecisionFigure, getOverviewFigure, getShowcaseFigure } from "./caseFinalMedia";
 import { CaseOneDemoLinks, CaseOneFinalContent } from "./CaseOneFinalContent";
 import { CaseTwoFinalContent, CaseTwoHeroEvidence } from "./CaseTwoFinalContent";
@@ -282,6 +283,7 @@ export function CaseStudyPrototype({
     <div className="min-h-screen">
       <SiteHeader locale={locale} page="case" variant={theme} />
 
+      <CaseEvidenceViewerProvider locale={locale}>
       <main className="case-final" data-theme={theme} data-content-version={contentVersion}>
         {/* Case Opening — Round 7 rebuild. Angela's "header needs more
             context" feedback was about THIS region, not SiteHeader (see
@@ -669,46 +671,52 @@ export function CaseStudyPrototype({
             block and Closing had no separating line, just an abrupt
             color change. Same cf-rule divider already used for the
             border-t above and throughout the page, not a new role. */}
-        <div className="border-t border-b cf-rule px-6 py-20 md:px-10 md:py-28 lg:px-14">
-          <div className="mx-auto grid max-w-[1520px] gap-12 md:grid-cols-2 md:gap-16">
+        {/* Previous / Next — P1.7 continuity. Next is the primary path: a
+            larger entry carrying the project number, title, its approved
+            one-line description and a restrained preview (the same Home
+            visual the reader already met in Selected Work), with the whole
+            block as the click target via a stretched CTA — one keyboard
+            stop, a short accessible name. Previous stays a quiet,
+            title-only link. border-b closes the case surface before the
+            always-dark Closing scene. */}
+        <div className="border-t border-b cf-rule px-6 py-16 md:px-10 md:py-24 lg:px-14">
+          <div className="mx-auto grid max-w-[1520px] gap-12 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-16">
             <CaseTransitionLink
               href={zhHant ? `/design-samples/case-final-${previousProject.number}` : `/en/design-samples/case-final-${previousProject.number}`}
-              className="case-link group inline-flex flex-col items-start gap-3"
+              className="case-link case-prev group inline-flex flex-col items-start gap-3 self-start"
             >
               <span className="cf-meta cf-dim label-mono inline-flex items-center gap-2">
-                <span aria-hidden className="transition-transform duration-300 group-hover:-translate-x-2">←</span>
-                {zhHant ? "上一個專案" : "PREVIOUS PROJECT"}
+                <span aria-hidden className="case-prev-arrow">←</span>
+                {zhHant ? "上一個專案" : "PREVIOUS PROJECT"} · {previousProject.number}
               </span>
-              <span className="cf-heading text-[clamp(1.4rem,2.2vw,1.9rem)]">{previousDisplayTitle}</span>
+              <span className="cf-heading text-[clamp(1.25rem,1.9vw,1.6rem)]">{previousDisplayTitle}</span>
             </CaseTransitionLink>
 
-            <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+            <div className="case-next group relative grid gap-8 sm:grid-cols-[minmax(0,1fr)_8.5rem] sm:items-end lg:grid-cols-[minmax(0,1fr)_11rem]">
               <div className="max-w-[46ch]">
-                <p className="cf-meta cf-accent">{caseStudy.nextProjectLabel ?? (zhHant ? "下一個專案" : "Next Project")}</p>
+                <p className="cf-meta cf-accent">
+                  {caseStudy.nextProjectLabel ?? (zhHant ? "下一個專案" : "Next Project")} · {nextProject.number} / {String(projects.length).padStart(2, "0")}
+                </p>
                 <h2 className="cf-heading cf-h3 mt-5 text-[clamp(1.75rem,3vw,2.5rem)]">
                   {caseStudy.nextProjectTitle ?? (zhHant ? nextProject.chineseTitle : nextProject.title)}
                 </h2>
                 {nextDescriptionDisplay && <p className="cf-dim body-tc mt-4">{nextDescriptionDisplay}</p>}
+                <CaseTransitionLink
+                  href={zhHant ? `/design-samples/case-final-${nextProject.number}` : `/en/design-samples/case-final-${nextProject.number}`}
+                  className="case-next-cta mt-8 inline-flex items-center gap-3 pb-2 label-mono cf-heading"
+                >
+                  <span className="case-next-label">{zhHant ? "查看案例" : "View case study"}</span>
+                  <span aria-hidden className="case-next-arrow">→</span>
+                </CaseTransitionLink>
               </div>
-              {/* Round 8: routes into the numbered prototype sequence
-                  (01→02→03→04→01, via data/projects.ts's own wraparound
-                  getNextProject) rather than the production /work/[slug]
-                  route, so the experience pass is actually navigable
-                  end to end across all four cases. Round 11: locale-
-                  prefixed (same /en convention Home/About already use) so
-                  Next Project preserves the current language instead of
-                  always landing on the zh case. */}
-              <CaseTransitionLink
-                href={zhHant ? `/design-samples/case-final-${nextProject.number}` : `/en/design-samples/case-final-${nextProject.number}`}
-                className="case-link group inline-flex shrink-0 items-center gap-3 pb-2 label-mono cf-heading"
-              >
-                {zhHant ? "查看案例" : "View case study"}
-                <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-2">→</span>
-              </CaseTransitionLink>
+              <div aria-hidden className="case-next-preview edge-frame relative hidden aspect-[3/4] w-full overflow-hidden sm:block">
+                <ProjectVisual project={nextProject} useHomeImage sizes="11rem" className="case-next-image absolute inset-0" />
+              </div>
             </div>
           </div>
         </div>
       </main>
+      </CaseEvidenceViewerProvider>
 
       <SiteFooter locale={locale} backToTopLabel="BACK TO TOP" />
     </div>

@@ -7,18 +7,15 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { CaseFinalFigure } from "./caseFinalMedia";
 
 const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
-const POINTER_QUERY = "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
-const clamp = (v: number, min = 0, max = 1) => Math.min(max, Math.max(min, v));
 
 /**
  * The one "showcase" moment (Final UI). Gets more presence than the
  * (now static, no-hover) EvidenceFigure: a one-time scroll-reveal
  * entrance (clip-path wipe + scale + opacity, strong ease-out, ~750ms —
- * the "rare/first-time" motion tier, since it appears once per reading),
- * a drawn-in accent frame edge, plus a restrained, damped pointer
- * parallax while it's in view — an entrance/ambient treatment, not a
- * reading-content hover effect, so it's unaffected by Round 3's removal
- * of block hover states. Shows the complete source image (object-
+ * the "rare/first-time" motion tier, since it appears once per reading)
+ * and a drawn-in accent frame edge. No pointer parallax: evidence is for
+ * inspection, so it holds still under the cursor. Shows the complete
+ * source image (object-
  * contain, aspect-[3/2] matches every real asset's native ratio exactly
  * — no cropping).
  */
@@ -57,25 +54,6 @@ export function ShowcaseMedia({ figure }: { figure: CaseFinalFigure }) {
         };
       });
 
-      media.add(POINTER_QUERY, () => {
-        const handleMove = (event: PointerEvent) => {
-          const rect = wrap.getBoundingClientRect();
-          const x = clamp((event.clientX - rect.left) / rect.width) - 0.5;
-          const y = clamp((event.clientY - rect.top) / rect.height) - 0.5;
-          frame.style.setProperty("--cf-pointer-rx", `${(y * -3).toFixed(2)}deg`);
-          frame.style.setProperty("--cf-pointer-ry", `${(x * 4).toFixed(2)}deg`);
-        };
-        const handleLeave = () => {
-          frame.style.setProperty("--cf-pointer-rx", "0deg");
-          frame.style.setProperty("--cf-pointer-ry", "0deg");
-        };
-        wrap.addEventListener("pointermove", handleMove);
-        wrap.addEventListener("pointerleave", handleLeave);
-        return () => {
-          wrap.removeEventListener("pointermove", handleMove);
-          wrap.removeEventListener("pointerleave", handleLeave);
-        };
-      });
     }, wrap);
 
     return () => {

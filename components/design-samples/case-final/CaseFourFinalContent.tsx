@@ -2,6 +2,8 @@ import Image from "next/image";
 import type { ReactNode } from "react";
 import type { Locale } from "@/data/locale";
 import { Reveal } from "../Reveal";
+import { EvidenceTrigger } from "./CaseEvidenceViewer";
+import { StateScrubber } from "./StateScrubber";
 
 type RegisterSection = (index: number, element: HTMLElement | null) => void;
 
@@ -73,15 +75,17 @@ function PhoneEvidence({
   return (
     <figure className={className}>
       <div className={`relative aspect-[1236/2803] w-full overflow-hidden bg-transparent ${frameClassName}`}>
-        <Image
-          src={asset.src}
-          alt={asset.alt}
-          fill
-          unoptimized
-          priority={priority}
-          sizes="(min-width: 1024px) 360px, (min-width: 640px) 42vw, 72vw"
-          className="object-contain"
-        />
+        <EvidenceTrigger asset={{ ...asset, caption }}>
+          <Image
+            src={asset.src}
+            alt=""
+            fill
+            unoptimized
+            priority={priority}
+            sizes="(min-width: 1024px) 360px, (min-width: 640px) 42vw, 72vw"
+            className="object-contain"
+          />
+        </EvidenceTrigger>
       </div>
       <figcaption className="cf-figure-caption cf-meta mt-3">{caption}</figcaption>
     </figure>
@@ -108,14 +112,16 @@ function ComposedEvidence({
   return (
     <figure className={className}>
       <div className={`relative w-full overflow-hidden bg-transparent ${aspectClassName}`}>
-        <Image
-          src={asset.src}
-          alt={asset.alt}
-          fill
-          unoptimized
-          sizes="(min-width: 1024px) 480px, 90vw"
-          className="object-contain object-top"
-        />
+        <EvidenceTrigger asset={{ ...asset, caption }}>
+          <Image
+            src={asset.src}
+            alt=""
+            fill
+            unoptimized
+            sizes="(min-width: 1024px) 480px, 90vw"
+            className="object-contain object-top"
+          />
+        </EvidenceTrigger>
       </div>
       <figcaption className="cf-figure-caption cf-meta mt-3">{caption}</figcaption>
     </figure>
@@ -363,7 +369,7 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
               caption={zhHant ? "環狀選擇" : "Radial choice"}
             />
           </div>
-          <div className="sm:opacity-90">
+          <div>
             <p className="cf-meta cf-dim">{zhHant ? "場景卡片" : "SCENE CARDS"}</p>
             <PhoneEvidence
               className="mt-4 max-w-[200px]"
@@ -404,21 +410,62 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
           </p>
         </div>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2">
-          <div className="grid grid-cols-2 gap-5">
-            <PhoneEvidence
-              asset={{ src: `${IMG}/case04-generating-v2.webp`, alt: "Generating today's soundscape with guidance that the user can leave and return" }}
-              caption={zhHant ? "生成中，可離開此頁" : "Generating — safe to leave"}
-            />
-            <PhoneEvidence
-              asset={{ src: `${IMG}/case04-generation-failed-v2.webp`, alt: "Generation failed state; the user's questionnaire answers have been preserved, with retry and defer actions" }}
-              caption={zhHant ? "失敗，答案已保留" : "Failed — answers preserved"}
-            />
-          </div>
-          <PhoneEvidence
-            className="mx-auto w-full max-w-[300px] sm:max-w-none"
-            asset={{ src: `${IMG}/case04-playback-error.webp`, alt: "Playback error state; the soundscape and playback progress are preserved, with a retry action" }}
-            caption={zhHant ? "「你的聲景與播放進度不會被刪除」" : "“Your soundscape and playback progress won't be deleted.”"}
+        {/* Signature 2 — State Scrubber: the recovery sequence as a real,
+            steppable state story (same three approved screens and captions
+            as before; copy drawn from this section and the approved
+            "protect effort already invested" principle). */}
+        <div className="mt-10">
+          <StateScrubber
+            label={zhHant ? "生成與播放的恢復狀態" : "Generation and playback recovery states"}
+            aspect="1284 / 2755"
+            states={
+              zhHant
+                ? [
+                    {
+                      name: "生成中，可離開此頁",
+                      detail: "生成期間可以離開畫面，之後再從對應狀態返回，不必停在會卡住整個畫面的載入畫面。",
+                      protects: "不必停留等待",
+                      asset: { src: `${IMG}/case04-generating-v2.webp`, alt: "生成今日聲景中的畫面，提示使用者可以先離開、稍後再返回" },
+                    },
+                    {
+                      name: "生成失敗，答案已保留",
+                      detail: "生成失敗或網路中斷時，原先已完成的輸入會保留，使用者可以直接重試或稍後再試，不需要重新走完整段問卷。",
+                      protects: "保護：已完成的輸入",
+                      asset: { src: `${IMG}/case04-generation-failed-v2.webp`, alt: "生成失敗狀態，問卷答案已保留，並提供重試與稍後再試的操作" },
+                    },
+                    {
+                      name: "播放錯誤，進度已保留",
+                      detail: "「你的聲景與播放進度不會被刪除」——播放中斷時保留聲景與聆聽進度，並提供重試。",
+                      protects: "保護：聆聽進度",
+                      asset: { src: `${IMG}/case04-playback-error.webp`, alt: "播放錯誤狀態，聲景與播放進度已保留，並提供重試操作" },
+                    },
+                  ]
+                : [
+                    {
+                      name: "Generating — safe to leave",
+                      detail: "Users can leave while generation continues and return later through the appropriate state, instead of waiting on a blocking loading screen.",
+                      protects: "No blocking wait",
+                      asset: { src: `${IMG}/case04-generating-v2.webp`, alt: "Generating today's soundscape with guidance that the user can leave and return" },
+                    },
+                    {
+                      name: "Failed — answers preserved",
+                      detail: "If generation fails or connectivity is interrupted, previously entered information is preserved so the user can retry instead of restarting the questionnaire.",
+                      protects: "Protects: input effort",
+                      asset: { src: `${IMG}/case04-generation-failed-v2.webp`, alt: "Generation failed state; the user's questionnaire answers have been preserved, with retry and defer actions" },
+                    },
+                    {
+                      name: "Playback error — progress preserved",
+                      detail: "“Your soundscape and playback progress won't be deleted.” The soundscape and listening progress survive the error, with a retry action.",
+                      protects: "Protects: listening progress",
+                      asset: { src: `${IMG}/case04-playback-error.webp`, alt: "Playback error state; the soundscape and playback progress are preserved, with a retry action" },
+                    },
+                  ]
+            }
+            footnote={
+              zhHant
+                ? "發生錯誤時，優先保護使用者已經投入的時間與進度。"
+                : "Recovery should protect effort the user has already invested."
+            }
           />
         </div>
 

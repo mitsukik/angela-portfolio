@@ -15,20 +15,21 @@ const INPUT_LEGEND: Record<Locale, string> = {
 };
 
 /**
- * Shared play/pause/freeze wiring for one panel's looping GSAP timeline.
- * `build` runs once (inside a gsap.context scoped to the returned ref) and
- * must return a paused, ready-to-play timeline — this hook never rebuilds
- * it, only starts/stops/repositions it. `inView` is controlled by the
- * caller (a single section-level observer on desktop, the existing
- * per-block observer on mobile) rather than observed here, so the same
- * hook works in both contexts without creating duplicate observers.
- * Reduced-motion freezes the timeline at `restProgress` — a real, labeled
- * frame from the same authored motion, not a hand-duplicated static state.
+ * Shared lifecycle for one panel's GSAP timeline (P1.5 — Resolve, then
+ * Rest). `build` runs once (inside a gsap.context scoped to the returned
+ * ref) and returns a looping timeline; this hook never lets it loop. The
+ * first time the panel enters view it plays once, from the start up to
+ * `restProgress` — the authored, meaningfully structured frame — and
+ * stops there, so the diagram stays calm while the text beside it is
+ * read. Hovering the panel (`replay`) plays that same pass again.
+ * Reduced motion jumps straight to the rest frame. `inView` comes from
+ * the caller (one section observer on desktop, per-block on mobile).
  */
 function usePanelMotion<T extends Element>(build: () => gsap.core.Timeline, restProgress: number, inView: boolean, startOffset = 0) {
   const rootRef = useRef<T | null>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
-  const startedRef = useRef(false);
+  const passRef = useRef<gsap.core.Tween | null>(null);
+  const playedRef = useRef(false);
 
   useLayoutEffect(() => {
     const root = rootRef.current;
@@ -39,11 +40,19 @@ function usePanelMotion<T extends Element>(build: () => gsap.core.Timeline, rest
       timelineRef.current = timeline;
     }, root);
     return () => {
+      passRef.current?.kill();
       timelineRef.current = null;
       context.revert();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const playPass = (delay: number) => {
+    const timeline = timelineRef.current;
+    if (!timeline || passRef.current?.isActive()) return;
+    const restTime = restProgress * timeline.duration();
+    passRef.current = timeline.tweenFromTo(0, restTime, { delay, ease: "none", duration: restTime });
+  };
 
   useLayoutEffect(() => {
     const timeline = timelineRef.current;
@@ -51,27 +60,29 @@ function usePanelMotion<T extends Element>(build: () => gsap.core.Timeline, rest
     const reducedQuery = window.matchMedia(REDUCED_MOTION_QUERY);
     const sync = () => {
       if (reducedQuery.matches) {
+        passRef.current?.kill();
         timeline.pause();
         timeline.progress(restProgress);
+        playedRef.current = true;
         return;
       }
-      if (inView) {
-        if (!startedRef.current) {
-          startedRef.current = true;
-          timeline.play(startOffset);
-        } else {
-          timeline.play();
-        }
-      } else {
-        timeline.pause();
+      if (inView && !playedRef.current) {
+        playedRef.current = true;
+        playPass(startOffset);
       }
     };
     sync();
     reducedQuery.addEventListener("change", sync);
     return () => reducedQuery.removeEventListener("change", sync);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView, restProgress, startOffset]);
 
-  return rootRef;
+  const replay = () => {
+    if (!playedRef.current || window.matchMedia(REDUCED_MOTION_QUERY).matches) return;
+    playPass(0);
+  };
+
+  return { rootRef, replay };
 }
 
 function useSectionInView<T extends HTMLElement>() {
@@ -145,12 +156,12 @@ function UnstructuredPanel({ inView, startOffset }: { inView: boolean; startOffs
   // 0.68 lands just before the tentative line's opacity peak (0.6) starts
   // declining, so reduced-motion freezes on the clearest "attempted, not
   // yet stable" frame rather than the scattered rest state.
-  const rootRef = usePanelMotion<SVGSVGElement>(build, 0.68, inView, startOffset);
+  const { rootRef, replay } = usePanelMotion<SVGSVGElement>(build, 0.68, inView, startOffset);
   const a = P1_NODES[P1_APPROACH_A];
   const b = P1_NODES[P1_APPROACH_B];
 
   return (
-    <svg ref={rootRef} viewBox="0 0 300 200" className="h-full w-full" role="img" aria-hidden>
+    <svg ref={rootRef} onPointerEnter={replay} viewBox="0 0 300 200" className="h-full w-full" role="img" aria-hidden>
       <line ref={lineRef} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="var(--scene-fg)" strokeWidth={1} strokeDasharray="4 5" opacity={0} />
       {P1_NODES.map((pt, i) => (
         <circle
@@ -235,10 +246,10 @@ function RelationshipsPanel({ inView, startOffset }: { inView: boolean; startOff
   // Labeled timeline: l0=0, l1≈1.02, l2≈2.04, hold≈3.06, recede≈3.66,
   // duration≈4.36 — 0.72 lands inside "hold," after all three
   // connections have drawn and the hub has responded to each.
-  const rootRef = usePanelMotion<SVGSVGElement>(build, 0.72, inView, startOffset);
+  const { rootRef, replay } = usePanelMotion<SVGSVGElement>(build, 0.72, inView, startOffset);
 
   return (
-    <svg ref={rootRef} viewBox="0 0 300 200" className="h-full w-full" role="img" aria-hidden>
+    <svg ref={rootRef} onPointerEnter={replay} viewBox="0 0 300 200" className="h-full w-full" role="img" aria-hidden>
       {P2_SOURCES.map((source, i) => (
         <line
           key={i}
@@ -370,10 +381,10 @@ function StructurePanel({ inView, startOffset }: { inView: boolean; startOffset:
   // route0≈3.39, route1≈4.24, duration≈5.09 — 0.745 lands inside the
   // route0 (roles branch) lavender-highlighted window, after the full
   // hierarchy has assembled.
-  const rootRef = usePanelMotion<SVGSVGElement>(build, 0.745, inView, startOffset);
+  const { rootRef, replay } = usePanelMotion<SVGSVGElement>(build, 0.745, inView, startOffset);
 
   return (
-    <svg ref={rootRef} viewBox="0 0 300 200" className="h-full w-full" role="img" aria-hidden>
+    <svg ref={rootRef} onPointerEnter={replay} viewBox="0 0 300 200" className="h-full w-full" role="img" aria-hidden>
       {P3_ROW2.map((pt, i) => (
         <line
           key={i}
@@ -489,10 +500,10 @@ function InteractionPanel({ inView, startOffset }: { inView: boolean; startOffse
   // settle≈1.9, duration≈2.3 — 0.652 lands inside the feedback window
   // (loop path drawn, dot mid-travel) with the content/badge response
   // already visible.
-  const rootRef = usePanelMotion<SVGSVGElement>(build, 0.652, inView, startOffset);
+  const { rootRef, replay } = usePanelMotion<SVGSVGElement>(build, 0.652, inView, startOffset);
 
   return (
-    <svg ref={rootRef} viewBox="0 0 300 200" className="h-full w-full" role="img" aria-hidden>
+    <svg ref={rootRef} onPointerEnter={replay} viewBox="0 0 300 200" className="h-full w-full" role="img" aria-hidden>
       <rect x={20} y={20} width={260} height={160} fill="none" stroke="var(--scene-line)" strokeWidth={1} />
       <rect x={20} y={20} width={260} height={24} fill="var(--scene-fg)" fillOpacity={0.08} />
       <rect x={20} y={44} width={60} height={136} fill="var(--scene-fg)" fillOpacity={0.05} />

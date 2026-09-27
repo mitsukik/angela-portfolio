@@ -122,7 +122,7 @@ export function CaseStudyPrototype({
   // six content chapters (01-06, The Challenge & My Role through
   // Delivery) — the old 01-08 + unnumbered Reflection (9 chapters) is
   // gone; Reflection was folded into Delivery. See CaseFourFinalContent.tsx.
-  const chapterCount = isCaseOneV3 ? 5 : isCaseOneV2 ? 11 : isCaseTwoV1 ? 7 : isCaseThreeV1 ? 6 : isCaseFourV1 ? 6 : CHAPTER_COUNT;
+  const chapterCount = isCaseOneV3 ? 5 : isCaseOneV2 ? 11 : isCaseTwoV1 ? 7 : isCaseThreeV1 ? 5 : isCaseFourV1 ? 6 : CHAPTER_COUNT;
   const chapters: Chapter[] = isCaseOneV3
     ? Array.from({ length: 5 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
     : isCaseOneV2
@@ -130,7 +130,7 @@ export function CaseStudyPrototype({
     : isCaseTwoV1
       ? Array.from({ length: 7 }, (_, i) => ({ number: String(i + 2).padStart(2, "0") }))
       : isCaseThreeV1
-        ? Array.from({ length: 6 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
+        ? Array.from({ length: 5 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
         : isCaseFourV1
           ? Array.from({ length: 6 }, (_, i) => ({ number: String(i + 1).padStart(2, "0") }))
           : CHAPTERS;
@@ -245,14 +245,16 @@ export function CaseStudyPrototype({
       : isCaseThreeV1
         ? zhHant
           ? [
-              { label: "角色", value: "UI/UX & Frontend Designer" },
-              { label: "平台", value: "Web · Industrial Tablet" },
-              { label: "客戶", value: "機密製造業客戶" },
+              { label: "角色", value: "UI/UX Designer · Frontend Implementation" },
+              { label: "時程", value: "2023 — 2024" },
+              { label: "平台", value: "Web · Internal Operations System" },
+              { label: "狀態", value: "Deployed · In Production Use" },
             ]
           : [
-              { label: "Role", value: "UI/UX & Frontend Designer" },
-              { label: "Platform", value: "Web · Industrial Tablet" },
-              { label: "Client", value: "Confidential Manufacturing Client" },
+              { label: "Role", value: "UI/UX Designer · Frontend Implementation" },
+              { label: "Timeline", value: "2023 — 2024" },
+              { label: "Platform", value: "Web · Internal Operations System" },
+              { label: "Status", value: "Deployed · In Production Use" },
             ]
         : isCaseFourV1
           ? zhHant
@@ -312,7 +314,7 @@ export function CaseStudyPrototype({
                   : isCaseTwoV1
                     ? "02 / BRAND & WEB EXPERIENCE"
                     : isCaseThreeV1
-                      ? "03 / CONFIDENTIAL MANUFACTURING OPERATIONS SYSTEM"
+                      ? zhHant ? "00 — 專案總覽" : "00 — OVERVIEW"
                       : isCaseFourV1
                         ? "04 / MOBILE WELLNESS PRODUCT"
                         : `${project.number} / ${caseStudy.eyebrowTitle ?? displayTitle}`}
@@ -333,8 +335,8 @@ export function CaseStudyPrototype({
                         ? "Shun De Xing · Charming Clinic · NATEX"
                         : isCaseThreeV1
                           ? zhHant
-                            ? "將複雜的製造需求，轉化為清楚、一致的現場與管理操作介面。"
-                            : "Turning complex manufacturing specifications into clear, consistent interfaces for shop-floor and management operations."
+                            ? "將既有工廠作業需求轉化為可在管理端與現場使用的系統介面，並完成前端 UI 實作。"
+                            : "Translating existing factory operations into interfaces that could be used by both management and shop-floor teams — and implementing the frontend UI."
                           : isCaseFourV1
                             ? zhHant
                               ? "在產品已進入開發的階段接手 UX/UI，重新整理流程、狀態與介面，讓體驗更清楚、更輕量，也更符合行動應用的使用方式。"
@@ -354,8 +356,8 @@ export function CaseStudyPrototype({
                 <div data-open-summary className="mt-6 max-w-[56ch]">
                   <p className="cf-body body-tc">
                     {zhHant
-                      ? "供工廠管理人員與現場人員使用的內部作業系統，涵蓋生產、物料、庫存與品檢等日常營運。"
-                      : "An internal operations system for factory management and shop-floor teams, covering production, materials, inventory, and quality inspection."}
+                      ? "這是一套實際導入工廠的內部營運系統，涵蓋生產、物料領退、品檢、包裝入庫與管理功能。我負責 UI/UX 設計及 HTML / CSS / JavaScript 前端介面實作，並參與客戶測試、Backend 整合與 QA。"
+                      : "This internal operations system was deployed in a real factory, covering production, material handling, quality inspection, packaging, inbound storage, and management functions. I was responsible for the UI/UX design and HTML / CSS / JavaScript frontend implementation, and participated in client testing, backend integration, and QA."}
                   </p>
                 </div>
               ) : isCaseFourV1 ? (

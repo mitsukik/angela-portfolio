@@ -1,6 +1,6 @@
 # PORTFOLIO HANDOFF — CURRENT STATE
 
-Last updated: 2026-09-23
+Last updated: 2026-09-27
 Status: PRODUCTION / VERIFIED / FROZEN
 
 This file is the source of truth for the current portfolio state.
@@ -201,43 +201,31 @@ Do not reopen without a concrete reason.
 
 ---
 
-## CASE03 — FROZEN
+## CASE03 — PRODUCTION REWRITE COMPLETE (2026-09-27)
 
-Public identity:
-Confidential Manufacturing Operations System
+Status: rewritten, deployed, live QA PASS. No open CASE03 task.
 
-Positioning:
-Enterprise implementation / operational system / production collaboration.
+Production commit: `f0daf81` `refactor(case03): sharpen production delivery story` (public repo `main`; mirrored on work branch as `026ce40`).
 
-Confirmed facts:
-- real factory implementation
-- client/factory identity confidential
-- product used in real operations
-- continued UX iteration after deployment
-- Angela handled UI/UX + HTML/CSS/JS front-end implementation
-- company had no dedicated front-end engineer for this work
+Positioning: CASE01 = product / system logic; CASE03 = real enterprise delivery / implementation.
 
-Workflow:
-interactive prototype
-→ client testing
-→ iteration
-→ backend integration
-→ QA
-→ real use
-→ feedback
-→ further UX refinement
+Structure (ZH + EN, `CaseThreeFinalContent.tsx` + CASE03 branches in `CaseStudyPrototype.tsx`, 5 chapters):
+00 Overview → 01 The Challenge (One system, two operating contexts) → 02 My Role & Approach (delivery flow grouped SA & client / owned by me / with the team) → 03 Key Design Decisions (01 Filter → Table / List → Form → Confirm; 02 storage codes → spatial floor-plan selector, full-width key evidence) → 04 From Prototype to Production → 05 Production & Iteration (one real post-launch example: tablet button relocation + flow split).
 
-Public demo:
-sanitized single-feature-page demo only.
+Removed (do not restore): generic lifecycle ring, 10-step pipeline, system-architecture/module inventory, hero tag row, Problem/Decision labels.
 
-Do not expose:
-- customer/factory name
-- private operational information
+Evidence (only these three): `case03-hero-desktop-tablet.webp`, `case03-operations-collage.webp`, `case03-warehouse-floorplan.webp`. `case03-monitoring-dashboard.webp` belongs to an unrelated identifiable client — deleted from public (production now 404). Never restore.
 
-STATUS:
-COMPLETE / PRODUCTION / FROZEN
+Locked facts:
+- Role: UI/UX Designer · Frontend Implementation. Timeline: 2023 — 2024. Platform: Web · Internal Operations System. Status: Deployed · In Production Use.
+- No dedicated frontend engineer; Angela did UI/UX + HTML/CSS/JS frontend UI, staged client testing, revision, backend-integration/QA participation, deployment involvement, post-launch iteration.
+- SA + client defined requirements, system rules and factory context. NO PM — never reintroduce one. Collaborators: SA, backend engineer(s), client/factory stakeholders, QA.
+- No KPIs, no formal research/interviews claims. Client/factory identity confidential.
+- Prototype CTA: `/demos/case03/demo01/demo_01.html` (sanitized single-feature demo).
 
-Do not reopen without a concrete reason.
+Shared component: `EvidenceShot.tsx` (`Shot`) now serves CASE01 + CASE03.
+
+Known non-blocking: Home card metadata for CASE03 (`data/projects.ts`) still says Platform "Web · Industrial Tablet" (Home not in scope of the rewrite).
 
 ---
 
@@ -697,7 +685,7 @@ READ THIS HANDOFF FIRST.
 Treat:
 CASE01 = frozen
 CASE02 = frozen
-CASE03 = frozen
+CASE03 = production rewrite complete (2026-09-27), frozen
 CASE04 V3 = frozen current public checkpoint
 
 Do not tell Angela an old pending task still needs doing if this HANDOFF marks it complete.

@@ -8,7 +8,6 @@ import type { Locale } from "@/data/locale";
 import { getLenisInstance } from "@/components/site/lenisInstance";
 import { HeroCube } from "./HeroCube";
 import { HeroBackgroundShapes } from "./HeroBackgroundShapes";
-import { SystemResolveField } from "./SystemResolveField";
 
 // A/B/C prototype switch only — see HeroBackgroundShapes.tsx's own header
 // comment. HeroCube ("cube") and the boxed Background Shapes ("shapes")
@@ -195,7 +194,7 @@ export function Hero({ locale }: { locale: Locale }) {
             can't leak into Selected Work or the Footer. */}
         {HERO_VISUAL === "shapes-full" && (
           <div aria-hidden className="fixed inset-0 pointer-events-none">
-            <SystemResolveField fill clearSelector="[data-glyph-clear]" />
+            <HeroBackgroundShapes fill />
           </div>
         )}
 
@@ -205,11 +204,11 @@ export function Hero({ locale }: { locale: Locale }) {
               HERO_VISUAL === "shapes-full" ? "md:col-span-12" : "md:col-span-6 lg:landscape:col-span-7"
             }`}
           >
-            <p ref={kickerRef} data-glyph-clear className="hero-kicker type-v3-label scene-dim-text">
+            <p ref={kickerRef} className="hero-kicker type-v3-label scene-dim-text">
               {content.kicker}
             </p>
 
-            <h1 ref={titleRef} data-glyph-clear className="hero-title type-v3-display mt-5 uppercase">
+            <h1 ref={titleRef} className="hero-title type-v3-display mt-5 uppercase">
               <span className="hero-title-mask block">
                 <span className="hero-title-word block">{content.identityLines[0]}</span>
               </span>
@@ -221,7 +220,7 @@ export function Hero({ locale }: { locale: Locale }) {
               </span>
             </h1>
 
-            <p ref={copyRef} data-glyph-clear lang={lang} className="hero-copy type-v3-body mt-7 max-w-[48ch]">
+            <p ref={copyRef} lang={lang} className="hero-copy type-v3-body mt-7 max-w-[48ch]">
               {content.statement.map((segment, index) =>
                 segment.noBreak ? (
                   <span key={index} className="whitespace-nowrap">
@@ -236,7 +235,7 @@ export function Hero({ locale }: { locale: Locale }) {
               </span>
             </p>
 
-            <div ref={ctaRef} data-glyph-clear className="hero-cta mt-8 flex flex-wrap items-center gap-x-8 gap-y-3">
+            <div ref={ctaRef} className="hero-cta mt-8 flex flex-wrap items-center gap-x-8 gap-y-3">
               <button
                 type="button"
                 onClick={handleWorkClick}

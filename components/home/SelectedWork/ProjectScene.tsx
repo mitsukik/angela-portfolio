@@ -94,7 +94,7 @@ export function ProjectScene({ project, locale, index, count, stacked }: Props) 
   const primaryTitle = locale === "zh" ? project.chineseTitle : project.title;
   const Head = (
     <div data-scene-text="0" style={stacked ? undefined : initial.text[0]}>
-      <p className={`type-v3-label cf-section-label whitespace-nowrap ${accentText}`}>
+      <p className={`type-v3-label cf-section-label sm:whitespace-nowrap ${accentText}`}>
         {project.number} — {project.category[locale]}
       </p>
       <h2 lang={locale === "zh" ? "zh-Hant" : "en"} className="type-v3-section-heading mt-4">
@@ -193,21 +193,16 @@ export function ProjectScene({ project, locale, index, count, stacked }: Props) 
   // hand-coded variants, so media reads at a consistent size across all
   // four projects. stageColumn controls the ->/<- column rhythm across
   // 01-04 (text-left, media-left, text-left, media-left); stageVertical
-  // is each project's own choreography and doesn't affect that rhythm.
+  // only anchors the media column now (see the media column below).
   const textFirst = project.stageColumn === "text-left";
-  // Desktop keeps its existing top/bottom/middle vertical anchor inside a
-  // shared-height row (unchanged). Mobile has no such row to anchor
-  // within — each block stacks full-width — so "justify-center" there was
-  // never a deliberate reading of stageVertical, just what was left once
-  // nothing below `md` overrode it. `justify-start` is the coherent mobile
-  // reading: content begins at the top of whatever space its own row
-  // resolves to, the same way every other stacked mobile section reads.
-  const verticalClass =
-    project.stageVertical === "top"
-      ? "justify-start md:justify-start"
-      : project.stageVertical === "bottom"
-        ? "justify-start md:justify-end"
-        : "justify-start md:justify-center md:self-center";
+  // Text block position — one shared rule for every project: on md+ the
+  // whole text column is vertically centred in the stage's shared-height
+  // row (the treatment CASE03/04 already had), so all four text blocks
+  // share one visual centre line instead of each project's stageVertical
+  // pushing it to the top or bottom. Mobile keeps `justify-start`: there
+  // is no shared row to centre in, and content starts at the top of its
+  // own row like every other stacked mobile section.
+  const verticalClass = "justify-start md:justify-center md:self-center";
 
   // Mobile row split: the media row used to claim a fixed h-[32vh] share
   // unconditionally, leaving the text row whatever remained (293.9px at

@@ -386,14 +386,29 @@ export function CaseStudyPrototype({
                       </p>
                     </>
                   )}
-                  {/* Angela explicitly approved this narrow confidentiality
-                      exception (see HANDOFF.md CASE04 section): these two
-                      URLs carry the real product name in their domain, but
-                      the portfolio's own copy/metadata stay anonymized —
-                      only the outbound href exposes it. Both are live
-                      prototype evidence, so both share cf-accent (the
-                      existing text-color role) rather than a new CTA style. */}
+                  {/* Angela explicitly approved these narrow confidentiality
+                      exceptions (see HANDOFF.md CASE04 section): all three
+                      URLs below carry the real product name in their
+                      domain, but the portfolio's own copy/metadata/section
+                      content stay anonymized — only these outbound hrefs
+                      expose it. The Web Staging Build link is a further,
+                      separately approved exception (2026-09-29): unlike the
+                      two prototype links, clicking it can reveal the real
+                      product identity directly, since it's the actual
+                      staging product rather than an anonymized prototype
+                      rebuild — Angela's explicit call, made knowing that.
+                      All three share cf-accent (the existing text-color
+                      role); hierarchy comes from DOM order, not color,
+                      per instruction not to make any of them dim/secondary. */}
                   <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-2">
+                    <a
+                      href="https://staging-app.labo65.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="case-link cf-meta cf-accent"
+                    >
+                      {zhHant ? "查看 Web Staging Build ↗" : "View Web Staging Build ↗"}
+                    </a>
                     <a
                       href="https://labo65-app.vercel.app/"
                       target="_blank"

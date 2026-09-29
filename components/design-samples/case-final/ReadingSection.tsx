@@ -81,6 +81,7 @@ export function ReadingSection({
   supporting,
   points,
   media,
+  aside,
   mediaFullBleed = false,
   composition = "standard",
   className = "",
@@ -91,6 +92,9 @@ export function ReadingSection({
   supporting?: string;
   points?: string[];
   media?: ReactNode;
+  /** background-role only: supporting material under the lead at lg+,
+   * after the body paragraphs when stacked. */
+  aside?: ReactNode;
   mediaFullBleed?: boolean;
   composition?: "standard" | "background-role";
   className?: string;
@@ -156,8 +160,11 @@ export function ReadingSection({
             precedent as EvidenceSection below. */}
         {title && <h2 ref={titleRef} className="cf-heading cf-h3 max-w-[70ch]">{title}</h2>}
         {composition === "background-role" ? (
-          <div ref={bodyRef} className="mt-10 grid gap-10 md:grid-cols-12 md:gap-12 lg:gap-16">
-            <div className="md:col-span-5">
+          /* Splits at lg, not md: at tablet width the 5/12 lead column would be
+              ~220px, too narrow for body text. Stacked, it reads as one
+              column (paragraph rhythm, not a section break). */
+          <div ref={bodyRef} className="mt-10 grid gap-4 lg:grid-cols-12 lg:grid-rows-[auto_1fr] lg:gap-x-16 lg:gap-y-10">
+            <div className="lg:col-span-5 lg:row-start-1">
               <p className="cf-body body-tc">{paragraphs[0]}</p>
               {supporting && (
                 <div ref={supportingRef} className="mt-7">
@@ -166,10 +173,13 @@ export function ReadingSection({
                 </div>
               )}
             </div>
-            <div className="md:col-span-7 md:border-l md:pl-12 cf-rule lg:pl-16">
+            {/* DOM order lead → body → aside keeps the stacked reading order;
+                at lg the body spans both rows beside lead + aside. */}
+            <div className="cf-role-body cf-rule lg:col-span-7 lg:col-start-6 lg:row-span-2 lg:row-start-1 lg:border-l lg:pl-12 xl:pl-16">
               <div className="space-y-4">{paragraphs.slice(1).map((paragraph) => <p key={paragraph} className="cf-body body-tc">{paragraph}</p>)}</div>
               {points && <ReadingPoints points={points} />}
             </div>
+            {aside && <div className="mt-8 lg:col-span-5 lg:col-start-1 lg:row-start-2 lg:mt-0">{aside}</div>}
           </div>
         ) : (
           <>

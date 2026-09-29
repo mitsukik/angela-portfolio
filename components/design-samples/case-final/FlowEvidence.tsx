@@ -12,6 +12,7 @@ type FlowEvidenceProps = {
   src: string;
   alt: string;
   caption: string;
+  /** Optional aspect class; by default .case01-plate sets the matted 3:2 ratio. */
   aspect?: string;
   className?: string;
   scrollHint?: string;
@@ -34,7 +35,7 @@ type FlowEvidenceProps = {
  * evidence figure in this file — the shared `Evidence`/`EvidenceMotion`
  * fade still covers everything else, so this stays the exception.
  */
-export function FlowEvidence({ src, alt, caption, aspect = "aspect-[3/2]", className = "", scrollHint, reveal = true }: FlowEvidenceProps) {
+export function FlowEvidence({ src, alt, caption, aspect = "", className = "", scrollHint, reveal = true }: FlowEvidenceProps) {
   const frameRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
@@ -70,9 +71,13 @@ export function FlowEvidence({ src, alt, caption, aspect = "aspect-[3/2]", class
   return (
     <figure className={className}>
       <div className="min-w-0 max-w-full overflow-x-auto">
-        <div ref={frameRef} className={`cf-figure-frame relative ${aspect} min-w-[48rem] lg:min-w-0`}>
+        <div ref={frameRef} className={`cf-figure-frame case01-plate relative ${aspect} min-w-[48rem] lg:min-w-0`}>
           <EvidenceTrigger asset={{ src, alt, caption }}>
-            <Image src={src} alt="" fill sizes="(max-width: 1023px) 768px, 1600px" className="object-contain" />
+            {/* Board inset by the same % on every axis, so the 3:2 diagram
+                fills it exactly and every plate has identical mat margins. */}
+            <span className="case01-plate-board">
+              <Image src={src} alt="" fill sizes="(max-width: 1023px) 768px, 1600px" className="object-contain" />
+            </span>
           </EvidenceTrigger>
         </div>
       </div>

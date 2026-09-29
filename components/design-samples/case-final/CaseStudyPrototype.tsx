@@ -18,6 +18,7 @@ import { CaseTransitionLink } from "./CaseTransitionLink";
 import { CaseEvidenceViewerProvider } from "./CaseEvidenceViewer";
 import { getDecisionFigure, getOverviewFigure, getShowcaseFigure } from "./caseFinalMedia";
 import { CaseOneDemoLinks, CaseOneFinalContent } from "./CaseOneFinalContent";
+import { CaseOneProductPreview } from "./CaseOnePresentation";
 import { CaseTwoFinalContent, CaseTwoHeroEvidence } from "./CaseTwoFinalContent";
 import { CaseThreeFinalContent, CaseThreeHeroEvidence } from "./CaseThreeFinalContent";
 import { CaseFourFinalContent, CaseFourHeroEvidence } from "./CaseFourFinalContent";
@@ -446,7 +447,7 @@ export function CaseStudyPrototype({
                       </p>
                     ))}
                   </div>
-                  <CaseOneDemoLinks locale={locale} className="mt-8" />
+                  <CaseOneDemoLinks locale={locale} className="mt-8" withPrototype={false} />
                 </div>
               ) : (
                 <>
@@ -468,7 +469,9 @@ export function CaseStudyPrototype({
               )}
             </div>
 
-            <div data-open-stats className="mt-12 md:col-span-4 md:col-start-9 md:mt-0">
+            {/* CASE01 (lg+): metadata spans columns 8–12 instead of 9–12, so
+                the gap to the copy is a gutter, not an empty column. */}
+            <div data-open-stats className={`mt-12 md:col-span-4 md:col-start-9 md:mt-0 ${isCaseOneV3 ? "lg:col-span-5 lg:col-start-8" : ""}`}>
               <dl className="border-t cf-rule">
                 {openingInfoRows.map((row) => (
                   <div key={row.label} className="grid grid-cols-[6rem_1fr] gap-4 border-b cf-rule py-4">
@@ -479,6 +482,7 @@ export function CaseStudyPrototype({
               </dl>
             </div>
           </div>
+          {isCaseOneV3 && <CaseOneProductPreview locale={locale} />}
           {isCaseTwoV1 && <CaseTwoHeroEvidence locale={locale} />}
           {isCaseThreeV1 && <CaseThreeHeroEvidence locale={locale} />}
           {isCaseFourV1 && <CaseFourHeroEvidence locale={locale} />}

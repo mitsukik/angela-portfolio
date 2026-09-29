@@ -21,7 +21,7 @@ const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffec
  * until this resolves synchronously before paint, matching this
  * component's other query-dependent state below.
  */
-function usePrefersReducedMotion() {
+export function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(true);
 
   useIsomorphicLayoutEffect(() => {
@@ -63,16 +63,32 @@ function usePrefersReducedMotion() {
 export function VideoEvidence({
   asset,
   format = "landscape",
+  surface = "light",
+  holdPosterUntilPlaying = false,
+  mp4First = false,
   zhHant = false,
 }: {
   asset: VideoEvidenceAsset;
-  format?: "landscape" | "portrait" | "crop";
+  /** "wide" (16:9) matches the other case hero figures; CASE01's product preview. */
+  format?: "landscape" | "portrait" | "crop" | "wide";
+  /** Loading backdrop behind the poster: white for light websites, ink for dark product UI. */
+  surface?: "light" | "dark";
+  /**
+   * CASE01 product preview: keep the poster on top until the browser
+   * reports real playback ("playing"), so buffering or a refused autoplay
+   * shows the poster rather than an empty frame; the control reflects the
+   * element's actual state, and a refused autoplay leaves it on "play".
+   */
+  holdPosterUntilPlaying?: boolean;
+  /** List H.264 before WebM (some Safari builds claim VP9 and then stall). */
+  mp4First?: boolean;
   zhHant?: boolean;
 }) {
   const aspect = {
     landscape: "aspect-[16/10]",
     portrait: "aspect-[4/5]",
     crop: "aspect-[4/3]",
+    wide: "aspect-[16/9]",
   }[format];
 
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -121,6 +137,11 @@ export function VideoEvidence({
   const [userPaused, setUserPaused] = useState(false);
   const shouldPlay = isInView && !userPaused;
 
+  // Actual element state (holdPosterUntilPlaying only): set from media
+  // events, never from the play() request.
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [hasPlayed, setHasPlayed] = useState(false);
+
   // React doesn't render `muted` as a real DOM attribute — only as a JS
   // property, applied after the element already exists — so by the time
   // it lands, the browser has often already evaluated (and rejected) the
@@ -139,6 +160,8 @@ export function VideoEvidence({
     const el = videoRef.current;
     if (!el) return;
     el.muted = true;
+    // A refused autoplay (NotAllowedError) leaves the element paused; with
+    // holdPosterUntilPlaying the poster stays up and the control shows "play".
     if (shouldPlay) {
       el.play().catch(() => {});
     } else {
@@ -153,9 +176,29 @@ export function VideoEvidence({
 
   const pauseLabel = zhHant ? "暫停影片" : "Pause video";
   const playLabel = zhHant ? "播放影片" : "Play video";
+  // Default: the control mirrors the viewer's choice. Held-poster mode: it
+  // mirrors real playback, so a stalled or refused clip offers "play".
+  const showPlayIcon = holdPosterUntilPlaying ? !isPlaying : userPaused;
+  const onToggle = () => {
+    if (!holdPosterUntilPlaying) {
+      setUserPaused((prev) => !prev);
+      return;
+    }
+    const el = videoRef.current;
+    if (isPlaying) {
+      setUserPaused(true);
+      return;
+    }
+    setUserPaused(false);
+    // Inside the click, so a gesture-gated browser allows it.
+    if (el) {
+      el.muted = true;
+      el.play().catch(() => {});
+    }
+  };
 
   return (
-    <div ref={containerRef} className={`cf-figure-frame relative ${aspect} overflow-hidden bg-white`}>
+    <div ref={containerRef} className={`cf-figure-frame relative ${aspect} overflow-hidden ${surface === "dark" ? "bg-[#111318]" : "bg-white"}`}>
       {showVideo ? (
         <>
           <video
@@ -166,17 +209,32 @@ export function VideoEvidence({
             muted
             playsInline
             aria-label={asset.alt}
+            onPlaying={() => {
+              setIsPlaying(true);
+              setHasPlayed(true);
+            }}
+            onPause={() => setIsPlaying(false)}
           >
+            {mp4First && <source src={asset.mp4} type="video/mp4" />}
             <source src={asset.webm} type="video/webm" />
-            <source src={asset.mp4} type="video/mp4" />
+            {!mp4First && <source src={asset.mp4} type="video/mp4" />}
           </video>
+          {holdPosterUntilPlaying && (
+            // eslint-disable-next-line @next/next/no-img-element -- same fixed local poster as the reduced-motion frame
+            <img
+              src={asset.poster}
+              alt=""
+              aria-hidden
+              className={`pointer-events-none absolute inset-0 h-full w-full object-cover transition-opacity duration-200 ${hasPlayed ? "opacity-0" : "opacity-100"}`}
+            />
+          )}
           <button
             type="button"
-            onClick={() => setUserPaused((prev) => !prev)}
-            aria-label={userPaused ? playLabel : pauseLabel}
+            onClick={onToggle}
+            aria-label={showPlayIcon ? playLabel : pauseLabel}
             className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/55 text-white transition-colors hover:bg-black/70 focus-visible:bg-black/70"
           >
-            {userPaused ? (
+            {showPlayIcon ? (
               <svg aria-hidden viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
                 <path d="M4 2.5v11l10-5.5-10-5.5Z" />
               </svg>

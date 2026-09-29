@@ -44,7 +44,7 @@ export function FlowTabs({ slides, label }: { slides: FlowSlide[]; label: string
 
   return (
     <div data-evidence-entrance>
-      <div role="tablist" aria-label={label} className="mb-8 hidden gap-8 border-b cf-rule md:flex">
+      <div role="tablist" aria-label={label} className="mb-6 hidden gap-8 border-b cf-rule md:flex">
         {slides.map((slide, index) => {
           const selected = active === index;
           return (

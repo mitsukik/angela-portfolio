@@ -1,37 +1,17 @@
 import type { ReactNode } from "react";
 import type { Locale } from "@/data/locale";
 import { EvidenceHeading } from "./EvidenceHeading";
-import { Shot } from "./EvidenceShot";
 import { EvidenceMotion } from "./EvidenceMotion";
 import { FlowEvidence } from "./FlowEvidence";
 import { FlowTabs } from "./FlowTabs";
 import { ReadingSection } from "./ReadingSection";
+import { CASE01_PROTOTYPE_URL, CaseOneRulesToProduct, CaseOneSystemCoverage } from "./CaseOnePresentation";
 
 type RegisterSection = (index: number, element: HTMLElement | null) => void;
-function Section({ index, register, children, divider = true }: { index: number; register: RegisterSection; children: ReactNode; divider?: boolean }) {
-  return <div ref={(element) => register(index, element)} className={`cf-section${divider ? " cf-section-divider" : ""}`}>{children}</div>;
-}
-
-/*
- * Curated evidence group: label + one sentence + the screenshot(s). Each
- * group proves one capability; widths are set per group by the caller so
- * no screenshot becomes another full-width hero.
- */
-const GROUP_SPLIT = {
-  stacked: ["", "mt-6"],
-  "4/8": ["lg:col-span-4", "mt-6 lg:col-span-8 lg:mt-0"],
-  "3/9": ["lg:col-span-3", "mt-6 lg:col-span-9 lg:mt-0"],
-} as const;
-
-function EvidenceGroup({ label, note, split = "stacked", children }: { label: string; note: string; split?: keyof typeof GROUP_SPLIT; children: ReactNode }) {
-  const [textCol, mediaCol] = GROUP_SPLIT[split];
-  return <article data-evidence-entrance className={`border-t cf-rule pt-8 ${split === "stacked" ? "" : "lg:grid lg:grid-cols-12 lg:gap-12"}`}>
-    <div className={textCol}>
-      <p className="cf-meta cf-accent">{label}</p>
-      <p className="cf-dim mt-3 max-w-[70ch] text-[14px] leading-6">{note}</p>
-    </div>
-    <div className={mediaCol}>{children}</div>
-  </article>;
+/* `strongPause`: a longer chapter break after this section (see the CASE01
+   chapter-rhythm rule in globals.css) — used once, after the dense 03. */
+function Section({ index, register, children, divider = true, strongPause = false }: { index: number; register: RegisterSection; children: ReactNode; divider?: boolean; strongPause?: boolean }) {
+  return <div ref={(element) => register(index, element)} data-chapter-pause={strongPause ? "strong" : undefined} className={`cf-section${divider ? " cf-section-divider" : ""}`}>{children}</div>;
 }
 
 /*
@@ -46,9 +26,15 @@ function EvidenceGroup({ label, note, split = "stacked", children }: { label: st
  * share cf-accent while their notes stay cf-dim.
  */
 const ENGINEERING_DEMO_URL = "https://sc-demo.sdxdevelop.com/zh-tw";
-const PORTFOLIO_PROTOTYPE_URL: string | null = "https://case01-admin.vercel.app/";
+const PORTFOLIO_PROTOTYPE_URL: string | null = CASE01_PROTOTYPE_URL;
 
-export function CaseOneDemoLinks({ locale, className = "" }: { locale: Locale; className?: string }) {
+/*
+ * `withPrototype={false}` is for the Hero: the Working Product Preview sits
+ * directly below it and carries its own prototype CTA plus the same
+ * "reconstructed for portfolio presentation" disclosure, so repeating the
+ * link ~90px above it read as clutter. Outcome keeps both destinations.
+ */
+export function CaseOneDemoLinks({ locale, className = "", withPrototype = true, stacked = false }: { locale: Locale; className?: string; withPrototype?: boolean; stacked?: boolean }) {
   const zh = locale === "zh";
   const items = [
     {
@@ -66,18 +52,20 @@ export function CaseOneDemoLinks({ locale, className = "" }: { locale: Locale; c
         : `Reconstructed for portfolio presentation${PORTFOLIO_PROTOTYPE_URL ? "" : " · In development"}`,
       tone: "cf-accent",
     },
-  ];
-  return <ul className={`flex flex-col gap-5 sm:flex-row sm:gap-10 ${className}`}>
+  ].filter((item) => withPrototype || item.href !== PORTFOLIO_PROTOTYPE_URL);
+  return <ul className={`flex flex-col gap-5 ${stacked ? "" : "sm:flex-row sm:gap-10"} ${className}`}>
     {items.map((item) => <li key={item.label}>
       {item.href
-        ? <a href={item.href} target="_blank" rel="noopener noreferrer" className={`case-link cf-meta whitespace-nowrap ${item.tone}`}>{item.label}</a>
-        : <span className={`cf-meta whitespace-nowrap ${item.tone}`}>{item.label}</span>}
+        ? <a href={item.href} target="_blank" rel="noopener noreferrer" className={`case-link cf-meta sm:whitespace-nowrap ${item.tone}`}>{item.label}</a>
+        : <span className={`cf-meta sm:whitespace-nowrap ${item.tone}`}>{item.label}</span>}
       <p className="cf-dim mt-2 text-[13px] leading-5">{item.note}</p>
     </li>)}
   </ul>;
 }
 
-function Timeline({ locale }: { locale: Locale }) {
+/* `stacked`: a date/label list (the Hero's info-row pattern) for the
+   chapter's lead column instead of a full-width four-column strip. */
+function Timeline({ locale, stacked = false }: { locale: Locale; stacked?: boolean }) {
   const zh = locale === "zh";
   const milestones = zh ? [
     ["2025.05", "Consumer Web 前台設計完成"],
@@ -92,7 +80,9 @@ function Timeline({ locale }: { locale: Locale }) {
   ];
   return <div>
     <p className="cf-meta cf-dim mb-4">{zh ? "專案時程" : "Project Timeline"}</p>
-    <ol className="grid border-t cf-rule sm:grid-cols-2 lg:grid-cols-4">{milestones.map(([date, text]) => <li key={date} className="border-b cf-rule py-6 lg:border-r lg:px-6 lg:first:pl-0 lg:last:border-r-0"><p className="cf-meta cf-accent">{date}</p><p className="cf-dim mt-3 text-[14px] leading-6">{text}</p></li>)}</ol>
+    {stacked
+      ? <ol className="border-t cf-rule">{milestones.map(([date, text]) => <li key={date} className="grid grid-cols-[6.5rem_1fr] gap-4 border-b cf-rule py-4"><p className="cf-meta cf-accent">{date}</p><p className="cf-dim text-[14px] leading-6">{text}</p></li>)}</ol>
+      : <ol className="grid border-t cf-rule sm:grid-cols-2 lg:grid-cols-4">{milestones.map(([date, text]) => <li key={date} className="border-b cf-rule py-6 lg:border-r lg:px-6 lg:first:pl-0 lg:last:border-r-0"><p className="cf-meta cf-accent">{date}</p><p className="cf-dim mt-3 text-[14px] leading-6">{text}</p></li>)}</ol>}
   </div>;
 }
 
@@ -159,16 +149,21 @@ export function CaseOneFinalContent({ register, locale }: { register: RegisterSe
           "04 Business Rules & States｜Permissions, validation, system states, exceptions, and edge cases.",
           "05 Interface Design｜Turning confirmed logic into usable workflows and UI.",
         ]}
-        media={<div className="space-y-10">
+        composition="background-role"
+        aside={<div className="space-y-8">
           <p className="cf-body body-tc">{zh ? "Consumer Web 前台於 2025 年 5 月完成設計，主要管理後台則於 6 月完成。" : "The consumer-facing Web experience was completed in May 2025, followed by the core administration systems in June."}</p>
           <SurfaceScope locale={locale} />
         </div>}
       />
     </Section>
 
-    <Section index={2} register={register}>
+    <Section index={2} register={register} strongPause>
       <EvidenceHeading label={zh ? "03 — Designing the System" : "03 — DESIGNING THE SYSTEM"} title={zh ? "讓複雜的營運規則變得容易理解" : "Making complex operations understandable"}>
-        <div className="space-y-12">
+        {/* Rhythm: intro → its diagram 40/48px (one story unit); the three
+            large modules (Flow, Business rules, System coverage) each get
+            their own moment — see .case01-modules in globals.css. */}
+        <div className="case01-modules">
+          <div className="space-y-10 md:space-y-12">
           <div data-evidence-entrance className="max-w-[70ch] space-y-4">
             {(zh ? [
               "共享庫存是這套系統的重要挑戰之一。",
@@ -205,37 +200,14 @@ export function CaseOneFinalContent({ register, locale }: { register: RegisterSe
               },
             ]}
           />
-          <div className="space-y-12">
-            <EvidenceGroup label={zh ? "庫存管理" : "Inventory Management"} note={zh ? "目前庫存與超賣數量，搭配可追溯的異動紀錄。" : "Current stock and oversold quantity, with a traceable change history."}>
-              <div className="space-y-8">
-                <Shot src="/images/case01/evidence/case01-inventory-list.webp" size={[1330, 467]} minW="min-w-[56rem]" alt={zh ? "商品庫存列表，呈現庫存、超賣數量與商品狀態" : "Product inventory list showing stock, oversold quantity, and product status"} caption={zh ? "目前庫存狀態" : "Current inventory state"} scrollHint={zh ? "→ 左右滑動查看完整內容" : "→ Scroll to see the full evidence"} />
-                <div className="lg:w-5/6">
-                  <Shot src="/images/case01/evidence/case01-inventory-log-focused.png" size={[2500, 920]} minW="min-w-[56rem]" alt={zh ? "商品庫存異動紀錄，呈現狀態、操作者、角色、異動內容與時間" : "Product Inventory Log showing status, Changed By, Role, change details, and Timestamp"} caption={zh ? "庫存異動紀錄" : "Operational history"} scrollHint={zh ? "→ 左右滑動查看 Role 與 Timestamp" : "→ Scroll to see Role and Timestamp"} />
-                </div>
-              </div>
-            </EvidenceGroup>
-            <EvidenceGroup label={zh ? "Agent 與 Streamer 協作" : "Agent–Streamer Collaboration"} note={zh ? "協作狀態讓 Agent 快速理解 Streamer 目前是可邀請、已送出邀請、合作中或已結束合作。" : "Collaboration states help Agents understand whether a Streamer is available, invited, active or no longer collaborating."} split="4/8">
-              <div>
-                <Shot src="/images/case01/evidence/case01-streamer-collaboration.webp" size={[1652, 1542]} minW="min-w-[40rem]" alt={zh ? "直播主名單卡片，呈現送出合作邀請、已送出邀請、合作中與結束合作等狀態" : "Streamer list cards showing Send Cooperation Request, Request Sent, In Collaboration, and End Collaboration states"} scrollHint={zh ? "→ 左右滑動查看完整內容" : "→ Scroll to see the full evidence"} />
-              </div>
-            </EvidenceGroup>
-            <EvidenceGroup label={zh ? "訂單管理" : "Order Management"} note={zh ? "在同一營運視圖中整合訂單狀態、銷售來源與待處理操作。" : "Order states, seller source, and required actions are brought together in one operational view."} split="4/8">
-              <div>
-                <Shot src="/images/case01/evidence/case01-order-list.webp" size={[2048, 1565]} minW="min-w-[48rem]" alt={zh ? "平台訂單管理列表，呈現訂單與付款狀態、Agent／直播主來源與列操作" : "Platform order list showing order and payment states, Agent / Streamer source, and row actions"} scrollHint={zh ? "→ 左右滑動查看 Payment、Source 與操作" : "→ Scroll to see Payment, Source, and Actions"} />
-              </div>
-            </EvidenceGroup>
-            <EvidenceGroup label={zh ? "售後狀態處理" : "After-sales State Handling"} note={zh ? "退貨結果會重新影響庫存與履約狀態，包括重新入庫、報廢、退款與重新出貨。" : "Return outcomes feed back into inventory and fulfillment states, including restock, disposal, refund and reshipment."} split="3/9">
-              <div>
-                <Shot src="/images/case01/evidence/case01-after-sales-states.webp" size={[1722, 1143]} minW="min-w-[48rem]" alt={zh ? "退貨詳情，呈現退貨商品的 Restock 與 Disposed 狀態，以及退款方式與重新出貨追蹤欄位" : "Return detail showing Restock and Disposed item states, refund type and method, and reshipment tracking"} scrollHint={zh ? "→ 左右滑動查看完整內容" : "→ Scroll to see the full evidence"} />
-              </div>
-            </EvidenceGroup>
-            <EvidenceGroup label={zh ? "消費者結帳狀態" : "Consumer Checkout State"} note={zh ? "當商品在結帳時已無法購買，前台會提示缺貨、將商品數量歸零並停用 Checkout。" : "When an item is unavailable at checkout, the storefront warns the user, sets the quantity to zero, and disables Checkout."} split="4/8">
-              <div className="space-y-6">
-                <Shot src="/images/case01/evidence/case01-checkout-warning.webp" size={[3510, 748]} minW="min-w-[40rem]" alt={zh ? "結帳確認頁的缺貨警告：所選商品剛剛售完，請先更新購物車" : "Checkout confirmation warning that a selected item just went out of stock and the cart must be updated"} caption={zh ? "缺貨提示" : "Out-of-stock warning"} />
-                <Shot src="/images/case01/evidence/case01-checkout-blocked.webp" size={[3510, 1920]} minW="min-w-[40rem]" alt={zh ? "數量歸零的缺貨商品，以及停用的 Checkout 按鈕" : "Out-of-stock item at quantity 0 and the disabled Checkout button"} caption={zh ? "數量歸零與停用的 Checkout" : "Zero quantity and disabled Checkout"} scrollHint={zh ? "→ 左右滑動查看完整內容" : "→ Scroll to see the full evidence"} />
-              </div>
-            </EvidenceGroup>
           </div>
+          {/* Presentation pass (2026-09-29): the five stacked screenshot
+              groups became two selectors — rules shown as the prototype
+              screens that carry them (layout B), then the remaining
+              operational scope (layout C). Same labels and notes as before;
+              see CaseOnePresentation.tsx. */}
+          <CaseOneRulesToProduct locale={locale} />
+          <CaseOneSystemCoverage locale={locale} />
         </div>
       </EvidenceHeading>
     </Section>
@@ -257,8 +229,8 @@ export function CaseOneFinalContent({ register, locale }: { register: RegisterSe
           "External dependencies also affected delivery. Work involving the local payment provider progressed more slowly than expected, which extended the project timeline.",
           "The Client also completed the local registration required to operate the online shop. Product-category restrictions reduced the range of items that could ultimately be listed, without changing the core system architecture.",
         ]}
-        media={<Timeline locale={locale} />}
-        mediaFullBleed
+        composition="background-role"
+        aside={<Timeline locale={locale} stacked />}
       />
     </Section>
 
@@ -277,8 +249,8 @@ export function CaseOneFinalContent({ register, locale }: { register: RegisterSe
           "The Client later changed its business strategy, so the product did not formally enter commercial operation.",
           "For that reason, this case does not claim post-launch KPIs. The evidence is the completed product architecture, multi-role workflows, UX/UI decisions, working engineering implementation, and delivered system.",
         ]}
-        media={<CaseOneDemoLinks locale={locale} />}
-        mediaFullBleed
+        composition="background-role"
+        aside={<CaseOneDemoLinks locale={locale} stacked />}
       />
     </Section>
   </></EvidenceMotion>;

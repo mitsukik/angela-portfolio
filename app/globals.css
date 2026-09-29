@@ -2591,6 +2591,15 @@ body {
   margin: 0 -0.75rem;
 }
 
+/* In the background-role body column the list meets the content edge:
+   keep the left bleed, drop the right one so rows end flush with the
+   page grid instead of 12px past it. */
+@media (min-width: 1024px) {
+  .cf-role-body .cf-summary-row {
+    margin-right: 0;
+  }
+}
+
 .cf-summary-index {
   font-family: var(--font-label);
   font-size: 0.9rem;
@@ -2630,6 +2639,274 @@ body {
      threshold (verified ~4.8:1 dark theme). */
   opacity: 0.94;
   font-size: 0.8rem;
+}
+
+/* CASE01 chapter rhythm (Angela-approved named exception, 2026-09-30):
+   tight inside chapters, a clearly larger pause between them. Each side of
+   a divider is clamp(48px, 5.3vw, 76px): ~152px chapter-to-chapter at 1440,
+   ~136 at 1280, ~108 at 1024, 96 on tablet/phone — above the Section 03
+   module gap (.case01-modules) at every width. Section 03 (the dense
+   visual/interactive chapter) ends on a stronger pause before Delivery:
+   clamp(56px, 6.25vw, 88px), ~160px at 1440 and still a step longer
+   than the other breaks on tablet/phone. */
+.case-final[data-content-version="case01-v3"] .cf-section {
+  padding-bottom: clamp(3rem, 5.3vw, 4.75rem);
+}
+
+.case-final[data-content-version="case01-v3"] .cf-section-divider {
+  padding-top: clamp(3rem, 5.3vw, 4.75rem);
+}
+
+/* Section 03's three large product artifacts (Inventory Status Flow,
+   Business rules → Product UI, System coverage): more room than related
+   blocks, less than a chapter break. ~120px at 1440, ~103 at 1024, ~93 at
+   768, ~80 on phones. */
+.case01-modules > * + * {
+  margin-top: clamp(4.5rem, calc(4rem + 3.8vw), 7.5rem);
+}
+
+.case-final[data-content-version="case01-v3"] .cf-section[data-chapter-pause="strong"] {
+  padding-bottom: clamp(3.5rem, 6.25vw, 5.5rem);
+}
+
+/* CASE01 presentation pass (2026-09-29) — named exception, CASE01 only
+   (CaseOnePresentation.tsx, FlowEvidence.tsx). Consumes .cf-figure-frame,
+   .cf-meta and the motion tokens; adds only what the three CASE01 layouts
+   need that no shared role owns:
+   - .case01-plate: both 3:2 diagrams sit on one mat (#1a1a1a, the value
+     baked into the Figma stage plates) with an identical margin on all four
+     sides, so exported white boards read as framed plates.
+   - .case01-stage / -panel: one 16:9 frame, panels cross-fade.
+   - .case01-tab: selector cells; the active cell is tinted and underlined.
+   - .case01-lift: Angela-requested 1.015 hover scale on product visuals —
+     an explicit exception to the static-evidence rule above, fine pointers
+     and no-reduced-motion only. */
+.case01-mark {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background: var(--cf-accent);
+}
+
+/* Frame ratio = a 3:2 board plus a uniform mat of 2.5% of the width:
+   (1 + 0.05) / (2/3 + 0.05) = 630 / 430. top/bottom insets resolve
+   against height, so 2.5% x 630/430 = 3.663% gives the same pixels. */
+.case01-plate {
+  aspect-ratio: 630 / 430;
+  background: #1a1a1a;
+}
+
+.case01-plate-board {
+  position: absolute;
+  inset: 3.663% 2.5%;
+  display: block;
+}
+
+/* Take the edge off the white boards on the dark page (content untouched). */
+.case01-plate-board img {
+  filter: brightness(0.94);
+}
+
+.case01-stage {
+  background: #111318;
+}
+
+/* Rule micro-loops are silent illustrations: never show iOS's native
+   start-playback overlay if autoplay is refused (the poster stays). */
+.case01-stage video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+/* Rule micro-loop play/pause (WCAG 2.2.2). 44px hit area, 28px visible
+   disc, quiet until the stage is hovered or the control is focused;
+   fully visible while paused so a stopped loop reads as paused. */
+.case01-loop-toggle {
+  position: absolute;
+  right: 0.25rem;
+  bottom: 0.25rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #f2f0ec;
+  cursor: pointer;
+}
+
+.case01-loop-toggle > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgb(17 17 17 / 0.66);
+  opacity: 0.6;
+}
+
+.case01-stage:hover .case01-loop-toggle > span,
+.case01-loop-toggle:focus-visible > span,
+.case01-loop-toggle[data-paused="true"] > span {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .case01-loop-toggle > span {
+    transition: opacity var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+}
+
+.case01-loop-toggle:focus-visible {
+  outline: 2px solid var(--accent-yellow);
+  outline-offset: -4px;
+}
+
+.case01-stage-panel[data-active="false"] {
+  opacity: 0;
+  visibility: hidden;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .case01-stage-panel {
+    transition:
+      opacity var(--motion-duration-micro) var(--motion-ease-editorial),
+      visibility 0s linear var(--motion-duration-micro);
+  }
+
+  .case01-stage-panel[data-active="true"] {
+    transition-delay: 0s;
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .case01-lift :is(img, video) {
+    transition: transform var(--motion-duration-discrete) var(--motion-ease-editorial);
+  }
+
+  .case01-lift:hover :is(img, video) {
+    transform: scale(1.015);
+  }
+}
+
+/* Selector cells. Quiet by default (dim label, no fill); the active cell
+   gets a faint tint, full-contrast label, accent number and a 2px accent
+   underline; hover previews the tint at half strength. */
+.case01-tab {
+  position: relative;
+  /* Buttons centre their content vertically; stretched grid rows need
+     every cell's text to start on the same line. */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 44px;
+  padding: 0.85rem 0.9rem;
+  border-bottom: 1px solid var(--cf-hairline);
+  cursor: pointer;
+}
+
+.case01-tab::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--cf-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.case01-tab[aria-selected="true"] {
+  background: color-mix(in oklab, var(--cf-heading) 6%, transparent);
+}
+
+.case01-tab[aria-selected="true"]::after {
+  transform: scaleX(1);
+}
+
+.case01-tab .case01-tab-index,
+.case01-tab .case01-tab-label {
+  color: var(--cf-dim);
+}
+
+.case01-tab[aria-selected="true"] .case01-tab-index {
+  color: var(--cf-accent);
+}
+
+.case01-tab[aria-selected="true"] .case01-tab-label {
+  color: var(--cf-heading);
+}
+
+@media (hover: hover) {
+  .case01-tab[aria-selected="false"]:hover {
+    background: color-mix(in oklab, var(--cf-heading) 3%, transparent);
+  }
+
+  .case01-tab:hover .case01-tab-label {
+    color: var(--cf-heading);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .case01-tab {
+    transition: background-color var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+
+  .case01-tab::after {
+    transition: transform var(--motion-duration-discrete) var(--motion-ease-editorial);
+  }
+
+  .case01-tab-label {
+    transition: color var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+}
+
+.case01-tab:focus-visible {
+  outline: 2px solid var(--accent-yellow);
+  outline-offset: -2px;
+}
+
+/* Rules rail: only the active rule shows its note + screen, and only in
+   the xl rail (below xl the statement sits under the stage). */
+.case01-tab-detail {
+  display: none;
+}
+
+/* Two-column cells: phone/tablet for both selectors, and the rules grid
+   up to xl. */
+@media (max-width: 1023.98px) {
+  .case01-tab:nth-child(even) {
+    border-left: 1px solid var(--cf-hairline);
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  .case01-tabs[data-layout="rail"] .case01-tab:nth-child(even) {
+    border-left: 1px solid var(--cf-hairline);
+  }
+}
+
+@media (min-width: 1024px) {
+  .case01-tabs[data-layout="row"] .case01-tab {
+    padding: 1.1rem 1.25rem 1.3rem;
+  }
+
+  .case01-tabs[data-layout="row"] .case01-tab + .case01-tab {
+    border-left: 1px solid var(--cf-hairline);
+  }
+}
+
+@media (min-width: 1280px) {
+  .case01-tabs[data-layout="rail"] .case01-tab {
+    padding: 1rem 1.1rem;
+  }
+
+  .case01-tabs[data-layout="rail"] .case01-tab[aria-selected="true"] .case01-tab-detail {
+    display: block;
+  }
 }
 
 

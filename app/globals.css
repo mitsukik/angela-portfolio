@@ -1342,6 +1342,30 @@ body {
   line-height: var(--portfolio-type-label-leading);
 }
 
+/* Home Hero subtitle: borrow only the shared body size; keep the label
+   font, tracking, uppercase and existing line boxes. The mobile 1px offset
+   preserves its current wrapping; desktop retains a single line. */
+.hero-kicker.type-v3-label {
+  font-size: calc(var(--portfolio-type-body-size) - 1px);
+  line-height: calc(var(--portfolio-type-label-size) * var(--portfolio-type-label-leading));
+}
+
+@media (min-width: 48rem) {
+  .hero-kicker.type-v3-label {
+    font-size: var(--portfolio-type-body-size);
+  }
+
+  .hero-kicker:lang(zh-Hant) {
+    font-size: var(--portfolio-type-body-size-zh-tablet, var(--portfolio-type-body-size));
+  }
+}
+
+@media (min-width: 64rem) {
+  .hero-kicker:lang(zh-Hant) {
+    font-size: var(--portfolio-type-body-size-zh-desktop, var(--portfolio-type-body-size));
+  }
+}
+
 .type-v3-display,
 .display-xl {
   font-family: var(--portfolio-font-display);

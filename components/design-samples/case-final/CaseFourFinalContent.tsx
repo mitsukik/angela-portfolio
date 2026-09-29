@@ -639,13 +639,13 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
           </p>
           <p className="cf-body body-tc">
             {zhHant
-              ? "目前設計與開發持續進行中，並朝上架準備推進。"
-              : "Design and development are ongoing as the product moves toward release readiness."}
+              ? "目前已有可操作的 Web staging 版本，App 則持續進行上架準備。"
+              : "A functional Web staging build is now available, while the App continues toward release."}
           </p>
           <p className="cf-body body-tc">
             {zhHant
-              ? "由於產品尚未完成正式公開上線週期，因此本案例不宣稱轉換率、留存率或使用率等上線後成效，而是以實際可展示的流程、互動決策、狀態設計與設計交付作為成果證據。"
-              : "Because the product has not completed its public release cycle, this case does not claim post-launch conversion, retention or engagement metrics. The case instead focuses on the product structure, interaction decisions and design output that can be directly demonstrated."}
+              ? "由於產品尚未完成 App 的正式公開上線週期，因此本案例不宣稱轉換率、留存率或使用率等上線後成效，而是以實際可展示的流程、互動決策、狀態設計與設計交付作為成果證據。"
+              : "Because the App has not completed its public release cycle, this case does not claim post-launch conversion, retention, or engagement metrics. The case instead focuses on the product structure, interaction decisions, implementation evidence, and design output that can be directly demonstrated."}
           </p>
         </div>
       </Section>

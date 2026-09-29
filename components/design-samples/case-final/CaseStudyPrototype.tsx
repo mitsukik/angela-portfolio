@@ -266,14 +266,16 @@ export function CaseStudyPrototype({
                 { label: "團隊", value: "PM · Full-stack Engineer · UI/UX Designer" },
                 { label: "平台", value: "Android 優先（iOS 共用核心方向）" },
                 { label: "週期", value: "約 1–2 個月" },
-                { label: "狀態", value: "上架準備中" },
+                { label: "Web", value: "staging 版本已可使用" },
+                { label: "App", value: "上架準備中" },
               ]
             : [
                 { label: "Role", value: "UI/UX Designer" },
                 { label: "Team", value: "PM · Full-stack Engineer · UI/UX Designer" },
                 { label: "Platform", value: "Android-first (shared core direction with iOS)" },
                 { label: "Timeline", value: "Approx. 1–2 months" },
-                { label: "Status", value: "Preparing for release" },
+                { label: "Web", value: "Staging build available" },
+                { label: "App", value: "Preparing for release" },
               ]
           : [
               { label: zhHant ? "類別" : "Category", value: zhHant ? project.category.zh : project.category.en },

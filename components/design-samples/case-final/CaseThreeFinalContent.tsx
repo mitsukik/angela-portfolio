@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { ReactNode } from "react";
 import type { Locale } from "@/data/locale";
 import { Reveal } from "../Reveal";
+import { CaseLinkList } from "./CaseLinkList";
 import { EvidenceMotion } from "./EvidenceMotion";
 import { EvidenceTrigger } from "./CaseEvidenceViewer";
 import { Shot } from "./EvidenceShot";
@@ -27,26 +28,23 @@ function Section({ index, register, children, divider = true }: { index: number;
 
 const PROTOTYPE_URL = "/demos/case03/demo01/demo_01.html";
 
+/** Prototype CTA — CASE01's Demo CTA grammar via the shared CaseLinkList,
+ * sized by the same column as CASE01's (the opening's 12-col grid, 7-col
+ * span, 56ch cap), with no divider section. */
 function DemoCTA({ zh }: { zh: boolean }) {
   return (
-    <div className="mt-10 border-t cf-rule pt-8">
-      <a
-        href={PROTOTYPE_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="case-link group inline-flex items-center gap-3 label-mono cf-accent"
-        style={{ fontSize: "1.3rem" }}
-      >
-        {zh ? "查看可操作 Prototype" : "View Interactive Prototype"}
-        <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-2">
-          ↗
-        </span>
-      </a>
-      <p className="cf-dim mt-5 max-w-[58ch] text-[1.1rem]" style={{ lineHeight: 1.8 }}>
-        {zh
-          ? "原系統中經去識別化處理的部分可操作 Prototype；其餘工作流程因保密需求，以真實專案畫面呈現。"
-          : "Selected sanitized prototype from the original system. Additional workflows are shown through real project screens due to confidentiality."}
-      </p>
+    <div className="mt-8 md:grid md:grid-cols-12 md:gap-10 lg:gap-16">
+      <div className="max-w-[56ch] md:col-span-7">
+      <CaseLinkList
+        items={[{
+          href: PROTOTYPE_URL,
+          label: zh ? "查看可操作 Prototype ↗" : "View Interactive Prototype ↗",
+          note: zh
+            ? "原系統中經去識別化處理的部分可操作 Prototype；其餘工作流程因保密需求，以真實專案畫面呈現。"
+            : "Selected sanitized prototype from the original system. Additional workflows are shown through real project screens due to confidentiality.",
+        }]}
+      />
+      </div>
     </div>
   );
 }

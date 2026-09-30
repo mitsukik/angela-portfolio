@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { Locale } from "@/data/locale";
+import { CaseLinkList } from "./CaseLinkList";
 import { EvidenceHeading } from "./EvidenceHeading";
 import { EvidenceMotion } from "./EvidenceMotion";
 import { FlowEvidence } from "./FlowEvidence";
@@ -41,7 +42,6 @@ export function CaseOneDemoLinks({ locale, className = "", withPrototype = true,
       href: ENGINEERING_DEMO_URL,
       label: zh ? "查看原始工程 Demo →" : "View Original Engineering Demo →",
       note: zh ? "專案期間使用的原始工程實作" : "Original engineering implementation used during the project",
-      tone: "cf-accent",
     },
     {
       href: PORTFOLIO_PROTOTYPE_URL,
@@ -50,17 +50,9 @@ export function CaseOneDemoLinks({ locale, className = "", withPrototype = true,
       note: zh
         ? `為作品集展示重新建構${PORTFOLIO_PROTOTYPE_URL ? "" : " · 製作中"}`
         : `Reconstructed for portfolio presentation${PORTFOLIO_PROTOTYPE_URL ? "" : " · In development"}`,
-      tone: "cf-accent",
     },
   ].filter((item) => withPrototype || item.href !== PORTFOLIO_PROTOTYPE_URL);
-  return <ul className={`flex flex-col gap-5 ${stacked ? "" : "sm:flex-row sm:gap-10"} ${className}`}>
-    {items.map((item) => <li key={item.label}>
-      {item.href
-        ? <a href={item.href} target="_blank" rel="noopener noreferrer" className={`case-link cf-meta sm:whitespace-nowrap ${item.tone}`}>{item.label}</a>
-        : <span className={`cf-meta sm:whitespace-nowrap ${item.tone}`}>{item.label}</span>}
-      <p className="cf-dim mt-2 text-[13px] leading-5">{item.note}</p>
-    </li>)}
-  </ul>;
+  return <CaseLinkList items={items} className={className} stacked={stacked} />;
 }
 
 /* `stacked`: a date/label list (the Hero's info-row pattern) for the

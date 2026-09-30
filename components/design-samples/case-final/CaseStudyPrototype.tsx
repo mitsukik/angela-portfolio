@@ -327,7 +327,7 @@ export function CaseStudyPrototype({
                         : `${project.number} / ${caseStudy.eyebrowTitle ?? displayTitle}`}
               </p>
               <h1 data-open-title className="cf-heading cf-opening-title mt-5">
-                {isCaseOneV3 && zhHant ? <><span className="block">跨境寄賣與</span><span className="block">直播電商平台</span></> : displayTitle}
+                {isCaseOneV3 && zhHant ? <><span className="block">跨境寄賣與</span><span className="block">直播電商平台</span></> : isCaseThreeV1 && zhHant ? <><span className="block"><span className="inline-block">工廠生產</span><span className="inline-block">與營運</span></span><span className="block">管理系統</span></> : displayTitle}
               </h1>
               <p lang={zhHant ? "zh-Hant" : "en"} className="cf-dim mt-4 text-[1.05rem]">
                 <MixedText

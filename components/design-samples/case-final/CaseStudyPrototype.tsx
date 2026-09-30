@@ -20,7 +20,7 @@ import { getDecisionFigure, getOverviewFigure, getShowcaseFigure } from "./caseF
 import { CaseOneDemoLinks, CaseOneFinalContent } from "./CaseOneFinalContent";
 import { CaseOneProductPreview } from "./CaseOnePresentation";
 import { CaseTwoFinalContent, CaseTwoHeroEvidence } from "./CaseTwoFinalContent";
-import { CaseThreeFinalContent, CaseThreeHeroEvidence } from "./CaseThreeFinalContent";
+import { CaseThreeDemoLinks, CaseThreeFinalContent, CaseThreeHeroEvidence } from "./CaseThreeFinalContent";
 import { CaseFourFinalContent, CaseFourHeroEvidence } from "./CaseFourFinalContent";
 
 /**
@@ -398,6 +398,7 @@ export function CaseStudyPrototype({
                       ? "這是一套實際導入工廠的內部營運系統，涵蓋生產、物料領退、品檢、包裝入庫與管理功能。我負責 UI/UX 設計及 HTML / CSS / JavaScript 前端介面實作，並參與客戶測試、Backend 整合與 QA。"
                       : "This internal operations system was deployed in a real factory, covering production, material handling, quality inspection, packaging, inbound storage, and management functions. I was responsible for the UI/UX design and HTML / CSS / JavaScript frontend implementation, and participated in client testing, backend integration, and QA."}
                   </p>
+                  <CaseThreeDemoLinks locale={locale} className="mt-8" />
                 </div>
               ) : isCaseFourV1 ? (
                 <div data-open-summary className="mt-6 max-w-[56ch] space-y-4">

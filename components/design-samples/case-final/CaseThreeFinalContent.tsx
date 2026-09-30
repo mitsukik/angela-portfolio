@@ -28,33 +28,33 @@ function Section({ index, register, children, divider = true }: { index: number;
 
 const PROTOTYPE_URL = "/demos/case03/demo01/demo_01.html";
 
-/** Prototype CTA — CASE01's Demo CTA grammar via the shared CaseLinkList,
- * sized by the same column as CASE01's (the opening's 12-col grid, 7-col
- * span, 56ch cap), with no divider section. */
-function DemoCTA({ zh }: { zh: boolean }) {
+/** Prototype CTA — CASE01's Demo CTA grammar via the shared CaseLinkList.
+ * Rendered in the hero summary column (CaseStudyPrototype), the same slot
+ * and spacing as CASE01's CaseOneDemoLinks: below the intro copy, above
+ * the hero evidence image. */
+export function CaseThreeDemoLinks({ locale, className = "" }: { locale: Locale; className?: string }) {
+  const zh = locale === "zh";
   return (
-    <div className="mt-8 md:grid md:grid-cols-12 md:gap-10 lg:gap-16">
-      <div className="max-w-[56ch] md:col-span-7">
-      <CaseLinkList
-        items={[{
-          href: PROTOTYPE_URL,
-          label: zh ? "查看可操作 Prototype ↗" : "View Interactive Prototype ↗",
-          note: zh
-            ? "原系統中經去識別化處理的部分可操作 Prototype；其餘工作流程因保密需求，以真實專案畫面呈現。"
-            : "Selected sanitized prototype from the original system. Additional workflows are shown through real project screens due to confidentiality.",
-        }]}
-      />
-      </div>
-    </div>
+    <CaseLinkList
+      className={className}
+      items={[{
+        href: PROTOTYPE_URL,
+        label: zh ? "查看可操作 Prototype ↗" : "View Interactive Prototype ↗",
+        note: zh
+          ? "原系統中經去識別化處理的部分可操作 Prototype；其餘工作流程因保密需求，以真實專案畫面呈現。"
+          : "Selected sanitized prototype from the original system. Additional workflows are shown through real project screens due to confidentiality.",
+      }]}
+    />
   );
 }
 
 /** Hero — one image proving both operating contexts (management desktop +
- * shop-floor tablet menu), the confidentiality note, and the prototype CTA. */
+ * shop-floor tablet menu) and the confidentiality note. The prototype CTA
+ * sits above it in the hero copy column (CaseThreeDemoLinks). */
 export function CaseThreeHeroEvidence({ locale }: { locale: Locale }) {
   const zh = locale === "zh";
   return (
-    <figure className="mt-12 md:mt-16">
+    <figure className="mt-10 md:mt-12">
       <Reveal>
         <div className="cf-figure-frame relative aspect-[16/9] overflow-hidden bg-white">
           <EvidenceTrigger asset={{ src: "/images/case03/case03-hero-desktop-tablet.webp", alt: zh ? "管理端 Desktop 儀表板，旁邊是現場工業平板的作業選單" : "Management desktop dashboard alongside the shop-floor industrial tablet's task menu" }}>
@@ -75,7 +75,6 @@ export function CaseThreeHeroEvidence({ locale }: { locale: Locale }) {
           ? "因專案保密需求，本案例不公開客戶與工廠名稱，並已移除敏感營運資料。"
           : "Client and facility identities are withheld, and sensitive operational data has been removed due to project confidentiality."}
       </figcaption>
-      <DemoCTA zh={zh} />
     </figure>
   );
 }

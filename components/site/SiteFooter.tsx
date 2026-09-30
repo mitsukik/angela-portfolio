@@ -9,11 +9,11 @@ import { getLenisInstance } from "@/components/site/lenisInstance";
 
 const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
 
-// Contact and resume destinations stay in the shared data module so both
-// locale routes use the same contact address and the matching resume file.
+// Keep the contact address in the mailto destination only; the visible row
+// retains its label-only presentation in both locales.
 const CONTACT_LINKS = (locale: Locale) => [
-  { label: locale === "zh" ? "聯絡我" : "CONTACT ME", value: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` },
-  { label: locale === "zh" ? "履歷 / Resume" : "Resume", value: "", href: locale === "zh" ? RESUME_URL_ZH : RESUME_URL_EN },
+  { label: locale === "zh" ? "聯絡我" : "CONTACT ME", value: "", href: `mailto:${CONTACT_EMAIL}` },
+  { label: locale === "zh" ? "履歷" : "Resume", value: "", href: locale === "zh" ? RESUME_URL_ZH : RESUME_URL_EN },
 ];
 
 /**

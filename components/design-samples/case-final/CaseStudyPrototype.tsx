@@ -119,6 +119,19 @@ export function CaseStudyPrototype({
           ? (locale === "zh" ? "行動療癒產品" : "Mobile Wellness Product")
           : (caseStudy.displayTitle ?? project.title);
   const zhHant = locale === "zh";
+  // ZH hero titles as approved semantic lines (outer array), each split
+  // into segments that may wrap apart only when a narrow screen forces it
+  // (inner array). Rendered through the shared .cf-opening-title-line
+  // role, which owns the ZH inter-line gap. null = single flowing title.
+  const zhTitleLines: string[][] | null = !zhHant
+    ? null
+    : isCaseOneV3
+      ? [["跨境寄賣與"], ["直播電商平台"]]
+      : isCaseTwoV1
+        ? [["品牌與", "網站體驗"]]
+        : isCaseThreeV1
+          ? [["工廠生產", "與營運"], ["管理系統"]]
+          : null;
   const openingRef = useRef<HTMLDivElement | null>(null);
   // V4 restructure (2026-09-23): CASE04's own copy now numbers exactly
   // six content chapters (01-06, The Challenge & My Role through
@@ -327,7 +340,13 @@ export function CaseStudyPrototype({
                         : `${project.number} / ${caseStudy.eyebrowTitle ?? displayTitle}`}
               </p>
               <h1 data-open-title className="cf-heading cf-opening-title mt-5">
-                {isCaseOneV3 && zhHant ? <><span className="block">跨境寄賣與</span><span className="block">直播電商平台</span></> : isCaseThreeV1 && zhHant ? <><span className="block"><span className="inline-block">工廠生產</span><span className="inline-block">與營運</span></span><span className="block">管理系統</span></> : displayTitle}
+                {zhTitleLines
+                  ? zhTitleLines.map((line) => (
+                      <span key={line.join("")} className="cf-opening-title-line">
+                        {line.length > 1 ? line.map((part) => <span key={part} className="cf-opening-title-keep">{part}</span>) : line[0]}
+                      </span>
+                    ))
+                  : displayTitle}
               </h1>
               <p lang={zhHant ? "zh-Hant" : "en"} className="cf-dim mt-4 text-[1.05rem]">
                 <MixedText

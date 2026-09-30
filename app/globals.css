@@ -2023,6 +2023,29 @@ body {
   letter-spacing: 0.02em;
 }
 
+/* Case Opening title lines — the one shared role for a Case hero title
+   that carries approved semantic line breaks (CaseStudyPrototype renders
+   each line through it). ZH only: 1rem between lines, none after the
+   last, so every current and future ZH case title inherits the same
+   rhythm. EN titles are single flowing text and never match. Segments
+   inside a line (.cf-opening-title-keep) only decide WHERE a line may
+   wrap on narrow screens — a wrap inside a line gets no extra gap. */
+.cf-opening-title-line {
+  display: block;
+}
+
+.cf-opening-title:lang(zh-Hant) .cf-opening-title-line {
+  margin-bottom: 1rem;
+}
+
+.cf-opening-title:lang(zh-Hant) .cf-opening-title-line:last-child {
+  margin-bottom: 0;
+}
+
+.cf-opening-title-keep {
+  display: inline-block;
+}
+
 /* Local rule — a short accent line connected to the content it
    introduces, never a full-width form-style separator. */
 .cf-local-rule {

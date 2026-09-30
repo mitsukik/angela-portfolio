@@ -103,25 +103,42 @@ function ComposedEvidence({
   aspectClassName,
   caption,
   className = "",
+  matted = false,
 }: {
   asset: EvidenceAsset;
   aspectClassName: string;
   caption: string;
   className?: string;
+  /** Shared neutral mat behind the image, so two evidence items of very
+   * different native proportions (a long scrolling capture vs. a contact
+   * sheet) still read as one consistent "stage" rather than two floating
+   * images of arbitrary size. EvidenceTrigger fills its positioned parent
+   * (absolute inset-0), so the padded mat wrapper needs its own relative
+   * box for the trigger to fill correctly. */
+  matted?: boolean;
 }) {
+  const trigger = (
+    <EvidenceTrigger asset={{ ...asset, caption }}>
+      <Image
+        src={asset.src}
+        alt=""
+        fill
+        unoptimized
+        sizes="(min-width: 1024px) 480px, 90vw"
+        className="object-contain object-top"
+      />
+    </EvidenceTrigger>
+  );
   return (
     <figure className={className}>
-      <div className={`relative w-full overflow-hidden bg-transparent ${aspectClassName}`}>
-        <EvidenceTrigger asset={{ ...asset, caption }}>
-          <Image
-            src={asset.src}
-            alt=""
-            fill
-            unoptimized
-            sizes="(min-width: 1024px) 480px, 90vw"
-            className="object-contain object-top"
-          />
-        </EvidenceTrigger>
+      <div className={`relative w-full overflow-hidden ${matted ? "bg-[#1a1a1a]" : "bg-transparent"} ${aspectClassName}`}>
+        {matted ? (
+          <div className="absolute inset-0 p-4 md:p-6">
+            <div className="relative h-full w-full">{trigger}</div>
+          </div>
+        ) : (
+          trigger
+        )}
       </div>
       <figcaption className="cf-figure-caption cf-meta mt-3">{caption}</figcaption>
     </figure>
@@ -235,53 +252,55 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
             title={zhHant ? "在既有產品上重新建立完整體驗" : "Redesigning an Existing Product Without Starting Over"}
           />
         </Reveal>
-        <div className="mt-8 max-w-[62ch] space-y-5">
-          {zhHant ? (
-            <>
-              <p className="cf-body body-tc">我接手時，產品已經具備可操作的核心功能，但不同功能之間還沒有形成一致的完整體驗。</p>
-              <p className="cf-body body-tc">
-                原有問卷是一個連續往下滑的長表單；個人化內容需要實際生成時間；失敗與網路中斷需要更完整的恢復方式；首頁、播放器與歷史紀錄之間，也需要重新整理彼此的關係。
-              </p>
-              <p className="cf-body body-tc">我的工作不是重新開始，而是在既有產品與技術基礎上，把這些功能重新整理成一套較清楚的行動產品流程。</p>
-            </>
-          ) : (
-            <>
-              <p className="cf-body body-tc">The early version already supported the product&apos;s core functionality, but several parts of the experience had developed independently.</p>
-              <p className="cf-body body-tc">
-                The questionnaire relied on a long scrolling form. Personalized content required meaningful generation time. Failure and connectivity issues needed clearer recovery paths, while Home, playback and history needed to work as one continuous experience.
-              </p>
-              <p className="cf-body body-tc">My role was to reorganize those existing functions into a clearer mobile product journey while working within the product and engineering foundation already in place.</p>
-            </>
-          )}
-        </div>
-        <div className="mt-10 border-t cf-rule">
-          {(zhHant
-            ? [
-                ["PM", "需求、範疇與專案協調"],
-                ["Full-stack Engineer", "早期功能流程、既有技術基礎與產品實作"],
-                ["UI/UX 設計師／我", "檢視既有體驗、重整流程、互動與狀態設計、建立可重用的介面系統與原型，並與工程確認可行性"],
-              ]
-            : [
-                ["PM", "Requirements, scope, and coordination"],
-                ["Full-stack Engineer", "Early functional flow, existing technical foundation, and implementation"],
-                ["UI/UX Designer / Me", "Reviewed existing experience, restructured flows, interaction and state design, built a reusable UI system and prototype, and worked with engineering on feasibility"],
-              ]
-          ).map(([role, desc], index) => (
-            <div
-              key={role}
-              className={`grid gap-2 border-b cf-rule sm:grid-cols-[3rem_11rem_1fr] sm:items-start sm:gap-5 ${
-                index === 2
-                  ? "border-l-2 border-l-[color:var(--cf-accent)] py-8 pl-5 sm:-ml-5 sm:pl-[calc(1.25rem-2px)]"
-                  : "py-5"
-              }`}
-            >
-              <p className="cf-meta cf-accent">0{index + 1}</p>
-              <p className={`cf-heading font-medium leading-7 ${index === 2 ? "text-[20px] text-[color:var(--cf-accent)]" : "text-[18px]"}`}>
-                {role}
-              </p>
-              <p className="cf-body body-tc">{desc}</p>
-            </div>
-          ))}
+        <div className="mt-10 grid gap-10 lg:grid-cols-12 lg:gap-16">
+          <div className="max-w-[70ch] space-y-5 lg:col-span-5">
+            {zhHant ? (
+              <>
+                <p className="cf-body body-tc">我接手時，產品已經具備可操作的核心功能，但不同功能之間還沒有形成一致的完整體驗。</p>
+                <p className="cf-body body-tc">
+                  原有問卷是一個連續往下滑的長表單；個人化內容需要實際生成時間；失敗與網路中斷需要更完整的恢復方式；首頁、播放器與歷史紀錄之間，也需要重新整理彼此的關係。
+                </p>
+                <p className="cf-body body-tc">我的工作不是重新開始，而是在既有產品與技術基礎上，把這些功能重新整理成一套較清楚的行動產品流程。</p>
+              </>
+            ) : (
+              <>
+                <p className="cf-body body-tc">The early version already supported the product&apos;s core functionality, but several parts of the experience had developed independently.</p>
+                <p className="cf-body body-tc">
+                  The questionnaire relied on a long scrolling form. Personalized content required meaningful generation time. Failure and connectivity issues needed clearer recovery paths, while Home, playback and history needed to work as one continuous experience.
+                </p>
+                <p className="cf-body body-tc">My role was to reorganize those existing functions into a clearer mobile product journey while working within the product and engineering foundation already in place.</p>
+              </>
+            )}
+          </div>
+          <div className="border-t cf-rule pt-8 lg:col-span-7 lg:border-t-0 lg:border-l lg:pl-12 lg:pt-0 xl:pl-16">
+            {(zhHant
+              ? [
+                  ["PM", "需求、範疇與專案協調"],
+                  ["Full-stack Engineer", "早期功能流程、既有技術基礎與產品實作"],
+                  ["UI/UX 設計師／我", "檢視既有體驗、重整流程、互動與狀態設計、建立可重用的介面系統與原型，並與工程確認可行性"],
+                ]
+              : [
+                  ["PM", "Requirements, scope, and coordination"],
+                  ["Full-stack Engineer", "Early functional flow, existing technical foundation, and implementation"],
+                  ["UI/UX Designer / Me", "Reviewed existing experience, restructured flows, interaction and state design, built a reusable UI system and prototype, and worked with engineering on feasibility"],
+                ]
+            ).map(([role, desc], index) => (
+              <div
+                key={role}
+                className={`grid gap-2 border-b border-[color:var(--cf-hairline)]/50 sm:grid-cols-[3rem_11rem_1fr] sm:items-start sm:gap-5 ${
+                  index === 2
+                    ? "border-l-2 border-l-[color:var(--cf-accent)] py-8 pl-5 sm:-ml-5 sm:pl-[calc(1.25rem-2px)]"
+                    : "py-5 first:pt-0"
+                }`}
+              >
+                <p className="cf-meta cf-accent">0{index + 1}</p>
+                <p className={`cf-heading font-medium leading-7 ${index === 2 ? "text-[20px] text-[color:var(--cf-accent)]" : "text-[18px]"}`}>
+                  {role}
+                </p>
+                <p className="cf-body body-tc">{desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </Section>
 
@@ -300,7 +319,7 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
             title={zhHant ? "把一個連續問卷重新整理成分階段流程" : "Turning One Continuous Questionnaire Into a Staged Experience"}
           />
         </Reveal>
-        <div className="mt-8 max-w-[62ch] space-y-5">
+        <div className="mt-8 max-w-[70ch] space-y-5">
           <p className="cf-body body-tc">
             {zhHant
               ? "原本的問卷把多組問題集中在單一長頁面，並重複使用相近的選取方式。"
@@ -313,15 +332,21 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
           </p>
         </div>
 
-        <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:items-start lg:gap-14">
+        {/* Before/After share one matted stage (same mat color, same
+            max-height cap) so a long scrolling capture and a contact-sheet
+            overview read as two deliberately paired exhibits rather than
+            two images of arbitrary, unrelated size. Grid row stretches
+            (no items-start override) so both stages share one height. */}
+        <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-14">
           <div>
             <p className="cf-meta cf-dim mb-4">{zhHant ? "既有工程版本・改版前" : "EXISTING ENGINEERING VERSION · BEFORE"}</p>
             <ComposedEvidence
+              matted
               asset={{
                 src: `${IMG}/case04-questionnaire-before-v2.webp`,
                 alt: "Engineer-built daily questionnaire shown as two separate long-scroll captures, stacked with a visible gap",
               }}
-              aspectClassName="aspect-[1080/4736] max-h-[720px]"
+              aspectClassName="aspect-[1080/4736] max-h-[520px]"
               caption={
                 zhHant
                   ? "多個分類與大量選項集中在同一個長頁面中，沒有分段，也缺少清楚的進度提示。"
@@ -332,11 +357,12 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
           <div>
             <p className="cf-meta cf-accent mb-4">{zhHant ? "重新設計後" : "REDESIGNED"}</p>
             <ComposedEvidence
+              matted
               asset={{
                 src: `${IMG}/case04-questionnaire-after-overview-v2.webp`,
                 alt: "Guided daily questionnaire shown as a contact sheet overview, one panel per step",
               }}
-              aspectClassName="aspect-[1340/1932]"
+              aspectClassName="aspect-[1340/1932] max-h-[520px]"
               caption={
                 zhHant
                   ? "拆成多個階段，每一步只問一件事，並用明確的進度取代不確定要填多久的長表單。"
@@ -346,13 +372,13 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
           </div>
         </div>
 
-        <p className="cf-body body-tc mt-12 max-w-[62ch]">
+        <p className="cf-body body-tc mt-8 max-w-[70ch]">
           {zhHant
             ? "重點不只是把一張長表單拆成數個畫面，而是讓不同類型的輸入有更合適的操作方式，同時維持整段流程在導覽與選取狀態上的一致性。"
             : "Rather than treating every input as the same type of control, the redesign uses more appropriate interaction models for different kinds of decisions while keeping navigation and selected states consistent throughout the flow."}
         </p>
 
-        <div className="mt-12 grid gap-10 border-t cf-rule pt-12 sm:grid-cols-[minmax(0,280px)_minmax(0,280px)_minmax(0,200px)]">
+        <div className="mt-8 grid gap-10 border-t cf-rule pt-8 sm:grid-cols-[minmax(0,280px)_minmax(0,280px)_minmax(0,200px)]">
           <div>
             <p className="cf-meta cf-accent">{zhHant ? "滑桿＋視覺狀態指示" : "SLIDER + VISUAL STATE INDICATOR"}</p>
             <PhoneEvidence
@@ -369,7 +395,7 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
               caption={zhHant ? "環狀選擇" : "Radial choice"}
             />
           </div>
-          <div>
+          <div className="sm:opacity-90">
             <p className="cf-meta cf-dim">{zhHant ? "場景卡片" : "SCENE CARDS"}</p>
             <PhoneEvidence
               className="mt-4 max-w-[200px]"
@@ -392,7 +418,7 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
             title={zhHant ? "不只設計成功流程，也處理等待、失敗與返回" : "The Experience Had to Work Beyond the Happy Path"}
           />
         </Reveal>
-        <div className="mt-8 max-w-[62ch] space-y-5">
+        <div className="mt-8 max-w-[70ch] space-y-5">
           <p className="cf-body body-tc">
             {zhHant
               ? "個人化內容需要一定時間生成，因此不能只依賴一個會卡住整個畫面的載入畫面。"
@@ -469,7 +495,7 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
           />
         </div>
 
-        <p className="cf-body body-tc mt-12 max-w-[62ch] border-t cf-rule pt-10">
+        <p className="cf-body body-tc mt-12 max-w-[70ch] border-t cf-rule pt-10">
           {zhHant
             ? "首頁也依照同一套狀態邏輯重新整理。主要內容與 CTA 會依使用者目前所在階段改變，而不是把所有功能以相同權重一起呈現。"
             : "Home was redesigned around the same state model. Its primary content and action change according to where the user currently is in the experience rather than presenting every function with equal priority."}
@@ -515,7 +541,7 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
             title={zhHant ? "把不同功能串成一套連續產品流程" : "Connecting the Experience Into One Continuous Journey"}
           />
         </Reveal>
-        <p className="cf-body body-tc mt-8 max-w-[62ch]">
+        <p className="cf-body body-tc mt-8 max-w-[70ch]">
           {zhHant ? "我將核心使用體驗整理成一條連續流程：" : "I reorganized the core experience into one continuous journey:"}
         </p>
 
@@ -567,7 +593,7 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
           </div>
         </div>
 
-        <p className="cf-body body-tc mt-10 max-w-[62ch]">
+        <p className="cf-body body-tc mt-10 max-w-[70ch]">
           {zhHant
             ? "這套結構把首次設定、每日輸入、非同步生成、播放與再次使用串在同一套操作邏輯裡，而不是讓每個功能各自形成獨立流程。"
             : "This structure connects first-time setup, repeated daily input, asynchronous generation, playback and return use without requiring a separate interaction model for every feature."}
@@ -578,18 +604,28 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
             : "A state-aware product journey connecting guided input, asynchronous generation, recovery, listening and return use."}
         </p>
 
-        <div className="mt-10 flex gap-5 border-t cf-rule pt-10">
-          <PhoneEvidence
-            className="w-full max-w-[180px]"
-            frameClassName="shadow-[0_20px_60px_rgb(0_0_0/0.28)]"
-            asset={{ src: `${IMG}/case04-player.webp`, alt: "Player for listening to a generated soundscape" }}
-            caption={zhHant ? "聆聽" : "Listen"}
-          />
-          <PhoneEvidence
-            className="w-full max-w-[180px]"
-            asset={{ src: `${IMG}/case04-history-v2.webp`, alt: "Listening history showing recent activity and per-track summaries" }}
-            caption={zhHant ? "歷史紀錄" : "History"}
-          />
+        {/* Deliberate supporting-evidence stage, clearly subordinate to
+            the journey diagram above: labeled, centered, same scale.
+            Lighter divider + tighter label gap than a full section
+            divider, so this reads as a small addendum, not its own
+            framed module. */}
+        <div className="mt-10 border-t border-[color:var(--cf-hairline)]/50 pt-8">
+          <p className="cf-meta cf-dim mb-5 text-center">
+            {zhHant ? "輔助畫面・聆聽與歷史紀錄" : "SUPPORTING EVIDENCE · PLAYER & HISTORY"}
+          </p>
+          <div className="flex justify-center gap-8">
+            <PhoneEvidence
+              className="w-full max-w-[180px]"
+              frameClassName="shadow-[0_20px_60px_rgb(0_0_0/0.28)]"
+              asset={{ src: `${IMG}/case04-player.webp`, alt: "Player for listening to a generated soundscape" }}
+              caption={zhHant ? "聆聽" : "Listen"}
+            />
+            <PhoneEvidence
+              className="w-full max-w-[180px]"
+              asset={{ src: `${IMG}/case04-history-v2.webp`, alt: "Listening history showing recent activity and per-track summaries" }}
+              caption={zhHant ? "歷史紀錄" : "History"}
+            />
+          </div>
         </div>
       </Section>
 
@@ -606,7 +642,7 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
             title={zhHant ? "從實際行動裝置限制建立可重複使用的設計規則" : "Reusable Rules Shaped by Real Mobile Constraints"}
           />
         </Reveal>
-        <div className="mt-8 max-w-[62ch] space-y-5">
+        <div className="mt-8 max-w-[70ch] space-y-5">
           <p className="cf-body body-tc">
             {zhHant
               ? "隨著重新設計的範圍擴大，我將重複出現的互動方式整理成共用 UI 規則，包括導覽、選取狀態、字體層級、間距、圖示，以及不同產品狀態的呈現方式。"
@@ -627,7 +663,8 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
           </p>
         </div>
 
-        <div className="mt-10 grid gap-8 sm:grid-cols-2 sm:max-w-[36rem]">
+        <p className="cf-meta cf-dim mt-10 mb-4 sm:text-center">{zhHant ? "共用步驟進度模式" : "SHARED STEP-PROGRESS PATTERN"}</p>
+        <div className="grid gap-8 sm:grid-cols-2 sm:max-w-[36rem] sm:mx-auto">
           <PhoneEvidence
             className="mx-auto w-full max-w-[240px]"
             asset={{ src: `${IMG}/case04-profile-birthdate-v2.webp`, alt: "Profile setup step 1 of 4, showing a step-progress indicator" }}
@@ -639,7 +676,7 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
             caption={zhHant ? "每日問卷" : "Daily questionnaire"}
           />
         </div>
-        <p className="cf-body body-tc mt-6 max-w-[62ch]">
+        <p className="cf-body body-tc mt-6 max-w-[62ch] sm:mx-auto sm:max-w-[36rem] sm:text-center">
           {zhHant ? "不同流程沿用同一套步驟進度模式。" : "Different flows reuse the same step-progress pattern."}
         </p>
 
@@ -678,22 +715,30 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
             title={zhHant ? "這次重新設計完成了什麼" : "What the Redesign Delivered"}
           />
         </Reveal>
-        <div className="mt-8 max-w-[62ch] space-y-5 border-t cf-rule pt-10">
-          <p className="cf-body body-tc">
-            {zhHant
-              ? "我完成既有行動產品的端到端 UX/UI 重整，涵蓋核心流程、引導式輸入、生成生命週期、錯誤與恢復狀態、首頁、播放器、歷史紀錄、可重複使用的 UI 規則，以及互動原型。"
-              : "I delivered an end-to-end UX/UI redesign covering the core mobile journey, guided input, generation lifecycle, failure and recovery states, Home, Player, History, reusable UI patterns, and an interactive prototype."}
-          </p>
-          <p className="cf-body body-tc">
-            {zhHant
-              ? "目前已有可操作的 Web staging 版本，App 則持續進行上架準備。"
-              : "A functional Web staging build is now available, while the App continues toward release."}
-          </p>
-          <p className="cf-body body-tc">
-            {zhHant
-              ? "由於產品尚未完成 App 的正式公開上線週期，因此本案例不宣稱轉換率、留存率或使用率等上線後成效，而是以實際可展示的流程、互動決策、狀態設計與設計交付作為成果證據。"
-              : "Because the App has not completed its public release cycle, this case does not claim post-launch conversion, retention, or engagement metrics. The case instead focuses on the product structure, interaction decisions, implementation evidence, and design output that can be directly demonstrated."}
-          </p>
+        {/* Editorial closing split (lead statement + supporting detail,
+            divided by a rule at lg+) rather than one narrow paragraph
+            stack floating in a much wider column — the same principle
+            CASE01's Outcome section uses for its own closing chapter. */}
+        <div className="mt-10 grid gap-8 border-t cf-rule pt-10 lg:grid-cols-12 lg:gap-16">
+          <div className="max-w-[70ch] lg:col-span-5">
+            <p className="cf-body body-tc">
+              {zhHant
+                ? "我完成既有行動產品的端到端 UX/UI 重整，涵蓋核心流程、引導式輸入、生成生命週期、錯誤與恢復狀態、首頁、播放器、歷史紀錄、可重複使用的 UI 規則，以及互動原型。"
+                : "I delivered an end-to-end UX/UI redesign covering the core mobile journey, guided input, generation lifecycle, failure and recovery states, Home, Player, History, reusable UI patterns, and an interactive prototype."}
+            </p>
+          </div>
+          <div className="max-w-[70ch] space-y-5 border-t cf-rule pt-8 lg:col-span-7 lg:border-t-0 lg:border-l lg:pl-12 lg:pt-0 xl:pl-16">
+            <p className="cf-body body-tc">
+              {zhHant
+                ? "目前已有可操作的 Web staging 版本，App 則持續進行上架準備。"
+                : "A functional Web staging build is now available, while the App continues toward release."}
+            </p>
+            <p className="cf-body body-tc">
+              {zhHant
+                ? "由於產品尚未完成 App 的正式公開上線週期，因此本案例不宣稱轉換率、留存率或使用率等上線後成效，而是以實際可展示的流程、互動決策、狀態設計與設計交付作為成果證據。"
+                : "Because the App has not completed its public release cycle, this case does not claim post-launch conversion, retention, or engagement metrics. The case instead focuses on the product structure, interaction decisions, implementation evidence, and design output that can be directly demonstrated."}
+            </p>
+          </div>
         </div>
       </Section>
     </>

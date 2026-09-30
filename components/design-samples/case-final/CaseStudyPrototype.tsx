@@ -78,6 +78,16 @@ const CHAPTERS: Chapter[] = Array.from({ length: CHAPTER_COUNT }, (_, i) => ({
  * in here yet; these prototype routes still pass theme explicitly so
  * both registers can be reviewed against the same real content.
  */
+/**
+ * Narrow-screen wrap points for ZH title lines, keyed by the exact line
+ * text. Only decides WHERE a line may wrap when it cannot fit (e.g. 320px);
+ * it never adds a semantic line or gap. Lines absent here wrap naturally.
+ */
+const ZH_TITLE_WRAP_POINTS: Record<string, string[]> = {
+  "工廠生產與營運": ["工廠生產", "與營運"],
+  "品牌與網站體驗": ["品牌與", "網站體驗"],
+};
+
 export function CaseStudyPrototype({
   theme,
   project,
@@ -119,18 +129,19 @@ export function CaseStudyPrototype({
           ? (locale === "zh" ? "行動療癒產品" : "Mobile Wellness Product")
           : (caseStudy.displayTitle ?? project.title);
   const zhHant = locale === "zh";
-  // ZH hero titles as approved semantic lines (outer array), each split
-  // into segments that may wrap apart only when a narrow screen forces it
-  // (inner array). Rendered through the shared .cf-opening-title-line
-  // role, which owns the ZH inter-line gap. null = single flowing title.
-  const zhTitleLines: string[][] | null = !zhHant
+  // LOCKED ZH hero title lines — one entry per approved semantic line,
+  // rendered through the shared .cf-opening-title-line role (1rem ZH gap,
+  // 0 after the last). Never collapse a multi-line title back into one
+  // string: that hands the break to browser wrapping (CASE03 would read
+  // 工廠生產與營運管理系 / 統). null = single flowing title.
+  const zhTitleLines: string[] | null = !zhHant
     ? null
     : isCaseOneV3
-      ? [["跨境寄賣與"], ["直播電商平台"]]
+      ? ["跨境寄賣與", "直播電商平台"]
       : isCaseTwoV1
-        ? [["品牌與", "網站體驗"]]
+        ? ["品牌與網站體驗"]
         : isCaseThreeV1
-          ? [["工廠生產", "與營運"], ["管理系統"]]
+          ? ["工廠生產與營運", "管理系統"]
           : null;
   const openingRef = useRef<HTMLDivElement | null>(null);
   // V4 restructure (2026-09-23): CASE04's own copy now numbers exactly
@@ -342,8 +353,10 @@ export function CaseStudyPrototype({
               <h1 data-open-title className="cf-heading cf-opening-title mt-5">
                 {zhTitleLines
                   ? zhTitleLines.map((line) => (
-                      <span key={line.join("")} className="cf-opening-title-line">
-                        {line.length > 1 ? line.map((part) => <span key={part} className="cf-opening-title-keep">{part}</span>) : line[0]}
+                      <span key={line} className="cf-opening-title-line">
+                        {ZH_TITLE_WRAP_POINTS[line]
+                          ? ZH_TITLE_WRAP_POINTS[line].map((part) => <span key={part} className="cf-opening-title-keep">{part}</span>)
+                          : line}
                       </span>
                     ))
                   : displayTitle}

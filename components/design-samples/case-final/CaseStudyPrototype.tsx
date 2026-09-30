@@ -248,14 +248,16 @@ export function CaseStudyPrototype({
         ? zhHant
           ? [
               { label: "角色", value: "UI/UX Designer · Frontend Implementation" },
-              { label: "時程", value: "2023 — 2024" },
+              { label: "團隊", value: "SA · Backend Engineer · UI/UX Designer" },
               { label: "平台", value: "Web · Internal Operations System" },
-              { label: "狀態", value: "Deployed · In Production Use" },
+              { label: "專案期間", value: "2023 — 2024" },
+              { label: "狀態", value: "已部署並投入實際使用" },
             ]
           : [
               { label: "Role", value: "UI/UX Designer · Frontend Implementation" },
-              { label: "Timeline", value: "2023 — 2024" },
+              { label: "Team", value: "SA · Backend Engineer · UI/UX Designer" },
               { label: "Platform", value: "Web · Internal Operations System" },
+              { label: "Timeline", value: "2023 — 2024" },
               { label: "Status", value: "Deployed · In Production Use" },
             ]
         : isCaseFourV1
@@ -469,9 +471,9 @@ export function CaseStudyPrototype({
               )}
             </div>
 
-            {/* CASE01 (lg+): metadata spans columns 8–12 instead of 9–12, so
-                the gap to the copy is a gutter, not an empty column. */}
-            <div data-open-stats className={`mt-12 md:col-span-4 md:col-start-9 md:mt-0 ${isCaseOneV3 ? "lg:col-span-5 lg:col-start-8" : ""}`}>
+            {/* CASE01 + CASE03 (lg+): metadata spans columns 8–12 instead of
+                9–12, so the gap to the copy is a gutter, not an empty column. */}
+            <div data-open-stats className={`mt-12 md:col-span-4 md:col-start-9 md:mt-0 ${isCaseOneV3 || isCaseThreeV1 ? "lg:col-span-5 lg:col-start-8" : ""}`}>
               <dl className="border-t cf-rule">
                 {openingInfoRows.map((row) => (
                   <div key={row.label} className="grid grid-cols-[6rem_1fr] gap-4 border-b cf-rule py-4">

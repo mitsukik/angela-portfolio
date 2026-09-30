@@ -34,7 +34,7 @@ function DemoCTA({ zh }: { zh: boolean }) {
         href={PROTOTYPE_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className="case-link group inline-flex items-center gap-3 label-mono cf-heading"
+        className="case-link group inline-flex items-center gap-3 label-mono cf-accent"
         style={{ fontSize: "1.3rem" }}
       >
         {zh ? "查看可操作 Prototype" : "View Interactive Prototype"}

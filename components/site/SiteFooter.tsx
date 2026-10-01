@@ -111,8 +111,8 @@ export function SiteFooter({ locale = "zh", backToTopLabel }: { locale?: Locale;
             <ul ref={detailsRef} className="space-y-0 md:col-span-5 md:self-end">
               {CONTACT_LINKS(locale).map((link) => (
                 <li key={link.label}>
-                  {/* Hover: a paper surface slides in from the left (scaleX,
-                      CSS-only) behind the row's own text, which flips from
+                  {/* Hover: a theme-yellow (--acid) surface slides in from the
+                      left (scaleX, CSS-only) behind the row's own text, which flips from
                       the scene's dim/light-on-dark tone to ink for contrast
                       against it — the "moving surface -> state change"
                       principle from re-presentation.jp's service rows,
@@ -125,7 +125,7 @@ export function SiteFooter({ locale = "zh", backToTopLabel }: { locale?: Locale;
                     rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
                     className="contact-row group relative flex items-baseline justify-between gap-6 overflow-hidden border-t scene-rule px-3 py-5 -mx-3"
                   >
-                    <span aria-hidden className="contact-row-surface absolute inset-0 -z-10 bg-paper" />
+                    <span aria-hidden className="contact-row-surface absolute inset-0 -z-10 bg-acid" />
                     <span className="contact-row-text type-v3-label">{link.label}</span>
                     <span className="contact-row-text text-[15px] tracking-tight">
                       {link.value}

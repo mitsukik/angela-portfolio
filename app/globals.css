@@ -1634,9 +1634,18 @@ body {
   display: inline-block;
 }
 
+/* Progress fill uses the theme yellow wherever it would otherwise be the
+   dark stage's white foreground. Light stages keep their ink fill: --acid
+   measures ~1.09:1 against --paper (see --hdr-accent below). Color only —
+   the fill still paints via bg-current, so scaleX and the handover
+   transition are untouched. */
+.work-stage-chrome.scene-dark [data-rail-fill] {
+  color: var(--acid);
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .work-stage-chrome,
-  .work-stage-chrome :is(.scene-text, .scene-dim-text, .scene-rule) {
+  .work-stage-chrome :is(.scene-text, .scene-dim-text, .scene-rule, [data-rail-fill]) {
     transition: color var(--motion-duration-discrete) ease, border-color var(--motion-duration-discrete) ease;
   }
 

@@ -7,6 +7,12 @@ export type VideoEvidenceAsset = {
   mp4: string;
   poster: string;
   alt: string;
+  /**
+   * Optional still for `prefers-reduced-motion` when the loop's first frame
+   * doesn't carry the point on its own (CASE03: the warehouse floor plan,
+   * not the inbound list the clip starts on). Unset = `poster` / `alt`.
+   */
+  reducedMotion?: { poster: string; alt: string };
 };
 
 // SSR has no window/matchMedia, and React warns if useLayoutEffect runs
@@ -248,7 +254,11 @@ export function VideoEvidence({
         </>
       ) : (
         // eslint-disable-next-line @next/next/no-img-element -- fixed local poster frame, not an optimizable remote asset
-        <img src={asset.poster} alt={asset.alt} className="absolute inset-0 h-full w-full object-cover" />
+        <img
+          src={prefersReducedMotion && asset.reducedMotion ? asset.reducedMotion.poster : asset.poster}
+          alt={prefersReducedMotion && asset.reducedMotion ? asset.reducedMotion.alt : asset.alt}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
       )}
     </div>
   );

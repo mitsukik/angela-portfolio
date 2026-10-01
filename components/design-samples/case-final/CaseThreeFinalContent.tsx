@@ -5,8 +5,8 @@ import { Reveal } from "../Reveal";
 import { CaseLinkList } from "./CaseLinkList";
 import { EvidenceMotion } from "./EvidenceMotion";
 import { EvidenceTrigger } from "./CaseEvidenceViewer";
-import { Shot } from "./EvidenceShot";
 import { ReadingSection } from "./ReadingSection";
+import { VideoEvidence } from "./VideoEvidence";
 
 type RegisterSection = (index: number, element: HTMLElement | null) => void;
 
@@ -252,16 +252,35 @@ export function CaseThreeFinalContent({ register, locale }: { register: Register
               "I redrew the storage area as a visual floor plan and implemented it as an interactive location-selection interface.",
               "Instead of relying only on codes, users could understand and select the corresponding physical storage position directly on screen.",
             ]} />
-            <div data-evidence-entrance className="mt-10">
-              <Shot
-                src="/images/case03/case03-warehouse-floorplan.webp"
-                size={[1920, 1080]}
-                minW="min-w-[44rem]"
-                alt={zh ? "入庫作業中的儲位選擇視窗：以實體倉儲平面圖呈現貨架、走道與樓層分頁，可直接點選儲位" : "Storage-location selector in the inbound flow: the physical warehouse drawn as a floor plan with shelves, aisles, and floor tabs, selectable directly on screen"}
-                caption={zh ? "將實體倉儲空間轉為可直接操作的數位位置選擇。" : "Translating the physical warehouse layout into a directly operable digital location selector."}
-                scrollHint={zh ? "→ 左右滑動查看完整平面圖" : "→ Scroll to see the full floor plan"}
+            {/* Real interaction recorded from the public sanitized demo
+                (PROTOTYPE_URL): inbound list → 選擇儲位 → 1F floor plan →
+                B11 rack, shelf 06 → slot availability for B11-06-01 → an
+                available slot's put-away form. Same VideoEvidence grammar as
+                CASE01's product preview; reduced motion shows the static
+                floor-plan screenshot this clip replaced. */}
+            <figure data-evidence-entrance className="mt-10">
+              <VideoEvidence
+                format="wide"
+                holdPosterUntilPlaying
+                mp4First
+                zhHant={zh}
+                asset={{
+                  webm: "/videos/case03/case03-storage-interaction-2x.webm",
+                  mp4: "/videos/case03/case03-storage-interaction-2x.mp4",
+                  poster: "/images/case03/case03-storage-interaction-poster-2x.webp",
+                  alt: zh
+                    ? "入庫作業操作預覽：點選儲位查詢開啟倉儲平面圖，選取 B11 貨架的儲位，查看 B11-06-01 各層可使用與已佔用狀態，再開啟可使用儲位的存放明細並輸入放入包數"
+                    : "Inbound flow walkthrough: opening the storage selector shows the warehouse floor plan; selecting a shelf on rack B11 shows which levels of B11-06-01 are available or occupied, then an available slot opens its put-away form",
+                  reducedMotion: {
+                    poster: "/images/case03/case03-warehouse-floorplan.webp",
+                    alt: zh ? "入庫作業中的儲位選擇視窗：以實體倉儲平面圖呈現貨架、走道與樓層分頁，可直接點選儲位" : "Storage-location selector in the inbound flow: the physical warehouse drawn as a floor plan with shelves, aisles, and floor tabs, selectable directly on screen",
+                  },
+                }}
               />
-            </div>
+              <figcaption className="cf-figure-caption cf-meta mt-3">
+                {zh ? "將實體倉儲空間轉為可直接操作的數位位置選擇。" : "Translating the physical warehouse layout into a directly operable digital location selector."}
+              </figcaption>
+            </figure>
           </Decision>
         </div>
       </section>

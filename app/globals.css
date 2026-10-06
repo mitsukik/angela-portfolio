@@ -200,9 +200,7 @@ body {
    paper theme, light Selected Work stages, the light header variant), so
    the same immediate ring switches to ink there — same shape and timing,
    color-only, like every other Dark/Light difference. */
-.case-final[data-theme="light"] :where(a, button):focus-visible,
-.scene-light :where(a, button):focus-visible,
-[data-header-variant="light"] :where(a, button):focus-visible {
+.case-final[data-theme="light"] :where(a, button):focus-visible, [data-header-variant="light"] :where(a, button):focus-visible {
   outline-color: var(--ink);
 }
 
@@ -471,15 +469,9 @@ body {
  * its approved optical inset through a documented component variant; page
  * interiors remain free to define their own grids inside either frame.
  */
-.site-frame,
 .site-frame-header {
   width: 100%;
   margin-inline: auto;
-}
-
-.site-frame {
-  max-width: var(--portfolio-frame-max);
-  padding-inline: var(--portfolio-frame-gutter-mobile);
 }
 
 .site-frame-header {
@@ -488,9 +480,6 @@ body {
 }
 
 @media (min-width: 48rem) {
-  .site-frame {
-    padding-inline: var(--portfolio-frame-gutter-tablet);
-  }
 
   .site-frame-header {
     padding-inline: var(--portfolio-header-gutter-tablet);
@@ -1100,7 +1089,6 @@ body {
 }
 
 .interaction-nav,
-.interaction-destination,
 .nav-line,
 .case-link {
   position: relative;
@@ -1113,7 +1101,6 @@ body {
 }
 
 .interaction-nav::after,
-.interaction-destination::after,
 .nav-line::after,
 .case-link::after {
   content: "";
@@ -1130,8 +1117,6 @@ body {
 .interaction-nav:hover::after,
 .interaction-nav:focus-visible::after,
 .interaction-nav[data-status="active"]::after,
-.interaction-destination:hover::after,
-.interaction-destination:focus-visible::after,
 .nav-line:hover::after,
 .nav-line:focus-visible::after,
 .nav-line[data-status="active"]::after,
@@ -1154,13 +1139,10 @@ body {
    .interaction-destination/.case-link never appear on a light surface,
    so plain --acid stays correct for them unchanged. */
 .interaction-nav,
-.interaction-destination,
 .case-link {
   transition: color var(--portfolio-interaction-duration) var(--portfolio-interaction-ease);
 }
 
-.interaction-destination:hover,
-.interaction-destination:focus-visible,
 .case-link:hover,
 .case-link:focus-visible {
   color: var(--acid);
@@ -1417,43 +1399,6 @@ body {
  * per-project-scene art direction (NOT a site theme) — independent of
  * --background/--foreground, which the rest of the site still uses.
  */
-.scene-dark {
-  --scene-bg: var(--ink);
-  --scene-fg: var(--paper);
-  /* Whole-site QA (2026-09): scene-dim-text measured 3.1-3.5:1 in About
-     (Home/About's WhatIDoV2, HowIWorkV2) against WCAG AA's 4.5:1 —
-     several consumers additionally stack a Tailwind opacity utility
-     (e.g. opacity-60) on top of this color, so the base token is bumped
-     with headroom rather than to a bare-minimum pass. */
-  --scene-dim: oklch(0.89 0.01 265);
-  --scene-line: oklch(1 0 0 / 18%);
-  background-color: var(--scene-bg);
-  color: var(--scene-fg);
-}
-
-.scene-light {
-  --scene-bg: var(--paper);
-  --scene-fg: var(--ink);
-  /* Whole-site QA (2026-09): same scene-dim-text contrast issue as
-     .scene-dark above, light-theme side — darkened with the same
-     opacity-stacking headroom in mind. */
-  --scene-dim: oklch(0.36 0.012 265);
-  --scene-line: oklch(0.16 0.008 265 / 16%);
-  background-color: var(--scene-bg);
-  color: var(--scene-fg);
-}
-
-.scene-text {
-  color: var(--scene-fg, var(--foreground));
-}
-
-.scene-dim-text {
-  color: var(--scene-dim, oklch(0.5 0.01 265));
-}
-
-.scene-rule {
-  border-color: var(--scene-line, var(--hairline));
-}
 
 /* Round 14: same rule as Case Final's light-theme accent-text weight
    (see .case-final[data-theme="light"] .cf-accent below) applied to
@@ -1461,9 +1406,6 @@ body {
    is "all Lavender accent TEXT in light theme renders at weight 500,"
    not a Case-only rule. Scoped to text-lavender specifically (not
    bg-lavender, which is a decorative accent bar/line, not text). */
-.scene-light .text-lavender {
-  font-weight: 500;
-}
 
 /* Fine pointers only: the project image answers the pointer with a 1.02
    scale — a destination cue for the clickable image, never ambient. */
@@ -1477,21 +1419,12 @@ body {
   line-height: var(--portfolio-type-label-leading);
 }
 
-.type-v3-display,
 .display-xl {
   font-family: var(--portfolio-font-display);
   font-weight: var(--portfolio-type-display-weight);
   letter-spacing: var(--portfolio-type-display-tracking);
   line-height: var(--portfolio-type-display-leading);
   font-size: var(--portfolio-type-display-size);
-}
-
-.type-v3-section-heading {
-  font-family: var(--portfolio-font-display);
-  font-weight: var(--portfolio-type-section-weight);
-  letter-spacing: var(--portfolio-type-section-tracking);
-  line-height: var(--portfolio-type-section-leading);
-  font-size: var(--portfolio-type-section-size);
 }
 
 /* Public-release typography audit (2026-09-15): a role class here sets
@@ -1511,10 +1444,7 @@ body {
    :lang(zh-Hant) and simply defers back up to the resolved value on this
    parent — a one-time, three-selector fix rather than patching every
    current and future nested span individually. */
-.type-v3-label *,
-.type-v3-display *,
-.type-v3-section-heading *,
-.type-v3-subheading * {
+.type-v3-label * {
   font-family: inherit;
 }
 
@@ -1525,28 +1455,9 @@ body {
    through this same class is never affected. Restrained positive
    tracking only; CJK glyphs don't want Latin-style negative/zero
    tracking at display size. */
-.type-v3-section-heading:lang(zh-Hant) {
-  font-weight: 500;
-  letter-spacing: 0.04em;
-}
 
 /* Compatibility owner for unmigrated design-sample/prototype consumers. */
-.display-l {
-  font-family: var(--portfolio-font-display);
-  font-weight: 600;
-  letter-spacing: 0;
-  line-height: 0.94;
-  font-size: clamp(2rem, 5.2vw, 4.5rem);
-}
 
-.type-v3-subheading {
-  font-family: var(--portfolio-font-display);
-  font-size: var(--portfolio-type-subheading-size);
-  font-weight: var(--portfolio-type-subheading-weight);
-  line-height: var(--portfolio-type-subheading-leading);
-}
-
-.type-v3-body,
 .body-tc {
   font-family: var(--portfolio-font-body);
   font-size: var(--portfolio-type-body-size);
@@ -1566,7 +1477,6 @@ body {
    with CASE02-04 at tablet/desktop without touching its own mobile/base
    sizing. */
 @media (min-width: 48rem) {
-  .type-v3-body:lang(zh-Hant),
   .body-tc:lang(zh-Hant) {
     font-size: var(--portfolio-type-body-size-zh-tablet);
   }
@@ -1576,7 +1486,6 @@ body {
 }
 
 @media (min-width: 64rem) {
-  .type-v3-body:lang(zh-Hant),
   .body-tc:lang(zh-Hant) {
     font-size: var(--portfolio-type-body-size-zh-desktop);
   }
@@ -1605,15 +1514,6 @@ body {
    longer line ("designed for real use.", ~10.15em) holds on one line in
    its column: full width below md, the 7/12 column from md up (373px at
    768, 765px at 1440, ~866px at the 1600px frame max). */
-.closing-statement {
-  font-size: clamp(1.875rem, 8.2vw, 3.25rem);
-}
-
-@media (min-width: 48rem) {
-  .closing-statement {
-    font-size: clamp(2.125rem, 4.6vw, 5rem);
-  }
-}
 
 /*
  * ============================================================
@@ -1627,32 +1527,6 @@ body {
  * them, both driven by the same :hover/:focus-visible transition so they
  * stay in lockstep and reverse cleanly on leave.
  */
-.contact-row-surface {
-  transform: scaleX(0);
-  transform-origin: left;
-}
-
-.contact-row-text {
-  position: relative;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .contact-row-surface {
-    transition: transform 420ms cubic-bezier(.76, 0, .24, 1);
-  }
-
-  .contact-row-text {
-    transition: color 260ms ease;
-  }
-}
-
-.contact-row:is(:hover, :focus-visible) .contact-row-surface {
-  transform: scaleX(1);
-}
-
-.contact-row:is(:hover, :focus-visible) .contact-row-text {
-  color: var(--ink);
-}
 
 /*
  * ============================================================
@@ -2243,9 +2117,6 @@ body {
 
 /* Destination links hover to --acid, which disappears on the light
    (paper) case theme; there they take the theme's darker accent. */
-.case-final[data-theme="light"] :is(.case-link, .interaction-destination):is(:hover, :focus-visible) {
-  color: var(--cf-accent-2);
-}
 
 /* CASE01 system-flow tabs (FlowTabs.tsx): the newly shown diagram fades
    in on the discrete token (Switch grammar) instead of snapping — a CSS

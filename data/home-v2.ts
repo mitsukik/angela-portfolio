@@ -46,7 +46,7 @@ export type Ui = {
   hintHover: string;
   hintTouch: string;
   drawer: { close: string; read: string };
-  marquee: { label: string };
+  marquee: { label: string; toggle: string; pauseClick: string; pauseTap: string; pausedClick: string; pausedTap: string };
   proofLabel: string;
   copyEmail: string;
   copied: string;
@@ -67,7 +67,14 @@ const UI: Record<Locale, Ui> = {
     hintHover: "滑過預覽 · 點擊展開",
     hintTouch: "點擊展開",
     drawer: { close: "關閉", read: "閱讀完整案例" },
-    marquee: { label: "技能與工具" },
+    marquee: {
+      label: "技能與工具",
+      toggle: "暫停技能跑馬燈",
+      pauseClick: "點擊暫停",
+      pauseTap: "點擊暫停",
+      pausedClick: "已暫停 · 點擊繼續",
+      pausedTap: "已暫停 · 點擊繼續",
+    },
     proofLabel: "重點數字",
     copyEmail: "複製 Email",
     copied: "已複製 ✓",
@@ -86,7 +93,14 @@ const UI: Record<Locale, Ui> = {
     hintHover: "Hover to preview · Click to open",
     hintTouch: "Tap to open",
     drawer: { close: "Close", read: "Read the full case study" },
-    marquee: { label: "Skills and tools" },
+    marquee: {
+      label: "Skills and tools",
+      toggle: "Pause skills ticker",
+      pauseClick: "CLICK TO PAUSE",
+      pauseTap: "TAP TO PAUSE",
+      pausedClick: "PAUSED · CLICK TO PLAY",
+      pausedTap: "PAUSED · TAP TO PLAY",
+    },
     proofLabel: "At a glance",
     copyEmail: "Copy email",
     copied: "Copied ✓",

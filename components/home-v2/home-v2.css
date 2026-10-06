@@ -643,9 +643,60 @@ html[data-v2-lang-fade="out"] .hv2-page > footer {
   animation: hv2-marquee var(--hv2-marquee-duration, 90s) linear infinite;
 }
 
-.hv2-marquee:hover .hv2-marquee-track,
-.hv2-marquee:focus-within .hv2-marquee-track {
+.hv2-marquee[data-paused="true"] .hv2-marquee-track {
   animation-play-state: paused;
+}
+
+/* The whole strip is the pause / play toggle (WCAG 2.2.2). */
+.hv2-marquee-toggle {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  width: 100%;
+  padding: 0 var(--hv2-gutter) 6px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.hv2 .hv2-marquee-toggle:focus-visible {
+  outline-offset: -4px;
+}
+
+.hv2-marquee-cue {
+  font-family: var(--hv2-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--hv2-text-2);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.hv2-cue-touch {
+  display: none;
+}
+
+.hv2-marquee-toggle:hover .hv2-marquee-cue,
+.hv2-marquee-toggle:focus-visible .hv2-marquee-cue,
+.hv2-marquee[data-paused="true"] .hv2-marquee-cue {
+  opacity: 1;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .hv2-cue-fine {
+    display: none;
+  }
+
+  .hv2-cue-touch {
+    display: inline;
+  }
+
+  .hv2-marquee-cue {
+    opacity: 1;
+  }
 }
 
 @keyframes hv2-marquee {
@@ -1295,7 +1346,8 @@ html.hv2-drawer-open {
     gap: 32px;
   }
 
-  .hv2-marquee-track > .hv2-marquee-list:nth-child(2) {
+  .hv2-marquee-track > .hv2-marquee-list:nth-child(2),
+  .hv2-marquee-toggle {
     display: none;
   }
 

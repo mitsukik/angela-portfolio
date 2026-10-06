@@ -1835,6 +1835,22 @@ body {
   border: 1px solid var(--scene-line, var(--hairline));
 }
 
+/* Closing statement — named size exception to .type-v3-display (which
+   stays the Home Hero's scale). Font-size only: family, weight, tracking
+   and leading still come from the shared display role. Sized so the
+   longer line ("designed for real use.", ~10.15em) holds on one line in
+   its column: full width below md, the 7/12 column from md up (373px at
+   768, 765px at 1440, ~866px at the 1600px frame max). */
+.closing-statement {
+  font-size: clamp(1.875rem, 8.2vw, 3.25rem);
+}
+
+@media (min-width: 48rem) {
+  .closing-statement {
+    font-size: clamp(2.125rem, 4.6vw, 5rem);
+  }
+}
+
 /*
  * ============================================================
  * Closing contact-row hover — moving surface, not color-only

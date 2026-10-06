@@ -95,10 +95,10 @@ export function SiteFooter({ locale = "zh", backToTopLabel }: { locale?: Locale;
                   closing line without becoming playful/cute. */}
               <h2 ref={headingRef} className="closing-statement group type-v3-display cursor-default">
                 <span className="closing-statement-line block transition-colors duration-300 group-hover:text-acid">
-                  Let&apos;s build
+                  Complex systems,
                 </span>
                 <span className="closing-statement-line block scene-dim-text transition-colors duration-300 group-hover:text-acid">
-                  the system.
+                  designed for real use.
                 </span>
               </h2>
               <p className="type-v3-body mt-8 max-w-[42ch]">

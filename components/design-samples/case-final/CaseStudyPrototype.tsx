@@ -6,7 +6,7 @@ import { projects, type Project } from "@/data/projects";
 import type { Locale } from "@/data/locale";
 import { MixedText } from "@/components/site/MixedText";
 import { ProjectVisual } from "@/components/site/ProjectVisual";
-import { SiteFooter } from "@/components/site/SiteFooter";
+import { V2Closing } from "@/components/home-v2/V2Closing";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { ChapterRegister, type Chapter } from "./ChapterRegister";
 import { useActiveChapter } from "./useActiveChapter";
@@ -773,7 +773,7 @@ export function CaseStudyPrototype({
       </main>
       </CaseEvidenceViewerProvider>
 
-      <SiteFooter locale={locale} backToTopLabel="BACK TO TOP" />
+      <V2Closing locale={locale} />
     </div>
   );
 }

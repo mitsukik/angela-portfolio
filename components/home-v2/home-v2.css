@@ -1,0 +1,1358 @@
+/*
+ * Portfolio V2 — homepage presentation layer.
+ *
+ * NAMED EXCEPTION to the shared V3 foundation (app/globals.css): Home V2 is
+ * an explicitly approved redesign of the homepage with its own accent system
+ * (lime + purple on ink/cream). Everything here is scoped under `.hv2` /
+ * `.hv2-*`, so nothing leaks into About or Case Study pages. It reuses the
+ * shared font tokens (--portfolio-font-*) and the shared skip-link, and only
+ * re-declares what genuinely differs: palette, V2 type scale, composition.
+ *
+ * This file is intentionally UNLAYERED so it beats the Tailwind-layered
+ * `:lang(zh-Hant)` base font rule (`.hv2 *` resets font-family to inherit and
+ * each role then sets its own).
+ */
+
+.hv2 {
+  --hv2-ink: #0d0e11;
+  --hv2-ink-800: #16171b;
+  --hv2-surface: #17181d;
+  --hv2-cream: #f4f1ea;
+  --hv2-lime: #d4f04a;
+  --hv2-purple: #a98bf0;
+  /* #7a5fd6 (reference) is ~4.2:1 on cream; this deeper step clears 7:1. */
+  --hv2-purple-deep: #4f36a6;
+
+  --hv2-text-1: rgba(244, 241, 234, 0.82);
+  --hv2-text-2: rgba(244, 241, 234, 0.7);
+  /* 0.5–0.55 alpha in the reference falls under 4.5:1 for small text. */
+  --hv2-text-3: rgba(244, 241, 234, 0.64);
+  --hv2-line: rgba(244, 241, 234, 0.18);
+  --hv2-line-soft: rgba(244, 241, 234, 0.1);
+  --hv2-line-strong: rgba(244, 241, 234, 0.35);
+
+  --hv2-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --hv2-ease-drawer: cubic-bezier(0.7, 0, 0.2, 1);
+  --hv2-gutter: clamp(20px, 5vw, 64px);
+  /* Content width; padded sections add the gutters on top so every
+     section's content edge lines up with the hero's. */
+  --hv2-max: 1320px;
+  --hv2-nav-h: 64px;
+
+  --hv2-display: var(--portfolio-font-display);
+  --hv2-body: var(--portfolio-font-body);
+  --hv2-mono: var(--portfolio-font-label);
+
+  position: relative;
+  min-height: 100vh;
+  background: var(--hv2-ink);
+  color: var(--hv2-cream);
+  font-family: var(--hv2-body);
+  overflow-x: clip;
+}
+
+/* :where() keeps these resets at zero specificity so every role class below
+   (button colours, fonts) wins on source order alone. */
+/* Closing-only use (Case Studies): a band at the end of another page. */
+.hv2.hv2-closing-only {
+  min-height: 0;
+}
+
+:where(.hv2) *,
+:where(.hv2) *::before,
+:where(.hv2) *::after {
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+:where(.hv2) a {
+  color: inherit;
+  text-decoration: none;
+}
+
+:where(.hv2) button {
+  font: inherit;
+  color: inherit;
+}
+
+.hv2 :where(a, button):focus-visible {
+  outline: 2px solid var(--hv2-lime);
+  outline-offset: 4px;
+}
+
+.hv2-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.hv2-nowrap {
+  white-space: nowrap;
+}
+
+.hv2-dot {
+  display: inline-block;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--hv2-lime);
+}
+
+/* -------------------------------------------------------------------------
+ * Scroll reveal (state is set by motion.ts; server HTML is fully visible)
+ * ---------------------------------------------------------------------- */
+.hv2 [data-reveal="pending"],
+.hv2 [data-reveal="shown"] {
+  transition:
+    opacity 0.8s var(--hv2-ease),
+    transform 0.8s var(--hv2-ease);
+}
+
+.hv2 [data-reveal="pending"] {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.hv2 [data-reveal="shown"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* -------------------------------------------------------------------------
+ * Navigation
+ * ---------------------------------------------------------------------- */
+.hv2-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(13, 14, 17, 0.72);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(244, 241, 234, 0.08);
+}
+
+.hv2-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: var(--hv2-nav-h);
+  padding-inline: var(--hv2-gutter);
+}
+
+.hv2-wordmark {
+  padding-block: 12px;
+  font-family: var(--hv2-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+}
+
+.hv2-nav-links {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font-size: 14px;
+}
+
+.hv2-nav-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 999px;
+  transition:
+    transform 0.3s var(--hv2-ease),
+    color 0.2s;
+}
+
+.hv2-nav-link:hover {
+  color: var(--hv2-lime);
+}
+
+/* Current page (About): lime label with a small lead dot. */
+.hv2-nav-link[data-current="true"] {
+  gap: 8px;
+  color: var(--hv2-lime);
+}
+
+.hv2-current-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hv2-lime);
+}
+
+.hv2-menu-link[data-current="true"] {
+  color: var(--hv2-lime);
+}
+
+/* 中 / EN switch: content (not the nav) fades out, the route swaps, then
+   it fades back in (see languageFade.ts). */
+.hv2-page > main,
+.hv2-page > footer {
+  transition: opacity 0.18s ease;
+}
+
+html[data-v2-lang-fade="out"] .hv2-page > main,
+html[data-v2-lang-fade="out"] .hv2-page > footer {
+  opacity: 0;
+}
+
+.hv2-nav-end {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 中 / EN toggle — two segments, lime active segment. */
+.hv2-lang {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+  padding: 3px;
+  border: 1px solid var(--hv2-line-strong);
+  border-radius: 999px;
+  font-family: var(--hv2-mono);
+  font-size: 12px;
+  font-weight: 500;
+  transition: transform 0.3s var(--hv2-ease);
+}
+
+/* Enlarges the tap target without changing the visible pill. */
+.hv2-lang::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+
+.hv2-lang-seg {
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: var(--hv2-text-2);
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
+
+.hv2-lang-seg[data-active="true"] {
+  background: var(--hv2-lime);
+  color: var(--hv2-ink);
+}
+
+.hv2-lang:hover .hv2-lang-seg[data-active="false"] {
+  color: var(--hv2-lime);
+}
+
+.hv2-menu-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.hv2-menu-line {
+  position: absolute;
+  width: 18px;
+  height: 1.5px;
+  background: currentColor;
+  transition: transform 0.3s var(--hv2-ease);
+}
+
+.hv2-menu-line:nth-child(1) {
+  transform: translateY(-4px);
+}
+
+.hv2-menu-line:nth-child(2) {
+  transform: translateY(4px);
+}
+
+.hv2-menu-line[data-open="true"]:nth-child(1) {
+  transform: rotate(45deg);
+}
+
+.hv2-menu-line[data-open="true"]:nth-child(2) {
+  transform: rotate(-45deg);
+}
+
+.hv2-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(13, 14, 17, 0.985);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--hv2-line-soft);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition:
+    opacity 0.22s var(--hv2-ease),
+    transform 0.22s var(--hv2-ease),
+    visibility 0s linear 0.22s;
+}
+
+.hv2-menu[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 0.22s var(--hv2-ease),
+    transform 0.22s var(--hv2-ease),
+    visibility 0s;
+}
+
+.hv2-menu-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 8px var(--hv2-gutter) 16px;
+}
+
+.hv2-menu-link {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  font-size: 18px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--hv2-line-soft);
+}
+
+.hv2-menu-link:last-child {
+  border-bottom: 0;
+}
+
+.hv2-menu-link:hover {
+  color: var(--hv2-lime);
+}
+
+@media (min-width: 40rem) {
+  .hv2 {
+    --hv2-nav-h: 76px;
+  }
+
+  .hv2-nav-links {
+    display: flex;
+  }
+
+  .hv2-menu-trigger,
+  .hv2-menu {
+    display: none;
+  }
+}
+
+/* -------------------------------------------------------------------------
+ * Buttons
+ * ---------------------------------------------------------------------- */
+.hv2-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 16px 26px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  transition:
+    transform 0.3s var(--hv2-ease),
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.hv2-btn-lime {
+  background: var(--hv2-lime);
+  color: var(--hv2-ink);
+}
+
+.hv2-btn-lime:hover {
+  background: var(--hv2-purple);
+}
+
+.hv2-btn-outline {
+  border-color: var(--hv2-line-strong);
+  font-weight: 500;
+}
+
+.hv2-btn-outline:hover {
+  border-color: var(--hv2-lime);
+  color: var(--hv2-lime);
+}
+
+.hv2-btn-ghost {
+  background: none;
+  color: var(--hv2-text-1);
+  font-weight: 500;
+  padding-inline: 18px;
+}
+
+.hv2-btn-ghost:hover {
+  color: var(--hv2-lime);
+}
+
+.hv2-btn-dark {
+  align-self: flex-start;
+  background: var(--hv2-ink-800);
+  color: var(--hv2-cream);
+}
+
+.hv2-btn-dark:hover {
+  background: var(--hv2-purple-deep);
+}
+
+.hv2-btn-lg {
+  padding: 19px 28px;
+  font-size: 16px;
+}
+
+/* -------------------------------------------------------------------------
+ * Hero
+ * ---------------------------------------------------------------------- */
+.hv2-hero {
+  --hv2-mx: 30%;
+  --hv2-my: 40%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  /* Background-only Hero: tall enough for the atmosphere to read, never
+     taller than the viewport minus the nav. */
+  min-height: clamp(520px, calc(100svh - var(--hv2-nav-h) - 96px), 860px);
+  padding: clamp(48px, 8vw, 112px) var(--hv2-gutter);
+  overflow: hidden;
+}
+
+.hv2-hero-shapes,
+.hv2-hero-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* V1's sparse geometric field, recoloured to the V2 accents. Faded toward
+   the text side so the type always wins; fuller on the open right. */
+.hv2-hero-shapes {
+  --acid: var(--hv2-lime);
+  --accent-lavender: var(--hv2-purple);
+  color: var(--hv2-cream);
+  opacity: 0.55;
+  -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.4) 38%, #000 78%);
+  mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.4) 38%, #000 78%);
+}
+
+.hv2-hero-glow {
+  background: radial-gradient(520px circle at var(--hv2-mx) var(--hv2-my), rgba(169, 139, 240, 0.16), transparent 65%);
+}
+
+.hv2-hero-inner {
+  position: relative;
+  width: 100%;
+  max-width: var(--hv2-max);
+  margin: 0 auto;
+}
+
+.hv2-hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-width: 0;
+}
+
+.hv2-eyebrow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  font-family: var(--hv2-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  line-height: 1.6;
+  color: var(--hv2-text-2);
+}
+
+.hv2[data-locale="en"] .hv2-eyebrow {
+  text-transform: uppercase;
+}
+
+.hv2-pulse {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: 0.5em;
+  border-radius: 50%;
+  background: var(--hv2-lime);
+  animation: hv2-pulse 2s infinite;
+}
+
+@keyframes hv2-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.hv2-eyebrow-line {
+  display: inline;
+}
+
+.hv2-eyebrow-line [lang="zh-Hant"] {
+  letter-spacing: 0.04em;
+}
+
+.hv2-role-static {
+  display: none;
+  color: var(--hv2-lime);
+}
+
+.hv2-role-rotating {
+  display: inline-flex;
+  overflow: hidden;
+  vertical-align: bottom;
+  letter-spacing: 0.04em;
+}
+
+.hv2-role-word {
+  display: inline-block;
+  color: var(--hv2-lime);
+  animation: hv2-rise 0.55s var(--hv2-ease);
+}
+
+@keyframes hv2-rise {
+  from {
+    opacity: 0;
+    transform: translateY(60%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hv2-name {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-family: var(--hv2-display);
+  font-weight: 900;
+  font-size: clamp(3.25rem, 15vw, 7rem);
+  line-height: 0.86;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+@media (min-width: 64rem) {
+  .hv2-name {
+    font-size: clamp(5rem, 9vw, 8.25rem);
+  }
+}
+
+.hv2-name-line {
+  display: flex;
+  align-items: center;
+}
+
+.hv2-name-line-2 {
+  color: var(--hv2-purple);
+}
+
+.hv2-letter {
+  display: inline-block;
+  transition:
+    transform 0.35s var(--hv2-ease),
+    color 0.2s;
+}
+
+.hv2-name-bar {
+  display: inline-block;
+  width: 0.5em;
+  height: 0.11em;
+  margin-left: 0.12em;
+  background: var(--hv2-lime);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hv2-letter:hover {
+    transform: translateY(-14px) rotate(var(--hv2-tilt, 3deg));
+    color: var(--hv2-lime);
+  }
+}
+
+.hv2-lede {
+  max-width: 480px;
+  margin: 0;
+  font-size: clamp(17px, 1.5vw, 19px);
+  line-height: 1.75;
+  color: var(--hv2-text-1);
+  text-wrap: pretty;
+}
+
+.hv2-lede-support {
+  display: block;
+  margin-top: 6px;
+  color: var(--hv2-text-2);
+}
+
+.hv2-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* -------------------------------------------------------------------------
+ * Skills marquee (CSS-only loop)
+ * ---------------------------------------------------------------------- */
+.hv2-marquee {
+  position: relative;
+  border-block: 1px solid var(--hv2-line-soft);
+}
+
+.hv2-marquee-viewport {
+  padding: 22px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  /* Soft edge fades at both ends. */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 90%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 90%, transparent);
+}
+
+.hv2-marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: hv2-marquee var(--hv2-marquee-duration, 90s) linear infinite;
+}
+
+.hv2-marquee:hover .hv2-marquee-track,
+.hv2-marquee:focus-within .hv2-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes hv2-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.hv2-marquee-list {
+  display: flex;
+  flex: none;
+  gap: 48px;
+  margin: 0;
+  padding: 0 48px 0 0;
+  list-style: none;
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 700;
+}
+
+.hv2-marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.hv2-marquee-star {
+  color: var(--hv2-purple);
+}
+
+/* -------------------------------------------------------------------------
+ * Work index
+ * ---------------------------------------------------------------------- */
+.hv2-work {
+  max-width: calc(var(--hv2-max) + 2 * var(--hv2-gutter));
+  margin: 0 auto;
+  padding: clamp(64px, 9vw, 120px) var(--hv2-gutter);
+  scroll-margin-top: var(--hv2-nav-h);
+  outline: none;
+}
+
+.hv2-work-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-bottom: 36px;
+}
+
+.hv2-section-title {
+  margin: 0;
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.hv2-hint {
+  margin: 0;
+  font-family: var(--hv2-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hv2-text-3);
+}
+
+.hv2-hint-touch {
+  display: none;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .hv2-hint-hover {
+    display: none;
+  }
+
+  .hv2-hint-touch {
+    display: inline;
+  }
+}
+
+.hv2-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--hv2-line);
+}
+
+.hv2-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 28px;
+  width: 100%;
+  padding: clamp(22px, 3vw, 34px) 0;
+  border: 0;
+  border-bottom: 1px solid var(--hv2-line);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.hv2-row-no {
+  width: 40px;
+  font-family: var(--hv2-mono);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--hv2-lime);
+}
+
+.hv2-row-title {
+  flex: 1 1 320px;
+  min-width: 0;
+  font-size: clamp(24px, 3.2vw, 40px);
+  font-weight: 700;
+  line-height: 1.3;
+  transition: transform 0.45s var(--hv2-ease);
+}
+
+.hv2-row-cat {
+  min-width: 150px;
+  font-size: 15px;
+  color: var(--hv2-text-2);
+}
+
+.hv2-row-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 120px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.hv2-row-status .hv2-dot {
+  background: var(--hv2-purple);
+}
+
+.hv2-row-status[data-live="true"] .hv2-dot {
+  background: var(--hv2-lime);
+}
+
+.hv2-row-arrow {
+  font-family: var(--hv2-display);
+  font-size: 24px;
+  line-height: 1;
+  transition: transform 0.35s;
+}
+
+/* Phone: a deliberate stacked composition rather than a wrapped desktop row. */
+@media (max-width: 39.99rem) {
+  .hv2-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "no arrow"
+      "title title"
+      "cat cat"
+      "status status";
+    gap: 10px 16px;
+  }
+
+  .hv2-row-no {
+    grid-area: no;
+  }
+
+  .hv2-row-arrow {
+    grid-area: arrow;
+  }
+
+  .hv2-row-title {
+    grid-area: title;
+    flex: none;
+  }
+
+  .hv2-row-cat {
+    grid-area: cat;
+    min-width: 0;
+  }
+
+  .hv2-row-status {
+    grid-area: status;
+    min-width: 0;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hv2-list:hover .hv2-row:not(:hover) {
+    opacity: 0.32;
+  }
+
+  .hv2-row:hover .hv2-row-title {
+    transform: translateX(18px);
+  }
+
+  .hv2-row:hover .hv2-row-arrow {
+    transform: rotate(45deg);
+  }
+}
+
+/* Keyboard: same emphasis, no hover required. */
+.hv2-list:has(.hv2-row:focus-visible) .hv2-row:not(:focus-visible) {
+  opacity: 0.5;
+}
+
+.hv2-row:focus-visible .hv2-row-title {
+  transform: translateX(18px);
+}
+
+.hv2-row:focus-visible .hv2-row-arrow {
+  transform: rotate(45deg);
+}
+
+/* -------------------------------------------------------------------------
+ * Floating hover preview (fine pointers only; the cursor accent is global)
+ * ---------------------------------------------------------------------- */
+.hv2-preview {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  width: clamp(260px, 26vw, 380px);
+  aspect-ratio: 4 / 3;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.hv2-preview[data-visible="true"] {
+  opacity: 1;
+  will-change: transform;
+}
+
+.hv2-preview-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--hv2-surface);
+  transform: scale(0.85) rotate(0deg);
+  transition: transform 0.4s var(--hv2-ease);
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.8);
+}
+
+.hv2-preview[data-visible="true"] .hv2-preview-card {
+  transform: scale(1) rotate(-2deg);
+}
+
+.hv2-preview-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.hv2-preview-layer[data-on="true"] {
+  opacity: 1;
+}
+
+.hv2-preview-layer img {
+  object-fit: cover;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hv2-preview {
+    display: block;
+  }
+}
+
+/* -------------------------------------------------------------------------
+ * Proof strip (cream band)
+ * ---------------------------------------------------------------------- */
+.hv2-proof {
+  background: var(--hv2-cream);
+  color: var(--hv2-ink-800);
+  padding: clamp(64px, 8vw, 112px) var(--hv2-gutter) clamp(72px, 9vw, 128px);
+}
+
+.hv2-proof-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 36px 32px;
+  max-width: var(--hv2-max);
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 36rem) {
+  .hv2-proof-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64rem) {
+  .hv2-proof-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.hv2-proof-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(22, 23, 27, 0.18);
+}
+
+.hv2-proof-title {
+  margin: 0;
+  font-size: clamp(24px, 2.4vw, 34px);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.hv2-proof-items {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(22, 23, 27, 0.68);
+}
+
+/* Separator is generated (never read aloud) and attached to the preceding
+   item, so when a line wraps the dot trails the line instead of leading the next. */
+.hv2-proof-items li:not(:last-child)::after {
+  content: "•";
+  margin-inline: 0.5em;
+}
+
+.hv2-proof-grid:lang(zh-Hant) .hv2-proof-items li:not(:last-child)::after {
+  content: "・";
+  margin-inline: 0;
+}
+
+/* -------------------------------------------------------------------------
+ * Contact + footer
+ * ---------------------------------------------------------------------- */
+#contact.hv2-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: calc(var(--hv2-max) + 2 * var(--hv2-gutter));
+  margin: 0 auto;
+  padding: clamp(72px, 10vw, 144px) var(--hv2-gutter) 48px;
+  scroll-margin-top: var(--hv2-nav-h);
+  outline: none;
+}
+
+.hv2-contact-title {
+  margin: 0;
+  font-family: var(--hv2-display);
+  font-size: clamp(2.25rem, 5.4vw, 4.75rem);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.hv2-contact-title-2 {
+  color: var(--hv2-purple);
+}
+
+.hv2-contact-body {
+  max-width: 560px;
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.75;
+  color: var(--hv2-text-1);
+  text-wrap: pretty;
+}
+
+.hv2-contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+.hv2-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  max-width: calc(var(--hv2-max) + 2 * var(--hv2-gutter));
+  margin: 0 auto;
+  padding: 40px var(--hv2-gutter) 48px;
+  font-family: var(--hv2-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--hv2-text-3);
+}
+
+.hv2-footer p {
+  margin: 0;
+}
+
+.hv2-footer::before {
+  content: "";
+  flex: 1 0 100%;
+  height: 1px;
+  margin-bottom: 16px;
+  background: var(--hv2-line-soft);
+}
+
+.hv2-backtop {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  letter-spacing: inherit;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.hv2-backtop:hover {
+  color: var(--hv2-lime);
+}
+
+/* -------------------------------------------------------------------------
+ * Case drawer
+ * ---------------------------------------------------------------------- */
+.hv2-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: rgba(0, 0, 0, 0.55);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.35s,
+    visibility 0s linear 0.35s;
+}
+
+.hv2-overlay[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.35s,
+    visibility 0s;
+}
+
+.hv2-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  width: min(640px, 100%);
+  background: var(--hv2-cream);
+  color: var(--hv2-ink-800);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  visibility: hidden;
+  transform: translateX(105%);
+  transition:
+    transform 0.55s var(--hv2-ease-drawer),
+    visibility 0s linear 0.55s;
+}
+
+.hv2-drawer[data-open="true"] {
+  visibility: visible;
+  transform: none;
+  transition:
+    transform 0.55s var(--hv2-ease-drawer),
+    visibility 0s;
+}
+
+.hv2 .hv2-drawer :where(a, button):focus-visible {
+  outline-color: var(--hv2-ink-800);
+}
+
+.hv2-drawer-bar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  background: var(--hv2-cream);
+  font-family: var(--hv2-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: rgba(22, 23, 27, 0.66);
+}
+
+.hv2-drawer-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid rgba(22, 23, 27, 0.3);
+  border-radius: 50%;
+  background: none;
+  font-family: var(--hv2-display);
+  font-size: 22px;
+  line-height: 1;
+  color: var(--hv2-ink-800);
+  cursor: pointer;
+  transition:
+    transform 0.3s var(--hv2-ease),
+    background-color 0.2s;
+}
+
+.hv2-drawer-close:hover {
+  background: rgba(22, 23, 27, 0.08);
+}
+
+.hv2-drawer-media {
+  position: relative;
+  flex: none;
+  margin: 0 28px;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #e4e0d6;
+}
+
+.hv2-drawer-media img {
+  object-fit: cover;
+}
+
+.hv2-drawer-body {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 22px;
+  padding: 28px 28px 40px;
+}
+
+.hv2-drawer-kicker {
+  margin: 0;
+  font-family: var(--hv2-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hv2-purple-deep);
+}
+
+.hv2-drawer-title {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.hv2-drawer-desc {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.75;
+  color: rgba(22, 23, 27, 0.78);
+  text-wrap: pretty;
+}
+
+.hv2-drawer-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.hv2-drawer-meta div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.hv2-drawer-meta dt {
+  font-family: var(--hv2-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(22, 23, 27, 0.62);
+}
+
+.hv2-drawer-meta dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+html.hv2-drawer-open {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
+/* -------------------------------------------------------------------------
+ * Reduced motion: nothing loops or follows the pointer; fades stay short.
+ * ---------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .hv2-pulse {
+    animation: none;
+  }
+
+  .hv2-role-rotating {
+    display: none;
+  }
+
+  .hv2-role-static {
+    display: inline;
+  }
+
+  .hv2-marquee-viewport {
+    padding: 22px var(--hv2-gutter);
+    overflow: visible;
+    white-space: normal;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .hv2-marquee-track {
+    width: auto;
+    animation: none;
+    will-change: auto;
+  }
+
+  .hv2-marquee-list {
+    flex-wrap: wrap;
+    gap: 12px 32px;
+    padding: 0;
+  }
+
+  .hv2-marquee-item {
+    gap: 32px;
+  }
+
+  .hv2-marquee-track > .hv2-marquee-list:nth-child(2) {
+    display: none;
+  }
+
+  .hv2-letter,
+  .hv2-letter:hover {
+    transform: none;
+  }
+
+  .hv2-row-title,
+  .hv2-row:hover .hv2-row-title,
+  .hv2-row:focus-visible .hv2-row-title {
+    transform: none;
+  }
+
+  .hv2-row:hover .hv2-row-arrow,
+  .hv2-row:focus-visible .hv2-row-arrow {
+    transform: none;
+  }
+
+  .hv2-preview-card,
+  .hv2-preview[data-visible="true"] .hv2-preview-card {
+    transform: none;
+    transition: none;
+  }
+
+  .hv2-drawer,
+  .hv2-drawer[data-open="true"] {
+    transform: none;
+    opacity: 0;
+    transition:
+      opacity 0.15s,
+      visibility 0s linear 0.15s;
+  }
+
+  .hv2-drawer[data-open="true"] {
+    opacity: 1;
+    transition:
+      opacity 0.15s,
+      visibility 0s;
+  }
+
+  .hv2-overlay,
+  .hv2-overlay[data-open="true"] {
+    transition-duration: 0.15s;
+  }
+
+  .hv2-menu,
+  .hv2-menu[data-open="true"] {
+    transform: none;
+    transition-duration: 0.15s;
+  }
+
+  .hv2-menu-line,
+  .hv2-btn,
+  .hv2-nav-link,
+  .hv2-lang,
+  .hv2-drawer-close {
+    transition-duration: 0.01ms;
+  }
+}

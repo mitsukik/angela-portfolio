@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { AboutV2 } from "@/components/about-v2/AboutV2";
-import { SiteFooter } from "@/components/site/SiteFooter";
-import { SiteHeader } from "@/components/site/SiteHeader";
+import { AboutPageV2 } from "@/components/about-page-v2/AboutPageV2";
 
 export const metadata: Metadata = {
   title: "About | Angela Yu",
@@ -16,17 +14,8 @@ export const metadata: Metadata = {
 
 export default function AboutPageEn() {
   return (
-    <div id="top" className="scene-dark min-h-screen">
-      <a href="#main-content" className="skip-link">
-        Skip to main content
-      </a>
-      <SiteHeader locale="en" page="about" />
-
-      <main id="main-content" tabIndex={-1}>
-        <AboutV2 locale="en" />
-      </main>
-
-      <SiteFooter locale="en" />
+    <div id="top">
+      <AboutPageV2 locale="en" />
     </div>
   );
 }

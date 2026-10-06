@@ -1,6 +1,6 @@
 import type { Locale } from "./locale";
 
-type HeroSegment = { text: string; noBreak?: boolean };
+export type HeroSegment = { text: string; noBreak?: boolean };
 
 type HeroContent = {
   /** Kicker line above the identity title — one line, matches the exact

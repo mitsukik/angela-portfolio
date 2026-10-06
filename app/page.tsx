@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
-import { Hero } from "@/components/home/Hero";
-import { SelectedWork } from "@/components/home/SelectedWork/SelectedWork";
-import { SiteFooter } from "@/components/site/SiteFooter";
-import { SiteHeader } from "@/components/site/SiteHeader";
-import { HeaderThemeProvider } from "@/components/site/headerTheme";
+import { HomeV2 } from "@/components/home-v2/HomeV2";
 
 export const metadata: Metadata = {
   title: "Angela Yu | 資深 UI/UX 設計師",
@@ -18,18 +14,8 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div id="top" className="min-h-screen bg-background text-primary">
-      <a href="#main-content" className="skip-link">
-        Skip to main content
-      </a>
-      <HeaderThemeProvider>
-        <SiteHeader locale="zh" page="home" />
-        <main id="main-content" tabIndex={-1}>
-          <Hero locale="zh" />
-          <SelectedWork locale="zh" />
-        </main>
-      </HeaderThemeProvider>
-      <SiteFooter locale="zh" />
+    <div id="top">
+      <HomeV2 locale="zh" />
     </div>
   );
 }

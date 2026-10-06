@@ -4,6 +4,12 @@ import Script from "next/script";
 import { RouteTransition } from "@/components/site/RouteTransition";
 import { SmoothScroll } from "@/components/site/SmoothScroll";
 import "./globals.css";
+// Scoped V2 styles (.hv2-*, the Home/About cursor) live in the global sheet on purpose: as a
+// route-level chunk, the shared header's <Link href="/"> prefetches it from
+// About/Case pages that never use it (console "preloaded but not used").
+import "@/components/home-v2/home-v2.css";
+import "@/components/site/custom-cursor.css";
+import "@/components/about-page-v2/about-page-v2.css";
 
 // Every route is statically generated from one shared root layout (no
 // per-locale layout.tsx, no [locale] dynamic segment), so the server has
@@ -53,7 +59,9 @@ const geistMono = Geist_Mono({
 const archivo = Archivo({
   variable: "--font-archivo",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  // 900 is for Home V2's identity/number display; nothing else in the site
+  // requests weight 800+, so adding it changes no existing page.
+  weight: ["400", "500", "600", "700", "900"],
 });
 
 const ibmPlexMono = IBM_Plex_Mono({

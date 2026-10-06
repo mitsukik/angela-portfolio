@@ -61,6 +61,14 @@ export type Project = {
   /** Approved real evidence used by the Home / Selected Work scene. */
   homeImages?: string[];
   homeVisual?: ProjectHomeVisual;
+  /** Home V2 only: CSS object-position for the 4:3 crops of `homeImage`
+   * (hero card, hover preview, drawer) — the approved visuals are portrait,
+   * so each keeps its own focal point instead of a blind centre crop. */
+  homeCrop?: string;
+  /** Home V2 only: "live" tints the Work Index status dot lime (launched /
+   * in real use); anything else keeps it purple. Presentation only — the
+   * status wording itself still comes from `caseStudy.metadata`. */
+  statusTone?: "live";
   alt: string;
   /** Selected Work pinned-stage presentation state — alternating black/white
    * registers (01 dark, 02 light, 03 dark, 04 light) per Angela's V3
@@ -151,6 +159,7 @@ export const projects: Project[] = [
     ],
     image: "/images/case01/evidence/case01-order-list.webp",
     homeImage: "/images/home/case01-home-visual.webp",
+    homeCrop: "50% 32%",
     homeVisual: "system-cover",
     alt: "Order management interface from the Complex System case study",
     // CASE01 content source of truth is CaseOneFinalContent.tsx + the
@@ -328,6 +337,8 @@ export const projects: Project[] = [
     ],
     image: "/images/case02/evidence/sdx-home-desktop.webp",
     homeImage: "/images/home/case02-home-visual.webp",
+    homeCrop: "50% 46%",
+    statusTone: "live",
     homeImages: [
       "/images/case02/evidence/sdx-home-desktop.webp",
       "/images/case02/evidence/charming-home-desktop.webp",
@@ -383,6 +394,8 @@ export const projects: Project[] = [
     ],
     image: "/images/case03/case03-hero-desktop-tablet.webp",
     homeImage: "/images/home/case03-home-visual.webp",
+    homeCrop: "50% 58%",
+    statusTone: "live",
     // No homeImages/homeVisual: case03-monitoring-dashboard.webp (the
     // previous 3rd collage tile) belongs to a different, unrelated
     // client and must never render for this project. homeImage alone
@@ -437,6 +450,7 @@ export const projects: Project[] = [
     ],
     image: "/images/case04/case04-hero-home-v5.webp",
     homeImage: "/images/home/case04-home-visual.webp",
+    homeCrop: "50% 36%",
     homeImages: [
       "/images/case04/case04-generating-v2.webp",
       "/images/case04/case04-hero-home-v5.webp",

@@ -1,0 +1,64 @@
+/* Global cursor accent (see CustomCursor.tsx). The native cursor is never
+   hidden. Colours are fixed brand values so the ring reads on every page:
+   the cream outline uses `difference` blending, so it inverts on light
+   surfaces automatically. */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+
+.custom-cursor[data-mode="view"] {
+  mix-blend-mode: normal;
+}
+
+.custom-cursor-center {
+  transform: translate(-50%, -50%);
+}
+
+.custom-cursor-ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  box-sizing: border-box;
+  border: 1.5px solid #f4f1ea;
+  border-radius: 50%;
+  background: transparent;
+  color: #0d0e11;
+  font-family: var(--font-noto-sans-tc), var(--font-archivo), system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition:
+    width 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
+    height 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
+    background-color 0.25s,
+    border-color 0.25s;
+}
+
+.custom-cursor[data-mode="link"] .custom-cursor-ring {
+  width: 56px;
+  height: 56px;
+}
+
+.custom-cursor[data-mode="view"] .custom-cursor-ring {
+  width: 72px;
+  height: 72px;
+  border-color: transparent;
+  background: #d4f04a;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-cursor-ring {
+    transition-duration: 0.01ms;
+  }
+}

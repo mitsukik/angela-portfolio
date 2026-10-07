@@ -17,9 +17,9 @@ type RegisterSection = (index: number, element: HTMLElement | null) => void;
  * into interfaces, implemented as a working HTML/CSS/JS frontend, tested
  * with the client in stages, then integrated, QA'd and deployed.
  *
- * Evidence is limited to the three verified CASE03 assets (hero, operations
- * collage, warehouse floorplan). The former case03-monitoring-dashboard
- * image belonged to an unrelated client and must never return here.
+ * Evidence is limited to verified CASE03 assets (hero, shop-floor interaction
+ * patterns, warehouse floorplan). The former case03-monitoring-dashboard image
+ * belonged to an unrelated client and must never return here.
  */
 
 function Section({ index, register, children, divider = true }: { index: number; register: RegisterSection; children: ReactNode; divider?: boolean }) {
@@ -223,10 +223,10 @@ export function CaseThreeFinalContent({ register, locale }: { register: Register
                   : "The content changed, but filtering, reading data, entering information, and confirming actions followed the same basic logic across workflows."]} />
               </div>
               <figure data-evidence-entrance className="mt-10 lg:col-span-7 lg:mt-0">
-                <div className="cf-figure-frame relative aspect-[16/9]">
-                  <EvidenceTrigger asset={{ src: "/images/case03/case03-operations-collage.webp", alt: zh ? "多個現場作業畫面，共用相同的篩選、表格、表單與確認模式" : "Several shop-floor task screens sharing the same filter, table, form, and confirmation patterns" }}>
+                <div className="cf-figure-frame relative aspect-[8/5]">
+                  <EvidenceTrigger asset={{ src: "/images/case03/case03-shared-interaction-patterns.webp", alt: zh ? "三張平板介面 mockup：用藥資料列表、反應資訊表單與入庫製令確認，呈現一致的篩選、表格、表單與確認模式" : "Three tablet UI mockups showing medication records, reaction input, and inbound work-order confirmation with a shared filter, table, form, and confirmation pattern" }}>
                     <Image
-                      src="/images/case03/case03-operations-collage.webp"
+                      src="/images/case03/case03-shared-interaction-patterns.webp"
                       alt=""
                       fill
                       unoptimized
@@ -236,7 +236,7 @@ export function CaseThreeFinalContent({ register, locale }: { register: Register
                   </EvidenceTrigger>
                 </div>
                 <figcaption className="cf-figure-caption cf-meta mt-3">
-                  {zh ? "不同作業畫面沿用相同的篩選、表格、表單與確認模式。" : "Different operational screens reuse the same filtering, table, form, and confirmation patterns."}
+                  {zh ? "平板 mockup 呈現不同作業共用的篩選、表格、表單與確認模式。" : "Tablet mockups show the shared filtering, table, form, and confirmation patterns across tasks."}
                 </figcaption>
               </figure>
             </div>

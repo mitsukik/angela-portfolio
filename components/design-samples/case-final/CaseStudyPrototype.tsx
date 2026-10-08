@@ -230,14 +230,14 @@ export function CaseStudyPrototype({
           { label: "角色", value: "UI/UX Designer" },
           { label: "時程", value: "2025.05 — 2026.04 · 12 個月" },
           { label: "範疇", value: "Product Architecture · Information Architecture · UX Flow · Interaction Design · UI Design · Prototype · Developer Handoff" },
-          { label: "團隊", value: "UI/UX Designer · UI Designer · 2 Engineers · PM（2025.10 加入）" },
+          { label: "團隊", value: "5 人 · UI/UX Designer（我） · UI Designer · 2 Engineers · PM（2025.10 加入）" },
           { label: "狀態", value: "Designed & Developed" },
         ]
       : [
           { label: "Role", value: "UI/UX Designer" },
           { label: "Timeline", value: "May 2025 — Apr 2026 · 12 months" },
           { label: "Scope", value: "Product Architecture · Information Architecture · UX Flow · Interaction Design · UI Design · Prototype · Developer Handoff" },
-          { label: "Team", value: "UI/UX Designer · UI Designer · 2 Engineers · PM (joined Oct 2025)" },
+          { label: "Team", value: "5 members · UI/UX Designer (me) · UI Designer · 2 Engineers · PM (joined Oct 2025)" },
           { label: "Status", value: "Designed & Developed" },
         ]
     : isCaseOneV2
@@ -338,17 +338,11 @@ export function CaseStudyPrototype({
           <div className="md:grid md:grid-cols-12 md:gap-10 lg:gap-16">
             <div className="md:col-span-7">
               <p data-open-eyebrow className="cf-meta cf-accent">
-                {isCaseOneV2
-                  ? isCaseOneV3
-                    ? zhHant ? "00 — 專案總覽" : "00 — PROJECT SNAPSHOT"
-                    : "01 / COMPLEX SYSTEM"
-                  : isCaseTwoV1
-                    ? "02 / BRAND & WEB EXPERIENCE"
-                    : isCaseThreeV1
-                      ? zhHant ? "00 — 專案總覽" : "00 — OVERVIEW"
-                      : isCaseFourV1
-                        ? "04 / MOBILE WELLNESS PRODUCT"
-                        : `${project.number} / ${caseStudy.eyebrowTitle ?? displayTitle}`}
+                {isCaseOneV3 || isCaseTwoV1 || isCaseThreeV1 || isCaseFourV1
+                  ? zhHant ? "00 — 專案總覽" : "00 — PROJECT OVERVIEW"
+                  : isCaseOneV2
+                    ? "01 / COMPLEX SYSTEM"
+                    : `${project.number} / ${caseStudy.eyebrowTitle ?? displayTitle}`}
               </p>
               <h1 data-open-title className="cf-heading cf-opening-title mt-5">
                 {zhTitleLines

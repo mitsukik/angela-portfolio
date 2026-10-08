@@ -45,6 +45,7 @@ export type Ui = {
   workHeading: string;
   hintHover: string;
   hintTouch: string;
+  previewCase: string;
   drawer: { close: string; read: string };
   marquee: { label: string; toggle: string; pauseClick: string; pauseTap: string; pausedClick: string; pausedTap: string };
   proofLabel: string;
@@ -64,8 +65,9 @@ const UI: Record<Locale, Ui> = {
     workCta: "精選作品",
     resumeCta: "下載履歷",
     workHeading: "精選作品",
-    hintHover: "滑過預覽 · 點擊展開",
-    hintTouch: "點擊展開",
+    hintHover: "滑過預覽 · 開啟案例閱讀",
+    hintTouch: "點擊作品閱讀案例，或按預覽按鈕快速查看",
+    previewCase: "快速預覽案例",
     drawer: { close: "關閉", read: "閱讀完整案例" },
     marquee: {
       label: "技能與工具",
@@ -90,8 +92,9 @@ const UI: Record<Locale, Ui> = {
     workCta: "Selected Work",
     resumeCta: "Download Resume",
     workHeading: "Selected Work",
-    hintHover: "Hover to preview · Click to open",
-    hintTouch: "Tap to open",
+    hintHover: "Hover to preview · Open a case to read",
+    hintTouch: "Open a case to read, or use the preview button for a quick look",
+    previewCase: "Preview case",
     drawer: { close: "Close", read: "Read the full case study" },
     marquee: {
       label: "Skills and tools",

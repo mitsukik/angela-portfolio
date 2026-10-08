@@ -784,19 +784,59 @@ html[data-v2-lang-fade="out"] .hv2-page > footer {
   border-top: 1px solid var(--hv2-line);
 }
 
+.hv2-row-shell {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--hv2-line);
+}
+
 .hv2-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 12px 28px;
-  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
   padding: clamp(22px, 3vw, 34px) 0;
   border: 0;
-  border-bottom: 1px solid var(--hv2-line);
   background: none;
   text-align: left;
   cursor: pointer;
   transition: opacity 0.3s;
+}
+
+.hv2-row-preview {
+  display: grid;
+  flex: 0 0 40px;
+  place-items: center;
+  align-self: center;
+  width: 40px;
+  height: 40px;
+  margin-left: 8px;
+  border: 1px solid var(--hv2-line);
+  border-radius: 50%;
+  color: var(--hv2-text-2);
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.25s, border-color 0.25s, background-color 0.25s;
+}
+
+.hv2-row-preview svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+.hv2-row-preview:hover {
+  color: var(--hv2-lime);
+  border-color: var(--hv2-lime);
+}
+
+.hv2-row-preview:focus-visible {
+  outline: 2px solid var(--hv2-lime);
+  outline-offset: 3px;
 }
 
 .hv2-row-no {
@@ -859,6 +899,13 @@ html[data-v2-lang-fade="out"] .hv2-page > footer {
     gap: 10px 16px;
   }
 
+  .hv2-row-preview {
+    flex-basis: 36px;
+    width: 36px;
+    height: 36px;
+    margin-left: 6px;
+  }
+
   .hv2-row-no {
     grid-area: no;
   }
@@ -884,7 +931,7 @@ html[data-v2-lang-fade="out"] .hv2-page > footer {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .hv2-list:hover .hv2-row:not(:hover) {
+  .hv2-list:hover .hv2-row-shell:not(:hover) {
     opacity: 0.32;
   }
 
@@ -898,7 +945,7 @@ html[data-v2-lang-fade="out"] .hv2-page > footer {
 }
 
 /* Keyboard: same emphasis, no hover required. */
-.hv2-list:has(.hv2-row:focus-visible) .hv2-row:not(:focus-visible) {
+.hv2-list:has(.hv2-row:focus-visible, .hv2-row-preview:focus-visible) .hv2-row-shell:not(:focus-within) {
   opacity: 0.5;
 }
 

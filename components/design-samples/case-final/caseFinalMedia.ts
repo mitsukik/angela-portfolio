@@ -57,23 +57,6 @@ const overviewFigureByLocale: Record<Locale, CaseFinalFigure> = {
   },
 };
 
-const showcaseFigureByLocale: Record<Locale, CaseFinalFigure> = {
-  zh: {
-    src: "/images/case01/case01_inventory_showcase_sample.webp",
-    alt: "共享庫存後台介面，顯示商品列表、庫存狀態與篩選功能",
-    figureNumber: "Fig. 05",
-    caption: "連結實體庫存與數位商品狀態 — 共享庫存後台",
-  },
-  en: {
-    // No dedicated *_eng01 asset for this UI screenshot (unlike the
-    // diagrams above) — same real image, English caption only.
-    src: "/images/case01/case01_inventory_showcase_sample.webp",
-    alt: "Shared inventory backend interface, showing the product list, stock status, and filters",
-    figureNumber: "Fig. 05",
-    caption: "Connecting Physical Inventory with Digital Product States — Shared Inventory Backend",
-  },
-};
-
 const decisionFiguresByLocale: Record<Locale, Record<number, CaseFinalFigure>> = {
   zh: {
     0: {
@@ -107,10 +90,6 @@ const decisionFiguresByLocale: Record<Locale, Record<number, CaseFinalFigure>> =
 
 export function getOverviewFigure(locale: Locale): CaseFinalFigure {
   return overviewFigureByLocale[locale];
-}
-
-export function getShowcaseFigure(locale: Locale): CaseFinalFigure {
-  return showcaseFigureByLocale[locale];
 }
 
 export function getDecisionFigure(locale: Locale, decisionIndex: number): CaseFinalFigure | undefined {

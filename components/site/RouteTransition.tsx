@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import { useLayoutEffect, useRef } from "react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { getLenisInstance } from "./lenisInstance";
 import { consumeLanguageSwitch, restoreTarget } from "./navigationIntent";
 
@@ -74,16 +73,22 @@ export function RouteTransition() {
       // Work's pinned/stacked mode — has settled.
       timeouts.current.push(
         window.setTimeout(() => {
-          ScrollTrigger.refresh();
-          const top = restoreTarget(languageSwitch);
-          const lenis = getLenisInstance();
-          if (lenis) {
-            lenis.resize();
-            lenis.scrollTo(top, { immediate: true, force: true });
-          } else {
-            window.scrollTo(0, top);
-          }
-          ScrollTrigger.update();
+          void import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
+            if (window.location.pathname !== pathname) return;
+            ScrollTrigger.refresh();
+            const top = restoreTarget(languageSwitch);
+            const lenis = getLenisInstance();
+            if (lenis) {
+              lenis.resize();
+              lenis.scrollTo(top, { immediate: true, force: true });
+            } else {
+              window.scrollTo(0, top);
+            }
+            ScrollTrigger.update();
+          }).catch(() => {
+            if (window.location.pathname !== pathname) return;
+            window.scrollTo(0, restoreTarget(languageSwitch));
+          });
         }, 60),
       );
       return clearPending;

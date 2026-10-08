@@ -2,13 +2,11 @@
 
 import { useLayoutEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Lenis from "lenis";
+import type Lenis from "lenis";
 import { setLenisInstance } from "./lenisInstance";
 
 const SMOOTH_SCROLL_QUERY =
-  "(min-width: 1024px) and (prefers-reduced-motion: no-preference)";
+  "(min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
 
 const DEFAULT_LAG_SMOOTHING_THRESHOLD = 500;
 const DEFAULT_LAG_SMOOTHING_ADJUSTED_TIME = 33;
@@ -22,46 +20,81 @@ export function SmoothScroll() {
   const lenisRef = useRef<Lenis | null>(null);
 
   useLayoutEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
+    const media = window.matchMedia(SMOOTH_SCROLL_QUERY);
+    let disposed = false;
+    let loading = false;
+    let stopLenis: (() => void) | null = null;
 
-    const media = gsap.matchMedia();
+    const stop = () => {
+      stopLenis?.();
+      stopLenis = null;
+    };
 
-    media.add(SMOOTH_SCROLL_QUERY, () => {
-      const lenis = new Lenis({
-        lerp: 0.1,
-        wheelMultiplier: 1,
-        syncTouch: false,
-        anchors: false,
-        stopInertiaOnNavigate: true,
-        autoRaf: false,
+    const start = () => {
+      if (!media.matches || loading || stopLenis) return;
+      loading = true;
+
+      void Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+        import("lenis"),
+      ]).then(([gsapModule, scrollTriggerModule, lenisModule]) => {
+        loading = false;
+        if (disposed || !media.matches) return;
+
+        const gsap = gsapModule.gsap;
+        const ScrollTrigger = scrollTriggerModule.ScrollTrigger;
+        const LenisConstructor = lenisModule.default;
+        gsap.registerPlugin(ScrollTrigger);
+
+        const lenis = new LenisConstructor({
+          lerp: 0.1,
+          wheelMultiplier: 1,
+          syncTouch: false,
+          anchors: false,
+          stopInertiaOnNavigate: true,
+          autoRaf: false,
+        });
+        lenisRef.current = lenis;
+        setLenisInstance(lenis);
+
+        const onTick = (time: number) => {
+          lenis.raf(time * 1000);
+        };
+        gsap.ticker.add(onTick);
+        gsap.ticker.lagSmoothing(0);
+
+        const onLenisScroll = () => ScrollTrigger.update();
+        lenis.on("scroll", onLenisScroll);
+
+        stopLenis = () => {
+          lenis.off("scroll", onLenisScroll);
+          gsap.ticker.remove(onTick);
+          gsap.ticker.lagSmoothing(
+            DEFAULT_LAG_SMOOTHING_THRESHOLD,
+            DEFAULT_LAG_SMOOTHING_ADJUSTED_TIME,
+          );
+          lenis.destroy();
+          lenisRef.current = null;
+          setLenisInstance(null);
+        };
+      }).catch(() => {
+        loading = false;
       });
-      lenisRef.current = lenis;
-      setLenisInstance(lenis);
+    };
 
-      const onTick = (time: number) => {
-        lenis.raf(time * 1000);
-      };
-      gsap.ticker.add(onTick);
-      gsap.ticker.lagSmoothing(0);
+    const syncMedia = () => {
+      if (media.matches) start();
+      else stop();
+    };
 
-      const onLenisScroll = () => ScrollTrigger.update();
-      lenis.on("scroll", onLenisScroll);
-
-      return () => {
-        lenis.off("scroll", onLenisScroll);
-        gsap.ticker.remove(onTick);
-        gsap.ticker.lagSmoothing(
-          DEFAULT_LAG_SMOOTHING_THRESHOLD,
-          DEFAULT_LAG_SMOOTHING_ADJUSTED_TIME,
-        );
-        lenis.destroy();
-        lenisRef.current = null;
-        setLenisInstance(null);
-      };
-    });
+    media.addEventListener("change", syncMedia);
+    syncMedia();
 
     return () => {
-      media.revert();
+      disposed = true;
+      media.removeEventListener("change", syncMedia);
+      stop();
     };
   }, []);
 

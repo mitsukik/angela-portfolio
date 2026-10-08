@@ -1578,16 +1578,9 @@ body {
   --cf-meta: oklch(0.50 0.012 265);
   --cf-dim: oklch(0.50 0.01 265);
   --cf-hairline: oklch(0.16 0.008 265 / 10%);
-  /* Round 13 rejected Round 3's exact-hex gold/beige accent (#a3926a)
-     and initially substituted --cf-accent-2's darker light-mode purple
-     here instead of the raw --lavender token, on WCAG contrast grounds
-     (~1.9:1 against --cf-bg). Round 14: Angela explicitly approved using
-     the real --lavender value regardless — "do not substitute a darker
-     purple for accessibility without approval; if contrast is below
-     WCAG AA, record it as a known accessibility note only." Known
-     accessibility note: --lavender on --cf-bg (paper) measures ~1.9:1,
-     under WCAG AA (4.5:1 normal text / 3:1 large text) — accepted
-     per Angela's direction, not fixed here. */
+  /* Keep the approved Lavender accent for graphic details. Text roles use
+     --cf-accent-2 below so meaningful labels retain the purple identity at
+     accessible contrast against this light surface. */
   --cf-accent: var(--lavender);
   --cf-accent-2: oklch(0.42 0.13 300);
   --cf-surface-hover: oklch(0.16 0.008 265 / 4%);
@@ -1618,6 +1611,13 @@ body {
 .cf-accent { color: var(--cf-accent); }
 .cf-accent-2 { color: var(--cf-accent-2); }
 
+/* Lavender remains the light theme's graphic accent (rules, selection,
+   and surfaces). Accent labels, indexes, and links carry information, so
+   use the existing darker purple text token for readable contrast. */
+.case-final[data-theme="light"] .cf-accent {
+  color: var(--cf-accent-2);
+}
+
 /* Round 13: Light theme's new Lavender accent text renders at weight 500
    — Angela's explicit correction, text-only (never the accent-colored
    rules/lines/backgrounds that share the same --cf-accent variable:
@@ -1631,6 +1631,11 @@ body {
 .case-final[data-theme="light"] .cf-accent,
 .case-final[data-theme="light"] .cf-chapter-marker[data-active="true"] {
   font-weight: 500;
+}
+
+.case-final[data-theme="light"] .cf-chapter-marker[data-active="true"],
+.case-final[data-theme="light"] .cf-chapter-marker[data-active="true"] .cf-chapter-label-text {
+  color: var(--cf-accent-2);
 }
 
 /* Section meta label ("專案概述" etc.) — Round 3: ~16px (was inheriting

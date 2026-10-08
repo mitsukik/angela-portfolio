@@ -4,6 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { getAboutPageContent } from "@/data/about-page-v2";
 import type { Locale } from "@/data/locale";
 import { CustomCursor } from "@/components/site/CustomCursor";
+import { SkipLink } from "@/components/site/SkipLink";
 import { HomeContact, HomeFooter } from "@/components/home-v2/HomeContact";
 import { HomeNav } from "@/components/home-v2/HomeNav";
 import { finishLanguageFade } from "@/components/home-v2/languageFade";
@@ -53,9 +54,7 @@ export function AboutPageV2({ locale }: { locale: Locale }) {
   return (
     <div ref={rootRef} className="hv2 av2" data-locale={locale} data-drawer={zoomed ? "open" : "closed"}>
       <div ref={pageRef} className="hv2-page">
-        <a href="#main-content" className="skip-link">
-          Skip to main content
-        </a>
+        <SkipLink locale={locale} />
         <HomeNav content={content} page="about" />
         <main id="main-content" tabIndex={-1}>
           <AboutHero content={content} />

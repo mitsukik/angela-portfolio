@@ -34,10 +34,8 @@ const BILINGUAL_ZH_PATH = /^(\/|\/about|\/design-samples\/case-final-0[1-4])$/;
  * gained a real /en pair, so this now maps to it like Home/About always
  * did — same rule, bigger whitelist, no new locale system.
  *
- * Any route NOT in `BILINGUAL_ZH_PATH` (design-sample/comparison pages
- * with no English content, e.g. case-final-dark/light) still safely
- * stays on the exact same pathname rather than guessing a destination
- * that doesn't exist.
+ * Any route NOT in `BILINGUAL_ZH_PATH` still safely stays on the exact
+ * same pathname rather than guessing a destination that doesn't exist.
  */
 function otherLocaleHref(pathname: string, currentLocale: Locale): string {
   if (currentLocale === "zh") {

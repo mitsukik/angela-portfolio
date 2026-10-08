@@ -1,14 +1,15 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { HomeV2Content } from "@/data/home-v2";
 
 /**
- * Compact Work Index: one button per case, normal document scroll. Hover
+ * Compact Work Index: one navigational link per case, normal document scroll. Hover
  * dimming/shift is pure CSS (fine pointers only); the floating preview is
- * driven by motion.ts and the cursor label by the global CustomCursor. Every
- * row opens the case drawer, with or without hover.
+ * driven by motion.ts and the cursor label by the global CustomCursor. A
+ * sibling button opens the quick-preview drawer without replacing navigation.
  */
 export function WorkIndex({
   content,
@@ -34,15 +35,13 @@ export function WorkIndex({
 
       <ul className="hv2-list" data-hv2-list>
         {work.map((item, index) => (
-          <li key={item.id} data-reveal="">
-            <button
-              type="button"
+          <li key={item.id} className="hv2-row-shell" data-reveal="">
+            <Link
+              href={item.href}
               className="hv2-row"
               data-hv2-row={index}
               data-cursor="view"
               data-cursor-label={ui.cursorView}
-              aria-haspopup="dialog"
-              onClick={(event) => onOpen(index, event.currentTarget)}
             >
               <span className="hv2-row-no">{item.number}</span>
               <span className="hv2-row-title" lang={lang}>{item.title}</span>
@@ -56,6 +55,18 @@ export function WorkIndex({
                 </span>
               )}
               <span className="hv2-row-arrow" aria-hidden>↗</span>
+            </Link>
+            <button
+              type="button"
+              className="hv2-row-preview"
+              aria-label={`${ui.previewCase} ${item.number}: ${item.title}`}
+              aria-haspopup="dialog"
+              onClick={(event) => onOpen(index, event.currentTarget)}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" />
+                <circle cx="12" cy="12" r="2.5" />
+              </svg>
             </button>
           </li>
         ))}

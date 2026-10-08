@@ -3,6 +3,7 @@ import { Archivo, Geist, Geist_Mono, IBM_Plex_Mono, Noto_Sans_TC } from "next/fo
 import Script from "next/script";
 import { RouteTransition } from "@/components/site/RouteTransition";
 import { SmoothScroll } from "@/components/site/SmoothScroll";
+import { SITE_ORIGIN } from "@/data/site-seo";
 import "./globals.css";
 // Scoped V2 styles (.hv2-*, the Home/About cursor) live in the global sheet on purpose: as a
 // route-level chunk, the shared header's <Link href="/"> prefetches it from
@@ -82,8 +83,24 @@ const notoSansTC = Noto_Sans_TC({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_ORIGIN),
   title: "Angela Yu | Senior UI/UX Designer",
-  description: "Minimal senior UI/UX designer portfolio landing page.",
+  description: "Portfolio of Angela Yu, a senior product designer focused on B2B, enterprise products, and complex systems.",
+  openGraph: {
+    type: "website",
+    title: "Angela Yu | Senior Product Designer & UI/UX Designer",
+    description: "Portfolio of Angela Yu, focused on B2B, enterprise products, and complex systems.",
+    url: "/",
+    siteName: "Angela Yu",
+    locale: "zh_TW",
+    images: [{ url: "/images/home/case01-home-visual.webp", alt: "Selected portfolio case study: a cross-border commerce platform interface" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Angela Yu | Senior Product Designer & UI/UX Designer",
+    description: "Portfolio of Angela Yu, focused on B2B, enterprise products, and complex systems.",
+    images: ["/images/home/case01-home-visual.webp"],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

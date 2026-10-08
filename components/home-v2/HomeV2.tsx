@@ -11,6 +11,7 @@ import { ProofStrip } from "./ProofStrip";
 import { SkillsMarquee } from "./SkillsMarquee";
 import { WorkIndex, WorkPreview } from "./WorkIndex";
 import { CustomCursor } from "@/components/site/CustomCursor";
+import { SkipLink } from "@/components/site/SkipLink";
 import { finishLanguageFade } from "./languageFade";
 import { initHomeMotion, initReveal } from "./motion";
 
@@ -53,9 +54,7 @@ export function HomeV2({ locale }: { locale: Locale }) {
   return (
     <div ref={rootRef} className="hv2" data-locale={locale} data-drawer={drawer.open ? "open" : "closed"}>
       <div ref={pageRef} className="hv2-page">
-        <a href="#main-content" className="skip-link">
-          Skip to main content
-        </a>
+        <SkipLink locale={locale} />
         <HomeNav content={content} />
         <main id="main-content" tabIndex={-1}>
           <HomeHero content={content} />

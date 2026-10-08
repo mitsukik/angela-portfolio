@@ -1,16 +1,8 @@
 import type { Metadata } from "next";
 import { HomeV2 } from "@/components/home-v2/HomeV2";
+import { createPageMetadata } from "@/data/site-seo";
 
-export const metadata: Metadata = {
-  title: "Angela Yu | Senior UI/UX Designer",
-  description: "Portfolio of Senior UI/UX Designer Angela Yu, focused on complex systems, B2B, and enterprise UX/UI design and delivery.",
-  alternates: {
-    languages: {
-      "zh-Hant": "/",
-      en: "/en",
-    },
-  },
-};
+export const metadata: Metadata = createPageMetadata("home", "en");
 
 export default function HomeEn() {
   return (

@@ -277,12 +277,12 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
               ? [
                   ["PM", "需求、範疇與專案協調"],
                   ["Full-stack Engineer", "早期功能流程、既有技術基礎與產品實作"],
-                  ["UI/UX 設計師／我", "檢視既有體驗、重整流程、互動與狀態設計、建立可重用的介面系統與原型，並與工程確認可行性"],
+                  ["UI/UX 設計師／我", "檢視既有體驗、重整流程、互動與狀態設計、建立可重用的介面系統與原型，與工程確認可行性，並協助另一位 UI Designer 對齊產品設計方向"],
                 ]
               : [
                   ["PM", "Requirements, scope, and coordination"],
                   ["Full-stack Engineer", "Early functional flow, existing technical foundation, and implementation"],
-                  ["UI/UX Designer / Me", "Reviewed existing experience, restructured flows, interaction and state design, built a reusable UI system and prototype, and worked with engineering on feasibility"],
+                  ["UI/UX Designer / Me", "Reviewed existing experience, restructured flows, interaction and state design, built a reusable UI system and prototype, confirmed feasibility with engineering, and guided another UI Designer in aligning their work with the product’s design direction"],
                 ]
             ).map(([role, desc], index) => (
               <div
@@ -395,10 +395,11 @@ export function CaseFourFinalContent({ register, locale }: { register: RegisterS
               caption={zhHant ? "環狀選擇" : "Radial choice"}
             />
           </div>
-          <div className="sm:opacity-90">
+          <div>
             <p className="cf-meta cf-dim">{zhHant ? "場景卡片" : "SCENE CARDS"}</p>
             <PhoneEvidence
               className="mt-4 max-w-[200px]"
+              frameClassName="sm:opacity-90"
               asset={{ src: `${IMG}/case04-guided-scene.webp`, alt: "A step in the guided daily flow: a swipeable image-card carousel for choosing a listening scene" }}
               caption={zhHant ? "場景選擇" : "Scene choice"}
             />

@@ -3,11 +3,9 @@ import { notFound } from "next/navigation";
 import { CaseStudyPrototype } from "@/components/design-samples/case-final/CaseStudyPrototype";
 import { getCaseTheme } from "@/components/design-samples/case-final/caseTheme";
 import { getNextProject, getPreviousProject, getProjectBySlug } from "@/data/projects";
+import { createPageMetadata } from "@/data/site-seo";
 
-export const metadata: Metadata = {
-  title: "Design Sample — Case 03 (Confidential Manufacturing Operations System)",
-  robots: { index: false, follow: false },
-};
+export const metadata: Metadata = createPageMetadata("case03", "zh");
 
 const SAMPLE_SLUG = "iot-system";
 

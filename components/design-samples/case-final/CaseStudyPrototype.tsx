@@ -8,15 +8,15 @@ import { MixedText } from "@/components/site/MixedText";
 import { ProjectVisual } from "@/components/site/ProjectVisual";
 import { V2Closing } from "@/components/home-v2/V2Closing";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { SkipLink } from "@/components/site/SkipLink";
 import { ChapterRegister, type Chapter } from "./ChapterRegister";
 import { useActiveChapter } from "./useActiveChapter";
 import { ReadingSection } from "./ReadingSection";
 import { EvidenceFigure } from "./EvidenceFigure";
-import { ShowcaseMedia } from "./ShowcaseMedia";
 import { SectionMarquee } from "./SectionMarquee";
 import { CaseTransitionLink } from "./CaseTransitionLink";
 import { CaseEvidenceViewerProvider } from "./CaseEvidenceViewer";
-import { getDecisionFigure, getOverviewFigure, getShowcaseFigure } from "./caseFinalMedia";
+import { getDecisionFigure, getOverviewFigure } from "./caseFinalMedia";
 import { CaseOneDemoLinks, CaseOneFinalContent } from "./CaseOneFinalContent";
 import { CaseOneProductPreview } from "./CaseOnePresentation";
 import { CaseTwoFinalContent, CaseTwoHeroEvidence } from "./CaseTwoFinalContent";
@@ -175,10 +175,12 @@ export function CaseStudyPrototype({
         const stats = opening.querySelector<HTMLElement>("[data-open-stats]");
         const targets = [eyebrow, title, summary, stats].filter((el): el is HTMLElement => Boolean(el));
         if (!targets.length) return;
-        gsap.set(targets, { autoAlpha: 0, y: 18 });
+        // Keep opening content visible and available to assistive technology
+        // while preserving the small positional reveal.
+        gsap.set(targets, { y: 18 });
         const timeline = gsap.timeline({ defaults: { ease: "power2.out" } });
         targets.forEach((el, i) => {
-          timeline.to(el, { autoAlpha: 1, y: 0, duration: 0.5 }, i === 0 ? 0 : "-=0.28");
+          timeline.to(el, { y: 0, duration: 0.5 }, i === 0 ? 0 : "-=0.28");
         });
         return () => {
           timeline.kill();
@@ -310,10 +312,11 @@ export function CaseStudyPrototype({
 
   return (
     <div className="min-h-screen">
+      <SkipLink locale={locale} />
       <SiteHeader locale={locale} page="case" variant={theme} />
 
       <CaseEvidenceViewerProvider locale={locale}>
-      <main className="case-final" data-theme={theme} data-content-version={contentVersion}>
+      <main id="main-content" tabIndex={-1} className="case-final" data-theme={theme} data-content-version={contentVersion}>
         {/* Case Opening — Round 7 rebuild. Angela's "header needs more
             context" feedback was about THIS region, not SiteHeader (see
             Round 4-6, reverted). Editorial two-column composition: left
@@ -669,13 +672,9 @@ export function CaseStudyPrototype({
                   paragraphs={paragraphsOf(caseStudy.finalUI.body)}
                   points={caseStudy.finalUI.points}
                   media={
-                    hasCaseOneEvidence ? (
-                      <ShowcaseMedia figure={getShowcaseFigure(locale)} />
-                    ) : (
-                      <div className="cf-figure-frame relative aspect-[16/9] w-full">
-                        <ProjectVisual project={project} showTempTag className="absolute inset-0" />
-                      </div>
-                    )
+                    <div className="cf-figure-frame relative aspect-[16/9] w-full">
+                      <ProjectVisual project={project} showTempTag className="absolute inset-0" />
+                    </div>
                   }
                   mediaFullBleed
                 />

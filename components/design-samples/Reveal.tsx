@@ -11,7 +11,9 @@ const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
  * samples — a once-only label -> body resolve, the same choreography
  * already established on Case Study section entrances and Home's
  * Closing scene, factored out so all four samples share one motion
- * mechanism instead of four bespoke ones.
+ * mechanism instead of four bespoke ones. The text remains visible while
+ * waiting for its scroll trigger; only its small positional offset resolves
+ * on entry, so off-screen headings remain in the accessibility tree.
  */
 export function Reveal({
   children,
@@ -36,12 +38,12 @@ export function Reveal({
     const media = gsap.matchMedia();
     const context = gsap.context(() => {
       media.add(MOTION_QUERY, () => {
-        gsap.set(el, { autoAlpha: 0, y });
+        gsap.set(el, { y });
         const trigger = ScrollTrigger.create({
           trigger: el,
           start: "top 85%",
           once: true,
-          onEnter: () => gsap.to(el, { autoAlpha: 1, y: 0, duration: 0.7, delay, ease: "power2.out" }),
+          onEnter: () => gsap.to(el, { y: 0, duration: 0.7, delay, ease: "power2.out" }),
         });
         return () => {
           trigger.kill();

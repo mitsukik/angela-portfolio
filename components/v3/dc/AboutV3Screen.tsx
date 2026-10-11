@@ -44,7 +44,7 @@ class Logic extends DCLogic {
   email = 'angelayyu.cu@gmail.com';
   secIds = ['intro', 'bg', 'exp', 'work', 'tools', 'beyond', 'contact'];
   T = {
-    zh: { navHome: '首頁', navWork: '作品', navAbout: '關於', navResume: '履歷', eyebrow: 'ABOUT — SENIOR UI/UX DESIGNER',
+    zh: { navHome: '首頁', navWork: '作品', navAbout: '關於', navResume: '履歷', eyebrow: 'ABOUT — UI/UX DESIGNER',
       h1a: '我設計的不只是畫面，更在意', h1b: '產品如何運作', h1c: '。',
       heroP: '我是 Angela，一名目前居住於台中的 UI/UX Designer，具近 9 年 Web、UI/UX 與前端實作相關經驗。',
       f1: '經驗', f1pre: '近 ', f1suf: ' 年', f2: '據點', f2v: '台中，台灣', f3: '經歷領域', f3v: 'B2B 後台 · IoT 系統 · 教育平台',
@@ -72,7 +72,7 @@ class Logic extends DCLogic {
         { title: '讓產品邏輯變成可以使用的體驗。', desc: '透過 Wireframe、UI 與 Prototype，把整理後的產品邏輯轉化為具體的互動與介面。' },
         { title: '在回饋與限制中持續調整。', desc: '根據使用者回饋、Edge Cases 與開發限制持續調整，讓最終方案不只在設計上合理，也能實際落地。' } ],
       toolTitles: ['產品與體驗', '設計工具', '網頁與實作', 'Technical Workflow'] },
-    en: { navHome: 'Home', navWork: 'Work', navAbout: 'About', navResume: 'Résumé', eyebrow: 'ABOUT — SENIOR UI/UX DESIGNER',
+    en: { navHome: 'Home', navWork: 'Work', navAbout: 'About', navResume: 'Résumé', eyebrow: 'ABOUT — UI/UX DESIGNER',
       h1a: 'I design more than screens — I care about ', h1b: 'how products work', h1c: '.',
       heroP: "I'm Angela, a UI/UX Designer based in Taichung with nearly 9 years of experience across web, UI/UX, and frontend implementation.",
       f1: 'EXPERIENCE', f1pre: '~', f1suf: ' yrs', f2: 'BASED IN', f2v: 'Taichung, Taiwan', f3: 'DOMAINS', f3v: 'B2B · IoT · Education',

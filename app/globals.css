@@ -60,7 +60,7 @@
   /* "Noto Sans TC" fallback matches --portfolio-font-display's existing
      pattern above: IBM Plex Mono has no CJK (or full punctuation, e.g.
      em dash) coverage, so a handful of genuinely mixed-language labels
-     (e.g. the Home Hero eyebrow "資深產品設計師 — 複雜系統 / B2B...")
+     (e.g. the Home Hero eyebrow "產品設計師 — 複雜系統 / B2B...")
      rendered a missing-glyph box for "—" once the :lang(zh-Hant) rule
      below moved into @layer base and stopped blanket-overriding this
      role's font for its Chinese portion. Latin glyphs IBM Plex Mono does

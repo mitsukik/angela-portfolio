@@ -25,14 +25,14 @@ const PUBLIC_PAGES = {
   home: {
     zh: {
       path: "/",
-      title: "Angela Yu｜資深產品設計師／UI/UX 設計師",
+      title: "Angela Yu｜產品設計師／UI/UX 設計師",
       description: "Angela Yu 的產品設計作品集，聚焦 B2B、企業產品與複雜系統，將繁複流程轉化為清晰、可實作的使用體驗。",
       imageAlt: "Angela Yu 作品集精選案例：跨境電商平台介面",
     },
     en: {
       path: "/en",
-      title: "Angela Yu | Senior Product Designer & UI/UX Designer",
-      description: "Portfolio of Angela Yu, a senior product designer focused on B2B, enterprise products, and complex systems that turn intricate workflows into clear experiences.",
+      title: "Angela Yu | Product Designer & UI/UX Designer",
+      description: "Portfolio of Angela Yu, a product designer focused on B2B, enterprise products, and complex systems that turn intricate workflows into clear experiences.",
       imageAlt: "Selected portfolio case study: a cross-border commerce platform interface",
     },
     image: DEFAULT_OG_IMAGE,
@@ -41,13 +41,13 @@ const PUBLIC_PAGES = {
   about: {
     zh: {
       path: "/about",
-      title: "關於 Angela Yu｜資深產品設計師",
+      title: "關於 Angela Yu｜產品設計師",
       description: "認識產品設計師 Angela Yu，以及她在複雜系統、B2B 與企業產品中的設計經驗與工作方式。",
       imageAlt: "Angela Yu 作品集精選案例：跨境電商平台介面",
     },
     en: {
       path: "/en/about",
-      title: "About Angela Yu | Senior Product Designer",
+      title: "About Angela Yu | Product Designer",
       description: "About product designer Angela Yu, her experience with complex systems, B2B and enterprise products, and how she works with teams.",
       imageAlt: "Selected portfolio case study: a cross-border commerce platform interface",
     },

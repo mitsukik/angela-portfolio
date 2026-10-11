@@ -99,11 +99,11 @@ const notoSansTC = Noto_Sans_TC({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_ORIGIN),
-  title: "Angela Yu | Senior UI/UX Designer",
-  description: "Portfolio of Angela Yu, a senior product designer focused on B2B, enterprise products, and complex systems.",
+  title: "Angela Yu | UI/UX Designer",
+  description: "Portfolio of Angela Yu, a product designer focused on B2B, enterprise products, and complex systems.",
   openGraph: {
     type: "website",
-    title: "Angela Yu | Senior Product Designer & UI/UX Designer",
+    title: "Angela Yu | Product Designer & UI/UX Designer",
     description: "Portfolio of Angela Yu, focused on B2B, enterprise products, and complex systems.",
     url: "/",
     siteName: "Angela Yu",
@@ -112,7 +112,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Angela Yu | Senior Product Designer & UI/UX Designer",
+    title: "Angela Yu | Product Designer & UI/UX Designer",
     description: "Portfolio of Angela Yu, focused on B2B, enterprise products, and complex systems.",
     images: ["/images/home/case01-home-visual.webp"],
   },

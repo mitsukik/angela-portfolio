@@ -12,6 +12,8 @@ Design references. Every source patch below is deliberate and listed:
   * language        → INDEX had no EN: every ZH string is routed through the
                       `L` prop (data/v3/indexStrings.ts). ABOUT keeps its own
                       zh/en tables; its localStorage toggle becomes a route switch.
+  * positioning     → no "Senior" self-title: the INDEX/ABOUT eyebrows read
+                      `UI/UX DESIGNER` (Angela, 2026-10-11; see drop_senior).
 
 Run:  python3 -I tools/dc2react/build_v3.py <reference-dir>
 """
@@ -392,6 +394,23 @@ def patch_about(src):
     return tpl + logic
 
 
+# Angela (2026-10-11): no Senior self-positioning anywhere on the site.
+# Applied to every reference before the other patches; fails loudly if the
+# references change so the wording can't silently come back.
+SENIOR_FIXES = (
+    ("ABOUT — SENIOR UI/UX DESIGNER", "ABOUT — UI/UX DESIGNER"),
+    ("SENIOR UI/UX DESIGNER", "UI/UX DESIGNER"),
+)
+
+
+def drop_senior(src, name):
+    for old, new in SENIOR_FIXES:
+        src = src.replace(old, new)
+    if re.search(r"senior|資深", src, re.I):
+        raise SystemExit(f"{name}: unmapped Senior / 資深 wording left in the reference")
+    return src
+
+
 def compile_one(name, src, root_id=None, imports=None):
     path = WORK / f"{name}.dc.html"
     path.write_text(src)
@@ -411,14 +430,14 @@ def compile_one(name, src, root_id=None, imports=None):
 
 
 def main():
-    idx = (REF / "Index V3.dc.html").read_text()
-    mob = (REF / "IndexV3MobileScreen.dc.html").read_text()
+    idx = drop_senior((REF / "Index V3.dc.html").read_text(), "Index V3")
+    mob = drop_senior((REF / "IndexV3MobileScreen.dc.html").read_text(), "IndexV3MobileScreen")
     for name, src, rid in (("IndexV3Desktop", patch_index(idx, False), "2a"), ("IndexV3Mobile", patch_index(mob, True), None)):
         left = compile_one(name, src, rid)
         print(f"  {name}: ZH literals left (must be language-neutral or unreachable): {left}")
-    about_desk = (REF / "About V3 Desktop TV.dc.html").read_text()
-    about_scr = (REF / "AboutV3Screen.dc.html").read_text()
-    about_tab = (REF / "AboutV3TabletMotion.dc.html").read_text()
+    about_desk = drop_senior((REF / "About V3 Desktop TV.dc.html").read_text(), "About V3 Desktop TV")
+    about_scr = drop_senior((REF / "AboutV3Screen.dc.html").read_text(), "AboutV3Screen")
+    about_tab = drop_senior((REF / "AboutV3TabletMotion.dc.html").read_text(), "AboutV3TabletMotion")
     for name, src, rid, imp in (
         ("AboutV3Desktop", patch_about(about_desk), "3a", None),
         ("AboutV3TabletMotion", patch_about(about_tab), None, None),

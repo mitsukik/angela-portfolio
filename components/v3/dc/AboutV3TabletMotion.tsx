@@ -33,7 +33,7 @@ class Logic extends DCLogic {
   S = 520; email = 'angelayyu.cu@gmail.com';
   T = {
     zh: { navHome: '首頁', navWork: '作品', navAbout: '關於', navResume: '履歷', aboutLbl: '關於 · ABOUT', regionAria: '關於 Angela', guideAria: '章節節目表', nemuAria: '導覽小幫手 Nemu',
-      eyebrow: 'SENIOR UI/UX DESIGNER', h1a: '我設計的不只是畫面，更在意', h1b: '產品如何運作', h1c: '。',
+      eyebrow: 'UI/UX DESIGNER', h1a: '我設計的不只是畫面，更在意', h1b: '產品如何運作', h1c: '。',
       heroP: '我是 Angela，一名目前居住於台中的 UI/UX Designer，具近 9 年 Web、UI/UX 與前端實作相關經驗。',
       f1: '經驗', f1pre: '近 ', f1suf: ' 年', f2: '據點', f2v: '台中，台灣', f3: '經歷領域', f3v: 'B2B 後台 · IoT 系統 · 教育平台',
       bgLabel: '背景 · BACKGROUND',
@@ -66,7 +66,7 @@ class Logic extends DCLogic {
         { title: '在回饋與限制中持續調整。', desc: '根據使用者回饋、Edge Cases 與開發限制持續調整，讓最終方案不只在設計上合理，也能實際落地。' } ],
       toolTitles: ['產品與體驗', '設計工具', '網頁與實作', 'Technical Workflow'] },
     en: { navHome: 'Home', navWork: 'Work', navAbout: 'About', navResume: 'Résumé', aboutLbl: 'ABOUT', regionAria: 'About Angela', guideAria: 'Chapter guide', nemuAria: 'Nemu companion',
-      eyebrow: 'SENIOR UI/UX DESIGNER', h1a: 'I design more than screens — I care about ', h1b: 'how products work', h1c: '.',
+      eyebrow: 'UI/UX DESIGNER', h1a: 'I design more than screens — I care about ', h1b: 'how products work', h1c: '.',
       heroP: "I'm Angela, a UI/UX Designer based in Taichung with nearly 9 years of experience across web, UI/UX, and frontend implementation.",
       f1: 'EXPERIENCE', f1pre: '~', f1suf: ' yrs', f2: 'BASED IN', f2v: 'Taichung, Taiwan', f3: 'DOMAINS', f3v: 'B2B · IoT · Education',
       bgLabel: 'BACKGROUND',

@@ -10,8 +10,8 @@ export const resumeUrl = (locale: Locale) => (locale === "zh" ? RESUME_URL_ZH : 
  * section, so the two can never drift apart. The address itself stays in the
  * mailto destination only — it is never printed. */
 export const closingBody: Record<Locale, string> = {
-  zh: "開放 Senior Product Designer／Senior UI/UX Designer 機會，聚焦 B2B、企業產品與複雜系統。現居台中，也開放遠端工作。",
-  en: "Open to Senior Product Designer and Senior UI/UX Designer opportunities in B2B, enterprise, and complex systems. Based in Taichung and open to remote work.",
+  zh: "開放 Product Designer／UI/UX Designer 機會，聚焦 B2B、企業產品與複雜系統。現居台中，也開放遠端工作。",
+  en: "Open to Product Designer and UI/UX Designer opportunities in B2B, enterprise, and complex systems. Based in Taichung and open to remote work.",
 };
 
 export const contactLabels: Record<Locale, { contact: string; resume: string }> = {

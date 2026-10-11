@@ -106,8 +106,8 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
         />
         <CaseContentGrid variant="cards-3" as="ol">
           {(zh
-            ? [["PM", "需求、範疇與專案協調"], ["Full-stack Engineer", "早期功能流程、既有技術基礎與產品實作"], ["UI/UX 設計師／我", "檢視既有體驗、重整流程、互動與狀態設計、建立可重用的介面系統與原型，與工程確認可行性，並協助另一位 UI Designer 對齊產品設計方向"]]
-            : [["PM", "Requirements, scope, and coordination"], ["Full-stack Engineer", "Early functional flow, existing technical foundation, and implementation"], ["UI/UX Designer / Me", "Reviewed existing experience, restructured flows, interaction and state design, built a reusable UI system and prototype, confirmed feasibility with engineering, and guided another UI Designer in aligning their work with the product’s design direction"]]
+            ? [["PM", "需求、範疇與專案協調"], ["Full-stack Engineer", "早期功能流程、既有技術基礎與產品實作"], ["UI/UX 設計師／我", "檢視既有體驗、重整流程、互動與狀態設計、建立可重用的介面系統與原型，與工程確認可行性"]]
+            : [["PM", "Requirements, scope, and coordination"], ["Full-stack Engineer", "Early functional flow, existing technical foundation, and implementation"], ["UI/UX Designer / Me", "Reviewed the existing experience, restructured flows, designed interactions and states, built a reusable UI system and prototype, and confirmed feasibility with engineering"]]
           ).map(([role, desc], i) => (
             <CaseCard key={role} as="li" tone={i === 2 ? "accent" : i === 0 ? "muted" : undefined} kicker={`0${i + 1}`} title={role}>
               <p className="cv3-p">{desc}</p>

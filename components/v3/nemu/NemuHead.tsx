@@ -6,7 +6,9 @@
  * that structure.
  */
 
-export const NEMU_HEAD_SRC = "/v3/nemu-master-head-v4.png";
+// 512px WebP of the 1024px master PNG (kept in /public/v3 for rollback);
+// the "nemu-master-head-v4" stem is what nemuMotion.ts selects on.
+export const NEMU_HEAD_SRC = "/v3/nemu-master-head-v4.webp";
 
 export type NemuExpression = "idle" | "blink" | "happy" | "looking" | "sleep" | "switching";
 

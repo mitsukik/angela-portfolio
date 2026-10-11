@@ -32,7 +32,9 @@ OUT.mkdir(exist_ok=True)
 
 URL_MAP = {
     "https://angela-portfolio-phi.vercel.app/images/": "/images/",
-    "assets/nemu-master-head-v4.png": "/v3/nemu-master-head-v4.png",
+    # 512px WebP (30 KB) of the 1024px master PNG (502 KB), kept as rollback;
+    # same "nemu-master-head-v4" stem, which nemuMotion.ts selects on.
+    "assets/nemu-master-head-v4.png": "/v3/nemu-master-head-v4.webp",
 }
 
 # id → zh source string (EN lives in data/v3/indexStrings.ts)

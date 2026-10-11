@@ -45,17 +45,19 @@ class Logic extends DCLogic {
   wake = () => { if (this.state.sleep) this.setState({ sleep: false }); clearTimeout(this.sleepT); this.sleepT = setTimeout(() => this.setState({ sleep: true }), 30000); };
   press = () => { this.wake(); this.setState({ led: true }); setTimeout(() => this.setState({ led: false }), 160); };
   zap = (no, force) => {
+    if (!force && this.busy && no !== this.state.no) { this.queued = no; return; }
     if (!force && (no === this.state.no || this.busy)) return;
+    this.queued = null;
     this.clear(); this.busy = true;
     try { const tc = this.cases.find(x => x.no === no); window.dispatchEvent(new CustomEvent('v3:track', { detail: { name: 'select_channel', params: { channel_id: 'CH' + (tc ? tc.ch : no), case_id: 'CASE' + no } } })); } catch (e) {}
     if (this.reduce || !(this.props.crtEffect ?? true)) {
-      this.setState({ no, phase: 'pre' }); this.later(60, () => { this.setState({ phase: 'on', happy: true }); this.busy = false; }); this.later(1200, () => this.setState({ happy: false }));
+      this.setState({ no, phase: 'pre' }); this.later(60, () => { this.setState({ phase: 'on', happy: true }); this.busy = false; this.flushQueued(); }); this.later(1200, () => this.setState({ happy: false }));
       return;
     }
     this.setState({ phase: 'off', osd: true, happy: false });
     this.later(150, () => this.setState({ phase: 'static', no }));
     this.later(400, () => this.setState({ phase: 'on' }));
-    this.later(700, () => { this.setState({ osd: false, happy: true }); this.busy = false; });
+    this.later(700, () => { this.setState({ osd: false, happy: true }); this.busy = false; this.flushQueued(); });
     this.later(1600, () => this.setState({ happy: false }));
   };
   boot = () => {
@@ -64,7 +66,7 @@ class Logic extends DCLogic {
     this.later(80, () => this.setState({ phase: 'off' }));
     this.later(380, () => this.setState({ phase: 'static' }));
     this.later(700, () => this.setState({ phase: 'on', osd: true }));
-    this.later(1000, () => { this.setState({ osd: false }); this.busy = false; });
+    this.later(1000, () => { this.setState({ osd: false }); this.busy = false; this.flushQueued(); });
   };
   step = d => { if (this.state.mode !== 'ch') return; const l = this.list(), i = l.findIndex(c => c.no === this.state.no); const n = l[((i < 0 ? 0 : i + d) + l.length) % l.length]; this.press(); this.zap(n.no); };
   closeCard = () => {
@@ -94,11 +96,8 @@ class Logic extends DCLogic {
     const st = this.strip.current; if (!st) return;
     const b = st.querySelector(`[data-no="${this.state.no}"]`); if (!b) return;
     const max = st.scrollWidth - st.clientWidth, to = Math.max(0, Math.min(max, b.offsetLeft - (st.clientWidth - b.offsetWidth) / 2)), from = st.scrollLeft;
-    cancelAnimationFrame(this.scrRaf);
-    if (this.reduce || Math.abs(to - from) < 2) { st.scrollLeft = to; return; }
-    const t0 = performance.now(), D = 320;
-    const tick = now => { const p = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - p, 3); st.scrollLeft = from + (to - from) * e; if (p < 1) this.scrRaf = requestAnimationFrame(tick); };
-    this.scrRaf = requestAnimationFrame(tick);
+    if (Math.abs(to - from) < 2) return;
+    st.scrollTo({ left: to, behavior: this.reduce ? 'auto' : 'smooth' });
   };
   handoff = mode => {
     const a = document.activeElement;
@@ -112,6 +111,7 @@ class Logic extends DCLogic {
       if (el) el.focus({ preventScroll: true });
     }, 60);
   };
+  flushQueued = () => { const q = this.queued; this.queued = null; if (q && q !== this.state.no) this.zap(q); };
   componentDidMount() {
     this.reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if ((this.props.startIn ?? 'home') === 'channels') this.setState({ mode: 'ch' });
@@ -215,6 +215,7 @@ class Logic extends DCLogic {
         if (Math.abs(dx) > 44 && Math.abs(dx) > Math.abs(dy) * 1.3) { g.done = true; this.swiped = true; clearTimeout(this.swT); this.swT = setTimeout(() => { this.swiped = false; }, 450); this.step(dx < 0 ? 1 : -1); }
       },
       swUp: () => { this.sw = null; }, swCancel: () => { this.sw = null; },
+      stripTouch: () => { clearTimeout(this.ctrT); },
       stripScroll: () => { if (this.state.open) close(); },
       goChannels: () => this.enterCh(), goHome: () => this.enterHome(), brandHome: e => { if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); this.enterHome(); },
       openTabs: () => { this.press(); this.openCard('tabs'); },
@@ -369,7 +370,7 @@ const render = (v) => h("div", { "ref": r(v, "root"), "onPointerDownCapture": r(
               h("span", { style: css("min-width:62px;text-align:center;font:500 11px var(--v3-mono);letter-spacing:.12em;color:#d4f04a;background:#0a0b0d;padding:3px 8px;border-radius:5px;box-shadow:inset 0 1px 3px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.05)") },
                 h(F, null, t(r(v, "readout"))))))),
         h("div", { style: css(("height:" + s(r(v, "stripH")) + ";flex:none;display:grid;grid-template-columns:minmax(0,1fr);min-width:0")) },
-          h("div", { "ref": r(v, "strip"), "onScroll": r(v, "stripScroll"), "aria-label": r(v, "L.programGuide"), style: css(("grid-area:1/1;min-width:0;position:relative;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:6px 2px 0;opacity:" + s(r(v, "chOp")) + ";visibility:" + s(r(v, "chVis")) + ";transition:opacity .28s")) },
+          h("div", { "ref": r(v, "strip"), "onScroll": r(v, "stripScroll"), "onPointerDown": r(v, "stripTouch"), "onTouchStart": r(v, "stripTouch"), "onWheel": r(v, "stripTouch"), "aria-label": r(v, "L.programGuide"), style: css(("grid-area:1/1;min-width:0;position:relative;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:6px 2px 0;opacity:" + s(r(v, "chOp")) + ";visibility:" + s(r(v, "chVis")) + ";transition:opacity .28s")) },
             h(F, null, (Array.isArray(r(v, "guide")) ? r(v, "guide") : []).map((it, i) => { const v0 = v; { const v = { ...v0, "g": it, $index: i };
               return h(F, { key: i },
               h("button", { "data-no": r(v, "g.no"), "onClick": r(v, "g.on"), "aria-label": r(v, "g.aria"), "aria-current": r(v, "g.curAttr"), style: css("flex:none;width:100px;border:0;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;gap:6px;text-align:left;color:inherit") },

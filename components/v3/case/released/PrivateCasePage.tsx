@@ -11,6 +11,7 @@ import { CASE07_CHAPTERS } from "./case07/chapters";
 import { Case05Article } from "./case05/Case05Article";
 import { Case06Article } from "./case06/Case06Article";
 import { Case07Article } from "./case07/Case07Article";
+import { CASE06_SOURCE } from "./case06/data";
 import { CASE07_SOURCE } from "./case07/data";
 
 /*
@@ -29,6 +30,12 @@ const ARTICLES: Record<PrivateNo, (locale: Locale) => ReactNode> = {
   "05": (locale) => <Case05Article locale={locale} />,
   "06": (locale) => <Case06Article locale={locale} />,
   "07": (locale) => <Case07Article locale={locale} />,
+};
+
+/** Cases with a hosted interactive prototype (hero CTA + Remote link). */
+const PROTOTYPES: Partial<Record<PrivateNo, { href: string; label: Record<Locale, string> }>> = {
+  "06": CASE06_SOURCE.prototype,
+  "07": CASE07_SOURCE.prototype,
 };
 
 /** Chapter label without its own "NN — " prefix (the Remote adds the number). */
@@ -58,8 +65,8 @@ export function PrivateCasePage({ caseNo, locale }: { caseNo: PrivateNo; locale:
         chapters={chapters}
         moreLine={CASE_SYSTEM_NEMU[locale].more}
         askLine={CASE_SYSTEM_NEMU[locale].toc}
-        prototypeHref={caseNo === "07" ? CASE07_SOURCE.prototype.href : undefined}
-        prototypeLabel={caseNo === "07" ? CASE07_SOURCE.prototype.label[locale] : undefined}
+        prototypeHref={PROTOTYPES[caseNo]?.href}
+        prototypeLabel={PROTOTYPES[caseNo]?.label[locale]}
         project={project}
         previousProject={previous}
         nextProject={next}

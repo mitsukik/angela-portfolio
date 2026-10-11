@@ -8,6 +8,9 @@ const PUBLIC_ROUTE_PAIRS = [
   { zh: "/design-samples/case-final-02", en: "/en/design-samples/case-final-02" },
   { zh: "/design-samples/case-final-03", en: "/en/design-samples/case-final-03" },
   { zh: "/design-samples/case-final-04", en: "/en/design-samples/case-final-04" },
+  { zh: "/design-samples/case-final-05", en: "/en/design-samples/case-final-05" },
+  { zh: "/design-samples/case-final-06", en: "/en/design-samples/case-final-06" },
+  { zh: "/design-samples/case-final-07", en: "/en/design-samples/case-final-07" },
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {

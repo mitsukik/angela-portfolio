@@ -1,0 +1,3380 @@
+/*
+ * Portfolio V3 — minimal shared foundation + CASE page frame.
+ *
+ * Source of truth: the approved Portfolio V3 design handoff — tokens §3,
+ * v3-interaction.css, CaseV3Screen.dc.html. Values are copied from those
+ * files; the prototype runtime is not.
+ *
+ * SCOPE: everything here is gated behind `.v3` (the V3 page root), so the
+ * existing V2 pages (Home, About, CASE01/02/04) are unaffected while they
+ * still run the V2 system. When V2 is retired these tokens move to :root
+ * (GLOBAL FIRST) — until then `.v3` is the one V3 source; no page-specific
+ * re-declaration of these roles is allowed.
+ */
+
+/* ---------------------------------------------------------------------
+ * Tokens (handoff §3)
+ * ------------------------------------------------------------------- */
+.v3 {
+  --v3-bg: #0b0c0e;
+  --v3-surface: #131418;
+  --v3-surface-2: #18191d;
+  --v3-media-bg: #15161b;
+  --v3-ink: #f4f1ea;
+  --v3-on-lime: #0d0e11;
+  --v3-lime: #d4f04a;
+  --v3-violet: #a98bf0;
+  --v3-violet-soft: #c9b6ff;
+  --v3-led: #afcbff;
+  --v3-face: #f8f8fb;
+
+  --v3-ink-82: rgba(244, 241, 234, 0.82);
+  --v3-ink-78: rgba(244, 241, 234, 0.78);
+  --v3-ink-74: rgba(244, 241, 234, 0.74);
+  --v3-ink-70: rgba(244, 241, 234, 0.7);
+  --v3-ink-60: rgba(244, 241, 234, 0.6);
+  --v3-ink-55: rgba(244, 241, 234, 0.55);
+  --v3-ink-50: rgba(244, 241, 234, 0.5);
+  --v3-ink-45: rgba(244, 241, 234, 0.45);
+  --v3-ink-38: rgba(244, 241, 234, 0.38);
+  --v3-line: rgba(244, 241, 234, 0.08);
+  --v3-line-2: rgba(244, 241, 234, 0.12);
+  --v3-line-3: rgba(244, 241, 234, 0.14);
+  --v3-line-4: rgba(244, 241, 234, 0.16);
+
+  --v3-display: var(--font-archivo), "Archivo", sans-serif;
+  --v3-mono: var(--font-v3-mono), "JetBrains Mono", ui-monospace, monospace;
+  --v3-sans: var(--font-v3-sans), "Noto Sans TC", sans-serif;
+
+  --ix-accent: var(--v3-lime);
+  --ix-ink: var(--v3-ink);
+  --ix-dur: 0.18s;
+  --ix-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ix-ring: 2px solid var(--v3-lime);
+  --ix-ring-off: 2px;
+
+  position: relative;
+  min-height: 100vh;
+  background: var(--v3-bg);
+  color: var(--v3-ink);
+  font-family: var(--v3-sans);
+  /* Prototype base (no Tailwind preflight): line-height normal. */
+  line-height: normal;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The root layout's :lang(zh-Hant) font rule (globals.css, @layer base)
+   targets every element; V3 owns its own stack, so its subtree inherits. */
+/* Resets are zero-specificity (:where) so every V3 role class wins on
+   source order — a reset must never override a component's own type. */
+:where(.v3) *,
+:where(.v3) *::before,
+:where(.v3) *::after {
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+:where(.v3) a {
+  color: inherit;
+  text-decoration: none;
+}
+
+:where(.v3) button {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------------------------------------------------------------------
+ * Global interactive states (v3-interaction.css, scoped)
+ * ------------------------------------------------------------------- */
+.v3 * {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.v3 :focus {
+  outline: none;
+}
+
+.v3 :focus-visible {
+  outline: var(--ix-ring);
+  outline-offset: var(--ix-ring-off);
+}
+
+.v3 :is(nav, header, section, main, [role="region"], [role="dialog"]):focus-visible {
+  outline: none;
+}
+
+.v3 button[aria-label*="Nemu"]:focus-visible {
+  outline-offset: -6px;
+  border-radius: 50%;
+}
+
+.v3 :is(a, button):active {
+  translate: 0 1px;
+}
+
+@media (hover: none) {
+  .v3 :is(a, button):active {
+    opacity: 0.82;
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * Keyframes (CaseV3Screen.dc.html)
+ * ------------------------------------------------------------------- */
+@keyframes v3Float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes v3Shade { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(0.84); opacity: 0.55; } }
+@keyframes v3Z { 0% { opacity: 0; transform: translate(0, 0) scale(0.8); } 30% { opacity: 1; } 100% { opacity: 0; transform: translate(10px, -18px) scale(1.1); } }
+@keyframes v3Card { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes v3CardOut { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(18px) scale(0.96); } }
+@keyframes v3In { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: none; } }
+@keyframes v3RemOut { to { opacity: 0; transform: translate(40px, 300px) scale(0.32); } }
+@keyframes v3RemIn { from { opacity: 0; transform: translate(40px, 300px) scale(0.32); } to { opacity: 1; transform: none; } }
+@keyframes v3ClIn { from { opacity: 0; transform: translate(-20px, -320px) scale(1.7); } to { opacity: 1; transform: none; } }
+@keyframes v3ClOut { to { opacity: 0; transform: translate(-20px, -320px) scale(1.7); } }
+@keyframes v3BubIn { from { opacity: 0; transform: translate(16px, 8px) scale(0.9); } to { opacity: 1; transform: none; } }
+@keyframes v3ReA { from { opacity: 0.35; transform: translateX(12px); } to { opacity: 1; transform: none; } }
+@keyframes v3ReB { from { opacity: 0.35; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+@keyframes v3Breath { 0%, 100% { box-shadow: 0 0 0 0 rgba(212, 240, 74, 0.65); opacity: 1; } 50% { box-shadow: 0 0 0 5px rgba(212, 240, 74, 0); opacity: 0.5; } }
+@keyframes v3Air { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* ---------------------------------------------------------------------
+ * Site header (V3 shell)
+ * ------------------------------------------------------------------- */
+.v3-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: var(--v3-hdr, 72px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--v3-pad, 48px);
+  background: rgba(11, 12, 14, 0.86);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(244, 241, 234, 0.07);
+}
+
+.v3-brand {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  height: 44px;
+  color: var(--v3-ink);
+}
+
+.v3-brand-led {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--v3-lime);
+  animation: v3Breath 1.8s ease-in-out infinite;
+}
+
+.v3-brand-name {
+  font: 700 14px var(--v3-mono);
+  letter-spacing: 0.22em;
+}
+
+.v3-brand-rule {
+  width: 1px;
+  height: 14px;
+  background: rgba(244, 241, 234, 0.2);
+}
+
+.v3-brand-sub {
+  font: 500 12px var(--v3-mono);
+  letter-spacing: 0.18em;
+  color: var(--v3-ink-50);
+}
+
+.v3-nav {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  font: 500 15px var(--v3-sans);
+}
+
+.v3-nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 var(--v3-nav-pad, 14px);
+  color: var(--v3-ink);
+  transition: color var(--ix-dur) var(--ix-ease), background-size var(--ix-dur) var(--ix-ease), translate var(--ix-dur) var(--ix-ease);
+}
+
+.v3-nav-link[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: var(--v3-nav-pad, 14px);
+  right: var(--v3-nav-pad, 14px);
+  bottom: 6px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--v3-lime);
+}
+
+.v3-lang {
+  display: flex;
+  gap: 2px;
+  min-height: 34px;
+  align-items: center;
+  padding: 3px;
+  margin-left: 6px;
+  border: 1px solid rgba(244, 241, 234, 0.2);
+  border-radius: 999px;
+  font: 500 11px var(--v3-mono);
+  transition: border-color var(--ix-dur) var(--ix-ease), translate var(--ix-dur) var(--ix-ease);
+}
+
+/* 44px touch target around the 34px pill without changing its look. */
+.v3-lang {
+  position: relative;
+}
+.v3-lang::before {
+  content: "";
+  position: absolute;
+  inset: -5px -2px;
+}
+
+.v3-lang-seg {
+  border-radius: 999px;
+  padding: 4px 9px;
+  color: var(--v3-ink-60);
+}
+
+.v3-lang-seg[data-active="true"] {
+  background: var(--v3-lime);
+  color: var(--v3-on-lime);
+}
+
+.v3-progress {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 2px;
+  width: 0;
+  background: var(--v3-lime);
+  box-shadow: 0 0 8px rgba(212, 240, 74, 0.5);
+}
+
+/* Top navigation interactions (Angela 2026-10-11) — ONE shared role for the
+   CASE header (V3Header.tsx) and the generated INDEX / ABOUT headers (tagged
+   by tools/dc2react/build_v3.py). Link: text → lime + 1px underline drawn
+   left→right; the active underline (::after / inline indicator) is untouched.
+   Brand: name → lime, LED glows. Language: the selected segment keeps its lime
+   pill; only the other segment brightens. Fine pointers only (no sticky touch
+   hover); focus-visible keeps the global lime outline; reduced motion = no
+   transitions. !important only where generated inline styles set colour. */
+.v3 .v3-navfx {
+  position: relative;
+  transition: color var(--ix-dur) var(--ix-ease);
+}
+.v3 .v3-navfx::before {
+  content: "";
+  position: absolute;
+  left: var(--v3-nav-pad, 14px);
+  right: var(--v3-nav-pad, 14px);
+  bottom: var(--v3-navfx-bottom, 6px);
+  height: 1px;
+  background: var(--ix-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--ix-dur) var(--ix-ease);
+  pointer-events: none;
+}
+.v3 .v3-navfx--gen {
+  --v3-navfx-bottom: 2px;
+}
+.v3 .v3-navfx-name {
+  transition: color var(--ix-dur) var(--ix-ease);
+}
+.v3 .v3-navfx-led {
+  transition: box-shadow var(--ix-dur) var(--ix-ease);
+}
+.v3 .v3-navfx-lang,
+.v3 .v3-navfx-lang [data-active] {
+  transition: border-color var(--ix-dur) var(--ix-ease), color var(--ix-dur) var(--ix-ease), background-color var(--ix-dur) var(--ix-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .v3 .v3-navfx:hover {
+    color: var(--ix-accent) !important;
+  }
+  .v3 .v3-navfx:hover::before {
+    transform: scaleX(1);
+  }
+  .v3 .v3-navfx-brand:hover .v3-navfx-name {
+    color: var(--ix-accent) !important;
+  }
+  .v3 .v3-navfx-brand:hover .v3-navfx-led {
+    box-shadow: 0 0 10px rgba(212, 240, 74, 0.55);
+  }
+  .v3 .v3-navfx-lang:hover {
+    border-color: rgba(212, 240, 74, 0.55) !important;
+  }
+  .v3 .v3-navfx-lang:hover [data-active="false"] {
+    color: var(--v3-ink) !important;
+    background-color: rgba(244, 241, 234, 0.08) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v3 :is(.v3-navfx, .v3-navfx-name, .v3-navfx-led, .v3-navfx-lang, .v3-navfx-lang [data-active]),
+  .v3 .v3-navfx::before {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * CASE page frame — layout modes
+ *   desktop  ≥1200 × ≥700 : sticky Remote, optional Reading Mode
+ *   short    ≥1200 × <700 : collapsed head + Expand → height-fitted Remote
+ *   compact  1024–1199 (Tablet L) : full-width reading + Floating Head
+ *   mobile   <1024 (Tablet P 768, phones) : the prototype's tablet/mobile
+ *            layout — reading-first + Floating Head, no bottom dock
+ * The same media queries are mirrored in JS (useCaseLayout) for behavior.
+ * ------------------------------------------------------------------- */
+.cv3 {
+  --v3-hdr: 72px;
+  --v3-pad: 48px;
+  --v3-nav-pad: 14px;
+  --cv3-row-r: var(--v3-pad);
+  --cv3-col: 1440px;
+  --cv3-h1: 48px;
+  --cv3-lead: 22px;
+  --cv3-body: 17px;
+  --cv3-h2: 38px;
+  --cv3-h3: 26px;
+  --cv3-hero-pad: 64px 0 48px;
+  --cv3-foot-b: 140px;
+}
+
+@media (min-width: 1200px) and (min-height: 600px) {
+  .cv3 {
+    --v3-pad: clamp(32px, 8.4vw, 162px);
+    --cv3-col: 1240px;
+    --cv3-h1: 60px;
+    --cv3-foot-b: 36px;
+  }
+  /* Reading Mode: driven by <html data-case-reading>, set before first
+     paint by the root layout's inline guard and kept in sync by the frame. */
+  html[data-case-reading="1"] .cv3 {
+    --v3-pad: clamp(48px, 6vw, 160px);
+    --cv3-row-r: 296px;
+    --cv3-col: 1440px;
+    --cv3-foot-b: 40px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .cv3 {
+    --v3-hdr: 52px;
+    --v3-pad: 20px;
+    --v3-nav-pad: 10px;
+    --cv3-h1: 32px;
+    --cv3-lead: 18px;
+    --cv3-body: 16px;
+    --cv3-h2: 26px;
+    --cv3-h3: 20px;
+    --cv3-hero-pad: 28px 0 36px;
+    --cv3-foot-b: 120px;
+  }
+}
+
+.cv3-glow {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 900px;
+  pointer-events: none;
+  background: radial-gradient(900px 560px at 30% 0%, rgba(169, 139, 240, 0.06), transparent 70%);
+}
+
+.cv3-fade {
+  transition: opacity 0.18s ease;
+}
+
+html[data-v2-lang-fade="out"] .cv3-fade {
+  opacity: 0;
+}
+
+.cv3-row {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  gap: 56px;
+  padding: 0 var(--cv3-row-r) 0 var(--v3-pad);
+}
+
+.cv3-article {
+  flex: 1;
+  min-width: 0;
+  max-width: var(--cv3-col);
+  display: flex;
+  flex-direction: column;
+}
+
+.cv3-article[data-switch="reading"] {
+  animation: v3ReA 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.cv3-article[data-switch="remote"] {
+  animation: v3ReB 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Hidden-on-desktop helpers driven by the layout media queries. */
+.cv3-desk-only {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .cv3-tab-up {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 1023px) {
+  .cv3-tab-up {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * Hero
+ * ------------------------------------------------------------------- */
+.cv3-hero {
+  padding: var(--cv3-hero-pad);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 2vw, 30px);
+}
+
+.cv3-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  font: 500 12px var(--v3-mono);
+  letter-spacing: 0.16em;
+  color: var(--v3-ink-60);
+}
+
+.cv3-ch-chip {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--v3-on-lime);
+  background: var(--v3-lime);
+  padding: 5px 10px 5px 9px;
+  border-radius: 4px;
+}
+
+.cv3-ch-chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--v3-on-lime);
+  animation: v3Air 2.4s ease-in-out infinite;
+}
+
+.cv3-meta-dash {
+  width: 16px;
+  height: 1px;
+  background: rgba(244, 241, 234, 0.3);
+}
+
+.cv3-h1 {
+  margin: 0;
+  max-width: 980px;
+  font: 900 var(--cv3-h1) / 1.16 var(--v3-sans);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+/* Locked ZH semantic lines: each stays unbroken; the break between them is
+   the only wrap point when the title cannot fit on one line. */
+.cv3-h1-line {
+  display: inline-block;
+}
+
+.cv3-h1-keep {
+  display: inline-block;
+}
+
+.cv3-lead {
+  margin: 0;
+  max-width: 760px;
+  font: 700 var(--cv3-lead) / 1.6 var(--v3-sans);
+  color: var(--v3-ink);
+  text-wrap: pretty;
+}
+
+.cv3-summary {
+  margin: 0;
+  max-width: 760px;
+  font: 400 var(--cv3-body) / 1.85 var(--v3-sans);
+  color: var(--v3-ink-74);
+  text-wrap: pretty;
+}
+
+.cv3-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  margin: 0;
+  border-top: 1px solid var(--v3-line-3);
+}
+
+.cv3-info > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 20px 16px 0;
+  border-bottom: 1px solid var(--v3-line-3);
+}
+
+.cv3-info dt {
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.18em;
+  color: var(--v3-ink-50);
+}
+
+.cv3-info dd {
+  margin: 0;
+  font: 500 15px / 1.55 var(--v3-sans);
+  color: var(--v3-ink);
+}
+
+.cv3-info dd[data-accent="true"] {
+  color: var(--v3-lime);
+}
+
+.cv3-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 20px;
+  align-items: center;
+}
+
+.cv3-cta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  height: 54px;
+  padding: 0 10px 0 24px;
+  border-radius: 999px;
+  background: var(--v3-lime);
+  color: var(--v3-on-lime);
+  font: 700 15px var(--v3-sans);
+  transition: box-shadow 0.3s, transform 0.12s, translate var(--ix-dur) var(--ix-ease);
+}
+
+.v3 a.cv3-cta {
+  color: var(--v3-on-lime);
+}
+
+.cv3-cta-arrow {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--v3-on-lime);
+  color: var(--v3-lime);
+  display: grid;
+  place-items: center;
+  font: 500 15px var(--v3-display);
+}
+
+/* Secondary CTA (other original links next to a case's primary CTA). */
+.cv3-cta[data-variant="secondary"],
+.v3 a.cv3-cta[data-variant="secondary"] {
+  background: transparent;
+  color: var(--v3-ink);
+  box-shadow: inset 0 0 0 1px rgba(244, 241, 234, 0.32);
+}
+
+.cv3-cta[data-variant="secondary"] .cv3-cta-arrow {
+  background: rgba(244, 241, 234, 0.1);
+  color: var(--v3-ink);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cv3-cta[data-variant="secondary"]:hover {
+    box-shadow: inset 0 0 0 1px var(--v3-lime), 0 0 0 6px rgba(212, 240, 74, 0.1);
+  }
+}
+
+.cv3-cta-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  align-items: flex-start;
+}
+
+.cv3-cta-list > li {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cv3-cta-note {
+  max-width: 520px;
+  margin: 0;
+  font: 400 13px / 1.7 var(--v3-sans);
+  color: var(--v3-ink-55);
+  text-wrap: pretty;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cv3-cta:hover {
+    box-shadow: 0 0 0 6px rgba(212, 240, 74, 0.16);
+  }
+}
+
+.cv3-cta:active {
+  transform: scale(0.97);
+}
+
+/* ---------------------------------------------------------------------
+ * Figures — device frame (hero) and evidence frame (chapters)
+ * ------------------------------------------------------------------- */
+.cv3-figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cv3-figure-hero {
+  margin: 0 0 clamp(56px, 6vw, 112px);
+  gap: 14px;
+}
+
+.cv3-bezel {
+  padding: 10px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, #222329, #131418);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 0 1px #050506, 0 50px 100px -50px #000;
+}
+
+.cv3-bezel-screen {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--v3-media-bg);
+}
+
+.cv3-bezel-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(118deg, rgba(255, 255, 255, 0.05), transparent 34%);
+}
+
+.cv3-media {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--v3-media-bg);
+  box-shadow: 0 0 0 1px var(--v3-line), 0 40px 80px -40px #000;
+}
+
+/* VideoEvidence (shared V2 component, unchanged) draws its own hairline
+   frame from --cf-hairline; inside the V3 frame that hairline is the
+   frame's own edge. Its 32px play/pause control gets a 44px hit area. */
+.cv3-media {
+  --cf-hairline: transparent;
+}
+
+.cv3-media .cf-figure-frame {
+  border-color: transparent;
+}
+
+.cv3-media button[aria-label] {
+  overflow: visible;
+}
+
+.cv3-media button[aria-label]::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+}
+
+.cv3-ratio {
+  position: relative;
+  width: 100%;
+}
+
+.cv3-caption {
+  font: 400 13px / 1.7 var(--v3-sans);
+  color: var(--v3-ink-55);
+}
+
+/* ---------------------------------------------------------------------
+ * Chapters
+ * ------------------------------------------------------------------- */
+/* Shared CASE chapter roles as tokens (CASE03 is the reference). Every CASE
+   — V3-native articles and the original CASE01/02/04 components through
+   the `.case-final[data-theme="v3"]` mapping below — reads these, so one
+   change here updates all seven cases. */
+.cv3 {
+  --cv3-sec-pad: clamp(48px, 4.6vw, 96px);
+  --cv3-measure: 760px;
+}
+
+.cv3-sec {
+  padding: var(--cv3-sec-pad) 0;
+  border-top: 1px solid var(--v3-line);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.cv3-eyebrow {
+  margin: 0;
+  font: 500 12px var(--v3-mono);
+  letter-spacing: 0.18em;
+  color: var(--v3-lime);
+}
+
+.cv3-h2 {
+  margin: 0;
+  max-width: 900px;
+  font: 900 var(--cv3-h2) / 1.3 var(--v3-sans);
+  text-wrap: balance;
+}
+
+.cv3-h3 {
+  margin: 0;
+  font: 700 var(--cv3-h3) / 1.4 var(--v3-sans);
+  text-wrap: balance;
+}
+
+.cv3-p {
+  margin: 0;
+  max-width: var(--cv3-measure);
+  font: 400 var(--cv3-body) / 1.85 var(--v3-sans);
+  color: var(--v3-ink-78);
+  text-wrap: pretty;
+}
+
+.cv3-list-reset {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 01 — operating contexts */
+.cv3-contexts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 14px;
+  margin: 10px 0 0;
+}
+
+.cv3-context {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  border-radius: 16px;
+  background: var(--v3-surface);
+  border: 1px solid rgba(244, 241, 234, 0.1);
+  transition: border-color 0.25s;
+}
+
+.cv3-context dt {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cv3-context-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.18em;
+  color: var(--v3-ink-50);
+  text-transform: uppercase;
+}
+
+.cv3-context[data-tone="accent"] .cv3-context-label {
+  color: var(--v3-lime);
+}
+
+.cv3-context[data-tone="secondary"] .cv3-context-label {
+  color: var(--v3-violet);
+}
+
+.cv3-context-device {
+  text-transform: none;
+}
+
+.cv3-context-group {
+  font: 700 20px / 1.4 var(--v3-sans);
+  color: var(--v3-ink);
+}
+
+.cv3-context dd {
+  margin: 0;
+  font: 500 13px / 1.8 var(--v3-mono);
+  color: var(--v3-ink-70);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cv3-context[data-tone="accent"]:hover {
+    border-color: rgba(212, 240, 74, 0.5);
+  }
+  .cv3-context[data-tone="secondary"]:hover {
+    border-color: rgba(169, 139, 240, 0.6);
+  }
+}
+
+/* 02 — delivery flow grouped by owner */
+.cv3-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.cv3-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid var(--v3-line-3);
+}
+
+.cv3-group:first-child {
+  border-style: dashed;
+  border-color: rgba(244, 241, 234, 0.2);
+}
+
+.cv3-group[data-mine="true"] {
+  background: rgba(212, 240, 74, 0.06);
+  border: 1px solid rgba(212, 240, 74, 0.55);
+}
+
+.cv3-group-owner {
+  margin: 0;
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.16em;
+  color: var(--v3-ink-50);
+}
+
+.cv3-group[data-mine="true"] .cv3-group-owner {
+  color: var(--v3-lime);
+}
+
+.cv3-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.cv3-chips > li {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.cv3-arrow {
+  color: rgba(244, 241, 234, 0.4);
+}
+
+.cv3-chip {
+  font: 500 13px var(--v3-mono);
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(244, 241, 234, 0.22);
+  white-space: nowrap;
+}
+
+.cv3-group[data-mine="true"] .cv3-chip {
+  border-color: var(--v3-lime);
+  background: var(--v3-lime);
+  color: var(--v3-on-lime);
+}
+
+/* 03 — decisions */
+.cv3-decision {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.cv3-decision + .cv3-decision {
+  margin-top: 48px;
+}
+
+.cv3-decision-no {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 0;
+  font: 500 12px var(--v3-mono);
+  letter-spacing: 0.16em;
+  color: var(--v3-violet);
+}
+
+.cv3-decision-no::after {
+  content: "";
+  flex: 1;
+  max-width: 120px;
+  height: 1px;
+  background: rgba(169, 139, 240, 0.4);
+}
+
+.cv3-pattern {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.cv3-pattern > li {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.cv3-pattern .cv3-chip {
+  padding: 8px 14px;
+  border-color: rgba(169, 139, 240, 0.6);
+  color: var(--v3-violet-soft);
+}
+
+.cv3-pattern > li:last-child .cv3-chip {
+  background: var(--v3-violet);
+  border-color: var(--v3-violet);
+  color: var(--v3-on-lime);
+}
+
+/* 04 — pipeline */
+.cv3-pipe {
+  margin: 10px 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  border-top: 1px solid var(--v3-line-4);
+}
+
+.cv3-pipe > li {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 16px 18px 0;
+  border-bottom: 1px solid var(--v3-line-4);
+}
+
+.cv3-pipe-mark {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.cv3-pipe-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--v3-ink-50);
+  background: var(--v3-bg);
+}
+
+.cv3-pipe > li:first-child .cv3-pipe-dot {
+  border-color: var(--v3-lime);
+  background: var(--v3-lime);
+}
+
+.cv3-pipe > li:last-child .cv3-pipe-dot {
+  border-color: var(--v3-violet);
+}
+
+.cv3-pipe-line {
+  flex: 1;
+  height: 1px;
+  background: var(--v3-line-3);
+}
+
+.cv3-pipe-n {
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.14em;
+  color: var(--v3-ink-50);
+}
+
+.cv3-pipe-l {
+  font: 500 15px var(--v3-mono);
+  color: var(--v3-ink);
+}
+
+/* 05 — post-launch + delivered */
+.cv3-note-card {
+  max-width: 860px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+  padding: 26px 28px;
+  border-radius: 16px;
+  background: var(--v3-surface);
+  border: 1px solid rgba(244, 241, 234, 0.1);
+}
+
+.cv3-note-label {
+  margin: 0;
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.18em;
+  color: var(--v3-lime);
+}
+
+.cv3-note-card .cv3-p {
+  color: var(--v3-ink-82);
+  max-width: none;
+}
+
+.cv3-delivered {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: baseline;
+  margin: 0;
+  padding-top: 8px;
+}
+
+.cv3-delivered dt {
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.18em;
+  color: var(--v3-ink-50);
+}
+
+.cv3-delivered dd {
+  margin: 0;
+  font: 500 14px var(--v3-mono);
+  color: var(--v3-ink);
+}
+
+/* ---------------------------------------------------------------------
+ * Remote (desktop) — sticky, not part of the reading column
+ * ------------------------------------------------------------------- */
+.cv3-remote {
+  display: none;
+}
+
+@media (min-width: 1200px) and (min-height: 600px) {
+  html:not([data-case-reading="1"]) .cv3 .cv3-remote {
+    display: block;
+  }
+  html[data-case-reading="1"] .cv3 .cv3-dock {
+    display: flex;
+  }
+  /* Desktop never shows the compact Floating Head (server-rendered so
+     compact/mobile get it at first paint without waiting for hydration). */
+  .cv3 .cv3-fhead,
+  .cv3 .cv3-fhead-shade {
+    display: none;
+  }
+}
+
+.cv3-remote {
+  position: sticky;
+  top: 96px;
+  align-self: flex-start;
+  width: 300px;
+  height: min(804px, calc(100vh - 120px));
+  flex: none;
+  margin-top: 24px;
+  transform-origin: 70% 100%;
+  animation: v3RemIn 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.cv3-remote[data-anim="out"] {
+  animation: v3RemOut 0.3s cubic-bezier(0.5, 0, 0.9, 0.4) forwards;
+}
+
+.cv3-remote-body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 156px;
+  bottom: 0;
+  border-radius: 40px 40px 38px 38px;
+  background: linear-gradient(180deg, #222329 0%, #18191d 6%, #131418 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), inset 0 -1px 0 rgba(0, 0, 0, 0.6), 0 0 0 1px #050506, 0 8px 0 -1px #0d0e11, 0 60px 110px -50px #000;
+  padding: 20px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.09s ease-out;
+}
+
+.cv3-remote[data-bump="true"] .cv3-remote-body {
+  transform: translateY(2px) rotate(-0.5deg);
+}
+
+/* Card: translate only (its open/close keyframes own transform). */
+.cv3-card[data-bump="true"] {
+  translate: 0 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cv3-remote[data-bump="true"] .cv3-remote-body {
+    transform: none;
+  }
+  .cv3-card[data-bump="true"] {
+    translate: none;
+  }
+}
+
+.cv3-remote-shade {
+  position: absolute;
+  left: 50%;
+  top: -16px;
+  width: 128px;
+  height: 26px;
+  margin-left: -64px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.7), transparent 70%);
+  filter: blur(5px);
+  animation: v3Shade 3.6s ease-in-out infinite;
+}
+
+.cv3-remote-led-line {
+  position: absolute;
+  left: 50%;
+  top: -1px;
+  width: 88px;
+  height: 2px;
+  margin-left: -44px;
+  border-radius: 1px;
+  background: linear-gradient(90deg, transparent, rgba(175, 203, 255, 0.7), transparent);
+  box-shadow: 0 0 10px rgba(175, 203, 255, 0.45);
+}
+
+.cv3-remote-top {
+  height: 44px;
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2px 0 6px;
+}
+
+.cv3-remote-id {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.2em;
+  color: rgba(244, 241, 234, 0.62);
+}
+
+.cv3-led {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2a2d22;
+  transition: background 0.06s, box-shadow 0.06s;
+}
+
+.cv3-led[data-on="true"] {
+  background: var(--v3-lime);
+  box-shadow: 0 0 10px 2px rgba(212, 240, 74, 0.8);
+}
+
+.cv3-collapse {
+  height: 44px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(244, 241, 234, 0.26);
+  background: #16171b;
+  color: var(--v3-ink);
+  font: 500 13px var(--v3-sans);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.12s, translate var(--ix-dur) var(--ix-ease);
+}
+
+.cv3-collapse-glyph {
+  font: 500 13px var(--v3-mono);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cv3-collapse:hover {
+    background: #1a1b20;
+    border-color: rgba(212, 240, 74, 0.6);
+    color: var(--v3-lime);
+  }
+}
+
+.cv3-collapse:active {
+  transform: scale(0.96);
+}
+
+.cv3-screen-well {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  padding: 6px;
+  border-radius: 24px;
+  background: #060708;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.035), inset 0 4px 12px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.cv3-screen {
+  position: relative;
+  height: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  background: radial-gradient(420px 300px at 30% 0%, #16171c, #0b0c0f 70%);
+  padding: 16px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cv3-screen::before,
+.cv3-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.cv3-screen::before {
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.14) 0 1px, transparent 1px 3px);
+  z-index: 1;
+}
+
+.cv3-screen::after {
+  background: linear-gradient(125deg, rgba(255, 255, 255, 0.045), transparent 30%);
+  z-index: 1;
+}
+
+.cv3-ctx {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px 10px;
+  border-bottom: 1px solid var(--v3-line);
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.18em;
+  color: var(--v3-ink-50);
+}
+
+.cv3-ctx > :first-child {
+  color: var(--v3-lime);
+}
+
+.cv3-msg {
+  min-height: 84px;
+  padding: 0 4px;
+}
+
+.cv3-spacer {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+/* The option list is its own scroll area (long chapter lists never clip):
+   it shrinks before anything else, keeps room for the focus ring, and ends
+   with breathing space so the last row is fully visible at the bottom. */
+.cv3-screen .cv3-opts {
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(244, 241, 234, 0.25) transparent;
+  margin: -4px -4px 0;
+  padding: 4px 4px 10px;
+  scroll-padding: 8px 0 14px;
+}
+
+.cv3-screen .cv3-opts[data-scrolls="true"] {
+  mask-image: linear-gradient(180deg, #000 calc(100% - 30px), transparent);
+}
+
+/* Only when the list genuinely overflows: room for the scrollbar so it
+   never overlaps the buttons. */
+.cv3-screen .cv3-opts[data-overflow="true"] {
+  padding-right: 10px;
+}
+
+/* Chapter directory: space first. The short prompt keeps its natural height
+   and the list starts right under it, using all remaining screen height;
+   it only scrolls when every row cannot fit. */
+.cv3-screen[data-menu="toc"] .cv3-msg {
+  min-height: 0;
+}
+
+.cv3-screen[data-menu="toc"] .cv3-spacer {
+  display: none;
+}
+
+/* Directory rows: same type, slightly tighter rhythm, and the decorative
+   speaker-grille row steps aside (the directory header shows the count),
+   so longer chapter lists fit before any scrolling is needed. */
+.cv3 .cv3-screen[data-menu="toc"] {
+  gap: 8px;
+}
+
+.cv3 .cv3-screen[data-menu="toc"] .cv3-opts {
+  gap: 4px;
+  padding-bottom: 6px;
+}
+
+.cv3 .cv3-remote .cv3-screen[data-menu="toc"] .cv3-opt {
+  min-height: 40px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.cv3 .cv3-remote[data-menu="toc"] .cv3-remote-foot {
+  display: none;
+}
+
+/* More than 7 chapters (CASE02: 00–07): 36px directory rows (§2 #8). */
+.cv3 .cv3-remote .cv3-screen[data-menu="toc"][data-dense="true"] .cv3-opt {
+  min-height: 36px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.cv3-opts {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  position: relative;
+  z-index: 2;
+}
+
+.cv3-opt {
+  width: 100%;
+  min-height: 46px;
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 16px 8px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(244, 241, 234, 0.22);
+  background: rgba(244, 241, 234, 0.065);
+  color: var(--v3-ink);
+  font: 500 14px / 1.4 var(--v3-sans);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.2s, border-color 0.3s, background 0.3s, translate var(--ix-dur) var(--ix-ease);
+}
+
+.cv3-opt[data-size="sec"] {
+  min-height: 44px;
+}
+
+.cv3-opt-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(244, 241, 234, 0.55);
+}
+
+.cv3-opt-glyph {
+  font: 500 12px var(--v3-mono);
+  opacity: 0.9;
+}
+
+.cv3-opt[data-primary="true"] {
+  background: var(--v3-lime);
+  border-color: var(--v3-lime);
+  color: var(--v3-on-lime);
+}
+
+.v3 a.cv3-opt[data-primary="true"] {
+  color: var(--v3-on-lime);
+}
+
+.cv3-opt[data-primary="true"] .cv3-opt-dot {
+  background: var(--v3-on-lime);
+}
+
+.cv3-opt[aria-current="true"] {
+  background: rgba(212, 240, 74, 0.1);
+  border-color: rgba(212, 240, 74, 0.75);
+  color: var(--v3-ink);
+}
+
+.cv3-opt[aria-current="true"] .cv3-opt-dot {
+  background: var(--v3-lime);
+  animation: v3Breath 1.8s ease-in-out infinite;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cv3-opt:hover {
+    background: rgba(244, 241, 234, 0.11);
+    border-color: rgba(212, 240, 74, 0.55);
+  }
+  .cv3-opt[data-primary="true"]:hover {
+    background: var(--v3-lime);
+    box-shadow: inset 0 0 0 1px currentColor;
+  }
+}
+
+/* Keyboard focus: a thin ring that follows the 12px radius (no big lime box). */
+.v3 .cv3-opt:focus-visible,
+.v3 .cv3-collapse:focus-visible {
+  outline: 2px solid rgba(212, 240, 74, 0.85);
+  outline-offset: 2px;
+}
+
+.cv3-opt:active {
+  transform: scale(0.98);
+}
+
+.cv3-remote-foot {
+  height: 34px;
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.cv3-grille {
+  width: 84px;
+  height: 22px;
+  border-radius: 11px;
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.85) 1.3px, transparent 1.7px) 0 0 / 7px 7px, #17181c;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.cv3-remote-count {
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.16em;
+  color: rgba(244, 241, 234, 0.6);
+}
+
+.cv3-remote-head {
+  position: absolute;
+  left: 50%;
+  top: -30px;
+  width: 202px;
+  height: 202px;
+  margin-left: -101px;
+  z-index: 2;
+  animation: v3Float 3.6s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------------
+ * Nemu head (one asset + CSS face overlay)
+ * ------------------------------------------------------------------- */
+.nemu-head {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 80%;
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.nemu-head-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 16px 16px rgba(0, 0, 0, 0.5));
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.nemu-screen {
+  position: absolute;
+  left: 29px;
+  top: 53px;
+  width: 110px;
+  height: 82px;
+  border-radius: 20px;
+  overflow: hidden;
+  mix-blend-mode: screen;
+  transform: perspective(320px) rotateY(16deg) rotateZ(-3deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.nemu-eyes {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  height: 22px;
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.2s;
+}
+
+.nemu-eye {
+  transition: height 0.16s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), border-radius 0.3s;
+}
+
+.nemu-mouth {
+  border-bottom: 2px solid var(--v3-face);
+  transition: width 0.3s, height 0.3s, opacity 0.2s, transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.nemu-bar {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 50%;
+  height: 6px;
+  margin-top: -3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, #afcbff, #ffffff, #afcbff, transparent);
+  box-shadow: 0 0 10px rgba(175, 203, 255, 0.9);
+  transition: opacity 0.12s;
+}
+
+.nemu-z {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  font: 700 18px var(--v3-mono);
+  color: var(--v3-violet-soft);
+  animation: v3Z 2.4s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------------
+ * Floating head + Conversation Card (compact / mobile)
+ * Desktop Reading Mode dock (bubble + head + Expand)
+ * ------------------------------------------------------------------- */
+.cv3-fhead-shade {
+  position: fixed;
+  right: 46px;
+  bottom: 22px;
+  width: 60px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.8), transparent 70%);
+  filter: blur(3px);
+  animation: v3Shade 3.6s ease-in-out infinite;
+  z-index: 35;
+  pointer-events: none;
+}
+
+.cv3-fhead {
+  position: fixed;
+  right: 32px;
+  bottom: 32px;
+  width: 88px;
+  height: 88px;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  border-radius: 50%;
+  z-index: 36;
+  animation: v3In 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.cv3-fhead-float {
+  position: absolute;
+  inset: 0;
+  animation: v3Float 3.6s ease-in-out infinite;
+}
+
+.cv3-fhead-scale {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 202px;
+  height: 202px;
+  transform: scale(0.436);
+  transform-origin: 0 0;
+}
+
+@media (max-width: 1023px) {
+  .cv3-fhead-shade {
+    right: 22px;
+    bottom: calc(40px + env(safe-area-inset-bottom));
+    width: 56px;
+  }
+  .cv3-fhead {
+    right: 14px;
+    bottom: calc(50px + env(safe-area-inset-bottom));
+    width: 72px;
+    height: 72px;
+  }
+  .cv3-fhead-scale {
+    transform: scale(0.356);
+  }
+}
+
+.cv3-card {
+  position: fixed;
+  right: 32px;
+  width: 380px;
+  bottom: 136px;
+  z-index: 40;
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
+  scrollbar-width: none;
+  overscroll-behavior: contain;
+  padding: 14px 14px 12px;
+  border-radius: 22px;
+  background: var(--v3-surface);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 0 1px var(--v3-line), 0 24px 50px -16px rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: translate 0.09s ease-out;
+  transform-origin: 85% 100%;
+  animation: v3Card 0.26s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.cv3-card[data-closing="true"] {
+  pointer-events: none;
+  animation: v3CardOut 0.22s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@media (max-width: 1023px) {
+  .cv3-card {
+    left: 12px;
+    right: 12px;
+    width: auto;
+    bottom: calc(132px + env(safe-area-inset-bottom));
+  }
+}
+
+.cv3-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cv3-card-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cv3-card-kicker {
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.2em;
+  color: var(--v3-lime);
+}
+
+.cv3-card-sub {
+  font: 500 10px var(--v3-mono);
+  letter-spacing: 0.14em;
+  color: var(--v3-ink-50);
+}
+
+.cv3-card-x {
+  margin-left: auto;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--v3-line-2);
+  background: transparent;
+  color: var(--v3-ink);
+  font: 400 20px var(--v3-display);
+  cursor: pointer;
+}
+
+.cv3-card .cv3-opt {
+  min-height: 48px;
+  padding: 10px 16px 10px 14px;
+  font: 500 15px / 1.4 var(--v3-sans);
+}
+
+.cv3-card .cv3-opt-glyph {
+  font-size: 13px;
+}
+
+.cv3-dock {
+  display: none;
+  position: fixed;
+  right: 24px;
+  bottom: 26px;
+  z-index: 36;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  max-height: calc(100vh - 100px);
+  transform-origin: 100% 100%;
+  animation: v3ClIn 0.5s cubic-bezier(0.2, 0.8, 0.25, 1.15);
+}
+
+.cv3-dock[data-anim="out"] {
+  animation: v3ClOut 0.22s cubic-bezier(0.5, 0, 0.9, 0.4) forwards;
+}
+
+.cv3-bubble {
+  position: relative;
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: 16px 16px 4px 16px;
+  background: var(--v3-surface);
+  border: 1px solid var(--v3-line-3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 24px 50px -20px rgba(0, 0, 0, 0.9);
+  color: var(--v3-ink);
+  cursor: pointer;
+  transform-origin: 100% 100%;
+  animation: v3BubIn 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) 0.4s both;
+  transition: border-color 0.2s, box-shadow 0.25s, transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.cv3-bubble[hidden] {
+  display: none;
+}
+
+@media (max-height: 559px) {
+  .cv3-bubble {
+    display: none;
+  }
+}
+
+.cv3-bubble-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font: 500 10px var(--v3-mono);
+  letter-spacing: 0.16em;
+  color: var(--v3-ink-50);
+}
+
+.cv3-bubble-top > :first-child {
+  color: var(--v3-lime);
+}
+
+.cv3-bubble-tail {
+  position: absolute;
+  right: 38px;
+  bottom: -7px;
+  width: 12px;
+  height: 12px;
+  background: var(--v3-surface);
+  border-right: 1px solid var(--v3-line-3);
+  border-bottom: 1px solid var(--v3-line-3);
+  transform: rotate(45deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cv3-bubble:hover {
+    border-color: var(--v3-lime);
+    box-shadow: 0 0 0 3px rgba(212, 240, 74, 0.18), 0 24px 50px -20px rgba(0, 0, 0, 0.9);
+    transform: translateY(-2px);
+  }
+}
+
+.cv3-dock-headwrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-right: 2px;
+}
+
+.cv3-dock-headbox {
+  position: relative;
+  width: 96px;
+  height: 96px;
+}
+
+.cv3-dock-shade {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: -8px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.8), transparent 70%);
+  filter: blur(3px);
+  animation: v3Shade 3.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.cv3-dock-head {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  border-radius: 30px;
+}
+
+.cv3-dock-hover {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.5), filter 0.3s;
+}
+
+.cv3-dock-head[data-hover="true"] .cv3-dock-hover {
+  transform: translateY(-7px) scale(1.05);
+}
+
+.cv3-dock-head .cv3-fhead-scale {
+  transform: scale(0.475);
+}
+
+.cv3-expand {
+  height: 34px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(244, 241, 234, 0.22);
+  background: var(--v3-surface);
+  color: var(--v3-ink);
+  font: 500 13px var(--v3-sans);
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.2s, color 0.2s, box-shadow 0.2s, translate var(--ix-dur) var(--ix-ease);
+}
+
+.cv3-expand::before {
+  content: "";
+  position: absolute;
+  inset: -5px 0;
+}
+
+.cv3-expand-glyph {
+  font: 500 12px var(--v3-mono);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cv3-expand:hover {
+    border-color: var(--v3-lime);
+    color: var(--v3-lime);
+    box-shadow: 0 0 0 3px rgba(212, 240, 74, 0.16);
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * Other cases (prev / all channels / next) + contact + footer
+ * ------------------------------------------------------------------- */
+.cv3-more {
+  padding: 48px var(--cv3-row-r) 48px var(--v3-pad);
+  border-top: 1px solid var(--v3-line);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.6fr) minmax(0, 1.4fr);
+  gap: 12px;
+}
+
+@media (max-width: 1023px) {
+  .cv3-more {
+    padding: 32px 20px;
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.cv3-more-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid var(--v3-line-2);
+  color: var(--v3-ink);
+  transition: border-color 0.25s, background 0.25s, translate var(--ix-dur) var(--ix-ease);
+}
+
+.cv3-more-kicker {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.16em;
+  color: var(--v3-ink-50);
+}
+
+.cv3-more-title {
+  font: 700 19px / 1.4 var(--v3-sans);
+}
+
+.cv3-more-all {
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.cv3-more-all .cv3-more-kicker {
+  color: var(--v3-lime);
+}
+
+.cv3-more-all .cv3-more-title {
+  font-size: 17px;
+}
+
+/* Next case: V3 card + the original Next Case preview (production:
+   decorative 3:4 home visual, hidden below sm, one link / one tab stop). */
+.cv3-next {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+  background: var(--v3-surface);
+}
+
+.cv3-next-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.cv3-next-desc {
+  margin: 0;
+  font: 400 14px / 1.7 var(--v3-sans);
+  color: rgba(244, 241, 234, 0.65);
+  text-wrap: pretty;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cv3-more-prev:hover {
+    border-color: rgba(244, 241, 234, 0.4);
+    background: rgba(244, 241, 234, 0.03);
+  }
+  .cv3-more-all:hover {
+    border-color: rgba(212, 240, 74, 0.6);
+    background: rgba(212, 240, 74, 0.04);
+  }
+  .cv3-next:hover {
+    border-color: var(--v3-lime);
+  }
+}
+
+/* CaseContact (CASE_SYSTEM.md §2 #10b): shared closing for every CASE.
+   1.3fr / 1fr at desktop; one column ≤1023 (CTAs left); stacked full-width
+   CTAs on phones. Padding 96 (56 ≤1023). Reading Mode keeps the 296px right
+   padding through --cv3-row-r, like the bottom navigation. */
+.cv3-contact {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 32px 56px;
+  align-items: end;
+  padding: 96px var(--cv3-row-r) 96px var(--v3-pad);
+  border-top: 1px solid var(--v3-line);
+}
+
+.cv3-contact-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+}
+
+.cv3-contact-title {
+  margin: 0;
+  font: 800 clamp(32px, 3.6vw, 52px) / 1.08 var(--v3-display);
+  letter-spacing: -0.02em;
+  color: var(--v3-ink);
+}
+
+.cv3-contact-body {
+  margin: 0;
+  max-width: 560px;
+  font: 400 var(--cv3-body) / 1.85 var(--v3-sans);
+  color: var(--v3-ink-74);
+  text-wrap: pretty;
+}
+
+.cv3-contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 14px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.cv3-contact-copy-btn {
+  min-height: 44px;
+  padding: 0 6px;
+  border: 0;
+  border-bottom: 1px solid rgba(244, 241, 234, 0.32);
+  background: transparent;
+  color: var(--v3-ink);
+  font: 500 15px var(--v3-sans);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, translate var(--ix-dur) var(--ix-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cv3-contact-copy-btn:hover {
+    color: var(--v3-lime);
+    border-color: var(--v3-lime);
+  }
+}
+
+.cv3-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 1023px) {
+  .cv3-contact {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 56px 20px;
+  }
+  .cv3-contact-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 767px) {
+  .cv3-contact-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .cv3-contact-actions .cv3-cta {
+    justify-content: space-between;
+  }
+  .cv3-contact-copy-btn {
+    align-self: flex-start;
+  }
+}
+
+.cv3-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 28px var(--cv3-row-r) var(--cv3-foot-b) var(--v3-pad);
+  border-top: 1px solid var(--v3-line);
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.14em;
+  color: var(--v3-ink-45);
+}
+
+@media (max-width: 1023px) {
+  .cv3-footer {
+    padding: 24px 20px calc(var(--cv3-foot-b) + env(safe-area-inset-bottom));
+  }
+}
+
+.cv3-footer p {
+  margin: 0;
+}
+
+.cv3-backtop {
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: var(--v3-ink-60);
+  font: inherit;
+  letter-spacing: inherit;
+  min-height: 44px;
+}
+
+/* ---------------------------------------------------------------------
+ * Reduced motion: every animation falls back (handoff §4 / §8)
+ * ------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .v3 *,
+  .v3 *::before,
+  .v3 *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+  .v3 .v3-brand-led {
+    box-shadow: 0 0 6px 1px rgba(212, 240, 74, 0.6);
+  }
+  .v3 :is(a, button):active {
+    translate: none;
+  }
+  .cv3-remote[data-anim="out"],
+  .cv3-dock[data-anim="out"] {
+    opacity: 0;
+  }
+  /* Handoff v3-interaction.css: breathing dots hold a static glow */
+  .cv3-opt[aria-current="true"] .cv3-opt-dot {
+    box-shadow: 0 0 6px 1px rgba(212, 240, 74, 0.6);
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * Typewriter + utilities
+ * ------------------------------------------------------------------- */
+.v3-typer {
+  position: relative;
+  display: grid;
+}
+
+.v3-typer-line {
+  grid-area: 1 / 1;
+  margin: 0;
+  color: var(--v3-ink);
+  text-wrap: pretty;
+}
+
+.v3-typer-ghost {
+  visibility: hidden;
+}
+
+.v3-typer-caret {
+  display: inline-block;
+  width: 7px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: -2px;
+  background: var(--v3-lime);
+  opacity: 0.8;
+}
+
+.v3-type-remote {
+  font: 500 16px / 1.65 var(--v3-sans);
+}
+
+.v3-type-card {
+  font: 500 15px / 1.6 var(--v3-sans);
+}
+
+.v3-type-bubble {
+  font: 500 14px / 1.6 var(--v3-sans);
+}
+
+.v3-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Next case: the CTA is the single link; its hit area covers the WHOLE card
+   (production: stretched CTA — one tab stop, short accessible name). The
+   decorative preview must never sit above that hit area, and the card shows
+   the link's hover / press / keyboard focus. */
+/* Press feedback moves the whole card. The stretched CTA itself must never
+   transform on :active — a transform makes it the containing block of its
+   ::after hit area, which would shrink mid-press and cancel the click. */
+.cv3-more-card:active {
+  translate: 0 1px;
+}
+
+
+/* 320–359px: keep the brand on one line next to the nav and pill. */
+.v3-brand-name {
+  white-space: nowrap;
+}
+
+@media (max-width: 359px) {
+  .cv3 {
+    --v3-pad: 16px;
+    --v3-nav-pad: 8px;
+  }
+  .v3-brand {
+    gap: 8px;
+  }
+  .v3-brand-name {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+  }
+  .v3-lang {
+    margin-left: 2px;
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * Short screens (CASE System V3 §3).
+ * <600 tall: Reading Mode for this visit only (Nemu head + Expand); the
+ *   saved preference is never written. Expand opens the fitted Remote.
+ * <720 tall: the Remote stays open but fits: smaller head, no grille row,
+ *   message limited to 2 lines, 42px options; only long lists scroll.
+ * ------------------------------------------------------------------- */
+@media (min-width: 1200px) and (max-height: 599px) {
+  .cv3 {
+    --v3-pad: clamp(48px, 6vw, 160px);
+    --cv3-row-r: 296px;
+    --cv3-col: 1440px;
+    --cv3-h1: 60px;
+    --cv3-foot-b: 40px;
+  }
+  .cv3[data-short-open="true"] {
+    --v3-pad: clamp(32px, 8.4vw, 162px);
+    --cv3-row-r: var(--v3-pad);
+    --cv3-col: 1240px;
+    --cv3-foot-b: 36px;
+  }
+  .cv3:not([data-short-open="true"]) .cv3-dock {
+    display: flex;
+  }
+  .cv3 .cv3-fhead,
+  .cv3 .cv3-fhead-shade {
+    display: none;
+  }
+  .cv3[data-short-open="true"] .cv3-remote {
+    display: block;
+    top: 82px;
+    margin-top: 10px;
+    width: 316px;
+    height: calc(100vh - 92px);
+  }
+}
+
+@media (min-width: 1200px) and (max-height: 719px) {
+  .cv3 .cv3-remote-body {
+    top: 62px;
+    padding: 14px 14px 14px;
+    gap: 10px;
+  }
+  .cv3 .cv3-remote-shade {
+    display: none;
+  }
+  .cv3 .cv3-remote-head {
+    top: -18px;
+    scale: 0.42;
+    transform-origin: 50% 0;
+  }
+  .cv3 .cv3-remote-foot {
+    display: none;
+  }
+  .cv3 .cv3-screen {
+    gap: 10px;
+    padding: 12px 12px 12px;
+  }
+  .cv3 .cv3-msg {
+    min-height: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+  /* Same type role as the Reading Mode bubble (14 / 1.6). */
+  .cv3 .cv3-remote .v3-type-remote {
+    font: 500 14px / 1.6 var(--v3-sans);
+  }
+  .cv3 .cv3-spacer {
+    flex: 0 1 auto;
+    min-height: 0;
+  }
+  .cv3 .cv3-screen .cv3-opts {
+    flex: 1 1 auto;
+  }
+  .cv3 .cv3-remote .cv3-opt {
+    min-height: 42px;
+  }
+}
+
+/* Filled chips have no outline in the prototype (background only). */
+.cv3-group[data-mine="true"] .cv3-chip,
+.cv3-pattern > li:last-child .cv3-chip {
+  border: 0;
+}
+.cv3-group[data-mine="true"] .cv3-chip {
+  padding: 7px 12px;
+}
+.cv3-pattern > li:last-child .cv3-chip {
+  padding: 8px 14px;
+}
+
+/* Short desktop chapter list: when more options sit below the fold, a
+   small chevron over the fade marks it (visual only; the list itself is
+   the scroll target and keyboard focus scrolls options into view). */
+.cv3-opts-more {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .cv3 .cv3-opts-more[data-on="true"] {
+    position: absolute;
+    left: 50%;
+    bottom: 6px;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 18px;
+    margin-left: -13px;
+    border-radius: 999px;
+    background: rgba(244, 241, 234, 0.12);
+    color: var(--v3-ink-70);
+    font: 500 11px var(--v3-mono);
+    pointer-events: none;
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * INDEX V3 stage — the approved 1920×1080 artboard scaled to fit
+ * (prototype `crop`), or the responsive mobile screen.
+ * ------------------------------------------------------------------- */
+.v3-index {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+.v3-index-stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--v3-bg);
+}
+
+.v3-index-board {
+  position: absolute;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: 0 0;
+}
+
+.v3-index-board > .sc-host {
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------------------------------------------------------------------
+ * Page Transition 01 (global): the page stage + CRT overlay.
+ * ------------------------------------------------------------------- */
+.pt01-stage {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  width: 100%;
+  will-change: auto;
+}
+
+.pt01-fx {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.pt01-noise {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.pt01-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, #e9ecff 15%, #ffffff 50%, #e9ecff 85%, transparent);
+  box-shadow: 0 0 14px 2px rgba(200, 210, 255, 0.75), 0 0 40px 6px rgba(169, 139, 240, 0.25);
+}
+
+/* ---------------------------------------------------------------------
+ * CASE01 / 02 / 04 original content in the V3 frame — named exception
+ * `.case-final[data-theme="v3"]`: a third value of the existing case-final
+ * theme switch (dark | light | v3). It re-points ONLY the case-final role
+ * variables and type roles at the V3 tokens; layout, media and modules of
+ * the original components are untouched.
+ * ------------------------------------------------------------------- */
+.cv3 .case-final[data-theme="v3"] {
+  --cf-bg: transparent;
+  --cf-heading: var(--v3-ink);
+  --cf-body: var(--v3-ink-78);
+  --cf-meta: var(--v3-ink-55);
+  --cf-dim: var(--v3-ink-60);
+  --cf-hairline: var(--v3-line-2);
+  --cf-accent: var(--v3-lime);
+  --cf-accent-2: var(--v3-violet);
+  --cf-surface-hover: rgba(244, 241, 234, 0.04);
+  --portfolio-font-display: var(--v3-sans);
+  --portfolio-font-body: var(--v3-sans);
+  --font-display: var(--v3-sans);
+  --font-label: var(--v3-mono);
+  --portfolio-font-label: var(--v3-mono);
+  background: transparent;
+  color: var(--v3-ink-78);
+}
+
+/* Section eyebrow → V3 eyebrow role (mono 500 12 / .18em, lime, the
+   registry label in its own case — SectionLabelContext). */
+.cv3 .case-final[data-theme="v3"] .cf-section-label {
+  font: 500 12px var(--v3-mono);
+  letter-spacing: 0.18em;
+  text-transform: none;
+}
+
+/* Chapter rhythm → V3 chapter role (same padding + seam as .cv3-sec). */
+.cv3 .case-final[data-theme="v3"] .cf-section,
+.cv3 .case-final[data-theme="v3"] .cf-section[data-chapter-pause="strong"] {
+  padding-bottom: var(--cv3-sec-pad);
+}
+
+.cv3 .case-final[data-theme="v3"] .cf-section-divider {
+  padding-top: var(--cv3-sec-pad);
+  border-top-color: var(--v3-line);
+}
+
+/* Display-size sub-headings (the clamp()-sized card / story titles) → V3 h3. */
+.cv3 .case-final[data-theme="v3"] h3.cf-heading[class*="clamp"] {
+  font: 700 var(--cv3-h3) / 1.4 var(--v3-sans);
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+/* Captions → V3 caption role (sans 13 / 1.7, ink-55, sentence case). */
+.cv3 .case-final[data-theme="v3"] .cf-figure-caption {
+  font: 400 13px / 1.7 var(--v3-sans);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--v3-ink-55);
+  opacity: 1;
+}
+
+/* Chapter headings → V3 h2 role. */
+.cv3 .case-final[data-theme="v3"] .cf-h3 {
+  font-family: var(--v3-sans);
+  font-weight: 900;
+  font-size: var(--cv3-h2);
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+/* Body copy → V3 body role (incl. the reading measure). */
+.cv3 .case-final[data-theme="v3"] .body-tc {
+  font-family: var(--v3-sans);
+  font-size: var(--cv3-body);
+  line-height: 1.85;
+  letter-spacing: 0;
+  max-width: var(--cv3-measure);
+}
+
+/* Evidence frames → V3 media frame (.cv3-media: 16px radius, media ground,
+   1px ring + depth so dark dashboard screenshots separate from the page). */
+.cv3 .case-final[data-theme="v3"] .cf-figure-frame {
+  border-radius: 16px;
+  border-color: transparent;
+  background-color: var(--v3-media-bg);
+  box-shadow: 0 0 0 1px var(--v3-line-2), 0 40px 80px -40px #000;
+}
+
+.cv3-original-hero {
+  margin: 0 0 clamp(56px, 6vw, 112px);
+}
+
+.cv3-summary[data-lead="true"] {
+  color: var(--v3-ink);
+}
+
+.cv3-hero-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cv3-hero-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font: 500 13px var(--v3-mono);
+  letter-spacing: 0.08em;
+  color: var(--v3-lime);
+  border-bottom: 1px solid rgba(212, 240, 74, 0.4);
+}
+
+/* Polish: at 320–375px the floating Nemu covered the bottom 2px of
+   BACK TO TOP's tap area at page end — 8px more footer clearance. */
+@media (max-width: 1023px) {
+  .cv3 {
+    --cv3-foot-b: 128px;
+  }
+}
+
+/* =====================================================================
+ * CASE System V3 shared roles (CASE_SYSTEM.md §2). Used by every CASE;
+ * built only from the CASE03 tokens above.
+ * ===================================================================== */
+
+/* 2 CaseMetadata — long values span the full row */
+.cv3-info > div[data-wide="true"] {
+  grid-column: 1 / -1;
+}
+
+/* 5 CaseContentGrid — tracks minmax(0,1fr); ≤1023 3→2; ≤767 1 (phones stay 2) */
+.cv3-grid {
+  display: grid;
+  gap: 14px;
+  margin: 10px 0 0;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.cv3-grid[data-variant="cards-2"] {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+}
+
+.cv3-grid[data-variant="cards-3"],
+.cv3-grid[data-variant="media-3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.cv3-grid[data-variant="media-2"],
+.cv3-grid[data-variant="compare"] {
+  grid-template-columns: var(--cv3-grid-cols, repeat(2, minmax(0, 1fr)));
+  align-items: end;
+}
+
+.cv3-grid[data-variant="media-4"] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: end;
+}
+
+@media (max-width: 1023px) {
+  .cv3-grid[data-variant="cards-3"],
+  .cv3-grid[data-variant="media-3"],
+  .cv3-grid[data-variant="media-4"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .cv3-grid[data-variant="cards-3"],
+  .cv3-grid[data-variant="media-3"],
+  .cv3-grid[data-variant="media-2"],
+  .cv3-grid[data-variant="compare"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cv3-grid[data-variant="media-3"][data-phones="true"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Surface card (cards-2 / cards-3) */
+.cv3-card-s {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 24px;
+  border-radius: 16px;
+  background: var(--v3-surface);
+  border: 1px solid rgba(244, 241, 234, 0.1);
+}
+
+.cv3-card-s[data-tone="accent"] {
+  background: rgba(212, 240, 74, 0.06);
+  border-color: rgba(212, 240, 74, 0.55);
+}
+
+.cv3-card-s[data-tone="muted"] {
+  background: transparent;
+  border-style: dashed;
+  border-color: rgba(244, 241, 234, 0.2);
+}
+
+.cv3-card-kicker {
+  margin: 0;
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.18em;
+  color: var(--v3-ink-50);
+}
+
+.cv3-card-s[data-tone="accent"] .cv3-card-kicker {
+  color: var(--v3-lime);
+}
+
+.cv3-card-s[data-tone="secondary"] .cv3-card-kicker {
+  color: var(--v3-violet);
+}
+
+.cv3-card-title {
+  margin: 0;
+  font: 700 20px / 1.4 var(--v3-sans);
+  color: var(--v3-ink);
+  text-wrap: balance;
+}
+
+.cv3-card-s .cv3-p {
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+/* Numbered rows inside a card (e.g. 4-step lists) */
+.cv3-steps {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--v3-line-3);
+}
+
+.cv3-steps > li {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--v3-line-3);
+  font: 400 15px / 1.6 var(--v3-sans);
+  color: var(--v3-ink-82);
+}
+
+.cv3-steps > li > span:first-child {
+  font: 500 11px / 2.1 var(--v3-mono);
+  letter-spacing: 0.14em;
+  color: var(--v3-ink-50);
+}
+
+/* 6 CaseMedia frames: inline r16 (.cv3-media) · phone r22 · plain */
+.cv3-media-phone {
+  border-radius: 22px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.cv3-media-plain {
+  position: relative;
+}
+
+.cv3-figure[data-frame="phone"] .cv3-caption {
+  text-align: center;
+}
+
+.cv3-pipe-note {
+  font: 400 13px / 1.6 var(--v3-sans);
+  color: var(--v3-ink-60);
+}
+
+/* 7 State card */
+.cv3-state {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px;
+  border-radius: 16px;
+  background: var(--v3-surface);
+  border: 1px solid rgba(244, 241, 234, 0.1);
+}
+
+.cv3-state[data-active="true"] {
+  border-color: rgba(212, 240, 74, 0.55);
+}
+
+.cv3-state-no {
+  margin: 0;
+  font: 500 12px var(--v3-mono);
+  letter-spacing: 0.16em;
+  color: var(--v3-violet);
+}
+
+.cv3-state-title {
+  margin: 0;
+  font: 700 18px / 1.45 var(--v3-sans);
+  color: var(--v3-ink);
+}
+
+.cv3-state-body {
+  margin: 0;
+  font: 400 15px / 1.75 var(--v3-sans);
+  color: var(--v3-ink-78);
+}
+
+.cv3-state-tag {
+  align-self: flex-start;
+  margin: 4px 0 0;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font: 500 12px var(--v3-mono);
+  color: var(--v3-on-lime);
+  background: var(--v3-lime);
+}
+
+/* Flow chips: lime = mine, violet = decision step */
+.cv3-chips[data-tone="mine"] .cv3-chip {
+  border-color: var(--v3-lime);
+  color: var(--v3-lime);
+}
+
+/* Original V2 modules inside a V3 chapter keep their own layout */
+.cv3-module {
+  margin-top: 10px;
+  min-width: 0;
+}
+
+/* CaseHeroCTA on phones: full width, stacked, primary first (§2 #3) */
+@media (max-width: 767px) {
+  .cv3-cta-list {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .cv3-cta-list .cv3-cta {
+    justify-content: space-between;
+  }
+}
+
+/* CASE01 §01 text flow (fallback to the diagram) */
+.cv3-flow-text {
+  padding-top: 18px;
+  border-top: 1px solid var(--v3-line-3);
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--v3-ink-70);
+}
+
+.cv3-sub-label {
+  margin-top: 10px;
+}
+
+/* Original CASE01 evidence modules inside a V3 chapter: CASE03 block gap */
+.cv3-case01-modules > * + * {
+  margin-top: 48px;
+}
+
+/* CaseBottomNavigation (§2 #9): the Next card is one link (no nested CTA,
+   no preview, no counter); its arrow sits at the end of the kicker row. */
+.cv3 .cv3-more > .cv3-next {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 10px;
+  text-align: left;
+}
+
+.cv3-next .cv3-more-kicker {
+  align-items: center;
+}
+
+.cv3-next-arrow {
+  font: 500 15px var(--v3-display);
+  color: var(--v3-lime);
+  transition: translate var(--ix-dur) var(--ix-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cv3-next:hover .cv3-next-arrow {
+    translate: 3px 0;
+  }
+}
+
+.cv3-more-card:focus-visible {
+  outline: var(--ix-ring);
+  outline-offset: var(--ix-ring-off);
+}
+
+.cv3-cta-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cv3-cta-list > li {
+  align-items: flex-start;
+}
+
+@media (max-width: 767px) {
+  .cv3-cta-list > li {
+    align-items: stretch;
+  }
+}
+
+/* --- CASE System roles used by CASE04 (shared, not case-scoped) --- */
+.cv3-hero-phones {
+  padding: clamp(20px, 3vw, 40px) clamp(16px, 3vw, 40px) clamp(28px, 4vw, 56px);
+}
+
+.cv3-compare {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px dashed rgba(244, 241, 234, 0.24);
+}
+
+.cv3-compare[data-tone="after"] {
+  border: 1px solid rgba(212, 240, 74, 0.55);
+}
+
+.cv3-compare[data-tone="after"] > .cv3-card-kicker,
+.cv3-kicker-accent {
+  color: var(--v3-lime);
+}
+
+.cv3-compare .cv3-module {
+  margin-top: 0;
+}
+
+.cv3-phone-col,
+.cv3-state-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.cv3-phone-col .cv3-module,
+.cv3-state-col .cv3-module {
+  margin-top: 0;
+  width: 100%;
+  max-width: 260px;
+  margin-inline: auto;
+}
+
+.cv3-grid[data-variant="media-4"] .cv3-module {
+  margin-top: 0;
+}
+
+.cv3-phones-narrow {
+  max-width: 520px;
+}
+
+.cv3-journey {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  margin-top: 10px;
+  border-top: 1px solid var(--v3-line-3);
+  border-bottom: 1px solid var(--v3-line-3);
+}
+
+.cv3-journey > li {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 18px 12px 18px 0;
+}
+
+.cv3-journey-n {
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.14em;
+  color: var(--v3-lime);
+}
+
+.cv3-journey-l {
+  font: 500 15px / 1.4 var(--v3-sans);
+  color: var(--v3-ink);
+}
+
+.cv3-journey-a {
+  margin-left: auto;
+  color: var(--v3-lime);
+}
+
+@media (max-width: 1023px) {
+  .cv3-journey {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-bottom: 0;
+  }
+  .cv3-journey > li {
+    border-bottom: 1px solid var(--v3-line-3);
+  }
+}
+
+.cv3-subflow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 36rem;
+  padding-left: 18px;
+  border-left: 2px solid var(--v3-line-3);
+  font: 400 13px / 1.7 var(--v3-sans);
+  color: var(--v3-ink-60);
+}
+
+.cv3-subflow p {
+  margin: 0;
+}
+
+.cv3-tradeoff {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 22px;
+  border-radius: 16px;
+  background: var(--v3-surface);
+  border: 1px solid rgba(244, 241, 234, 0.1);
+}
+
+.cv3-tradeoff p {
+  margin: 0;
+}
+
+.cv3-tradeoff-before {
+  font: 400 14px / 1.6 var(--v3-sans);
+  color: var(--v3-ink-55);
+}
+
+.cv3-tradeoff-arrow {
+  font: 500 13px var(--v3-mono);
+  color: var(--v3-lime);
+}
+
+.cv3-tradeoff-after {
+  font: 700 16px / 1.5 var(--v3-sans);
+  color: var(--v3-ink);
+}
+
+/* State cards over their phones: one row of cards, one row of phones */
+@supports (grid-template-rows: subgrid) {
+  .cv3-grid[data-variant="cards-3"] > .cv3-state-col {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 2;
+    align-items: start;
+  }
+}
+
+.cv3-phones-narrow {
+  max-width: 440px;
+}
+
+/* --- CASE System roles used by CASE02 --- */
+.cv3-hero-homes {
+  margin: 0;
+  padding: clamp(14px, 2vw, 24px);
+  gap: clamp(10px, 1.4vw, 16px);
+}
+
+.cv3-home {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--v3-line-2);
+}
+
+.cv3-home-tag {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #fff;
+  color: #111;
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.12em;
+  pointer-events: none;
+}
+
+.cv3-grid.cv3-story-media {
+  margin: 0;
+  align-items: start;
+}
+
+.cv3-story-media .cv3-media {
+  box-shadow: 0 0 0 1px var(--v3-line);
+}
+
+.cv3-principle {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.cv3-principle .cv3-module {
+  margin-top: 0;
+}
+
+.cv3-principle-h {
+  margin-top: 6px;
+  font-size: 20px;
+}
+
+.cv3-compare-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px 20px;
+  margin-top: 10px;
+  padding-top: 18px;
+  border-top: 1px solid var(--v3-line-3);
+}
+
+/* Matrix: Yes = lime dot · Partial = half dot · No = grey line (text kept) */
+.cv3-matrix {
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
+  table-layout: fixed;
+  text-align: left;
+}
+
+.cv3-matrix th:first-child {
+  width: 34%;
+}
+
+.cv3-matrix th,
+.cv3-matrix td {
+  padding: 14px 16px 14px 0;
+  border-bottom: 1px solid var(--v3-line-3);
+  font: 400 15px / 1.5 var(--v3-sans);
+  color: var(--v3-ink-82);
+}
+
+.cv3-matrix thead th {
+  border-top: 1px solid var(--v3-line-3);
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.16em;
+  color: var(--v3-ink-50);
+}
+
+.cv3-matrix tbody th {
+  font-weight: 500;
+  color: var(--v3-ink);
+}
+
+.cv3-mark {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.cv3-mark-glyph {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.cv3-mark[data-value="Yes"] .cv3-mark-glyph {
+  background: var(--v3-lime);
+}
+
+.cv3-mark[data-value="Partial"] .cv3-mark-glyph {
+  border: 1.5px solid var(--v3-lime);
+  background: linear-gradient(90deg, var(--v3-lime) 50%, transparent 50%);
+}
+
+.cv3-mark[data-value="No"] .cv3-mark-glyph {
+  height: 2px;
+  border-radius: 1px;
+  background: var(--v3-ink-50);
+}
+
+.cv3-mark-text {
+  font: 500 13px var(--v3-mono);
+  color: var(--v3-ink-70);
+}
+
+.cv3-matrix-cards {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .cv3-matrix {
+    display: none;
+  }
+  .cv3-matrix-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .cv3-matrix-card {
+    border-radius: 14px;
+    background: var(--v3-surface);
+    border: 1px solid rgba(244, 241, 234, 0.1);
+  }
+  .cv3-matrix-card summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 18px;
+    font: 700 16px var(--v3-sans);
+    color: var(--v3-ink);
+    cursor: pointer;
+    list-style: none;
+  }
+  .cv3-matrix-card summary::-webkit-details-marker {
+    display: none;
+  }
+  .cv3-matrix-card[open] .cv3-matrix-chev {
+    rotate: 180deg;
+  }
+  .cv3-matrix-card dl {
+    margin: 0;
+    padding: 0 18px 12px;
+  }
+  .cv3-matrix-card dl > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px solid var(--v3-line-3);
+  }
+  .cv3-matrix-card dt {
+    font: 400 15px / 1.5 var(--v3-sans);
+    color: var(--v3-ink-82);
+  }
+  .cv3-matrix-card dd {
+    margin: 0;
+  }
+}
+
+.cv3-delivered dd .cv3-chips {
+  gap: 8px;
+}
+
+/* CASE03 §7.3 (shared): pipelines stack vertically at ≤1023 — no 3 + 2 wrap */
+@media (max-width: 1023px) {
+  .cv3-pipe {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cv3-pipe > li {
+    display: grid;
+    grid-template-columns: 22px auto minmax(0, 1fr);
+    grid-template-areas: "mark n l" "mark . note";
+    column-gap: 12px;
+    row-gap: 4px;
+    align-items: baseline;
+    padding: 14px 0;
+  }
+  .cv3-pipe-mark {
+    grid-area: mark;
+    align-self: center;
+  }
+  .cv3-pipe-line {
+    display: none;
+  }
+  .cv3-pipe-n {
+    grid-area: n;
+  }
+  .cv3-pipe-l {
+    grid-area: l;
+  }
+  .cv3-pipe-note {
+    grid-area: note;
+  }
+}
+
+/* CaseBottomNavigation — Previous and Next share ONE card component (same
+   structure, surface, padding, type hierarchy, arrow and states); the All
+   Channels card keeps its own centered variant. */
+.cv3 .cv3-more > .cv3-navcard {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 10px;
+  text-align: left;
+  background: var(--v3-surface);
+  border: 1px solid var(--v3-line-2);
+}
+
+.cv3-navcard .cv3-more-kicker {
+  align-items: center;
+}
+
+.cv3-navcard-arrow {
+  display: inline-block;
+  font: 500 15px var(--v3-display);
+  color: var(--v3-lime);
+  transition: translate var(--ix-dur) var(--ix-ease);
+}
+
+.cv3-navcard[data-dir="prev"] .cv3-navcard-arrow {
+  margin-right: 4px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cv3 .cv3-more > .cv3-navcard:hover {
+    border-color: var(--v3-lime);
+    background: var(--v3-surface);
+  }
+  .cv3-navcard[data-dir="next"]:hover .cv3-navcard-arrow {
+    translate: 3px 0;
+  }
+  .cv3-navcard[data-dir="prev"]:hover .cv3-navcard-arrow {
+    translate: -3px 0;
+  }
+}
+
+/* Same proportions at desktop: Previous · All channels · Next = 1.4fr .6fr 1.4fr */
+@media (min-width: 1024px) {
+  .cv3 .cv3-more {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr) minmax(0, 1.4fr);
+  }
+}
+
+/* 768–1023 (compact, tablet portrait): the Nemu dialog card is the approved
+   380px, constrained to the viewport; phones (<768) keep the full-width card. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .cv3-card {
+    left: auto;
+    right: 24px;
+    width: min(380px, calc(100vw - 48px));
+  }
+}
+
+/* CaseMetadata (CASE_SYSTEM.md §2 #2): the spec grid is auto-fit
+   minmax(200px, 1fr). When ALL of a case's short keys fit on one row
+   (N × 200px), use exactly N equal columns, so a wide column (e.g. Reading
+   Mode) never leaves an empty trailing track. Below that width the spec rule
+   applies unchanged (CASE03: 5 keys → 4 + 1 at 842px, as approved). Plain
+   container queries — no percentage maths inside minmax(). */
+.cv3-hero {
+  container: cv3hero / inline-size;
+}
+
+@container cv3hero (min-width: 600px) {
+  .cv3-info[data-n="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@container cv3hero (min-width: 800px) {
+  .cv3-info[data-n="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@container cv3hero (min-width: 1000px) {
+  .cv3-info[data-n="5"] { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+@container cv3hero (min-width: 1200px) {
+  .cv3-info[data-n="6"] { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+
+/* ===== Final visual parity (approved 2026-10-11) ===== */
+/* CASE02 hero: project-name sub-line (mono 14, .08em, ink .6) above the bold lead */
+.cv3-subline {
+  margin: 0;
+  font: 500 14px var(--v3-mono);
+  letter-spacing: 0.08em;
+  color: var(--v3-ink-60);
+}
+
+/* CASE02 hero tiles: labels BELOW each tile (mono 11, .16em, ink .6) */
+.cv3-home-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.cv3 .cv3-home-tag {
+  position: static;
+  padding: 0 4px 4px;
+  border-radius: 0;
+  background: none;
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--v3-ink-60);
+}
+
+/* 390 artboard: one large tile, then two smaller tiles side by side */
+@media (max-width: 767px) {
+  .cv3-grid.cv3-hero-homes[data-variant="media-3"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .cv3-grid.cv3-hero-homes > .cv3-home-item:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* CASE01 §03 diagrams: V3 inline frame (r16 + subtle ring), no V2 dark mat */
+.cv3 .case-final[data-theme="v3"] .case01-plate {
+  aspect-ratio: 3 / 2;
+  background-color: transparent;
+}
+
+.cv3 .case-final[data-theme="v3"] .case01-plate-board {
+  inset: 0;
+}
+
+/* Compact secondary link (CASE02 story 前往網站 ↗): plain lime glyph, no disc */
+.cv3-cta[data-size="compact"] {
+  padding: 0 22px;
+  gap: 10px;
+}
+
+.cv3-cta[data-size="compact"] .cv3-cta-arrow {
+  width: auto;
+  height: auto;
+  background: none;
+  color: var(--v3-lime);
+}
+
+.cv3-cta-list > li:has(.cv3-cta[data-size="compact"]) {
+  align-items: flex-start;
+}
+
+/* CASE04 §03 phones: same column rhythm as the cards above */
+.cv3-state-phones .cv3-phone-col .cv3-module {
+  margin-top: 0;
+}
+
+/* Mobile artboards (CASE01/04): Title / Lead → CTA row → Metadata → Hero media */
+@media (max-width: 767px) {
+  .cv3-hero[data-cta-first="true"] > :is(.cv3-cta-block, .cv3-cta-list) {
+    order: 1;
+  }
+  .cv3-hero[data-cta-first="true"] > .cv3-info {
+    order: 2;
+  }
+}
+
+/* Remote below 800px tall: the decorative speaker grille steps aside so all
+   four primary actions stay visible without scrolling (approved). */
+@media (min-width: 1200px) and (max-height: 799px) {
+  .cv3 .cv3-remote-foot {
+    display: none;
+  }
+}
+
+/* CASE02 hero tiles: the bezel itself is the tile grid (design: padding 10, gap 10) */
+.cv3-grid.cv3-hero-homes {
+  padding: 0;
+  gap: 10px;
+}
+
+/* INDEX mobile — short landscape (P1 QA Q01, 2026-10-10). On a phone held
+   sideways the flexible TV collapsed to ~100px and clipped the hero name and
+   the channel card. The TV keeps a readable minimum height and the content
+   region (TV + up-next strip) scrolls vertically; header and Remote stay put.
+   The name is also capped by the TV's height (container is `size`). */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  [data-v3m="main"] {
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+  [data-v3m="tv"] {
+    flex: none !important;
+    height: 340px !important;
+  }
+  [data-v3m="name"] {
+    font-size: min(19cqw, 21cqh) !important;
+  }
+}
+
+/* CASE04 hero showcase stage — named exception (Angela 2026-10-11).
+   Only the panel that holds CASE04's three hero phones (`.cv3-hero-phones`
+   is CASE04-only): neutral near-black stage, no blue/purple cast. The shared
+   bezel (padding, radius, shadow), phones, labels and layout are unchanged;
+   the sheen stays as a faint hint of depth. */
+.cv3 .cv3-figure-hero:has(.cv3-hero-phones) .cv3-bezel {
+  background: linear-gradient(180deg, #1a1a1a, #0d0d0d);
+}
+.cv3 .cv3-figure-hero:has(.cv3-hero-phones) .cv3-bezel-screen {
+  background: #0a0a0a;
+}
+.cv3 .cv3-figure-hero:has(.cv3-hero-phones) .cv3-bezel-sheen {
+  background: linear-gradient(118deg, rgba(255, 255, 255, 0.025), transparent 34%);
+}

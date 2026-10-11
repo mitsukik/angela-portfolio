@@ -1,8 +1,25 @@
 import type { Metadata } from "next";
 import type { Locale } from "./locale";
+import { legacyCases } from "@/components/v3/case/released/legacy-cases";
 
 export const SITE_ORIGIN = "https://angela-portfolio-phi.vercel.app";
 const DEFAULT_OG_IMAGE = "/images/home/case01-home-visual.webp";
+
+// CASE05–07 (released): title/category/description are the approved index copy
+// (components/v3/case/released/legacy-cases.ts), in the existing SEO pattern.
+const RELEASED_CASE_SEO = Object.fromEntries(
+  legacyCases
+    .filter((c) => ["05", "06", "07"].includes(c.number))
+    .map((c) => [
+      `case${c.number}`,
+      {
+        zh: { path: `/design-samples/case-final-${c.number}`, title: `${c.title.zh}｜${c.category.zh}${/UX$/.test(c.category.zh) ? " 設計案例" : " UX/UI 案例"}`, description: c.description.zh, imageAlt: c.title.zh },
+        en: { path: `/en/design-samples/case-final-${c.number}`, title: `${c.title.en} | UX/UI Case Study`, description: c.description.en, imageAlt: c.title.en },
+        image: c.navImage ?? c.image?.src ?? DEFAULT_OG_IMAGE,
+        type: "article",
+      },
+    ]),
+) as Record<"case05" | "case06" | "case07", { zh: { path: string; title: string; description: string; imageAlt: string }; en: { path: string; title: string; description: string; imageAlt: string }; image: string; type: "article" }>;
 
 const PUBLIC_PAGES = {
   home: {
@@ -101,6 +118,7 @@ const PUBLIC_PAGES = {
     image: "/images/home/case04-home-visual.webp",
     type: "article",
   },
+  ...RELEASED_CASE_SEO,
 } as const;
 
 export type PublicSeoPage = keyof typeof PUBLIC_PAGES;

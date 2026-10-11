@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { ReactNode } from "react";
+import { SectionLabelText } from "./SectionLabelContext";
 
 const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
 
@@ -152,7 +153,7 @@ export function ReadingSection({
   return (
     <section ref={sectionRef} className={className}>
       <p ref={labelRef} className="cf-meta cf-section-label cf-accent md:whitespace-nowrap">
-        {label}
+        <SectionLabelText text={label} />
       </p>
       <div className={`mt-4 ${composition === "background-role" ? "max-w-none" : "max-w-[70ch]"}`}>
         {/* cf-h3 is a visual size token, not a semantic level — this is a

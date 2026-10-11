@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef, type ReactNode } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SectionLabelText } from "./SectionLabelContext";
 
 const MOTION_QUERY = "(prefers-reduced-motion: no-preference)";
 
@@ -60,7 +61,7 @@ export function EvidenceHeading({ label, title, children }: { label: string; tit
 
   return (
     <section ref={sectionRef}>
-      <p ref={labelRef} className="cf-meta cf-section-label cf-accent md:whitespace-nowrap">{label}</p>
+      <p ref={labelRef} className="cf-meta cf-section-label cf-accent md:whitespace-nowrap"><SectionLabelText text={label} /></p>
       <h2 ref={titleRef} className="cf-heading cf-h3 mt-4 max-w-[70ch]">{title}</h2>
       <div className="mt-10">{children}</div>
     </section>

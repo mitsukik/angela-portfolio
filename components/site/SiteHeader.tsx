@@ -173,12 +173,12 @@ export function SiteHeader({
       {locale === "zh" ? (
         <span lang="zh-Hant" className="language-switch-option" data-active="true" aria-current="true">中</span>
       ) : (
-        <Link href={switchHref} scroll={false} onClick={handleLanguageSwitch} lang="zh-Hant" className="language-switch-option" aria-label="切換為中文">中</Link>
+        <Link href={switchHref} scroll={false} data-no-transition onClick={handleLanguageSwitch} lang="zh-Hant" className="language-switch-option" aria-label="切換為中文">中</Link>
       )}
       {locale === "en" ? (
         <span lang="en" className="language-switch-option" data-active="true" aria-current="true">EN</span>
       ) : (
-        <Link href={switchHref} scroll={false} onClick={handleLanguageSwitch} lang="en" className="language-switch-option" aria-label="Switch to English">EN</Link>
+        <Link href={switchHref} scroll={false} data-no-transition onClick={handleLanguageSwitch} lang="en" className="language-switch-option" aria-label="Switch to English">EN</Link>
       )}
     </div>
   );

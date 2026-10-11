@@ -4,6 +4,7 @@ import type { Locale } from "@/data/locale";
 import { Reveal } from "../Reveal";
 import { EvidenceTrigger } from "./CaseEvidenceViewer";
 import { StateScrubber } from "./StateScrubber";
+import { SectionLabelText } from "./SectionLabelContext";
 
 type RegisterSection = (index: number, element: HTMLElement | null) => void;
 
@@ -44,7 +45,7 @@ function SectionHeading({
 }) {
   return (
     <header className="max-w-[70ch]">
-      <p className="cf-meta cf-section-label cf-accent md:whitespace-nowrap">{label}</p>
+      <p className="cf-meta cf-section-label cf-accent md:whitespace-nowrap"><SectionLabelText text={label} /></p>
       <h2 className="cf-heading cf-h3 mt-4">{title}</h2>
       {intro && <p className="cf-body body-tc mt-8 max-w-[62ch]">{intro}</p>}
     </header>
@@ -59,7 +60,7 @@ type EvidenceAsset = { src: string; alt: string };
  * in Case Two/Three assume. The source already includes the device edge;
  * its transparent outer pixels intentionally blend into the case surface.
  */
-function PhoneEvidence({
+export function PhoneEvidence({
   asset,
   caption,
   className = "",
@@ -98,7 +99,7 @@ function PhoneEvidence({
  * screenshots and so don't fit PhoneEvidence's fixed portrait aspect —
  * this renders any evidence image at its own true aspect ratio instead.
  */
-function ComposedEvidence({
+export function ComposedEvidence({
   asset,
   aspectClassName,
   caption,
@@ -158,10 +159,10 @@ function ComposedEvidence({
  * Player unchanged. V4 restructure kept this composition as-is per
  * instruction ("keep the existing 3-phone Hero visual").
  */
-export function CaseFourHeroEvidence({ locale }: { locale: Locale }) {
+/** The three-phone hero composition alone (CASE System V3 hero bezel). */
+export function CaseFourHeroPhones({ locale }: { locale: Locale }) {
   const zhHant = locale === "zh";
   return (
-    <figure className="mt-12 md:mt-16">
       <Reveal className="block">
         <div className="grid grid-cols-2 items-end gap-5 md:grid-cols-12 md:gap-6 lg:gap-8">
           <PhoneEvidence
@@ -194,6 +195,14 @@ export function CaseFourHeroEvidence({ locale }: { locale: Locale }) {
           />
         </div>
       </Reveal>
+  );
+}
+
+export function CaseFourHeroEvidence({ locale }: { locale: Locale }) {
+  const zhHant = locale === "zh";
+  return (
+    <figure className="mt-12 md:mt-16">
+      <CaseFourHeroPhones locale={locale} />
       <p className="cf-dim mt-20 max-w-[62ch] text-[13px] leading-6 md:mt-24">
         {zhHant
           ? "畫面反映目前開發階段，介面與細節可能持續調整。"

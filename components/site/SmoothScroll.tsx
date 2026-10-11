@@ -67,7 +67,17 @@ export function SmoothScroll() {
         const onLenisScroll = () => ScrollTrigger.update();
         lenis.on("scroll", onLenisScroll);
 
+        // Same stale-`limit` cause as the navigation case below, but for
+        // height changes WITHIN a page (CASE Remote collapse → Reading Mode
+        // re-flows the article taller; images/media settling): <html> is
+        // viewport-sized (h-full), so Lenis' own observer never fires and
+        // wheel scrolling clamps at the old bottom. <body> grows with the
+        // document, so observing it keeps the limit current.
+        const bodyObserver = new ResizeObserver(() => lenis.resize());
+        bodyObserver.observe(document.body);
+
         stopLenis = () => {
+          bodyObserver.disconnect();
           lenis.off("scroll", onLenisScroll);
           gsap.ticker.remove(onTick);
           gsap.ticker.lagSmoothing(

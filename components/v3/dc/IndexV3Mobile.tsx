@@ -346,7 +346,7 @@ const render = (v) => h("div", { "ref": r(v, "root"), "onPointerDownCapture": r(
                         "ANGELA'S PORTFOLIO")),
                     h("div", { style: css("flex:1;min-height:0") }),
                     h("span", { style: css("font:500 11px var(--v3-mono);letter-spacing:.16em;color:#d4f04a") },
-                      "SENIOR UI/UX DESIGNER"),
+                      "UI/UX DESIGNER"),
                     h("h1", { "data-v3m": "name", style: css("margin:0;font:900 19cqw/.84 var(--v3-display),sans-serif;letter-spacing:-.03em;color:#f4f1ea") },
                       "ANGELA",
                       h("br", null),

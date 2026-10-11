@@ -143,7 +143,7 @@ function buildWork(locale: Locale): HomeWorkItem[] {
   });
 }
 
-/** "資深 UI/UX 設計師 — 複雜系統 / B2B / 企業產品" → lead + rotating words. */
+/** "UI/UX 設計師 — 複雜系統 / B2B / 企業產品" → lead + rotating words. */
 function splitKicker(kicker: string) {
   const [lead, rest = ""] = kicker.split(" — ");
   return { lead, words: rest.split(" / ").filter(Boolean) };

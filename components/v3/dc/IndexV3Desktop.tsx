@@ -360,7 +360,7 @@ const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:rela
                             h("div", { style: css("flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 404px;gap:64px;align-items:end;padding:28px 0 30px") },
                               h("div", { style: css("display:flex;flex-direction:column;gap:22px") },
                                 h("span", { style: css("font:500 14px var(--v3-mono);letter-spacing:.18em;color:#d4f04a") },
-                                  "SENIOR UI/UX DESIGNER"),
+                                  "UI/UX DESIGNER"),
                                 h("h1", { style: css("margin:0;font:900 136px/.84 var(--v3-display),sans-serif;letter-spacing:-.03em;color:#f4f1ea") },
                                   "ANGELA",
                                   h("br", null),

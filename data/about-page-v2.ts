@@ -91,7 +91,7 @@ const NEW: Record<
   }
 > = {
   zh: {
-    eyebrow: "關於 — SENIOR UI/UX DESIGNER",
+    eyebrow: "關於 — UI/UX DESIGNER",
     facts: [
       { label: "經驗", value: "近 9 年", count: { prefix: "近 ", value: 9, suffix: " 年" } },
       { label: "據點", value: "台中，台灣" },
@@ -115,7 +115,7 @@ const NEW: Record<
     close: "關閉",
   },
   en: {
-    eyebrow: "ABOUT — SENIOR UI/UX DESIGNER",
+    eyebrow: "ABOUT — UI/UX DESIGNER",
     facts: [
       { label: "EXPERIENCE", value: "~9 yrs", count: { prefix: "~", value: 9, suffix: " yrs" } },
       { label: "BASED IN", value: "Taichung, Taiwan" },

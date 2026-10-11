@@ -44,17 +44,19 @@ class Logic extends DCLogic {
   wake = () => { if (this.state.sleep) this.setState({ sleep: false }); clearTimeout(this.sleepT); this.sleepT = setTimeout(() => this.setState({ sleep: true }), 30000); };
   press = () => { this.wake(); this.setState({ led: true, bump: true }); this.later(90, () => this.setState({ bump: false })); this.later(160, () => this.setState({ led: false })); };
   zap = (no, force) => {
+    if (!force && this.busy && no !== this.state.no) { this.queued = no; return; }
     if (!force && (no === this.state.no || this.busy)) return;
+    this.queued = null;
     this.clear(); this.busy = true;
     try { const tc = this.cases.find(x => x.no === no); window.dispatchEvent(new CustomEvent('v3:track', { detail: { name: 'select_channel', params: { channel_id: 'CH' + (tc ? tc.ch : no), case_id: 'CASE' + no } } })); } catch (e) {}
     if (this.reduce || !(this.props.crtEffect ?? true)) {
-      this.setState({ no, phase: 'pre' }); this.later(60, () => { this.setState({ phase: 'on', happy: true }); this.busy = false; }); this.later(1200, () => this.setState({ happy: false }));
+      this.setState({ no, phase: 'pre' }); this.later(60, () => { this.setState({ phase: 'on', happy: true }); this.busy = false; this.flushQueued(); }); this.later(1200, () => this.setState({ happy: false }));
       return;
     }
     this.setState({ phase: 'off', osd: true, happy: false });
     this.later(150, () => this.setState({ phase: 'static', no }));
     this.later(400, () => this.setState({ phase: 'on' }));
-    this.later(700, () => { this.setState({ osd: false, happy: true }); this.busy = false; });
+    this.later(700, () => { this.setState({ osd: false, happy: true }); this.busy = false; this.flushQueued(); });
     this.later(1600, () => this.setState({ happy: false }));
   };
   boot = () => {
@@ -63,7 +65,7 @@ class Logic extends DCLogic {
     this.later(80, () => this.setState({ phase: 'off' }));
     this.later(380, () => this.setState({ phase: 'static' }));
     this.later(700, () => this.setState({ phase: 'on', osd: true }));
-    this.later(1000, () => { this.setState({ osd: false }); this.busy = false; });
+    this.later(1000, () => { this.setState({ osd: false }); this.busy = false; this.flushQueued(); });
   };
   step = d => { const l = this.list(), i = l.findIndex(c => c.no === this.state.no); const n = l[((i < 0 ? 0 : i + d) + l.length) % l.length]; this.press(); this.zap(n.no); };
   pickTab = k => {
@@ -106,6 +108,7 @@ class Logic extends DCLogic {
       if (el) el.focus({ preventScroll: true });
     }, 60);
   };
+  flushQueued = () => { const q = this.queued; this.queued = null; if (q && q !== this.state.no) this.zap(q); };
   componentDidMount() {
     this.reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.tick(); this.clockT = setInterval(this.tick, 30000);

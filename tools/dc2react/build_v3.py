@@ -258,6 +258,30 @@ def patch_index(src, mobile):
     logic, k = re.subn(r"\+x\.no === \+e\.key", "+x.ch === +e.key", logic)
     if k < 2:
         raise SystemExit(f"digit keys by slot: {k}")
+    # --- Channel strip input (iPhone drag-drift bug, 2026-10-11).
+    # (1) Busy CRT switch: a channel requested while a switch is running was
+    #     dropped (taps 60–500 ms apart were ignored). Remember the latest
+    #     request and apply it when the switch finishes.
+    logic = sub_exact(logic, "    if (!force && (no === this.state.no || this.busy)) return;\n",
+                      "    if (!force && this.busy && no !== this.state.no) { this.queued = no; return; }\n    if (!force && (no === this.state.no || this.busy)) return;\n    this.queued = null;\n", count=1)
+    logic = sub_exact(logic, "this.busy = false;", "this.busy = false; this.flushQueued();")
+    logic = sub_exact(logic, "  componentDidMount() {", "  flushQueued = () => { const q = this.queued; this.queued = null; if (q && q !== this.state.no) this.zap(q); };\n  componentDidMount() {", count=1)
+    if mobile:
+        # (2) Centering after a selection wrote scrollLeft every frame for
+        #     320 ms from a stale start position, overriding the user's finger
+        #     (drags swallowed or reversed; jumps after a fling). Use the
+        #     browser's smooth scroll, which user scrolling cancels natively,
+        #     and drop a pending centre as soon as the user touches the strip.
+        logic = sub_exact(logic, """    cancelAnimationFrame(this.scrRaf);
+    if (this.reduce || Math.abs(to - from) < 2) { st.scrollLeft = to; return; }
+    const t0 = performance.now(), D = 320;
+    const tick = now => { const p = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - p, 3); st.scrollLeft = from + (to - from) * e; if (p < 1) this.scrRaf = requestAnimationFrame(tick); };
+    this.scrRaf = requestAnimationFrame(tick);
+  };""", """    if (Math.abs(to - from) < 2) return;
+    st.scrollTo({ left: to, behavior: this.reduce ? 'auto' : 'smooth' });
+  };""", count=1)
+        logic = sub_exact(logic, "      stripScroll: () => {", "      stripTouch: () => { clearTimeout(this.ctrT); },\n      stripScroll: () => {", count=1)
+        tpl = sub_exact(tpl, '<div ref="{{ strip }}" onScroll="{{ stripScroll }}"', '<div ref="{{ strip }}" onScroll="{{ stripScroll }}" onPointerDown="{{ stripTouch }}" onTouchStart="{{ stripTouch }}" onWheel="{{ stripTouch }}"', count=1)
     tpl = tag_header_nav(tpl)
     out = i18n_index(tpl + logic)
     # Q02: the button reads "Copied" only after a successful write

@@ -1,8 +1,7 @@
 "use client";
 
 import Link, { type LinkProps } from "next/link";
-import { useRef, type ReactNode } from "react";
-import { gsap } from "gsap";
+import type { ReactNode } from "react";
 
 /**
  * Case-navigation link with a local departure cue (a quick, restrained
@@ -26,17 +25,11 @@ export function CaseTransitionLink({
   className,
   ...rest
 }: LinkProps & { children: ReactNode; className?: string }) {
-  const ref = useRef<HTMLAnchorElement | null>(null);
-
-  const handleClick = () => {
-    const el = ref.current;
-    if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    gsap.fromTo(el, { autoAlpha: 1 }, { autoAlpha: 0.55, duration: 0.12, yoyo: true, repeat: 1, ease: "power1.inOut" });
-  };
-
+  // V3: Page Transition 01 (components/v3/transition) now owns every
+  // cross-page transition. The former local departure "dip" is retired so
+  // two transition effects never run on the same navigation.
   return (
-    <Link ref={ref} href={href} onClick={handleClick} className={className} {...rest}>
+    <Link href={href} className={className} {...rest}>
       {children}
     </Link>
   );

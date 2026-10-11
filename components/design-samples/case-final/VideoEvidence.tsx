@@ -69,14 +69,18 @@ export function usePrefersReducedMotion() {
 export function VideoEvidence({
   asset,
   format = "landscape",
+  ratio,
   surface = "light",
   holdPosterUntilPlaying = false,
   mp4First = false,
   zhHant = false,
 }: {
   asset: VideoEvidenceAsset;
-  /** "wide" (16:9) matches the other case hero figures; CASE01's product preview. */
-  format?: "landscape" | "portrait" | "crop" | "wide";
+  /** "wide" (16:9) matches the other case hero figures; CASE01's product preview.
+   * "phone" is a full mobile screen (CASE07 app recordings). */
+  format?: "landscape" | "portrait" | "crop" | "wide" | "phone";
+  /** Exact recording ratio (e.g. "834 / 1194"); overrides `format`. */
+  ratio?: string;
   /** Loading backdrop behind the poster: white for light websites, ink for dark product UI. */
   surface?: "light" | "dark";
   /**
@@ -95,6 +99,7 @@ export function VideoEvidence({
     portrait: "aspect-[4/5]",
     crop: "aspect-[4/3]",
     wide: "aspect-[16/9]",
+    phone: "aspect-[390/844]",
   }[format];
 
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -204,7 +209,7 @@ export function VideoEvidence({
   };
 
   return (
-    <div ref={containerRef} className={`cf-figure-frame relative ${aspect} overflow-hidden ${surface === "dark" ? "bg-[#111318]" : "bg-white"}`}>
+    <div ref={containerRef} className={`cf-figure-frame relative ${ratio ? "" : aspect} overflow-hidden ${surface === "dark" ? "bg-[#111318]" : "bg-white"}`} style={ratio ? { aspectRatio: ratio } : undefined}>
       {showVideo ? (
         <>
           <video

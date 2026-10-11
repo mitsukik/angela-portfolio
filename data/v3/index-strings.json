@@ -1,0 +1,242 @@
+{
+  "_note": {
+    "zh": "INDEX V3 UI strings. zh = approved prototype copy (verbatim). en = approved V2 copy where it exists (hero statement: data/home.ts; proof band, Download Resume, Copy email, Copied, nav: data/home-v2.ts); otherwise a faithful translation of the zh label (no new claims). Template strings use {placeholders}. emailCopied drops the address from the prototype toast (release rule: the email address is never printed).",
+    "en": ""
+  },
+  "heroStatement": {
+    "zh": "我把複雜的系統，轉譯成清晰、可延展、直覺的產品體驗。從資訊架構到互動細節，讓龐大的流程在畫面上有秩序，也在使用時有節奏。",
+    "en": "I translate complex systems into clear, scalable, and intuitive product experiences. From information architecture to interaction detail, I give complex workflows clarity and rhythm."
+  },
+  "focus": {
+    "zh": "複雜系統 · B2B · 企業產品",
+    "en": "Complex Systems · B2B · Enterprise"
+  },
+  "proof1": {
+    "zh": "近 9 年",
+    "en": "~9 years"
+  },
+  "proof1Sub": {
+    "zh": "Web・UI/UX 與前端相關經驗",
+    "en": "Web, UI/UX & front-end"
+  },
+  "proof2": {
+    "zh": "跨產品類型",
+    "en": "Multi-product"
+  },
+  "proof2Sub": {
+    "zh": "B2B・後台・Dashboard・Web・Mobile",
+    "en": "B2B・Admin・Dashboard・Web・Mobile"
+  },
+  "proof3": {
+    "zh": "真實落地",
+    "en": "Shipped"
+  },
+  "proof3Sub": {
+    "zh": "商業網站上線・企業系統正式導入",
+    "en": "Live sites・Systems in production"
+  },
+  "proof4": {
+    "zh": "設計到實作",
+    "en": "Design → Build"
+  },
+  "proof4Sub": {
+    "zh": "UX・UI・Design System・前端協作",
+    "en": "UX・UI・Design System・Dev handoff"
+  },
+  "explore": {
+    "zh": "探索作品",
+    "en": "Explore work"
+  },
+  "viewCase": {
+    "zh": "看案例",
+    "en": "View case"
+  },
+  "viewThisCase": {
+    "zh": "看這個案例",
+    "en": "View this case"
+  },
+  "watchChannels": {
+    "zh": "看作品頻道",
+    "en": "Watch the work channels"
+  },
+  "upNext": {
+    "zh": "UP NEXT · 作品頻道",
+    "en": "UP NEXT · Work channels"
+  },
+  "upNextPick": {
+    "zh": "UP NEXT · 作品頻道 · 直接選台",
+    "en": "UP NEXT · Work channels · Pick a channel"
+  },
+  "scrollHint": {
+    "zh": "往下捲動，或直接選台",
+    "en": "Scroll down, or pick a channel"
+  },
+  "prevArrow": {
+    "zh": "◀ 上一台",
+    "en": "◀ Prev"
+  },
+  "nextArrow": {
+    "zh": "下一台 ▶",
+    "en": "Next ▶"
+  },
+  "prev": {
+    "zh": "上一台",
+    "en": "Previous channel"
+  },
+  "next": {
+    "zh": "下一台",
+    "en": "Next channel"
+  },
+  "navHome": {
+    "zh": "首頁",
+    "en": "Home"
+  },
+  "navWork": {
+    "zh": "作品",
+    "en": "Work"
+  },
+  "navAbout": {
+    "zh": "關於",
+    "en": "About"
+  },
+  "resume": {
+    "zh": "履歷",
+    "en": "Resume"
+  },
+  "resumeArrow": {
+    "zh": "履歷 ↓",
+    "en": "Resume ↓"
+  },
+  "downloadResume": {
+    "zh": "下載履歷",
+    "en": "Download Resume"
+  },
+  "copyEmail": {
+    "zh": "複製 Email",
+    "en": "Copy email"
+  },
+  "copied": {
+    "zh": "已複製 ✓",
+    "en": "Copied ✓"
+  },
+  "categories": {
+    "zh": "作品分類",
+    "en": "Work categories"
+  },
+  "categoriesShort": {
+    "zh": "分類",
+    "en": "Categories"
+  },
+  "channelPreview": {
+    "zh": "作品頻道預覽",
+    "en": "Work channel preview"
+  },
+  "channelPreviewSwipe": {
+    "zh": "作品頻道預覽，左右滑動可轉台",
+    "en": "Work channel preview — swipe left or right to change channel"
+  },
+  "guide": {
+    "zh": "導覽小幫手 Nemu",
+    "en": "Nemu guide"
+  },
+  "nemuChat": {
+    "zh": "Nemu 對話",
+    "en": "Nemu conversation"
+  },
+  "openChat": {
+    "zh": "開啟 Nemu 對話",
+    "en": "Open Nemu conversation"
+  },
+  "closeChat": {
+    "zh": "關閉 Nemu 對話",
+    "en": "Close Nemu conversation"
+  },
+  "closeX": {
+    "zh": "關閉對話",
+    "en": "Close conversation"
+  },
+  "switchLang": {
+    "zh": "切換語言",
+    "en": "Switch language"
+  },
+  "backHome": {
+    "zh": "回到首頁",
+    "en": "Back to home"
+  },
+  "osdHome": {
+    "zh": "首頁 · HOME",
+    "en": "HOME"
+  },
+  "programGuide": {
+    "zh": "節目表",
+    "en": "Channel guide"
+  },
+  "aboutAngela": {
+    "zh": "關於 Angela",
+    "en": "About Angela"
+  },
+  "back": {
+    "zh": "返回",
+    "en": "Back"
+  },
+  "switching": {
+    "zh": "轉台中…",
+    "en": "Switching channel…"
+  },
+  "greet": {
+    "zh": "訊號穩定，歡迎收看。我是 Nemu，想從哪裡開始？",
+    "en": "Signal is clear — welcome. I'm Nemu. Where would you like to start?"
+  },
+  "askCategory": {
+    "zh": "想看哪一類作品？我幫你把頻道調好。",
+    "en": "What kind of work would you like to see? I'll tune the channel for you."
+  },
+  "tabAll": {
+    "zh": "全部",
+    "en": "All"
+  },
+  "tabSys": {
+    "zh": "B2B 系統",
+    "en": "B2B Systems"
+  },
+  "tabCom": {
+    "zh": "電商",
+    "en": "E-commerce"
+  },
+  "tabMob": {
+    "zh": "行動 App",
+    "en": "Mobile App"
+  },
+  "tabWeb": {
+    "zh": "網站",
+    "en": "Websites"
+  },
+  "tuned": {
+    "zh": "CH{no} 訊號清晰。正在播放：{t}。",
+    "en": "CH{no} signal is clear. Now playing: {t}."
+  },
+  "switchTab": {
+    "zh": "換分類 · {tab}",
+    "en": "Change category · {tab}"
+  },
+  "jumpTo": {
+    "zh": "直接選台：CH{no} {t}",
+    "en": "Go to channel: CH{no} {t}"
+  },
+  "emailCopied": {
+    "zh": "Email 已複製。",
+    "en": "Email copied."
+  },
+  "copyFailed": {
+    "zh": "無法存取剪貼簿，Email 未複製。",
+    "en": "Couldn't copy the email — clipboard unavailable."
+  },
+  "copyFailedShort": {
+    "zh": "無法複製",
+    "en": "Couldn't copy"
+  },
+  "brandHome": {
+    "zh": "返回首頁",
+    "en": "Back to Home"
+  }
+}

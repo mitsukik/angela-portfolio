@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { Archivo, Geist, Geist_Mono, IBM_Plex_Mono, Noto_Sans_TC } from "next/font/google";
 import Script from "next/script";
-import { RouteTransition } from "@/components/site/RouteTransition";
+import { PageTransitionStage } from "@/components/v3/transition/PageTransition01";
+import { v3FontVariables } from "@/components/v3/fonts";
 import { SmoothScroll } from "@/components/site/SmoothScroll";
 import { SITE_ORIGIN } from "@/data/site-seo";
+import { gaBuildEnabled } from "@/data/analytics";
+import { Analytics } from "@/components/site/Analytics";
 import "./globals.css";
 // Scoped V2 styles (.hv2-*, the Home/About cursor) live in the global sheet on purpose: as a
 // route-level chunk, the shared header's <Link href="/"> prefetches it from
@@ -11,6 +14,10 @@ import "./globals.css";
 import "@/components/home-v2/home-v2.css";
 import "@/components/site/custom-cursor.css";
 import "@/components/about-page-v2/about-page-v2.css";
+// Portfolio V3 foundation + CASE frame. Every selector is scoped under .v3, so
+// V2 pages are unaffected; global for the same prefetch reason as above.
+import "@/components/v3/v3.css";
+import "@/components/v3/dc/generated.css";
 
 // Every route is statically generated from one shared root layout (no
 // per-locale layout.tsx, no [locale] dynamic segment), so the server has
@@ -43,6 +50,14 @@ const ABOUT_HERO_MOTION_GUARD = `(() => {
     window.setTimeout(() => document.documentElement.removeAttribute("data-about-hero-motion"), 2000);
   } catch (e) {}
 })();`;
+
+// Portfolio V3 CASE Reading Mode (localStorage "ay-case-reading" = "1"):
+// marks <html> before the first paint so the V3 CASE frame renders the
+// saved Reading Mode / Remote state directly instead of flashing the
+// expanded Remote first. Inline in <head> per Next's "Preventing flash
+// before hydration" guide (a beforeInteractive Script runs too late for
+// first paint). V2 pages ignore the attribute.
+const CASE_READING_GUARD = `(function(){try{if(localStorage.getItem("ay-case-reading")==="1")document.documentElement.setAttribute("data-case-reading","1")}catch(e){}})()`;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -111,7 +126,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       // no-JS/pre-hydration default matches this site's actual primary
       // locale instead of the other way around.
       lang="zh-Hant"
-      className={`${geistSans.variable} ${geistMono.variable} ${notoSansTC.variable} ${archivo.variable} ${ibmPlexMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${notoSansTC.variable} ${archivo.variable} ${ibmPlexMono.variable} ${v3FontVariables} h-full antialiased`}
       // The beforeInteractive scripts below legitimately mutate this
       // element's attributes (lang on every route; data-about-hero-motion
       // on /about routes) before hydration — React has no way to know
@@ -122,6 +137,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       // element's own attributes, not for anything inside it.
       suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: CASE_READING_GUARD }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <Script
           id="locale-lang-guard"
@@ -134,8 +152,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           dangerouslySetInnerHTML={{ __html: ABOUT_HERO_MOTION_GUARD }}
         />
         <SmoothScroll />
-        <RouteTransition />
-        {children}
+        {/* Page Transition 01 (approved V3) replaces the V2 RouteTransition curtain. */}
+        <PageTransitionStage>{children}</PageTransitionStage>
+        {/* GA4: Vercel production builds only, production host only (data/analytics.ts). */}
+        {gaBuildEnabled() && <Analytics />}
       </body>
     </html>
   );

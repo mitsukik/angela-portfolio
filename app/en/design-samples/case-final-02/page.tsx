@@ -1,25 +1,9 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { CaseStudyPrototype } from "@/components/design-samples/case-final/CaseStudyPrototype";
-import { getCaseTheme } from "@/components/design-samples/case-final/caseTheme";
-import { getNextProject, getPreviousProject, getProjectBySlug } from "@/data/projects";
+import { CaseOriginalPage } from "@/components/v3/case/legacy/CaseOriginalPage";
 import { createPageMetadata } from "@/data/site-seo";
 
 export const metadata: Metadata = createPageMetadata("case02", "en");
 
-const SAMPLE_SLUG = "corporate-website";
-
 export default function CaseFinal02PageEn() {
-  const project = getProjectBySlug(SAMPLE_SLUG);
-  if (!project) notFound();
-  return (
-    <CaseStudyPrototype
-      theme={getCaseTheme(SAMPLE_SLUG)}
-      project={project}
-      nextProject={getNextProject(project)}
-      previousProject={getPreviousProject(project)}
-      locale="en"
-      contentVersion="case02-v1"
-    />
-  );
+  return <CaseOriginalPage caseNo="02" locale="en" />;
 }

@@ -91,6 +91,29 @@ export function CaseOneProductPreview({ locale }: { locale: Locale }) {
   );
 }
 
+/** The Working Product Preview loop alone (CASE System V3 hero bezel; the
+ * label, prototype link and caption are provided by the V3 hero). */
+export function CaseOneProductPreviewMedia({ locale }: { locale: Locale }) {
+  const zh = locale === "zh";
+  return (
+    <VideoEvidence
+      format="wide"
+      surface="dark"
+      holdPosterUntilPlaying
+      mp4First
+      zhHant={zh}
+      asset={{
+        webm: "/videos/case01/case01-product-preview-2x.webm",
+        mp4: "/videos/case01/case01-product-preview-2x.mp4",
+        poster: "/images/case01/prototype/case01-product-preview-poster-2x.webp",
+        alt: zh
+          ? "後台原型操作預覽：依庫存狀態篩選、查看超賣商品與庫存異動紀錄，再開啟已送達訂單的出貨資訊"
+          : "Admin prototype walkthrough: filtering inventory by stock health, reviewing oversold items and the inventory log, then opening a delivered order's shipping details",
+      }}
+    />
+  );
+}
+
 /* ------------------------------------------------------------ B + C -- */
 
 type StageItem = {

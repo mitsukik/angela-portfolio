@@ -1,0 +1,137 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState, type MouseEvent } from "react";
+import type { Locale } from "@/data/locale";
+import type { V3Channel } from "@/data/v3/channels";
+import strings from "@/data/v3/index-strings.json";
+import { resumeUrl } from "@/data/contact";
+import { captureLanguageSwitch } from "@/components/site/navigationIntent";
+import { finishLanguageFade, LANG_FADE_MS, startLanguageFade } from "@/components/home-v2/languageFade";
+import { attachNemuMotion } from "../nemu/nemuMotion";
+import IndexV3Desktop from "../dc/IndexV3Desktop";
+import IndexV3Mobile from "../dc/IndexV3Mobile";
+
+/*
+ * INDEX V3 — mounts the approved designs exactly as the connected
+ * prototype does (Portfolio V3 Connected.dc.html):
+ * - desktop + tablet landscape (≥1024): the 1920×1080 INDEX artboard,
+ *   uniformly scaled to fit the viewport and centred (prototype `crop`);
+ * - tablet portrait + mobile (<1024): IndexV3MobileScreen with vw/vh.
+ * Hero → Channels, the original CRT channel switch, tabs, keyboard and
+ * Nemu all run inside the compiled components unchanged.
+ */
+
+type Mode = { kind: "desk"; w: number; h: number } | { kind: "mob"; w: number; h: number };
+
+const SEG_ON_D = "background:var(--v3-lime);color:var(--v3-on-lime);border-radius:999px;padding:4px 10px";
+const SEG_OFF_D = "padding:4px 10px;color:rgba(244,241,234,.6)";
+const SEG_ON_M = "background:var(--v3-lime);color:var(--v3-on-lime);border-radius:999px;padding:4px 8px";
+const SEG_OFF_M = "padding:4px 8px;color:rgba(244,241,234,.6)";
+
+export function IndexV3Page({ locale, channels, chMax }: { locale: Locale; channels: V3Channel[]; chMax: string }) {
+  const router = useRouter();
+  const [mode, setMode] = useState<Mode | null>(null);
+  const [startIn, setStartIn] = useState<"home" | "channels">("home");
+  const zh = locale === "zh";
+  const prefix = zh ? "" : "/en";
+  const switchHref = zh ? "/en" : "/";
+
+  const L = useMemo(
+    () => Object.fromEntries(Object.entries(strings).filter(([k]) => !k.startsWith("_")).map(([k, v]) => [k, (v as { zh: string; en: string })[locale]])),
+    [locale],
+  );
+
+  useEffect(() => {
+    const measure = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      setMode(w >= 1024 ? { kind: "desk", w, h } : { kind: "mob", w, h });
+    };
+    // Deep links from CASE "All channels" / the V2 anchor open on Channels.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of the URL hash on mount
+    if (/^#(channels|selected-work)$/.test(window.location.hash)) setStartIn("channels");
+    measure();
+    window.addEventListener("resize", measure);
+    document.documentElement.lang = zh ? "zh-Hant" : "en";
+    finishLanguageFade();
+    return () => window.removeEventListener("resize", measure);
+  }, [zh]);
+
+  useEffect(() => attachNemuMotion(), []);
+
+  const onSwitchLang = (event: MouseEvent) => {
+    event.preventDefault();
+    if (!startLanguageFade()) {
+      captureLanguageSwitch(switchHref, locale);
+      router.push(switchHref, { scroll: false });
+      return;
+    }
+    window.setTimeout(() => {
+      captureLanguageSwitch(switchHref, locale);
+      router.push(switchHref, { scroll: false });
+    }, LANG_FADE_MS);
+  };
+
+  const shared = {
+    L,
+    lang: locale,
+    channels,
+    prefix,
+    chMax,
+    chMaxDigit: String(Number(chMax)),
+    resumeHref: resumeUrl(locale),
+    aboutHref: `${prefix}/about`,
+    homeHref: prefix || "/",
+    zhActive: zh ? "true" : "false",
+    enActive: zh ? "false" : "true",
+    switchHref,
+    onSwitchLang,
+    startIn,
+    zhSegD: zh ? SEG_ON_D : SEG_OFF_D,
+    enSegD: zh ? SEG_OFF_D : SEG_ON_D,
+    zhSeg: zh ? SEG_ON_M : SEG_OFF_M,
+    enSeg: zh ? SEG_OFF_M : SEG_ON_M,
+  };
+
+  const k = mode?.kind === "desk" ? Math.min(mode.w / 1920, mode.h / 1080) : 1;
+
+  return (
+    <div className="v3 v3-index cv3-fade" data-lenis-prevent>
+      {/* Crawlable / screen-reader summary (the TV UI is canvas-like). */}
+      <div className="v3-sr">
+        <h1>{zh ? "Angela Yu — 作品集" : "Angela Yu — Portfolio"}</h1>
+        {!mode ? (
+          <>
+            <p>{L.heroStatement}</p>
+            <ul>
+              {channels.map((c) => (
+                <li key={c.no}>
+                  <a href={`${prefix}/design-samples/case-final-${c.no}`}>{`CH ${c.ch} · ${c.t}`}</a>
+                </li>
+              ))}
+              <li>
+                <a href={`${prefix}/about`}>{L.navAbout}</a>
+              </li>
+            </ul>
+          </>
+        ) : null}
+      </div>
+      {mode?.kind === "desk" ? (
+        <div className="v3-index-stage">
+          <div
+            className="v3-index-board"
+            style={{ transform: `scale(${k})`, left: (mode.w - 1920 * k) / 2, top: (mode.h - 1080 * k) / 2 }}
+          >
+            <IndexV3Desktop key={`d-${startIn}`} {...shared} />
+          </div>
+        </div>
+      ) : null}
+      {mode?.kind === "mob" ? (
+        <div className="v3-index-stage">
+          <IndexV3Mobile key={`m-${startIn}`} {...shared} vw={mode.w} vh={mode.h} __hostStyle="position:absolute;inset:0" />
+        </div>
+      ) : null}
+    </div>
+  );
+}

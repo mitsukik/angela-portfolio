@@ -5,8 +5,30 @@ import { Reveal } from "../Reveal";
 import { HeroEvidenceReveal } from "./HeroEvidenceReveal";
 import { EvidenceTrigger } from "./CaseEvidenceViewer";
 import { VideoEvidence, type VideoEvidenceAsset } from "./VideoEvidence";
+import { SectionLabelText } from "./SectionLabelContext";
 
 type RegisterSection = (index: number, element: HTMLElement | null) => void;
+
+export const CASE02_PROJECTS = {
+  sdx: {
+    name: "Shun De Xing / SDX",
+    role: "UI/UX Designer · Frontend Support",
+    focus: "Information Architecture · Content Hierarchy · Corporate Communication",
+    url: "https://sdxdevelop.com/",
+  },
+  charming: {
+    name: "Charming Clinic",
+    role: "UI/UX Designer · Frontend Support",
+    focus: "Service Discovery · Brand Trust · User Flow",
+    url: "https://charmingvip.com/",
+  },
+  natex: {
+    name: "NATEX",
+    role: "UI/UX Designer · Frontend",
+    focus: "B2B Communication · Technical Content Hierarchy · Responsive Execution",
+    url: "https://www.natex.com.tw/",
+  },
+} as const;
 
 const projects = {
   sdx: {
@@ -61,7 +83,7 @@ function SectionHeading({
 }) {
   return (
     <header className="max-w-[70ch]">
-      <p className="cf-meta cf-section-label cf-accent md:whitespace-nowrap">{label}</p>
+      <p className="cf-meta cf-section-label cf-accent md:whitespace-nowrap"><SectionLabelText text={label} /></p>
       <h2 className="cf-heading cf-h3 mt-4">{title}</h2>
       {intro && <p className="cf-body body-tc mt-8 max-w-[62ch]">{intro}</p>}
     </header>
@@ -121,7 +143,7 @@ type EvidenceAsset = {
   alt: string;
 };
 
-function EvidenceImage({
+export function EvidenceImage({
   asset,
   format = "landscape",
 }: {
@@ -286,7 +308,7 @@ function ProjectStoryHeading({ index, title }: { index: string; title: string })
   );
 }
 
-const contributionRows = [
+export const contributionRows = [
   ["Requirements", "Yes", "Yes", "Yes"],
   ["Information Architecture / Flow", "Yes", "Yes", "Yes"],
   ["UX/UI Design", "Yes", "Yes", "Yes"],
@@ -296,8 +318,8 @@ const contributionRows = [
   ["Frontend", "Partial", "Partial", "Yes"],
 ] as const;
 
-const CONTRIBUTION_VALUE_ZH: Record<string, string> = { Yes: "是", No: "否", Partial: "部分" };
-const CONTRIBUTION_LABEL_ZH: Record<string, string> = {
+export const CONTRIBUTION_VALUE_ZH: Record<string, string> = { Yes: "是", No: "否", Partial: "部分" };
+export const CONTRIBUTION_LABEL_ZH: Record<string, string> = {
   Requirements: "需求",
   "Information Architecture / Flow": "資訊架構／流程",
   "UX/UI Design": "UX/UI 設計",
@@ -382,7 +404,7 @@ export function CaseTwoFinalContent({ register, locale }: { register: RegisterSe
       </Section>
 
       <Section index={2} register={register}>
-        <p className="cf-meta cf-section-label cf-accent md:whitespace-nowrap">{zhHant ? "04 — 專案故事" : "04 — PROJECT STORIES"}</p>
+        <p className="cf-meta cf-section-label cf-accent md:whitespace-nowrap"><SectionLabelText text={zhHant ? "04 — 專案故事" : "04 — PROJECT STORIES"} /></p>
         <div className="mt-10">
         <ProjectStoryHeading index="04A / SDX" title={zhHant ? "整理龐大的企業服務內容" : "Organizing a Complex Corporate Offering"} />
         <div className="mt-10 grid gap-12 lg:grid-cols-12 lg:items-start">

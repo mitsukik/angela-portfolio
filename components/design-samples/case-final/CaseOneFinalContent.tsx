@@ -35,9 +35,10 @@ const PORTFOLIO_PROTOTYPE_URL: string | null = CASE01_PROTOTYPE_URL;
  * "reconstructed for portfolio presentation" disclosure, so repeating the
  * link ~90px above it read as clutter. Outcome keeps both destinations.
  */
-export function CaseOneDemoLinks({ locale, className = "", withPrototype = true, stacked = false }: { locale: Locale; className?: string; withPrototype?: boolean; stacked?: boolean }) {
+/** The CASE01 demo / prototype links (one source for the original list and the V3 hero CTAs). */
+export function caseOneDemoItems(locale: Locale, withPrototype = true) {
   const zh = locale === "zh";
-  const items = [
+  return [
     {
       href: ENGINEERING_DEMO_URL,
       label: zh ? "查看原始工程 Demo →" : "View Original Engineering Demo →",
@@ -52,7 +53,10 @@ export function CaseOneDemoLinks({ locale, className = "", withPrototype = true,
         : `Reconstructed for portfolio presentation${PORTFOLIO_PROTOTYPE_URL ? "" : " · In development"}`,
     },
   ].filter((item) => withPrototype || item.href !== PORTFOLIO_PROTOTYPE_URL);
-  return <CaseLinkList items={items} className={className} stacked={stacked} />;
+}
+
+export function CaseOneDemoLinks({ locale, className = "", withPrototype = true, stacked = false }: { locale: Locale; className?: string; withPrototype?: boolean; stacked?: boolean }) {
+  return <CaseLinkList items={caseOneDemoItems(locale, withPrototype)} className={className} stacked={stacked} />;
 }
 
 /* `stacked`: a date/label list (the Hero's info-row pattern) for the

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>body{margin:0;background:#211b1a}a{color:#f2b8b5}a:hover{color:#fff}</style>
+</helmet>
+<div style="min-height:100vh;padding:56px {{ gut }}px 72px;font-family:'Noto Sans TC',sans-serif;color:#f4ece8;display:flex;flex-direction:column;align-items:center;gap:44px">
+  <div style="max-width:880px;width:100%;display:flex;flex-direction:column;gap:12px;text-align:center;align-items:center">
+    <div style="font:500 12px 'JetBrains Mono',monospace;letter-spacing:.14em;color:#c9a8a3">CASE07 · IoT MOBILE · 2022 — INTERACTIVE PROTOTYPE</div>
+    <div style="font-size:30px;font-weight:700;line-height:1.35;text-wrap:balance">讓位置與安全狀態，不需要懂技術也能看得懂。</div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:64px;justify-content:center;align-items:flex-start;max-width:100%">
+    <sc-if value="{{ showIos }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:18px">
+        <div style="width:{{ ios.w }}px;height:{{ ios.h }}px">
+          <div style="width:414px;height:868px;transform:{{ ios.t }};transform-origin:0 0">
+            <dc-import name="UnMeApp" platform="ios" start-at="{{ startAt }}" hint-size="414px,868px"></dc-import>
+          </div>
+        </div>
+        <div style="font:500 12px 'JetBrains Mono',monospace;letter-spacing:.14em;color:#c9a8a3">iOS · HIG</div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showAndroid }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:18px">
+        <div style="width:{{ android.w }}px;height:{{ android.h }}px">
+          <div style="width:416px;height:874px;transform:{{ android.t }};transform-origin:0 0">
+            <dc-import name="UnMeApp" platform="android" start-at="{{ startAt }}" hint-size="416px,874px"></dc-import>
+          </div>
+        </div>
+        <div style="font:500 12px 'JetBrains Mono',monospace;letter-spacing:.14em;color:#c9a8a3">ANDROID · MATERIAL 3</div>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;show&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;both&quot;,&quot;ios&quot;,&quot;android&quot;],&quot;default&quot;:&quot;ios&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;startAt&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;login&quot;,&quot;home&quot;],&quot;default&quot;:&quot;login&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  // Fit the fixed-size device into narrow viewports by scaling the whole
+  // frame; the app's internal 390/392px coordinates stay untouched.
+  state = { vw: document.documentElement.clientWidth || window.innerWidth };
+  onResize = () => this.setState({ vw: document.documentElement.clientWidth || window.innerWidth });
+  componentDidMount() { window.addEventListener('resize', this.onResize); this.onResize(); }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); }
+  renderVals() {
+    const show = this.props.show ?? 'ios';
+    const vw = this.state.vw, gut = vw < 480 ? 16 : 32;
+    const fit = (w, h) => {
+      const k = Math.min(1, (vw - gut * 2) / w);
+      return { w: Math.floor(w * k), h: Math.floor(h * k), t: k < 1 ? `scale(${k})` : 'none' };
+    };
+    return {
+      showIos: show !== 'android', showAndroid: show !== 'ios', startAt: this.props.startAt ?? 'login',
+      gut, ios: fit(414, 868), android: fit(416, 874),
+    };
+  }
+}
+</script>
+</body>
+</html>

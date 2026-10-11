@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
-import { AboutPageV2 } from "@/components/about-page-v2/AboutPageV2";
+import { AboutV3Page } from "@/components/v3/about/AboutV3Page";
+import { getAboutPageContent } from "@/data/about-page-v2";
 import { createPageMetadata } from "@/data/site-seo";
 
 export const metadata: Metadata = createPageMetadata("about", "zh");
 
 export default function AboutPage() {
+  // Crawlable summary from the approved About copy (the TV UI renders client-side).
+  const about = getAboutPageContent("zh");
+  const headline = about.hero.headline.before + about.hero.headline.key + about.hero.headline.after;
   return (
     <div id="top">
-      <AboutPageV2 locale="zh" />
+      <AboutV3Page locale="zh" summary={{ title: headline, lines: [about.hero.lede, about.background.text, about.background.closing].filter(Boolean) }} />
     </div>
   );
 }

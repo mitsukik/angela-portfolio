@@ -29,7 +29,7 @@ class Logic extends DCLogic {
       React.createElement('span', { style: { position: 'absolute', width: '1px', height: '1px', overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap' } }, text));
   };
   state = { lang: (this.props.lang === 'en' ? 'en' : 'zh'), fading: false, ch: 0, menu: 'main', led: false, bump: false, happy: false, blink: false, sleep: false, sw: false, artH: false, gHov: null, sweepK: 0, toast: '', hS: null, hI: null, auto: 0, step: 0, paused: false, tool: null, chain: null, lb: false };
-  board = React.createRef(); scroller = React.createRef(); screen = React.createRef(); bioRef = React.createRef(); graphRef = React.createRef(); stageRef = React.createRef(); tiltRef = React.createRef();
+  board = React.createRef(); scroller = React.createRef(); screen = React.createRef(); bioRef = React.createRef(); graphRef = React.createRef(); stageRef = React.createRef(); tiltRef = React.createRef(); lbRef = React.createRef(); lbCloseRef = React.createRef();
   S = 520; email = 'angelayyu.cu@gmail.com';
   T = {
     zh: { navHome: '首頁', navWork: '作品', navAbout: '關於', navResume: '履歷', aboutLbl: '關於 · ABOUT', regionAria: '關於 Angela', guideAria: '章節節目表', nemuAria: '導覽小幫手 Nemu',
@@ -168,8 +168,8 @@ class Logic extends DCLogic {
     this.raf = requestAnimationFrame(loop);
     this.onKey = e => {
       if (/input|textarea/i.test(e.target.tagName)) return;
-      if (e.key === 'Escape' && this.state.lb) { this.setState({ lb: false }); return; }
-      if (this.state.lb) return;
+      if (e.key === 'Escape' && this.state.lb) { this.lbClose(); return; }
+      if (this.state.lb) { if (e.key === 'Tab') { e.preventDefault(); this.lbCloseRef.current && this.lbCloseRef.current.focus(); } return; }
       if (e.key === 'ArrowRight') { e.preventDefault(); this.goCh(this.state.ch + 1); }
       else if (e.key === 'ArrowLeft') { e.preventDefault(); this.goCh(this.state.ch - 1); }
       else if (/^[1-6]$/.test(e.key)) this.goCh(+e.key - 1);
@@ -181,7 +181,21 @@ class Logic extends DCLogic {
     const b = this.board.current; if (b) { b.addEventListener('pointermove', this.onAct); b.addEventListener('wheel', this.onWheel, { passive: true }); }
     this.wake();
   }
+  lbOpen = () => {
+    if (this.lbOn) return; this.lbOn = true; this.inerted = [];
+    this.setState({ lb: true }, () => {
+      if (!this.lbOn) return;
+      for (let n = this.lbRef.current; n && n !== document.body; n = n.parentElement) for (const sib of n.parentElement ? n.parentElement.children : []) if (sib !== n && !sib.inert) { sib.inert = true; this.inerted.push(sib); }
+      this.lbCloseRef.current && this.lbCloseRef.current.focus({ preventScroll: true });
+    });
+  };
+  lbClose = () => {
+    if (!this.lbOn) return; this.lbOn = false;
+    (this.inerted || []).forEach(n => { n.inert = false; }); this.inerted = [];
+    this.setState({ lb: false }, () => { if (!this.lbOn && this.tiltRef.current) this.tiltRef.current.focus({ preventScroll: true }); });
+  };
   componentWillUnmount() {
+    (this.inerted || []).forEach(n => { n.inert = false; });
     cancelAnimationFrame(this.raf); clearInterval(this.autoT); this.Tm.forEach(clearTimeout);
     ['blinkT', 'sleepT', 'swT', 'hapT', 'toastT', 'lockT', 'lt'].forEach(k => clearTimeout(this[k]));
     window.removeEventListener('keydown', this.onKey);
@@ -353,7 +367,7 @@ class Logic extends DCLogic {
     const msgMin = s.menu === 'toc' ? '0px' : '112px', spacerDisp = s.menu === 'toc' ? 'none' : 'block';
     return {
       msgMin, spacerDisp,
-      board: this.board, scroller: this.scroller, screen: this.screen, bioRef: this.bioRef, graphRef: this.graphRef, stageRef: this.stageRef, tiltRef: this.tiltRef,
+      board: this.board, scroller: this.scroller, screen: this.screen, bioRef: this.bioRef, graphRef: this.graphRef, stageRef: this.stageRef, tiltRef: this.tiltRef, lbRef: this.lbRef, lbCloseRef: this.lbCloseRef,
       t, fadeOp: s.fading ? 0 : 1,
       brandL: s.lang === 'en' ? 'Back to Home' : '返回首頁', zhActive: s.lang === 'zh' ? 'true' : 'false', enActive: s.lang === 'en' ? 'true' : 'false', toggleLang: (e) => { this.props.onSwitchLang && this.props.onSwitchLang(e); },
       zhBg: s.lang === 'zh' ? 'var(--v3-lime)' : 'transparent', zhFg: s.lang === 'zh' ? 'var(--v3-on-lime)' : 'rgba(244,241,234,.6)', enBg: s.lang === 'en' ? 'var(--v3-lime)' : 'transparent', enFg: s.lang === 'en' ? 'var(--v3-on-lime)' : 'rgba(244,241,234,.6)',
@@ -398,7 +412,8 @@ class Logic extends DCLogic {
           arrowColor: chain !== null && i < chain ? '#16171b' : 'rgba(22,23,27,.35)' }; }),
       artMove: e => { if (this.reduce) return; const r = e.currentTarget.getBoundingClientRect(); this.ttx = ((e.clientX - r.left) / r.width - 0.5) * 12; this.tty = -((e.clientY - r.top) / r.height - 0.5) * 9; },
       artEnter: () => this.setState({ artH: true }), artLeave: () => { this.ttx = 0; this.tty = 0; this.setState({ artH: false }); },
-      openArt: () => { this.press(); this.setState({ lb: true }); }, closeArt: () => this.setState({ lb: false }),
+      openArt: () => { this.press(); this.lbOpen(); }, closeArt: () => this.lbClose(),
+      lbVis: s.lb ? 'visible' : 'hidden', lbVisDelay: s.lb ? '0s' : '.3s',
       lbOp: s.lb ? 1 : 0, lbPE: s.lb ? 'auto' : 'none', lbScale: s.lb ? 'scale(1)' : 'scale(.94)',
       emailLabel: s.copyOk ? t.copied : s.copyFail ? (s.lang === 'en' ? 'Couldn\'t copy' : '無法複製') : (s.lang === 'en' ? 'Copy email' : '複製 Email'), copyEmail: () => { this.press(); this.copy(); },
       magMove: e => { if (this.reduce) return; const el = e.currentTarget, r = el.getBoundingClientRect(), k = el.offsetWidth / r.width; el.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * 0.3 * k}px,${(e.clientY - r.top - r.height / 2) * 0.3 * k}px)`; },
@@ -790,9 +805,9 @@ const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:rela
                       h("span", { style: css(("width:" + s(r(v, "face.mW")) + ";height:" + s(r(v, "face.mH")) + ";border-bottom:2px solid #F8F8FB;border-radius:" + s(r(v, "face.mR")) + ";opacity:" + s(r(v, "face.mOp")) + ";transform:" + s(r(v, "face.eyeTf")) + ";transition:width .3s,height .3s,opacity .2s,transform .45s cubic-bezier(.2,.7,.2,1)")) }),
                       h("div", { style: css(("position:absolute;left:10px;right:10px;top:50%;height:6px;margin-top:-3px;border-radius:3px;background:linear-gradient(90deg,transparent,#AFCBFF,#ffffff,#AFCBFF,transparent);box-shadow:0 0 10px rgba(175,203,255,.9);opacity:" + s(r(v, "face.barOp")) + ";transition:opacity .12s")) })),
                     h(F, null, "\n", t(r(v, "zzz")), "\n")))))))),
-      h("div", { "role": "dialog", "aria-label": r(v, "t.artAlt"), "onClick": r(v, "closeArt"), style: css(("position:absolute;inset:0;z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(5,5,6,.9);backdrop-filter:blur(6px);opacity:" + s(r(v, "lbOp")) + ";pointer-events:" + s(r(v, "lbPE")) + ";transition:opacity .3s;cursor:zoom-out")) },
+      h("div", { "ref": r(v, "lbRef"), "role": "dialog", "aria-modal": "true", "aria-label": r(v, "t.artAlt"), "onClick": r(v, "closeArt"), style: css(("position:absolute;inset:0;z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(5,5,6,.9);backdrop-filter:blur(6px);opacity:" + s(r(v, "lbOp")) + ";pointer-events:" + s(r(v, "lbPE")) + ";visibility:" + s(r(v, "lbVis")) + ";transition:opacity .3s,visibility 0s linear " + s(r(v, "lbVisDelay")) + ";cursor:zoom-out")) },
         h("img", { "src": "/images/about/about-personalwork01.png", "alt": r(v, "t.artAlt"), style: css(("max-height:880px;max-width:1400px;border-radius:10px;transform:" + s(r(v, "lbScale")) + ";transition:transform .45s cubic-bezier(.2,.7,.2,1);box-shadow:0 40px 100px rgba(0,0,0,.6)")) }),
-        h("span", { style: css("font:500 12px var(--v3-mono);letter-spacing:.16em;color:rgba(244,241,234,.6)") },
+        h("button", { "ref": r(v, "lbCloseRef"), "type": "button", style: css("border:0;background:none;padding:0;cursor:pointer;font:500 12px var(--v3-mono);letter-spacing:.16em;color:rgba(244,241,234,.6)") },
           h(F, null, t(r(v, "t.lbHint"))))));
 
 export default dcComponent(Logic, render, "AboutV3Desktop", DEFAULTS, "dcaboutv3des-root");

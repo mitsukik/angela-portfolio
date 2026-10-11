@@ -2160,6 +2160,9 @@ html[data-v2-lang-fade="out"] .cv3-fade {
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+  /* Never painted: a system font keeps this hidden summary from fetching the
+     Noto Sans TC CJK slices before the visible UI renders (mobile LCP). */
+  font-family: system-ui, sans-serif;
 }
 
 /* Next case: the CTA is the single link; its hit area covers the WHOLE card

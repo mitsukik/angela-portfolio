@@ -4,17 +4,41 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
+<script>
+/* Phone fit: scale the fixed 393 x 852 device to its stage width (replaces the
+   cqw/trig transform, which WebKit mis-sized inside the wrapping flex row). */
+(function () {
+  var seen = new WeakSet();
+  function fit(el) { el.style.setProperty('--ldk-s', String(el.clientWidth / 393)); }
+  var ro = 'ResizeObserver' in window ? new ResizeObserver(function (es) { es.forEach(function (e) { fit(e.target); }); }) : null;
+  function scan() {
+    document.querySelectorAll('.ldk-stage').forEach(function (el) {
+      if (seen.has(el)) { if (el.style.getPropertyValue('--ldk-s') === '') fit(el); return; }
+      seen.add(el); fit(el); if (ro) ro.observe(el);
+    });
+  }
+  new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] });
+  if (!ro) window.addEventListener('resize', function () { document.querySelectorAll('.ldk-stage').forEach(fit); });
+  /* Mobile Quick Navigation: after a jump, bring the phone back into view. */
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('.ldk-quick button');
+    if (!b) return;
+    var st = document.querySelector('.ldk-stage');
+    if (st) setTimeout(function () { st.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 0);
+  });
+})();
+</script>
 </head>
 <body>
 <x-dc>
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
-<style>body{margin:0;background:#f3f1ec;color:#1c1b19;-webkit-font-smoothing:antialiased}a{color:#1c1b19}a:hover{color:#6b6862}*{box-sizing:border-box}button,input,textarea{font:inherit;color:inherit}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #1c1b19;outline-offset:2px}[data-scroll]::-webkit-scrollbar{display:none}@keyframes ldk-spin{to{transform:rotate(360deg)}}</style>
+<style>body{margin:0;background:#f3f1ec;color:#1c1b19;-webkit-font-smoothing:antialiased}.ldk-page{min-height:100vh;display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:clamp(32px,6vw,96px);padding:clamp(28px,5vw,72px) clamp(16px,4vw,48px)}.ldk-aside{flex:0 1 320px;min-width:0;display:flex;flex-direction:column;gap:22px;padding-top:12px}.ldk-stage{flex:none;width:min(393px,100%);aspect-ratio:393/852;position:relative}.ldk-phone{transform:scale(var(--ldk-s,1))}.ldk-quick{display:none}.ldk-quick summary{list-style:none;cursor:pointer;min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;font:500 12px/1 'JetBrains Mono',monospace;letter-spacing:.12em;color:#4a4741}.ldk-quick summary::-webkit-details-marker{display:none}.ldk-quick summary::after{content:'';width:8px;height:8px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .2s}.ldk-quick details[open] summary::after{transform:translateY(2px) rotate(-135deg)}.ldk-quick summary:focus-visible{outline:2px solid #1c1b19;outline-offset:2px}@media (max-width:767px){.ldk-page{flex-direction:column;flex-wrap:nowrap;align-items:center;gap:20px;padding:16px 16px 32px}.ldk-aside{display:none}.ldk-quick{display:flex;flex-direction:column;gap:14px;width:min(393px,100%)}}@media (prefers-reduced-motion:reduce){.ldk-quick summary::after{transition:none}}a{color:#1c1b19}a:hover{color:#6b6862}*{box-sizing:border-box}button,input,textarea{font:inherit;color:inherit}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #1c1b19;outline-offset:2px}[data-scroll]::-webkit-scrollbar{display:none}@keyframes ldk-spin{to{transform:rotate(360deg)}}</style>
 </helmet>
-<main style="min-height:100vh;display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:clamp(32px,6vw,96px);padding:clamp(28px,5vw,72px) clamp(16px,4vw,48px);font-family:-apple-system,BlinkMacSystemFont,'PingFang TC','Noto Sans TC',sans-serif">
+<main class="ldk-page" style="font-family:-apple-system,BlinkMacSystemFont,'PingFang TC','Noto Sans TC',sans-serif">
 <sc-if value="{{ showJump }}" hint-placeholder-val="{{ true }}">
-<aside style="flex:0 1 320px;min-width:0;display:flex;flex-direction:column;gap:22px;padding-top:12px">
+<aside class="ldk-aside">
   <span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#6b6862">LUDOVIK · iOS APP PROTOTYPE</span>
   <p style="margin:0;font-size:14px;line-height:1.7;color:#4a4741;text-wrap:pretty">依工作說明書前台功能重建：主題推薦、主題活動、商品列表與介紹、搜尋、追蹤清單、購物車與結帳、會員專區、訂閱服務、穿搭形象牆、品牌故事。手機內所有按鈕皆可操作，使用示意資料。</p>
   <div style="display:flex;flex-direction:column;gap:10px">
@@ -28,8 +52,8 @@
 </aside>
 </sc-if>
 
-<div style="flex:0 1 393px;width:min(393px,100%);aspect-ratio:393/852;container-type:inline-size;position:relative">
-<div style="position:absolute;top:0;left:0;width:393px;height:852px;transform-origin:0 0;transform:scale(tan(atan2(100cqw,393px)));border-radius:54px;overflow:hidden;background:{{ phoneBg }};border:1px solid #d6d0c6;box-shadow:0 50px 90px -50px rgba(40,34,24,.5),0 2px 8px rgba(40,34,24,.06);display:flex;flex-direction:column;color:#1c1b19;font-family:-apple-system,BlinkMacSystemFont,'PingFang TC','Noto Sans TC',sans-serif">
+<div class="ldk-stage">
+<div class="ldk-phone" style="position:absolute;top:0;left:0;width:393px;height:852px;transform-origin:0 0;border-radius:54px;overflow:hidden;background:{{ phoneBg }};border:1px solid #d6d0c6;box-shadow:0 50px 90px -50px rgba(40,34,24,.5),0 2px 8px rgba(40,34,24,.06);display:flex;flex-direction:column;color:#1c1b19;font-family:-apple-system,BlinkMacSystemFont,'PingFang TC','Noto Sans TC',sans-serif">
   <div style="height:50px;flex:none;position:relative;z-index:7;display:flex;align-items:center;justify-content:space-between;padding:4px 30px 0 38px;font:600 15px/1 -apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;color:{{ sbColor }}"><span>9:41</span><span style="position:absolute;left:50%;top:11px;width:122px;height:34px;margin-left:-61px;border-radius:20px;background:#0b0b0a"></span><span style="display:flex;gap:6px;align-items:center"><span style="display:flex;gap:2px;align-items:flex-end;height:11px"><span style="width:3px;height:4px;background:currentColor;border-radius:1px"></span><span style="width:3px;height:6px;background:currentColor;border-radius:1px"></span><span style="width:3px;height:8px;background:currentColor;border-radius:1px"></span><span style="width:3px;height:11px;background:currentColor;border-radius:1px"></span></span><span style="width:25px;height:12px;border:1.3px solid currentColor;border-radius:4px;padding:1.5px;opacity:.9;display:flex"><span style="width:75%;background:currentColor;border-radius:1.5px"></span></span></span></div>
 
   <div style="height:44px;flex:none;display:grid;grid-template-columns:100px 1fr 100px;align-items:center;padding:0 6px;position:relative;z-index:6;background:{{ navBg }};color:{{ navFg }};border-bottom:.5px solid {{ navLine }}">
@@ -149,6 +173,20 @@
 </div></sc-if>
 <sc-if value="{{ popup }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;z-index:30;background:rgba(0,0,0,.5);display:grid;place-items:center;padding:32px"><div role="dialog" aria-label="活動快訊" style="width:100%;border-radius:22px;overflow:hidden;background:#fbfaf8;display:flex;flex-direction:column"><div style="height:250px;background:url(assets/lookbook-park.jpg) 50% 40%/cover;position:relative"><button onClick="{{ closePopup }}" aria-label="關閉" style="position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.9);cursor:pointer;font-size:13px">✕</button></div><div style="padding:20px;display:flex;flex-direction:column;gap:10px;text-align:center"><span style="font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;color:#6b6862">NEW YEAR SALE</span><span style="font:400 32px/1.05 'Instrument Serif',serif">新年 9 折優惠</span><span style="font-size:14px;color:#4a4741">全館滿 NT$2,000 即可使用 · 至 01/31</span><div style="display:flex;flex-direction:column;gap:8px;padding-top:8px"><button onClick="{{ popupClaim }}" style="flex:1;min-height:50px;border:0;border-radius:14px;background:#1c1b19;color:#fbfaf8;font-size:16px;font-weight:600;cursor:pointer;">立即領取</button><button onClick="{{ popupGo }}" style="min-height:40px;border:0;background:transparent;font-size:14px;color:#6b6862;cursor:pointer">查看活動詳情</button></div></div></div></div></sc-if>
 </div></div>
+<sc-if value="{{ showJump }}" hint-placeholder-val="{{ true }}">
+<section class="ldk-quick" aria-label="快速導覽">
+  <details style="border:1px solid #d8d3ca;border-radius:14px;background:#fbfaf8">
+    <summary>快速導覽 · QUICK NAV</summary>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;padding:2px 16px 16px">
+      <sc-for list="{{ jumps }}" as="j" hint-placeholder-count="12"><button onClick="{{ j.go }}" style="min-height:44px;padding:0 14px;border-radius:999px;border:1px solid #d8d3ca;background:transparent;cursor:pointer;font-size:14px">{{ j.label }}</button></sc-for>
+    </div>
+  </details>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <button onClick="{{ reset }}" style="min-height:44px;padding:0 18px;border-radius:999px;border:1px solid #1c1b19;background:#1c1b19;color:#fbfaf8;cursor:pointer;font:500 12px/1 'JetBrains Mono',monospace">↺ 重設原型</button>
+    <p style="margin:0;flex:1 1 180px;font:400 11px/1.6 'JetBrains Mono',monospace;color:#7d776d">付款為示意流程（綠界 ECPay），不會產生真實交易。</p>
+  </div>
+</section>
+</sc-if>
 </main>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;startLoggedIn&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;launchPopup&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;showJump&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Presentation&quot;}}">

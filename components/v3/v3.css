@@ -453,12 +453,27 @@ html[data-v2-lang-fade="out"] .cv3-fade {
   gap: clamp(20px, 2vw, 30px);
 }
 
+/* Stand-in for JetBrains Mono while its file loads, for the hero meta row.
+   The generated "JetBrains Mono Fallback" is Arial at 134.59%: Latin text
+   ~35% wider, so the row wrapped one item further and collapsed when the
+   font arrived (CASE04 mobile CLS 0.258). These system monospace faces have
+   JetBrains Mono's 0.6em advance; the overrides copy its line metrics
+   (ascent 1020, descent 300 per 1000 em). */
+@font-face {
+  font-family: "V3 Mono Metric Fallback";
+  src: local("Courier New"), local("CourierNewPSMT"), local("Menlo"), local("DejaVu Sans Mono"), local("Liberation Mono"), local("Droid Sans Mono");
+  ascent-override: 102%;
+  descent-override: 30%;
+  line-gap-override: 0%;
+}
+
 .cv3-hero-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   align-items: center;
-  font: 500 12px var(--v3-mono);
+  /* JetBrains Mono first, as before; the metric fallback only paints until it loads */
+  font: 500 12px "JetBrains Mono", "V3 Mono Metric Fallback", var(--v3-mono);
   letter-spacing: 0.16em;
   color: var(--v3-ink-60);
 }

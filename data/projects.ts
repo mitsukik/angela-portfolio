@@ -172,7 +172,7 @@ export const projects: Project[] = [
       displayTitle: "複雜系統設計",
       eyebrowTitle: "COMPLEX SYSTEM",
       projectName: "跨境寄賣與直播電商平台",
-      summary: "將 Client 的商業構想，轉換成一套可實際運作的多角色電商平台。",
+      summary: "將客戶的商業構想，轉換成一套可實際運作的多角色電商平台。",
       metadata: {
         "角色": "UI/UX DESIGNER",
         "平台": "Responsive Web",
@@ -185,10 +185,10 @@ export const projects: Project[] = [
       backToSelectedWorkLabel: "返回精選作品",
       overview: {
         heading: "Overview",
-        title: "將 Client 的商業構想，轉換成一套可實際運作的多角色電商平台",
+        title: "將客戶的商業構想，轉換成一套可實際運作的多角色電商平台",
         body: [
-          "Client 希望建立一套跨境寄賣與直播電商平台，串接台灣供應商、越南當地倉儲、銷售角色與消費者。",
-          "我的工作是將 Client 的商業需求整理成清楚的產品架構、操作流程、互動邏輯與介面，讓工程團隊能進一步實作。",
+          "客戶希望建立一套跨境寄賣與直播電商平台，串接台灣供應商、越南當地倉儲、銷售角色與消費者。",
+          "我的工作是將客戶的商業需求整理成清楚的產品架構、操作流程、互動邏輯與介面，讓工程團隊能進一步實作。",
         ],
         supportingLine: "UI/UX Designer · 2025.05 — 2026.04 · 12 個月",
       },
@@ -237,7 +237,7 @@ export const projects: Project[] = [
       outcome: {
         heading: "Outcome",
         title: "完成可運作的產品，而不是概念作品",
-        body: "最終完成可運作的前後台系統，並交付 Client。\n\nClient 後續因商業策略調整，產品沒有正式進入商業營運，因此本案例不主張上線後 KPI。",
+        body: "最終完成可運作的前後台系統，並交付客戶。\n\n客戶後續因商業策略調整，產品沒有正式進入商業營運，因此本案例不主張上線後 KPI。",
       },
     },
     caseStudyEn: {

@@ -115,7 +115,7 @@ export function Case01Article({ locale, project }: { locale: Locale; project: Pr
           eyebrow={eb(2)}
           title={zh ? "先建立產品邏輯，再進入介面設計" : "From business rules to product structure"}
           paragraphs={zh ? [
-            "專案前期，我直接與工程團隊合作，將 Client 在會議中提出的需求逐步整理成完整產品流程。",
+            "專案前期，我直接與工程團隊合作，將客戶在會議中提出的需求逐步整理成完整產品流程。",
             "我沒有直接從單一畫面開始，而是從五個層次建立系統：",
           ] : [
             "Early in the project, I worked directly with the engineering team to translate requirements from client meetings into complete product flows.",
@@ -219,7 +219,7 @@ export function Case01Article({ locale, project }: { locale: Locale; project: Pr
             "後續工作包含補足缺少的狀態與規則、確認實際操作行為、處理開發過程中的 UX 問題，以及依照實作狀況調整設計。",
             "PM 於 2025 年 10 月加入專案，主要協助後期的專案協調與 QA。",
             "專案期間也受到外部條件影響。當地金流合作方的處理時程較長，使部分整合工作與整體交付時間延後。",
-            "Client 最後也完成了當地 Online Shop 所需的相關登記，但因商品類型受到限制，實際可上架的品項範圍需要縮減；核心系統架構則維持不變。",
+            "客戶最後也完成了當地 Online Shop 所需的相關登記，但因商品類型受到限制，實際可上架的品項範圍需要縮減；核心系統架構則維持不變。",
           ] : [
             "After the main storefront and administration systems were designed, I continued working directly with the engineering team during implementation.",
             "My role included clarifying missing states and rules, reviewing implementation behavior, resolving UX questions, and adjusting designs when development exposed additional constraints.",
@@ -252,9 +252,9 @@ export function Case01Article({ locale, project }: { locale: Locale; project: Pr
           eyebrow={eb(5)}
           title={zh ? "完成可運作的產品，而不是概念作品" : "A working product, without fabricated metrics"}
           paragraphs={zh ? [
-            "最終完成可運作的 Consumer 前台與管理後台系統，並交付 Client。",
-            "當年的工程實作亦留下可操作 Demo，並曾供 PM 與 Client 確認需求與產品行為。",
-            "Client 後續因商業策略調整，產品沒有正式進入商業營運。",
+            "最終完成可運作的 Consumer 前台與管理後台系統，並交付客戶。",
+            "當年的工程實作亦留下可操作 Demo，並曾供 PM 與客戶確認需求與產品行為。",
+            "客戶後續因商業策略調整，產品沒有正式進入商業營運。",
           ] : [
             "The project resulted in a working frontend and backend system and was delivered to the Client.",
             "The original engineering implementation was also used by the PM and Client to review requirements and product behavior during the project.",

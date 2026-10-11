@@ -391,6 +391,44 @@ def patch_about(src):
     if '<header' in tpl:
         tpl = tag_header_nav(tpl)
         logic = sub_exact(logic, "toggleLang: (e) =>", "zhActive: s.lang === 'zh' ? 'true' : 'false', enActive: s.lang === 'en' ? 'true' : 'false', toggleLang: (e) =>", count=1)
+    # Chapter 05 illustration viewer is a real modal (Stage 3 P1, 2026-10-11):
+    # aria-modal; everything outside it is inert while open, so Tab and Enter
+    # can't reach the chapter controls; focus moves to the existing
+    # "ESC / 點擊關閉" hint, now a button styled exactly as before; Escape,
+    # that button and a click anywhere close it, and focus returns to the
+    # image trigger. Hidden (visibility) once its fade-out ends.
+    # Desktop and tablet only; the phone layout has no viewer.
+    if 'role="dialog" aria-label="{{ t.artAlt }}"' in tpl:
+        tpl = sub_exact(tpl, '<div role="dialog" aria-label="{{ t.artAlt }}" onClick="{{ closeArt }}" style="',
+                        '<div ref="{{ lbRef }}" role="dialog" aria-modal="true" aria-label="{{ t.artAlt }}" onClick="{{ closeArt }}" style="', count=1)
+        tpl = sub_exact(tpl, "opacity:{{ lbOp }};pointer-events:{{ lbPE }};transition:opacity .3s;cursor:zoom-out",
+                        "opacity:{{ lbOp }};pointer-events:{{ lbPE }};visibility:{{ lbVis }};transition:opacity .3s,visibility 0s linear {{ lbVisDelay }};cursor:zoom-out", count=1)
+        tpl = sub_exact(tpl, "<span style=\"font:500 12px 'JetBrains Mono';letter-spacing:.16em;color:rgba(244,241,234,.6)\">{{ t.lbHint }}</span>",
+                        "<button ref=\"{{ lbCloseRef }}\" type=\"button\" style=\"border:0;background:none;padding:0;cursor:pointer;font:500 12px 'JetBrains Mono';letter-spacing:.16em;color:rgba(244,241,234,.6)\">{{ t.lbHint }}</button>", count=1)
+        logic = sub_exact(logic, "tiltRef = React.createRef();", "tiltRef = React.createRef(); lbRef = React.createRef(); lbCloseRef = React.createRef();", count=1)
+        logic = sub_exact(logic, "tiltRef: this.tiltRef,", "tiltRef: this.tiltRef, lbRef: this.lbRef, lbCloseRef: this.lbCloseRef,", count=1)
+        logic = sub_exact(logic, "      openArt: () => { this.press(); this.setState({ lb: true }); }, closeArt: () => this.setState({ lb: false }),",
+                          "      openArt: () => { this.press(); this.lbOpen(); }, closeArt: () => this.lbClose(),\n"
+                          "      lbVis: s.lb ? 'visible' : 'hidden', lbVisDelay: s.lb ? '0s' : '.3s',", count=1)
+        logic = sub_exact(logic, "      if (e.key === 'Escape' && this.state.lb) { this.setState({ lb: false }); return; }\n      if (this.state.lb) return;",
+                          "      if (e.key === 'Escape' && this.state.lb) { this.lbClose(); return; }\n"
+                          "      if (this.state.lb) { if (e.key === 'Tab') { e.preventDefault(); this.lbCloseRef.current && this.lbCloseRef.current.focus(); } return; }", count=1)
+        logic = sub_exact(logic, "  componentWillUnmount() {\n",
+                          "  lbOpen = () => {\n"
+                          "    if (this.lbOn) return; this.lbOn = true; this.inerted = [];\n"
+                          "    this.setState({ lb: true }, () => {\n"
+                          "      if (!this.lbOn) return;\n"
+                          "      for (let n = this.lbRef.current; n && n !== document.body; n = n.parentElement) for (const sib of n.parentElement ? n.parentElement.children : []) if (sib !== n && !sib.inert) { sib.inert = true; this.inerted.push(sib); }\n"
+                          "      this.lbCloseRef.current && this.lbCloseRef.current.focus({ preventScroll: true });\n"
+                          "    });\n"
+                          "  };\n"
+                          "  lbClose = () => {\n"
+                          "    if (!this.lbOn) return; this.lbOn = false;\n"
+                          "    (this.inerted || []).forEach(n => { n.inert = false; }); this.inerted = [];\n"
+                          "    this.setState({ lb: false }, () => { if (!this.lbOn && this.tiltRef.current) this.tiltRef.current.focus({ preventScroll: true }); });\n"
+                          "  };\n"
+                          "  componentWillUnmount() {\n"
+                          "    (this.inerted || []).forEach(n => { n.inert = false; });\n", count=1)
     return tpl + logic
 
 

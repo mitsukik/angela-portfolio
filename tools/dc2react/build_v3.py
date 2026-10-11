@@ -280,8 +280,33 @@ def patch_index(src, mobile):
   };""", """    if (Math.abs(to - from) < 2) return;
     st.scrollTo({ left: to, behavior: this.reduce ? 'auto' : 'smooth' });
   };""", count=1)
-        logic = sub_exact(logic, "      stripScroll: () => {", "      stripTouch: () => { clearTimeout(this.ctrT); },\n      stripScroll: () => {", count=1)
-        tpl = sub_exact(tpl, '<div ref="{{ strip }}" onScroll="{{ stripScroll }}"', '<div ref="{{ strip }}" onScroll="{{ stripScroll }}" onPointerDown="{{ stripTouch }}" onTouchStart="{{ stripTouch }}" onWheel="{{ stripTouch }}"', count=1)
+        # (3) Strip stability on iPhone (2026-10-11, follow-up). overflow-x:auto
+        #     made the strip a two-axis scroller, so iOS let diagonal swipes
+        #     move the thumbnails vertically, and the edges rubber-banded.
+        #     Make it horizontal-only with no edge bounce (the page still
+        #     scrolls vertically). While a finger is down or the strip is
+        #     coasting, never centre it, and a tap that stops a fling does not
+        #     select a channel. A touch whose end event never arrives stops
+        #     counting as held after 1 s without touch or scroll activity.
+        tpl = sub_exact(tpl, "overflow-x:auto;scrollbar-width:none;padding:6px 2px 0;", "overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:none;scrollbar-width:none;padding:6px 2px 0;", count=1)
+        logic = sub_exact(logic, "    const st = this.strip.current; if (!st) return;\n", "    if (this.stripCoast || (this.stripHeld && performance.now() - Math.max(this.stripTouchAt || 0, this.userScrollAt || 0) < 1000)) return;\n    const st = this.strip.current; if (!st) return;\n", count=1)
+        logic = sub_exact(logic, "        on: () => { this.press(); this.zap(c.no); } }; }),", "        on: () => { if (performance.now() < (this.catchUntil || 0)) return; this.press(); this.zap(c.no); } }; }),", count=1)
+        logic = sub_exact(logic, "      stripScroll: () => { if (this.state.open) close(); },\n", """      stripTouch: e => {
+        if (e && e.type === 'pointerdown' && e.pointerType === 'touch') return;
+        clearTimeout(this.ctrT);
+        if (!this.stripHeld || (e && e.type === 'touchstart' && e.touches && e.touches.length === 1)) { this.stripCatch = performance.now() - (this.userScrollAt || 0) < 120; this.stripMoved = false; }
+        this.stripHeld = true; this.stripTouchAt = performance.now();
+      },
+      stripRelease: e => {
+        if (!this.stripHeld || (e && e.type.startsWith('pointer') && e.pointerType === 'touch')) return;
+        this.stripHeld = false; this.catchUntil = this.stripCatch ? performance.now() + 350 : 0; this.stripCatch = false;
+        this.stripCoast = this.stripMoved; if (this.stripCoast) this.stripIdle();
+      },
+      stripWheel: () => { clearTimeout(this.ctrT); this.stripCoast = true; this.userScrollAt = performance.now(); this.stripIdle(); },
+      stripScroll: () => { if (this.stripHeld || this.stripCoast) { this.stripMoved = true; this.userScrollAt = performance.now(); this.stripIdle(); } if (this.state.open) close(); },
+""", count=1)
+        logic = sub_exact(logic, "  flushQueued = () =>", "  stripIdle = () => { clearTimeout(this.coastT); this.coastT = setTimeout(() => { if (!this.stripHeld) this.stripCoast = false; }, 160); };\n  flushQueued = () =>", count=1)
+        tpl = sub_exact(tpl, '<div ref="{{ strip }}" onScroll="{{ stripScroll }}"', '<div ref="{{ strip }}" onScroll="{{ stripScroll }}" onPointerDown="{{ stripTouch }}" onTouchStart="{{ stripTouch }}" onPointerUp="{{ stripRelease }}" onPointerCancel="{{ stripRelease }}" onTouchEnd="{{ stripRelease }}" onTouchCancel="{{ stripRelease }}" onWheel="{{ stripWheel }}"', count=1)
     tpl = tag_header_nav(tpl)
     out = i18n_index(tpl + logic)
     # Q02: the button reads "Copied" only after a successful write

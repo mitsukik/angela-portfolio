@@ -93,6 +93,7 @@ class Logic extends DCLogic {
   enterHome = () => { if (this.state.mode === 'home') return; this.handoff('home'); this.press(); this.setState(s => ({ mode: 'home', open: false, menu: 'main', sweepK: s.sweepK + 1 })); };
   jump = no => { try { const tc = this.cases.find(x => x.no === no); window.dispatchEvent(new CustomEvent('v3:track', { detail: { name: 'select_channel', params: { channel_id: 'CH' + (tc ? tc.ch : no), case_id: 'CASE' + no } } })); } catch (e) {} const c = this.cases.find(x => x.no === no); this.setState(s => ({ no, tab: this.match(c, s.tab) ? s.tab : 'all' })); this.enterCh(); };
   center = () => {
+    if (this.stripCoast || (this.stripHeld && performance.now() - Math.max(this.stripTouchAt || 0, this.userScrollAt || 0) < 1000)) return;
     const st = this.strip.current; if (!st) return;
     const b = st.querySelector(`[data-no="${this.state.no}"]`); if (!b) return;
     const max = st.scrollWidth - st.clientWidth, to = Math.max(0, Math.min(max, b.offsetLeft - (st.clientWidth - b.offsetWidth) / 2)), from = st.scrollLeft;
@@ -111,6 +112,7 @@ class Logic extends DCLogic {
       if (el) el.focus({ preventScroll: true });
     }, 60);
   };
+  stripIdle = () => { clearTimeout(this.coastT); this.coastT = setTimeout(() => { if (!this.stripHeld) this.stripCoast = false; }, 160); };
   flushQueued = () => { const q = this.queued; this.queued = null; if (q && q !== this.state.no) this.zap(q); };
   componentDidMount() {
     this.reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -215,8 +217,19 @@ class Logic extends DCLogic {
         if (Math.abs(dx) > 44 && Math.abs(dx) > Math.abs(dy) * 1.3) { g.done = true; this.swiped = true; clearTimeout(this.swT); this.swT = setTimeout(() => { this.swiped = false; }, 450); this.step(dx < 0 ? 1 : -1); }
       },
       swUp: () => { this.sw = null; }, swCancel: () => { this.sw = null; },
-      stripTouch: () => { clearTimeout(this.ctrT); },
-      stripScroll: () => { if (this.state.open) close(); },
+      stripTouch: e => {
+        if (e && e.type === 'pointerdown' && e.pointerType === 'touch') return;
+        clearTimeout(this.ctrT);
+        if (!this.stripHeld || (e && e.type === 'touchstart' && e.touches && e.touches.length === 1)) { this.stripCatch = performance.now() - (this.userScrollAt || 0) < 120; this.stripMoved = false; }
+        this.stripHeld = true; this.stripTouchAt = performance.now();
+      },
+      stripRelease: e => {
+        if (!this.stripHeld || (e && e.type.startsWith('pointer') && e.pointerType === 'touch')) return;
+        this.stripHeld = false; this.catchUntil = this.stripCatch ? performance.now() + 350 : 0; this.stripCatch = false;
+        this.stripCoast = this.stripMoved; if (this.stripCoast) this.stripIdle();
+      },
+      stripWheel: () => { clearTimeout(this.ctrT); this.stripCoast = true; this.userScrollAt = performance.now(); this.stripIdle(); },
+      stripScroll: () => { if (this.stripHeld || this.stripCoast) { this.stripMoved = true; this.userScrollAt = performance.now(); this.stripIdle(); } if (this.state.open) close(); },
       goChannels: () => this.enterCh(), goHome: () => this.enterHome(), brandHome: e => { if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); this.enterHome(); },
       openTabs: () => { this.press(); this.openCard('tabs'); },
       toggleCard: () => { this.press(); if (this.state.open && !this.state.closing) this.closeCard(); else this.openCard('main'); },
@@ -238,7 +251,7 @@ class Logic extends DCLogic {
       guide: C.filter(c => m(c, s.tab)).map(c => { const a = c.no === s.no; return { ...c, aria: `CH${c.ch} ${c.t}`, curAttr: a ? 'true' : 'false',
         col: a ? INK : 'rgba(244,241,234,.55)', dim: a ? 'none' : 'brightness(.75)',
         ring: a ? '0 0 0 2px #d4f04a' : '0 0 0 1px rgba(244,241,234,.08)',
-        on: () => { this.press(); this.zap(c.no); } }; }),
+        on: () => { if (performance.now() < (this.catchUntil || 0)) return; this.press(); this.zap(c.no); } }; }),
       upnext: C.map(c => ({ no: c.no, ch: c.ch, aria: this.props.L.jumpTo.replace('{no}', c.ch).replace('{t}', c.t), on: () => this.jump(c.no) })),
       tabShort: `${tab.l} · ${cnt(s.tab)}`, tabBtnBg: s.tab === 'all' ? 'rgba(244,241,234,.04)' : 'rgba(212,240,74,.12)',
       prev: () => this.step(-1), next: () => this.step(1),
@@ -370,7 +383,7 @@ const render = (v) => h("div", { "ref": r(v, "root"), "onPointerDownCapture": r(
               h("span", { style: css("min-width:62px;text-align:center;font:500 11px var(--v3-mono);letter-spacing:.12em;color:#d4f04a;background:#0a0b0d;padding:3px 8px;border-radius:5px;box-shadow:inset 0 1px 3px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.05)") },
                 h(F, null, t(r(v, "readout"))))))),
         h("div", { style: css(("height:" + s(r(v, "stripH")) + ";flex:none;display:grid;grid-template-columns:minmax(0,1fr);min-width:0")) },
-          h("div", { "ref": r(v, "strip"), "onScroll": r(v, "stripScroll"), "onPointerDown": r(v, "stripTouch"), "onTouchStart": r(v, "stripTouch"), "onWheel": r(v, "stripTouch"), "aria-label": r(v, "L.programGuide"), style: css(("grid-area:1/1;min-width:0;position:relative;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:6px 2px 0;opacity:" + s(r(v, "chOp")) + ";visibility:" + s(r(v, "chVis")) + ";transition:opacity .28s")) },
+          h("div", { "ref": r(v, "strip"), "onScroll": r(v, "stripScroll"), "onPointerDown": r(v, "stripTouch"), "onTouchStart": r(v, "stripTouch"), "onPointerUp": r(v, "stripRelease"), "onPointerCancel": r(v, "stripRelease"), "onTouchEnd": r(v, "stripRelease"), "onTouchCancel": r(v, "stripRelease"), "onWheel": r(v, "stripWheel"), "aria-label": r(v, "L.programGuide"), style: css(("grid-area:1/1;min-width:0;position:relative;display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:none;scrollbar-width:none;padding:6px 2px 0;opacity:" + s(r(v, "chOp")) + ";visibility:" + s(r(v, "chVis")) + ";transition:opacity .28s")) },
             h(F, null, (Array.isArray(r(v, "guide")) ? r(v, "guide") : []).map((it, i) => { const v0 = v; { const v = { ...v0, "g": it, $index: i };
               return h(F, { key: i },
               h("button", { "data-no": r(v, "g.no"), "onClick": r(v, "g.on"), "aria-label": r(v, "g.aria"), "aria-current": r(v, "g.curAttr"), style: css("flex:none;width:100px;border:0;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;gap:6px;text-align:left;color:inherit") },

@@ -92,7 +92,7 @@ export const CASE_OPENINGS: Record<"01" | "02" | "04", Record<Locale, CaseOpenin
       titleLines: null,
       subtitle: "在產品已進入開發的階段接手 UX/UI，重新整理流程、狀態與介面，讓體驗更清楚、更輕量，也更符合行動應用的使用方式。",
       summary: [
-        "這是一款根據個人資料與每日輸入內容，產生個人化聲音體驗的行動產品。",
+        "LABO65 是一款根據個人資料與每日輸入內容，產生個人化聲音體驗的行動產品。",
         "我加入專案時，工程師已完成一版可運作的早期產品。我接手後負責 UX/UI 重整，重新梳理核心流程、定義互動與錯誤恢復狀態，並建立可重複使用的介面規則，作為 Android-first 行動體驗的設計基礎。",
       ],
       infoRows: [
@@ -104,12 +104,12 @@ export const CASE_OPENINGS: Record<"01" | "02" | "04", Record<Locale, CaseOpenin
         { label: "Web", value: "staging 版本已可使用" },
         { label: "App", value: "上架準備中" },
       ],
-      // Approved narrow confidentiality exceptions (see production
-      // CaseStudyPrototype.tsx): these outbound hrefs carry the real product
-      // name; all portfolio copy stays anonymized. The employer's company
-      // name (公司 row) is approved for public display (2026-10-12); the
-      // product name is not. The App prototype opens at its login screen
-      // (the V2 build pre-fills the demo account).
+      // Disclosure (Angela, 2026-10-12): the LABO65 product name and brand,
+      // the employer's company name (公司 row), and LABO65's Five-Element,
+      // chakra, Hz and quota UI are approved for public display. Business
+      // data, internal documents and customer data remain excluded. The App
+      // prototype opens at its login screen (the V2 build pre-fills a demo
+      // account; every service behind it is simulated).
       links: [
         { href: "https://staging-app.labo65.com/", label: "查看 Web Staging Build ↗" },
         { href: "https://labo65-app.vercel.app/auth/login", label: "操作 App 互動原型 ↗" },
@@ -121,7 +121,7 @@ export const CASE_OPENINGS: Record<"01" | "02" | "04", Record<Locale, CaseOpenin
       titleLines: null,
       subtitle: "Took over UX/UI after development was already underway, restructuring flows, states, and interfaces into a clearer, lighter, more app-native experience.",
       summary: [
-        "A mobile wellness product that generates personalized audio experiences from personal profile information and daily inputs.",
+        "LABO65 is a mobile wellness product that generates personalized audio experiences from personal profile information and daily inputs.",
         "When I joined, an early functional version had already been built by the engineer. I took over the UX/UI redesign, restructuring the core journey, defining interaction and recovery states, and establishing a reusable interface system for an Android-first mobile experience.",
       ],
       infoRows: [

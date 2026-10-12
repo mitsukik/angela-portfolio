@@ -38,9 +38,9 @@ import {
  * prototype (live build, real states via its own screen list, see
  * case04Media.ts); the V1 screenshots are archived. §03 Home states and
  * §02 / §05 patterns use the existing StateScrubber; §04 adds the recorded
- * journey (Case04Journey). Confidentiality rules unchanged: captures remove
- * the brand mark, quota badge, chakra / frequency and energy-structure
- * content, and generate step 04 is withheld.
+ * journey (Case04Journey). Disclosure (2026-10-12): LABO65 branding, the
+ * employer name, Five-Element, chakra, Hz and quota UI are approved and shown
+ * unaltered; all seven generate steps appear (see case04Media.ts).
  */
 
 const CH = CASE_SYSTEM_CHAPTERS["04"];
@@ -163,8 +163,8 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
               <ComposedEvidence
                 matted
                 asset={CASE04_V2.stepsOverview}
-                aspectClassName="aspect-[1896/2620] max-h-[520px]"
-                caption={zh ? "拆成多個階段，每一步只問一件事，並用明確的進度取代不確定要填多久的長表單。（第 4 步涉及個人化機制，未公開。）" : "Split into staged steps, each asking one thing, with explicit progress replacing a long form of uncertain length. (Step 04 involves the personalization mechanism and is not shown.)"}
+                aspectClassName="aspect-[2544/2620] max-h-[520px]"
+                caption={zh ? "拆成多個階段，每一步只問一件事，並用明確的進度取代不確定要填多久的長表單。" : "Split into staged steps, each asking one thing, with explicit progress replacing a long form of uncertain length."}
               />
             </CaseOriginalModule>
           </div>
@@ -269,15 +269,15 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
             chapters={journeyChapters(locale)}
             label={zh ? "操作錄影章節" : "Walkthrough chapters"}
             videoLabel={zh
-              ? "V2 互動原型的實際操作錄影（無聲）：從首頁開始生成今日聲景，完成引導式輸入、等待生成、開始聆聽，再回到首頁與聆聽紀錄。"
-              : "Silent screen recording of the V2 interactive prototype: starting from Home, completing guided input, waiting for generation, listening, then returning to Home and history."}
+              ? "LABO65 V2 互動原型的實際操作錄影（無聲）：從首頁開始生成今日聲景，依序完成 7 個引導步驟（含第 4 步今天的脈輪），等待生成、開始聆聽，再回到首頁與聆聽紀錄。"
+              : "Silent screen recording of the LABO65 V2 interactive prototype: starting from Home, completing all seven guided steps (including step 4, today's chakra), waiting for generation, listening, then returning to Home and history."}
             zh={zh}
           />
         </CaseOriginalModule>
         <p className="cv3-caption">
           {zh
-            ? "V2 互動原型的實際操作錄影，以原速呈現；第 4 步涉及個人化機制，已剪除。登入、生成與下載皆為模擬，品牌識別與個人化機制細節已移除。"
-            : "A real-time recording of the V2 interactive prototype; step 04 involves the personalization mechanism and is cut. Sign-in, generation and downloads are simulated; brand identity and personalization-mechanism details are removed."}
+            ? "LABO65 V2 互動原型的單次連續操作錄影，以原速呈現，7 個引導步驟完整收錄、中間未剪接。登入、生成與下載皆為模擬，播放使用示意音檔；錄影無聲。"
+            : "One continuous, real-time recording of the LABO65 V2 interactive prototype, with all seven guided steps and no cuts in between. Sign-in, generation and downloads are simulated, and playback uses a placeholder track; the recording is silent."}
         </p>
         <p className="cv3-card-kicker">{zh ? "輔助畫面・聆聽與歷史紀錄" : "SUPPORTING EVIDENCE · PLAYER & HISTORY"}</p>
         <div className="cv3-grid cv3-phones-narrow" data-variant="media-2">

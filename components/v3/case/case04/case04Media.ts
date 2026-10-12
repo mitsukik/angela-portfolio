@@ -34,6 +34,11 @@ export const CASE04_V2 = {
     listening: { src: v2("player-playing"), alt: "LABO65 player while a soundscape is playing, showing the scene, Heart chakra 639 Hz and length chips with progress, skip, loop, sleep-timer and favourite controls" },
   },
   stepsOverview: { src: v2("guided-steps-overview"), alt: "All seven steps of the guided daily flow: radar, slider with orb, radial picker, today's chakra and frequency, scene cards, nature-sound bubbles and instrument bubbles" },
+  /** §02 "After": two representative V2 steps shown large beside the long-form "before". */
+  after: {
+    radar: { src: v2("gen1-radar"), alt: "LABO65 V2 guided step 1 of 7: one question with a five-axis radar chart, a progress bar and a single Next action" },
+    bubbles: { src: v2("gen6-nature"), alt: "LABO65 V2 guided step 6 of 7: optional nature-sound bubbles, three selected, with a note that the step can be skipped" },
+  },
   stepProgress: {
     profile: { src: v2("profile-step1"), alt: "Profile setup step 1 of 4 (birth date), showing the step-progress indicator" },
     daily: { src: v2("gen1-radar"), alt: "Daily questionnaire step 1, showing the same step-progress indicator" },
@@ -189,14 +194,14 @@ export function systemPatterns(locale: Locale): ScrubberState[] {
 export function journeyChapters(locale: Locale): JourneyChapter[] {
   const zh = locale === "zh";
   return [
-    { t: 0, name: zh ? "首頁／今日" : "Home / Today", detail: zh ? "從今日主卡點選「生成」。" : "Start from Today's hero card and tap Generate." },
-    { t: 4.4, name: zh ? "第 1–3 步・感受與心願" : "Steps 1–3 · Feelings and wishes", detail: zh ? "雷達圖、滑桿與光球、環狀選擇。" : "Radar chart, slider with orb, radial picker." },
+    { t: 0, name: zh ? "首頁／今日" : "Home / Today", detail: zh ? "從今日主卡點選「生成」；主卡依目前狀態提供下一步。" : "Start from Today's hero card, which offers the next step for the current state, and tap Generate." },
+    { t: 4.4, name: zh ? "第 1–3 步・感受與心願" : "Steps 1–3 · Feelings and wishes", detail: zh ? "雷達圖、滑桿與光球、環狀選擇：每步只問一件事，並顯示 1/7 起的進度。" : "Radar chart, slider with orb, radial picker: one question per step, with progress shown from 1/7." },
     { t: 14.18, name: zh ? "第 4 步・今天的脈輪" : "Step 4 · Today's chakra", detail: zh ? "依前 3 題得出心輪 639 Hz；點選頂輪預覽說明，再回到今天的結果。" : "The first three answers lead to Heart, 639 Hz; Crown is previewed, then today's result is kept." },
-    { t: 20.74, name: zh ? "第 5–7 步・場景與聲音" : "Steps 5–7 · Scene and sounds", detail: zh ? "場景卡片、自然聲泡泡、樂器泡泡，最後生成專屬聲景。" : "Scene cards, nature-sound and instrument bubbles, then Generate." },
-    { t: 30.34, name: zh ? "生成中" : "Generating", detail: zh ? "選擇與頻率逐一被吸收進生成動畫，也可以先回到首頁。" : "Each choice and the frequency are drawn into the generation animation; the user can also go back Home." },
+    { t: 20.74, name: zh ? "第 5–7 步・場景與聲音" : "Steps 5–7 · Scene and sounds", detail: zh ? "場景卡片，以及可略過的自然聲與樂器泡泡；最後一步直接生成專屬聲景。" : "Scene cards, then skippable nature-sound and instrument bubbles; the last step generates the soundscape directly." },
+    { t: 30.34, name: zh ? "生成中" : "Generating", detail: zh ? "選擇與頻率逐一被吸收進生成動畫；可以先回到首頁，不必停在等待畫面。" : "Each choice and the frequency are drawn into the generation animation; the user can go back Home instead of waiting on this screen." },
     { t: 39.15, name: zh ? "生成完成" : "Ready", detail: zh ? "結果畫面直接提供「立即聆聽」。" : "The result screen leads straight to Listen now." },
     { t: 42.14, name: zh ? "播放器" : "Player", detail: zh ? "短暫載入後開始播放；循環、收藏、快轉 10 秒、暫停與繼續。" : "A brief loading state, then playback: loop, favourite, skip 10 seconds, pause and resume." },
     { t: 54.46, name: zh ? "返回首頁" : "Back to Home", detail: zh ? "收合播放器後，首頁主卡切換為聆聽中並保留進度；本月額度變為 2/3。" : "After the player is collapsed, Home's hero card switches to Listening and keeps the progress; the monthly quota now reads 2/3." },
-    { t: 58.07, name: zh ? "聆聽紀錄" : "History", detail: zh ? "從底部導覽進入聆聽紀錄。" : "The bottom navigation opens listening history." },
+    { t: 58.07, name: zh ? "聆聽紀錄" : "History", detail: zh ? "從底部導覽進入聆聽紀錄，回顧並下載過去的聲景。" : "The bottom navigation opens listening history, where past soundscapes can be revisited and downloaded." },
   ];
 }

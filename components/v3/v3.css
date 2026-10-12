@@ -3350,6 +3350,62 @@ html[data-v2-lang-fade="out"] .cv3-fade {
   background: #040e15;
 }
 
+/* Stage: the recording is CH04's primary evidence — one media surface (the
+   shared --v3-media-bg / --v3-line tokens), the device sized to the viewport
+   height so phone + controls stay on screen, the chapter rail beside it. */
+.case04-journey-stage {
+  padding: clamp(16px, 3vw, 36px);
+  border-radius: 16px;
+  background: var(--v3-media-bg);
+  box-shadow: 0 0 0 1px var(--v3-line);
+}
+
+.case04-journey-player {
+  width: clamp(17rem, calc((100svh - 9rem) * 0.474), 26rem);
+  max-width: 100%;
+}
+
+.case04-journey-start-disc {
+  background: var(--v3-lime);
+  color: #111;
+  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.6);
+}
+
+.case04-journey-toggle {
+  background: var(--v3-lime);
+  color: #111;
+}
+
+.case04-journey-toggle:focus-visible {
+  outline: 2px solid var(--v3-lime);
+  outline-offset: 3px;
+}
+
+.case04-journey-ticks {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.case04-journey-ticks > span {
+  position: absolute;
+  top: 50%;
+  width: 2px;
+  height: 10px;
+  margin: -5px 0 0 -1px;
+  background: rgba(244, 241, 234, 0.35);
+}
+
+.case04-journey-ticks > span[data-on="true"] {
+  background: var(--v3-lime);
+}
+
+.case04-journey-railhead {
+  margin: 0 0 10px;
+  color: var(--cf-dim);
+}
+
 .case04-journey-start:focus-visible {
   outline: 2px solid var(--v3-lime);
   outline-offset: -4px;
@@ -3359,6 +3415,59 @@ html[data-v2-lang-fade="out"] .cv3-fade {
   height: 44px;
   accent-color: var(--v3-lime);
   cursor: pointer;
+}
+
+/* CASE04 §02 Problem → Decision → After — named exception: the decision
+   column (neutral hairline, no before/after tone), the two "after" phones side
+   by side, and a single column below 1024px so the three steps keep their
+   reading order. Panels reuse .cv3-compare. */
+.cv3-grid.case04-compare {
+  align-items: stretch;
+}
+
+.case04-decision {
+  border: 1px solid var(--v3-line);
+  justify-content: center;
+}
+
+.case04-decision .cv3-h3 {
+  margin: 0;
+}
+
+.case04-decision-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0 0 0 1.1em;
+  list-style: disc;
+}
+
+.case04-decision-list > li::marker {
+  color: var(--v3-lime);
+}
+
+.case04-after-phones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.case04-after-phones .cv3-module {
+  margin-top: 0;
+}
+
+@media (max-width: 1023px) {
+  .cv3-grid.case04-compare {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* CASE04 §03 recovery phones — named exception: secondary to the State
+   Explorer above them, so the three screens sit narrower than the shared
+   phone column (only max-width differs). */
+.case04-recovery-phones .cv3-phone-col .cv3-module {
+  max-width: 200px;
 }
 
 /* CASE04 §03 phones: same column rhythm as the cards above */

@@ -12,6 +12,12 @@ import { usePrefersReducedMotion } from "@/components/design-samples/case-final/
  * detail, accent rule on the current row) so CASE04 keeps one interaction
  * vocabulary; the chapter rows are seek buttons, not tabs.
  *
+ * Hierarchy (2026-10-12 polish): the recording is the chapter's primary
+ * evidence — first in reading order, sized to the viewport height so the
+ * whole phone plus its controls fit on screen, on its own media stage; the
+ * chapter rail beside it is compact (name + timecode; the current chapter's
+ * UX note expands), with matching ticks on the scrubber.
+ *
  * Motion / loading rules:
  * - Never autoplays. The poster shows until the reader presses play or
  *   picks a chapter.
@@ -33,6 +39,7 @@ export function Case04Journey({
   duration,
   chapters,
   label,
+  railLabel,
   videoLabel,
   zh,
 }: {
@@ -43,6 +50,8 @@ export function Case04Journey({
   chapters: JourneyChapter[];
   /** Accessible name of the chapter list. */
   label: string;
+  /** Visible heading of the chapter rail. */
+  railLabel: string;
   /** Accessible description of the recording. */
   videoLabel: string;
   zh: boolean;
@@ -106,34 +115,38 @@ export function Case04Journey({
   const replayLabel = zh ? "重新播放操作錄影" : "Replay the walkthrough";
   const ended = started && !playing && t >= dur - 0.2;
 
-  return (
-    <div ref={rootRef} className="state-scrubber case04-journey grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,17rem)] md:items-start md:gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,19rem)]">
-      <ol aria-label={label} className="state-scrubber-list min-w-0 border-t cf-rule">
-        {chapters.map((c, i) => {
-          const current = i === active;
-          return (
-            <li key={c.name}>
-              <button
-                type="button"
-                className="state-scrubber-tab"
-                data-selected={current}
-                aria-current={current ? "step" : undefined}
-                aria-controls={`${baseId}-video`}
-                onClick={() => seek(c.t, !reduced)}
-              >
-                <span className="state-scrubber-index cf-meta">{String(i + 1).padStart(2, "0")}</span>
-                <span className="min-w-0">
+  const chapterList = (
+    <ol aria-label={label} className="state-scrubber-list min-w-0 border-t cf-rule">
+      {chapters.map((c, i) => {
+        const current = i === active;
+        return (
+          <li key={c.name}>
+            <button
+              type="button"
+              className="state-scrubber-tab"
+              data-selected={current}
+              aria-current={current ? "step" : undefined}
+              aria-controls={`${baseId}-video`}
+              onClick={() => seek(c.t, !reduced)}
+            >
+              <span className="state-scrubber-index cf-meta">{String(i + 1).padStart(2, "0")}</span>
+              <span className="min-w-0">
+                <span className="flex items-baseline justify-between gap-3">
                   <span className="state-scrubber-name cf-heading">{c.name}</span>
-                  <span className="state-scrubber-detail cf-body">{c.detail}</span>
-                  <span className="state-scrubber-protects cf-meta" lang="en">{fmt(c.t)}</span>
+                  <span className="state-scrubber-protects cf-meta mt-0 shrink-0" lang="en">{fmt(c.t)}</span>
                 </span>
-              </button>
-            </li>
-          );
-        })}
-      </ol>
+                <span className="state-scrubber-detail cf-body">{c.detail}</span>
+              </span>
+            </button>
+          </li>
+        );
+      })}
+    </ol>
+  );
 
-      <div className="state-scrubber-stage mx-auto w-full max-w-[17rem] max-md:order-first md:col-start-2 md:row-start-1 md:max-w-none">
+  return (
+    <div ref={rootRef} className="case04-journey case04-journey-stage state-scrubber state-scrubber--compact grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[auto_minmax(0,1fr)] lg:items-start lg:gap-12">
+      <div className="case04-journey-player mx-auto">
         <div className="case04-journey-device">
           <div className="case04-journey-screen relative w-full" style={{ aspectRatio: "640 / 1350" }}>
             <video
@@ -154,22 +167,23 @@ export function Case04Journey({
               <source src={src} type="video/mp4" />
             </video>
             {!started ? (
-              <button type="button" onClick={play} className="case04-journey-start absolute inset-0 flex items-end justify-center bg-black/35 pb-[18%]">
-                <span className="flex items-center gap-2 rounded-full bg-[#f4f1ea] px-4 py-2.5 text-[0.85rem] font-medium text-[#111]">
-                  <svg aria-hidden viewBox="0 0 16 16" width="12" height="12" fill="currentColor"><path d="M4 2.5v11l10-5.5-10-5.5Z" /></svg>
-                  {playLabel}
-                  <span className="tabular-nums opacity-60" lang="en">{fmt(duration)}</span>
+              <button type="button" onClick={play} className="case04-journey-start absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/45">
+                <span aria-hidden className="case04-journey-start-disc flex h-16 w-16 items-center justify-center rounded-full">
+                  <svg viewBox="0 0 16 16" width="22" height="22" fill="currentColor"><path d="M4.5 2.5v11l9.5-5.5-9.5-5.5Z" /></svg>
+                </span>
+                <span className="rounded-full bg-black/70 px-3.5 py-1.5 text-[0.85rem] font-medium text-white">
+                  {playLabel} <span className="tabular-nums opacity-70" lang="en">{fmt(duration)}</span>
                 </span>
               </button>
             ) : null}
           </div>
         </div>
-        <div className="mt-3 flex items-center gap-3">
+        <div className="mt-4 flex items-center gap-3">
           <button
             type="button"
             onClick={toggle}
             aria-label={playing ? pauseLabel : ended ? replayLabel : playLabel}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black/55 text-white transition-colors hover:bg-black/70 focus-visible:bg-black/70"
+            className="case04-journey-toggle flex h-11 w-11 shrink-0 items-center justify-center rounded-full"
           >
             {playing ? (
               <svg aria-hidden viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><rect x="3.5" y="2.5" width="3" height="11" /><rect x="9.5" y="2.5" width="3" height="11" /></svg>
@@ -177,22 +191,34 @@ export function Case04Journey({
               <svg aria-hidden viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M4 2.5v11l10-5.5-10-5.5Z" /></svg>
             )}
           </button>
-          <input
-            type="range"
-            min={0}
-            max={dur}
-            step={0.1}
-            value={Math.min(t, dur)}
-            onChange={(e) => seek(Number(e.target.value), false)}
-            aria-label={zh ? "錄影進度" : "Recording position"}
-            aria-valuetext={`${fmt(t)} / ${fmt(dur)}`}
-            className="case04-journey-range min-w-0 flex-1"
-          />
+          <div className="relative min-w-0 flex-1">
+            {/* Chapter ticks on the scrubber (decorative; the chapter list is the control). */}
+            <span aria-hidden className="case04-journey-ticks">
+              {chapters.map((c, i) => (
+                <span key={c.name} data-on={i === active ? "true" : undefined} style={{ left: `${(c.t / dur) * 100}%` }} />
+              ))}
+            </span>
+            <input
+              type="range"
+              min={0}
+              max={dur}
+              step={0.1}
+              value={Math.min(t, dur)}
+              onChange={(e) => seek(Number(e.target.value), false)}
+              aria-label={zh ? "錄影進度" : "Recording position"}
+              aria-valuetext={`${fmt(t)} / ${fmt(dur)}`}
+              className="case04-journey-range relative w-full"
+            />
+          </div>
           <span className="cf-meta shrink-0 tabular-nums" lang="en" aria-hidden>{fmt(t)} / {fmt(dur)}</span>
         </div>
         <p className="cf-figure-caption cf-meta mt-2" aria-live="polite">
           {String(active + 1).padStart(2, "0")} / {String(chapters.length).padStart(2, "0")} — {chapters[active].name}
         </p>
+      </div>
+      <div className="min-w-0">
+        <p className="cf-meta case04-journey-railhead">{railLabel}</p>
+        {chapterList}
       </div>
     </div>
   );

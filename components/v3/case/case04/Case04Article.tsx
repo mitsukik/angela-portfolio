@@ -132,7 +132,7 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
         </CaseContentGrid>
       </CaseSection>
 
-      {/* 02 — From Long Form to Guided Input: compare (before dashed / after lime) · media-3 phones */}
+      {/* 02 — From Long Form to Guided Input: Problem → Design decision → After (two V2 steps) · 7-step overview · input-pattern switcher */}
       <CaseSection id={CH[2].anchor}>
         <CaseSectionHeader
           eyebrow={eb(2)}
@@ -145,9 +145,11 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
             "I redesigned it as a guided multi-step flow with explicit progress and interaction patterns selected according to what each question needed.",
           ]}
         />
-        <div className="cv3-grid" data-variant="compare" style={{ "--cv3-grid-cols": "minmax(0, 1fr) minmax(0, 2fr)" } as CSSProperties}>
+        {/* Problem → Design decision → After: the engineer-built long form, the decision, and two
+            representative V2 steps at a legible size. The full seven-step overview supports it below. */}
+        <div className="cv3-grid case04-compare" data-variant="compare" style={{ "--cv3-grid-cols": "minmax(0, 0.8fr) minmax(0, 0.95fr) minmax(0, 1.55fr)" } as CSSProperties}>
           <div className="cv3-compare" data-tone="before">
-            <p className="cv3-card-kicker">{zh ? "既有工程版本・改版前" : "EXISTING ENGINEERING VERSION · BEFORE"}</p>
+            <p className="cv3-card-kicker">{zh ? "01 問題・既有工程版本" : "01 PROBLEM · EXISTING ENGINEERING VERSION"}</p>
             <CaseOriginalModule locale={locale} version={VERSION}>
               <ComposedEvidence
                 matted
@@ -157,18 +159,34 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
               />
             </CaseOriginalModule>
           </div>
+          <div className="cv3-compare case04-decision">
+            <p className="cv3-card-kicker cv3-kicker-accent">{zh ? "02 設計決策" : "02 DESIGN DECISION"}</p>
+            <h3 className="cv3-h3">{zh ? "一步一題，依輸入選擇互動方式" : "One question per step, with a control chosen for each input"}</h3>
+            <ul className="case04-decision-list">
+              {(zh
+                ? ["拆成 7 個步驟，以進度列顯示目前位置", "每一步只處理一個問題", "依內容選用雷達圖、滑桿、環狀選擇、卡片或泡泡", "可略過的步驟明確標示"]
+                : ["Seven steps, with a progress bar showing where the user is", "Each step handles a single question", "Radar chart, slider, radial picker, cards or bubbles, chosen per question", "Optional steps are clearly marked as skippable"]
+              ).map((item) => <li key={item} className="cv3-p">{item}</li>)}
+            </ul>
+          </div>
           <div className="cv3-compare" data-tone="after">
-            <p className="cv3-card-kicker">{zh ? "重新設計後" : "REDESIGNED"}</p>
-            <CaseOriginalModule locale={locale} version={VERSION}>
-              <ComposedEvidence
-                matted
-                asset={CASE04_V2.stepsOverview}
-                aspectClassName="aspect-[2544/2620] max-h-[520px]"
-                caption={zh ? "拆成多個階段，每一步只問一件事，並用明確的進度取代不確定要填多久的長表單。" : "Split into staged steps, each asking one thing, with explicit progress replacing a long form of uncertain length."}
-              />
-            </CaseOriginalModule>
+            <p className="cv3-card-kicker">{zh ? "03 結果・重新設計後（LABO65 V2）" : "03 AFTER · REDESIGNED (LABO65 V2)"}</p>
+            <div className="case04-after-phones">
+              {phone(CASE04_V2.after.radar.src, CASE04_V2.after.radar.alt, zh ? "第 1 步・雷達圖" : "Step 1 · Radar chart")}
+              {phone(CASE04_V2.after.bubbles.src, CASE04_V2.after.bubbles.alt, zh ? "第 6 步・泡泡（可略過）" : "Step 6 · Bubbles (skippable)")}
+            </div>
+            <p className="cv3-caption">{zh ? "拆成多個階段，每一步只問一件事，並用明確的進度取代不確定要填多久的長表單。" : "Split into staged steps, each asking one thing, with explicit progress replacing a long form of uncertain length."}</p>
           </div>
         </div>
+        <p className="cv3-card-kicker">{zh ? "完整 7 個步驟" : "ALL SEVEN STEPS"}</p>
+        <CaseOriginalModule locale={locale} version={VERSION}>
+          <ComposedEvidence
+            matted
+            asset={CASE04_V2.stepsOverview}
+            aspectClassName="aspect-[2544/2620] max-h-[560px]"
+            caption={zh ? "LABO65 V2 每日引導流程的 7 個步驟，依序排列。" : "The seven steps of LABO65 V2's daily guided flow, in order."}
+          />
+        </CaseOriginalModule>
         <p className="cv3-p">
           {zh
             ? "重點不只是把一張長表單拆成數個畫面，而是讓不同類型的輸入有更合適的操作方式，同時維持整段流程在導覽與選取狀態上的一致性。"
@@ -185,7 +203,7 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
         </CaseOriginalModule>
       </CaseSection>
 
-      {/* 03 — Designing a State-aware Product: State cards ×3 + media-3 phones · media-4 Home states */}
+      {/* 03 — Designing a State-aware Product: Home State Explorer (primary evidence) → recovery State cards ×3 + compact media-3 phones */}
       <CaseSection id={CH[3].anchor}>
         <CaseSectionHeader
           eyebrow={eb(3)}
@@ -200,21 +218,6 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
             "Users can leave while generation continues and return later through the appropriate state. If generation fails or connectivity is interrupted, previously entered information is preserved so the user can retry instead of restarting the questionnaire.",
           ]}
         />
-        <p className="cv3-card-kicker">{zh ? "生成與播放的恢復狀態" : "Generation and playback recovery states"}</p>
-        <CaseContentGrid variant="cards-3" as="ol" label={zh ? "生成與播放的恢復狀態" : "Generation and playback recovery states"}>
-          {states.map((s, i) => (
-            <li key={s.name} className="cv3-state-col">
-              <CaseStateCard no={`0${i + 1}`} title={s.name} body={s.detail} protects={s.protects} />
-            </li>
-          ))}
-        </CaseContentGrid>
-        {/* The three screens, in the same order as their state cards (captions = state names). */}
-        <div className="cv3-grid cv3-state-phones" data-variant="media-3" data-phones="true">
-          {states.map((s) => (
-            <div key={s.src} className="cv3-phone-col">{phone(s.src, s.alt, s.name)}</div>
-          ))}
-        </div>
-        <p className="cv3-caption">{zh ? "發生錯誤時，優先保護使用者已經投入的時間與進度。" : "Recovery should protect effort the user has already invested."}</p>
         <p className="cv3-p">
           {zh
             ? "首頁也依照同一套狀態邏輯重新整理。主要內容與 CTA 會依使用者目前所在階段改變，而不是把所有功能以相同權重一起呈現。"
@@ -226,12 +229,27 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
             label={zh ? "首頁狀態" : "Home states"}
             states={homeStates(locale)}
             aspect={CASE04_V2_ASPECT}
-            mobileStageFirst
+            variant="explorer"
           />
         </CaseOriginalModule>
+        <p className="cv3-card-kicker">{zh ? "生成與播放的恢復狀態" : "Generation and playback recovery states"}</p>
+        <CaseContentGrid variant="cards-3" as="ol" label={zh ? "生成與播放的恢復狀態" : "Generation and playback recovery states"}>
+          {states.map((s, i) => (
+            <li key={s.name} className="cv3-state-col">
+              <CaseStateCard no={`0${i + 1}`} title={s.name} body={s.detail} protects={s.protects} />
+            </li>
+          ))}
+        </CaseContentGrid>
+        {/* The three screens, in the same order as their state cards (captions = state names). */}
+        <div className="cv3-grid cv3-state-phones case04-recovery-phones" data-variant="media-3" data-phones="true">
+          {states.map((s) => (
+            <div key={s.src} className="cv3-phone-col">{phone(s.src, s.alt, s.name)}</div>
+          ))}
+        </div>
+        <p className="cv3-caption">{zh ? "發生錯誤時，優先保護使用者已經投入的時間與進度。" : "Recovery should protect effort the user has already invested."}</p>
       </CaseSection>
 
-      {/* 04 — Connecting the Product Journey: 6-step flow chips + generation sub-flow · media-2 phones */}
+      {/* 04 — Connecting the Product Journey: 6-step flow chips → recorded journey (primary evidence) → lifecycle + summary · media-2 phones */}
       <CaseSection id={CH[4].anchor}>
         <CaseSectionHeader
           eyebrow={eb(4)}
@@ -247,6 +265,26 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
             </li>
           ))}
         </ol>
+        <p className="cv3-card-kicker cv3-kicker-accent">{zh ? "實際操作錄影・從首頁到聆聽紀錄" : "RECORDED WALKTHROUGH · HOME TO HISTORY"}</p>
+        <CaseOriginalModule locale={locale} version={VERSION}>
+          <Case04Journey
+            src={CASE04_V2.journey.src}
+            poster={CASE04_V2.journey.poster}
+            duration={CASE04_V2.journey.duration}
+            chapters={journeyChapters(locale)}
+            label={zh ? "操作錄影章節" : "Walkthrough chapters"}
+            railLabel={zh ? "9 個章節・點選即跳轉" : "9 CHAPTERS · SELECT TO JUMP"}
+            videoLabel={zh
+              ? "LABO65 V2 互動原型的實際操作錄影（無聲）：從首頁開始生成今日聲景，依序完成 7 個引導步驟（含第 4 步今天的脈輪），等待生成、開始聆聽，再回到首頁與聆聽紀錄。"
+              : "Silent screen recording of the LABO65 V2 interactive prototype: starting from Home, completing all seven guided steps (including step 4, today's chakra), waiting for generation, listening, then returning to Home and history."}
+            zh={zh}
+          />
+        </CaseOriginalModule>
+        <p className="cv3-caption">
+          {zh
+            ? "LABO65 V2 互動原型的單次連續操作錄影，以原速呈現，7 個引導步驟完整收錄、中間未剪接。登入、生成與下載皆為模擬，播放使用示意音檔；錄影無聲。"
+            : "One continuous, real-time recording of the LABO65 V2 interactive prototype, with all seven guided steps and no cuts in between. Sign-in, generation and downloads are simulated, and playback uses a placeholder track; the recording is silent."}
+        </p>
         <div className="cv3-subflow">
           <p className="cv3-card-kicker">{zh ? "生成的狀態" : "GENERATE — LIFECYCLE"}</p>
           <p>{zh ? "生成中" : "Generating"} <span aria-hidden>→</span> {zh ? "已完成生成" : "Ready"}</p>
@@ -259,25 +297,6 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
         </p>
         <p className="cv3-caption">
           {zh ? "把輸入、生成、恢復、聆聽到再次使用串成完整流程。" : "A state-aware product journey connecting guided input, asynchronous generation, recovery, listening and return use."}
-        </p>
-        <p className="cv3-card-kicker cv3-kicker-accent">{zh ? "實際操作錄影・從首頁到聆聽紀錄" : "RECORDED WALKTHROUGH · HOME TO HISTORY"}</p>
-        <CaseOriginalModule locale={locale} version={VERSION}>
-          <Case04Journey
-            src={CASE04_V2.journey.src}
-            poster={CASE04_V2.journey.poster}
-            duration={CASE04_V2.journey.duration}
-            chapters={journeyChapters(locale)}
-            label={zh ? "操作錄影章節" : "Walkthrough chapters"}
-            videoLabel={zh
-              ? "LABO65 V2 互動原型的實際操作錄影（無聲）：從首頁開始生成今日聲景，依序完成 7 個引導步驟（含第 4 步今天的脈輪），等待生成、開始聆聽，再回到首頁與聆聽紀錄。"
-              : "Silent screen recording of the LABO65 V2 interactive prototype: starting from Home, completing all seven guided steps (including step 4, today's chakra), waiting for generation, listening, then returning to Home and history."}
-            zh={zh}
-          />
-        </CaseOriginalModule>
-        <p className="cv3-caption">
-          {zh
-            ? "LABO65 V2 互動原型的單次連續操作錄影，以原速呈現，7 個引導步驟完整收錄、中間未剪接。登入、生成與下載皆為模擬，播放使用示意音檔；錄影無聲。"
-            : "One continuous, real-time recording of the LABO65 V2 interactive prototype, with all seven guided steps and no cuts in between. Sign-in, generation and downloads are simulated, and playback uses a placeholder track; the recording is silent."}
         </p>
         <p className="cv3-card-kicker">{zh ? "輔助畫面・聆聽與歷史紀錄" : "SUPPORTING EVIDENCE · PLAYER & HISTORY"}</p>
         <div className="cv3-grid cv3-phones-narrow" data-variant="media-2">

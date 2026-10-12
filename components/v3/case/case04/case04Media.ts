@@ -8,9 +8,9 @@ import type { JourneyChapter } from "./Case04Journey";
  * the build's own public screen list (real states, real copy), the journey
  * recorded as one uninterrupted pass in the build's phone mode.
  *
- * Disclosure (Angela, 2026-10-12): the LABO65 name and logo, the employer
- * name, Five-Element (五行) content, chakra (脈輪) screens, Hz values and the
- * monthly generation-quota badge are approved for public display, so every
+ * Disclosure (Angela, 2026-10-12): the LABO65 name and logo, Five-Element
+ * (五行) content, chakra (脈輪) screens, Hz values and the monthly
+ * generation-quota badge are approved for public display, so every
  * capture shows the V2 UI unaltered (the only overlay is the recording's tap
  * indicator). That approval is an allowlist: no private business data,
  * internal documents, customer data or credentials appear in any capture.

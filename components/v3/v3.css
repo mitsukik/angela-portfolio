@@ -3420,7 +3420,7 @@ html[data-v2-lang-fade="out"] .cv3-fade {
 /* CASE04 named exceptions (five-section structure, 2026-10-12) — layout only;
    cards, kickers, type and tones are the shared roles.
    §01: the three challenges stack beside the single "before" image.
-   §02: the led / collaborated lists. §04: the closing takeaway's spacing. */
+   §02: the led / collaborated lists. */
 .cv3-grid.case04-challenge {
   align-items: start;
 }
@@ -3443,12 +3443,6 @@ html[data-v2-lang-fade="out"] .cv3-fade {
 
 .case04-bullets > li::marker {
   color: var(--v3-lime);
-}
-
-.case04-takeaway {
-  margin: 32px 0 0;
-  max-width: 34em;
-  text-wrap: balance;
 }
 
 /* CASE04 §03 phones: same column rhythm as the cards above */

@@ -67,7 +67,6 @@ export type MetaRow = { label: string; value: string; accent?: boolean };
 
 const KEY_ORDER: string[][] = [
   ["角色", "Role"],
-  ["公司", "Company"],
   ["團隊", "Team"],
   ["平台", "Platform"],
   ["期間", "專案期間", "時程", "週期", "Timeline"],
@@ -79,7 +78,7 @@ const rank = (label: string) => {
   return i === -1 ? KEY_ORDER.length : i;
 };
 
-/** Fixed key order (角色 → 公司 → 團隊 → 平台 → 期間 → 狀態, then case keys); long values span the row. */
+/** Fixed key order (角色 → 團隊 → 平台 → 期間 → 狀態, then case keys); long values span the row. */
 export function CaseMetadata({ rows, wide = [], keepOrder = false }: { rows: MetaRow[]; wide?: string[]; /** Story meta keeps its own order (專案 → 角色 → 專注領域). */ keepOrder?: boolean }) {
   const ordered = keepOrder ? rows : rows.map((r, i) => ({ r, i })).sort((a, b) => rank(a.r.label) - rank(b.r.label) || a.i - b.i).map(({ r }) => r);
   // §2 #2 grid: auto-fit minmax(200px,1fr); data-n (short-key count) lets the

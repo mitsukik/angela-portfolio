@@ -98,20 +98,21 @@ export const CASE_OPENINGS: Record<"01" | "02" | "04", Record<Locale, CaseOpenin
       ],
       infoRows: [
         { label: "角色", value: "UI/UX Designer" },
-        { label: "公司", value: "鈁象數位行銷顧問有限公司" },
-        { label: "團隊", value: "PM · UI/UX Designer · UI Designer · 前端／後端工程師" },
+        { label: "團隊", value: "PM · UI/UX Designer · 後⁠端⁠工⁠程⁠師" },
         { label: "平台", value: "Android 優先（iOS 共用核心方向）" },
         { label: "週期", value: "約 1–2 個月" },
         { label: "Web", value: "staging 版本已可使用" },
         { label: "App", value: "上架準備中" },
         { label: "範疇", value: "UX/UI 重整 · 資訊架構 · 使用流程 · 互動與狀態設計 · Design System · 互動原型" },
       ],
-      // Disclosure (Angela, 2026-10-12): the LABO65 product name and brand,
-      // the employer's company name (公司 row), and LABO65's Five-Element,
-      // chakra, Hz and quota UI are approved for public display. Business
-      // data, internal documents and customer data remain excluded. The App
-      // prototype opens at its login screen (the V2 build pre-fills a demo
-      // account; every service behind it is simulated).
+      // Disclosure (Angela, 2026-10-12): the LABO65 product name and brand, and
+      // LABO65's Five-Element, chakra, Hz and quota UI are approved for public
+      // display. No company/employer metadata row is shown (removed at Angela's
+      // request before freeze). Team = PM (per the original approved copy:
+      // requirements, scope, coordination) · UI/UX Designer · one Backend
+      // Engineer. Business data, internal documents and customer data remain
+      // excluded. The App prototype opens at its login screen (the V2 build
+      // pre-fills a demo account; every service behind it is simulated).
       links: [
         { href: "https://staging-app.labo65.com/", label: "查看 Web Staging Build ↗" },
         { href: "https://labo65-app.vercel.app/auth/login", label: "操作 App 互動原型 ↗" },
@@ -127,8 +128,7 @@ export const CASE_OPENINGS: Record<"01" | "02" | "04", Record<Locale, CaseOpenin
       ],
       infoRows: [
         { label: "Role", value: "UI/UX Designer" },
-        { label: "Company", value: "鈁象數位行銷顧問有限公司" },
-        { label: "Team", value: "PM · UI/UX Designer · UI Designer · Front-end & Back-end Engineers" },
+        { label: "Team", value: "PM · UI/UX Designer · Backend Engineer" },
         { label: "Platform", value: "Android-first (shared core direction with iOS)" },
         { label: "Timeline", value: "Approx. 1–2 months" },
         { label: "Web", value: "Staging build available" },

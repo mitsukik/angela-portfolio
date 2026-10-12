@@ -35,8 +35,8 @@ import {
  * input-pattern switcher, B the Home State Explorer, C the recorded journey.
  * The hero phones are not reused as standalone evidence; the long-form
  * "before" questionnaire appears once (§01). Every screen is a capture of the
- * LABO65 V2 prototype (case04Media.ts); LABO65 branding, the employer name,
- * Five-Element, chakra, Hz and quota UI are approved and shown unaltered.
+ * LABO65 V2 prototype (case04Media.ts); LABO65 branding, Five-Element,
+ * chakra, Hz and quota UI are approved and shown unaltered. No company row.
  * Earlier, longer versions of this page (and their media) live in Git history
  * and private-archive/.
  */
@@ -72,8 +72,8 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
     ? ["LABO65 的 UX/UI 重整與資訊架構", "核心使用流程、互動與狀態設計", "可重複使用的元件與介面規則", "互動原型"]
     : ["LABO65's UX/UI redesign and information architecture", "Core user flows, interactions and states", "Reusable components and interface rules", "The interactive prototype"];
   const collaborated = zh
-    ? ["與另一位 UI Designer 協調設計分工與產出", "與前端／後端工程師確認可行性、交付與實作對齊", "與 PM 確認需求與範疇"]
-    : ["Coordinated design work with another UI Designer", "Worked with front-end and back-end engineers on feasibility, handoff and implementation alignment", "Aligned requirements and scope with the PM"];
+    ? ["與一位後端工程師確認技術可行性、設計交付與實作對齊。", "與 PM 確認需求與範疇。"]
+    : ["Collaborated with a backend engineer to align on technical feasibility, design handoff, and implementation.", "Aligned requirements and scope with the PM."];
   const approach = zh
     ? [
         { title: "理解", note: "檢視既有可運作版本與需求" },
@@ -165,7 +165,7 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
       <CaseSection id={CH[2].anchor}>
         <CaseSectionHeader
           eyebrow={eb(2)}
-          title={zh ? "主導 UX/UI 重整，與設計和工程協作完成" : "Leading the Redesign, Working With Design and Engineering"}
+          title={zh ? "主導 UX/UI 重整，並與工程對齊實作" : "Leading the Redesign and Aligning It With Engineering"}
         />
         <CaseContentGrid variant="cards-2">
           <CaseCard tone="accent" kicker={zh ? "我主導" : "I LED"}>
@@ -252,7 +252,7 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
         </CaseDecision>
       </CaseSection>
 
-      {/* 04 — Outcome: four deliverables · real status (no claimed metrics) · takeaway */}
+      {/* 04 — Outcome: four deliverables · real status (no claimed metrics); ends on the facts, no summary line */}
       <CaseSection id={CH[4].anchor}>
         <CaseSectionHeader eyebrow={eb(4)} title={zh ? "交付了什麼" : "What Was Delivered"} />
         <CaseContentGrid variant="cards-2" as="ol">
@@ -269,11 +269,6 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
               : "A Web staging build is available and the App is preparing for release. The public V2 prototype is a standalone demo: sign-in, generation and related services are simulated, and playback uses a placeholder track. As the App has not launched, this case claims no post-launch conversion or retention results."}
           </p>
         </CaseClosingPanel>
-        <p className="cv3-h3 case04-takeaway">
-          {zh
-            ? "這個專案的重點，是把多個各自發展的複雜功能，整理成一套連貫、可重複使用的產品體驗。"
-            : "The core of this project was turning several separately built, complex functions into one coherent, reusable product experience."}
-        </p>
       </CaseSection>
     </>
   );

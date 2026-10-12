@@ -3508,3 +3508,69 @@ html[data-v2-lang-fade="out"] .cv3-fade {
 .cv3 .cv3-figure-hero:has(.cv3-hero-phones) .cv3-bezel-sheen {
   background: linear-gradient(118deg, rgba(255, 255, 255, 0.025), transparent 34%);
 }
+
+/* ---------------------------------------------------------------------
+ * Case Study desktop reading sizes (≥1024px only; 2026-10-12).
+ * Measured with Playwright at 1024–1920: the 17px body (--cv3-body) and
+ * 38/26px headings already read well, but several prose roles that carry
+ * real content sat at 13–15px. Only those roles step up here; mono labels,
+ * eyebrows, kickers, chips, buttons and drawn diagram/mock-UI text keep
+ * their sizes, so the label → body → heading hierarchy is unchanged.
+ * Tablet (768–1023) and mobile (<768) are untouched: every rule is inside
+ * this min-width block and scoped to the case shell (.cv3).
+ * ------------------------------------------------------------------- */
+@media (min-width: 1024px) {
+  /* Metadata values (hero meta grid; CASE03 context list) */
+  .cv3 .cv3-info dd {
+    font-size: 16px;
+  }
+
+  .cv3 .cv3-context dd {
+    font-size: 14px;
+  }
+
+  /* Card and timeline descriptions */
+  .cv3 .cv3-card-s .cv3-p {
+    font-size: 16px;
+  }
+
+  .cv3 .cv3-pipe-note {
+    font-size: 15px;
+  }
+
+  .cv3 .cv3-flow-text {
+    font-size: 16px;
+  }
+
+  /* Supporting captions and notes */
+  .cv3 .cv3-caption,
+  .cv3 .cv3-cta-note,
+  .cv3 .case-final[data-theme="v3"] .cf-figure-caption {
+    font-size: 14px;
+  }
+
+  /* CASE05–07 figure captions and CASE07's evidence captions (Tailwind
+     text-[13px] on the element; the semantic class is the scope) */
+  .cv3 figcaption.cf-dim,
+  .cv3 p.cf-dim.leading-5 {
+    font-size: 14px;
+  }
+
+  .cv3 p.cf-dim.leading-5 {
+    line-height: 1.6;
+  }
+
+  /* CASE01 presentation tab notes */
+  .cv3 .case01-tab-note {
+    font-size: 15px;
+  }
+
+  /* StateScrubber rows (CASE04 switchers, Explorer, journey rail) */
+  .cv3 .state-scrubber-detail {
+    font-size: 16px;
+  }
+
+  .cv3 .state-scrubber-protects {
+    font-size: 12px;
+  }
+}

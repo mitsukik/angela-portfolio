@@ -231,7 +231,7 @@ function Tag({ children, tone }: { children: ReactNode; tone: "actual" | "rebuil
  * on the light admin UI and on the page. */
 function Marker({ n, className = "" }: { n: number; className?: string }) {
   return (
-    <span aria-hidden className={`inline-grid size-6 shrink-0 place-items-center rounded-full border-2 border-[#111] bg-[var(--cf-accent)] font-mono text-[11px] font-bold leading-none text-[#111] ${className}`}>
+    <span aria-hidden className={`inline-grid size-6 shrink-0 place-items-center rounded-full border-2 border-[#111] bg-[var(--v3-lime)] font-mono text-[11px] font-bold leading-none text-[#111] ${className}`}>
       {String(n).padStart(2, "0")}
     </span>
   );

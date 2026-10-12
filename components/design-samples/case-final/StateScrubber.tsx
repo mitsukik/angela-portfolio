@@ -31,13 +31,24 @@ export function StateScrubber({
   states,
   aspect,
   footnote,
+  mobileStageFirst = false,
+  variant = "list",
 }: {
   label: string;
   states: ScrubberState[];
   /** CSS aspect-ratio of the evidence frame, e.g. "1284 / 2755". */
   aspect: string;
   footnote?: string;
+  /** Phones: show the screen above the list (long lists would push it below the fold).
+   * Visual order only — the tablist stays first in the DOM. */
+  mobileStageFirst?: boolean;
+  /** "explorer": the screen is the dominant element (larger, viewport-height
+   * sized stage), the list is compact (only the selected row shows its note),
+   * and on phones the states become a chip grid under the screen with the
+   * selected state's note directly below. Implies a stage-first phone order. */
+  variant?: "list" | "explorer";
 }) {
+  const explorer = variant === "explorer";
   const [active, setActive] = useState(0);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const baseId = useId();
@@ -63,7 +74,13 @@ export function StateScrubber({
   };
 
   return (
-    <div className="state-scrubber grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,17rem)] md:items-start md:gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,19rem)]">
+    <div
+      className={
+        explorer
+          ? "state-scrubber state-scrubber--compact state-scrubber--explorer grid grid-cols-[minmax(0,1fr)] gap-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-start md:gap-12"
+          : "state-scrubber grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,17rem)] md:items-start md:gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,19rem)]"
+      }
+    >
       <div className="min-w-0">
         <div role="tablist" aria-label={label} aria-orientation="vertical" className="state-scrubber-list border-t cf-rule">
           {states.map((state, index) => {
@@ -101,7 +118,11 @@ export function StateScrubber({
         role="tabpanel"
         id={`${baseId}-panel`}
         aria-labelledby={`${baseId}-tab-${active}`}
-        className="state-scrubber-stage mx-auto w-full max-w-[17rem] md:col-start-2 md:row-span-2 md:row-start-1 md:max-w-none"
+        className={
+          explorer
+            ? "state-scrubber-stage state-scrubber-stage--lg mx-auto max-md:order-first md:col-start-2 md:row-span-3 md:row-start-1"
+            : `state-scrubber-stage mx-auto w-full max-w-[17rem] md:col-start-2 md:row-span-2 md:row-start-1 md:max-w-none${mobileStageFirst ? " max-md:order-first" : ""}`
+        }
       >
         <div className="relative w-full" style={{ aspectRatio: aspect }}>
           {states.map((state, index) => (
@@ -117,6 +138,15 @@ export function StateScrubber({
         </p>
       </div>
       {footnote && <p className="cf-body body-tc max-w-[56ch] md:col-start-1 md:row-start-2">{footnote}</p>}
+      {explorer ? (
+        // Phones only: the selected state's note sits right under the chip grid
+        // (on wider screens the same note expands inside the selected row).
+        <div className="state-scrubber-note md:hidden" aria-live="polite">
+          <p className="state-scrubber-name cf-heading">{states[active].name}</p>
+          <p className="state-scrubber-detail cf-body">{states[active].detail}</p>
+          {states[active].protects && <p className="state-scrubber-protects cf-meta">{states[active].protects}</p>}
+        </div>
+      ) : null}
     </div>
   );
 }

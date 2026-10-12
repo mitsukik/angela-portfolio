@@ -91,18 +91,20 @@ export const CASE_OPENINGS: Record<"01" | "02" | "04", Record<Locale, CaseOpenin
       title: "行動療癒產品",
       titleLines: null,
       subtitle: "在產品已進入開發的階段接手 UX/UI，重新整理流程、狀態與介面，讓體驗更清楚、更輕量，也更符合行動應用的使用方式。",
+      // One-paragraph intro (2026-10-12 simplification; the earlier two-paragraph
+      // version is in Git history).
       summary: [
-        "LABO65 是一款根據個人資料與每日輸入內容，產生個人化聲音體驗的行動產品。",
-        "我加入專案時，工程師已完成一版可運作的早期產品。我接手後負責 UX/UI 重整，重新梳理核心流程、定義互動與錯誤恢復狀態，並建立可重複使用的介面規則，作為 Android-first 行動體驗的設計基礎。",
+        "LABO65 是一款根據個人資料與每日輸入，生成個人化療癒聲景的 Android-first 行動產品。我在工程師完成可運作的早期版本後加入，主導 UX/UI 重整，重新梳理核心流程、互動與恢復狀態，並建立可重複使用的介面規則。",
       ],
       infoRows: [
         { label: "角色", value: "UI/UX Designer" },
         { label: "公司", value: "鈁象數位行銷顧問有限公司" },
-        { label: "團隊", value: "PM · Full-stack Engineer · UI/UX Designer" },
+        { label: "團隊", value: "PM · UI/UX Designer · UI Designer · 前端／後端工程師" },
         { label: "平台", value: "Android 優先（iOS 共用核心方向）" },
         { label: "週期", value: "約 1–2 個月" },
         { label: "Web", value: "staging 版本已可使用" },
         { label: "App", value: "上架準備中" },
+        { label: "範疇", value: "UX/UI 重整 · 資訊架構 · 使用流程 · 互動與狀態設計 · Design System · 互動原型" },
       ],
       // Disclosure (Angela, 2026-10-12): the LABO65 product name and brand,
       // the employer's company name (公司 row), and LABO65's Five-Element,
@@ -121,17 +123,17 @@ export const CASE_OPENINGS: Record<"01" | "02" | "04", Record<Locale, CaseOpenin
       titleLines: null,
       subtitle: "Took over UX/UI after development was already underway, restructuring flows, states, and interfaces into a clearer, lighter, more app-native experience.",
       summary: [
-        "LABO65 is a mobile wellness product that generates personalized audio experiences from personal profile information and daily inputs.",
-        "When I joined, an early functional version had already been built by the engineer. I took over the UX/UI redesign, restructuring the core journey, defining interaction and recovery states, and establishing a reusable interface system for an Android-first mobile experience.",
+        "LABO65 is an Android-first mobile wellness product that generates personalized healing soundscapes from profile information and daily inputs. I joined after an engineer had built a working early version and led the UX/UI redesign, restructuring the core journey, interaction and recovery states, and establishing reusable interface rules.",
       ],
       infoRows: [
         { label: "Role", value: "UI/UX Designer" },
         { label: "Company", value: "鈁象數位行銷顧問有限公司" },
-        { label: "Team", value: "PM · Full-stack Engineer · UI/UX Designer" },
+        { label: "Team", value: "PM · UI/UX Designer · UI Designer · Front-end & Back-end Engineers" },
         { label: "Platform", value: "Android-first (shared core direction with iOS)" },
         { label: "Timeline", value: "Approx. 1–2 months" },
         { label: "Web", value: "Staging build available" },
         { label: "App", value: "Preparing for release" },
+        { label: "Scope", value: "UX/UI Redesign · Information Architecture · User Flows · Interaction & State Design · Design System · Interactive Prototype" },
       ],
       links: [
         { href: "https://staging-app.labo65.com/", label: "View Web Staging Build ↗" },

@@ -33,30 +33,13 @@ export const CASE04_V2 = {
     home: { src: v2("home-ready"), alt: "LABO65 Home with today's soundscape ready to play or generate, the 3/3 monthly generation quota and the energy-structure (Five-Element) row" },
     listening: { src: v2("player-playing"), alt: "LABO65 player while a soundscape is playing, showing the scene, Heart chakra 639 Hz and length chips with progress, skip, loop, sleep-timer and favourite controls" },
   },
-  stepsOverview: { src: v2("guided-steps-overview"), alt: "All seven steps of the guided daily flow: radar, slider with orb, radial picker, today's chakra and frequency, scene cards, nature-sound bubbles and instrument bubbles" },
-  /** §02 "After": two representative V2 steps shown large beside the long-form "before". */
-  after: {
-    radar: { src: v2("gen1-radar"), alt: "LABO65 V2 guided step 1 of 7: one question with a five-axis radar chart, a progress bar and a single Next action" },
-    bubbles: { src: v2("gen6-nature"), alt: "LABO65 V2 guided step 6 of 7: optional nature-sound bubbles, three selected, with a note that the step can be skipped" },
-  },
-  stepProgress: {
-    profile: { src: v2("profile-step1"), alt: "Profile setup step 1 of 4 (birth date), showing the step-progress indicator" },
-    daily: { src: v2("gen1-radar"), alt: "Daily questionnaire step 1, showing the same step-progress indicator" },
-  },
-  recovery: {
-    generating: { src: v2("status-generating"), alt: "Generating today's soundscape, including the Heart chakra 639 Hz calibration step, with guidance that the user can leave and return" },
-    failed: { src: v2("status-gen-fail"), alt: "Generation failed state; the user's questionnaire answers have been preserved, with retry and defer actions" },
-    playback: { src: v2("player-error"), alt: "Playback error state; the soundscape and playback progress are preserved, with a retry action" },
-  },
-  player: { src: v2("player-playing"), alt: "Player for listening to a generated soundscape" },
-  history: { src: v2("history"), alt: "Listening history with 7 / 30 / 60-day ranges, stats and per-track download status" },
   journey: { src: "/videos/case04/case04-v2-journey.mp4", poster: v2("journey-poster"), duration: 62.27 },
 } as const;
 
 type Item = { name: string; detail: string; protects: string; src: string; alt: string };
 const states = (items: Item[]): ScrubberState[] => items.map(({ src, alt, ...s }) => ({ ...s, asset: { src, alt } }));
 
-/** §03 — one Home, six real states (each = a state of Home's hero card in V2). */
+/** Decision B — one Home, six real states (each = a state of Home's hero card in V2). */
 export function homeStates(locale: Locale): ScrubberState[] {
   const zh = locale === "zh";
   return states([
@@ -105,7 +88,7 @@ export function homeStates(locale: Locale): ScrubberState[] {
   ]);
 }
 
-/** §02 — the input patterns of the guided flow (step 04 is a derived result, shown in the overview and §04). */
+/** Decision A — the input patterns of the guided flow (step 04 is a derived result, shown in the Decision C recording). */
 export function inputPatterns(locale: Locale): ScrubberState[] {
   const zh = locale === "zh";
   const step = (n: string) => (zh ? `第 ${n} 步／共 7 步` : `Step ${n} of 7`);
@@ -148,60 +131,16 @@ export function inputPatterns(locale: Locale): ScrubberState[] {
   ]);
 }
 
-/** §05 — reusable feedback, loading and recovery patterns shared across flows. */
-export function systemPatterns(locale: Locale): ScrubberState[] {
-  const zh = locale === "zh";
-  return states([
-    {
-      name: zh ? "選取上限回饋" : "Selection-limit feedback",
-      detail: zh ? "超過上限時以提示說明原因，而不是讓點擊沒有反應。" : "Going past the limit shows a short message explaining why, instead of a tap that silently does nothing.",
-      protects: zh ? "共用：所有多選步驟" : "Shared: every multi-select step",
-      src: v2("feedback-limit-toast"),
-      alt: "A toast reading 'select up to 3' after a fourth bubble is tapped",
-    },
-    {
-      name: zh ? "底部選單" : "Bottom sheet",
-      detail: zh ? "次要選擇（例如為誰生成）放在底部選單，不必離開目前的步驟。" : "Secondary choices, such as who the soundscape is for, open in a bottom sheet without leaving the current step.",
-      protects: zh ? "共用：日期、時區、性別、親友" : "Shared: date, time zone, gender, people",
-      src: v2("sheet-friends"),
-      alt: "A bottom sheet for choosing who to generate for: the user or a saved person",
-    },
-    {
-      name: zh ? "載入中" : "Loading",
-      detail: zh ? "網路較慢時明確說明正在載入，完成後自動開始播放。" : "Slow connections get an explicit loading state that starts playback automatically when ready.",
-      protects: zh ? "播放器" : "Player",
-      src: v2("player-buffering"),
-      alt: "Player loading state with scene, Heart chakra 639 Hz and length chips, explaining that slow networks may take a few seconds",
-    },
-    {
-      name: zh ? "網路中斷" : "Connection lost",
-      detail: zh ? "網路中斷時保留已輸入的答案，提供再試一次與稍後再試。" : "When the connection drops, answers are kept, with Try again and Later actions.",
-      protects: zh ? "共用：生成、註冊" : "Shared: generation, sign-up",
-      src: v2("status-gen-offline"),
-      alt: "Connection-lost screen stating the questionnaire answers are kept, with retry and later actions",
-    },
-    {
-      name: zh ? "完成回饋" : "Completion feedback",
-      detail: zh ? "聽完後以五種感受快速回饋，一次點擊即可完成。" : "After listening, five feelings give one-tap feedback.",
-      protects: zh ? "播放器" : "Player",
-      src: v2("player-feedback"),
-      alt: "Player feedback card after listening, with five feeling options and a Done action",
-    },
-  ]);
-}
-
-/** §04 — chapter marks of the recorded journey (seconds: the recording's own step marks + 0.4 s, so a seek lands after the screen transition). */
+/** Decision C — chapter marks of the recorded journey (seconds: the recording's own step marks + 0.4 s, so a seek lands after the screen transition). */
 export function journeyChapters(locale: Locale): JourneyChapter[] {
   const zh = locale === "zh";
+  // Six navigational groups over the same uncut recording (2026-10-12); Step 4 keeps its own entry.
   return [
     { t: 0, name: zh ? "首頁／今日" : "Home / Today", detail: zh ? "從今日主卡點選「生成」；主卡依目前狀態提供下一步。" : "Start from Today's hero card, which offers the next step for the current state, and tap Generate." },
     { t: 4.4, name: zh ? "第 1–3 步・感受與心願" : "Steps 1–3 · Feelings and wishes", detail: zh ? "雷達圖、滑桿與光球、環狀選擇：每步只問一件事，並顯示 1/7 起的進度。" : "Radar chart, slider with orb, radial picker: one question per step, with progress shown from 1/7." },
     { t: 14.18, name: zh ? "第 4 步・今天的脈輪" : "Step 4 · Today's chakra", detail: zh ? "依前 3 題得出心輪 639 Hz；點選頂輪預覽說明，再回到今天的結果。" : "The first three answers lead to Heart, 639 Hz; Crown is previewed, then today's result is kept." },
     { t: 20.74, name: zh ? "第 5–7 步・場景與聲音" : "Steps 5–7 · Scene and sounds", detail: zh ? "場景卡片，以及可略過的自然聲與樂器泡泡；最後一步直接生成專屬聲景。" : "Scene cards, then skippable nature-sound and instrument bubbles; the last step generates the soundscape directly." },
-    { t: 30.34, name: zh ? "生成中" : "Generating", detail: zh ? "選擇與頻率逐一被吸收進生成動畫；可以先回到首頁，不必停在等待畫面。" : "Each choice and the frequency are drawn into the generation animation; the user can go back Home instead of waiting on this screen." },
-    { t: 39.15, name: zh ? "生成完成" : "Ready", detail: zh ? "結果畫面直接提供「立即聆聽」。" : "The result screen leads straight to Listen now." },
-    { t: 42.14, name: zh ? "播放器" : "Player", detail: zh ? "短暫載入後開始播放；循環、收藏、快轉 10 秒、暫停與繼續。" : "A brief loading state, then playback: loop, favourite, skip 10 seconds, pause and resume." },
-    { t: 54.46, name: zh ? "返回首頁" : "Back to Home", detail: zh ? "收合播放器後，首頁主卡切換為聆聽中並保留進度；本月額度變為 2/3。" : "After the player is collapsed, Home's hero card switches to Listening and keeps the progress; the monthly quota now reads 2/3." },
-    { t: 58.07, name: zh ? "聆聽紀錄" : "History", detail: zh ? "從底部導覽進入聆聽紀錄，回顧並下載過去的聲景。" : "The bottom navigation opens listening history, where past soundscapes can be revisited and downloaded." },
+    { t: 30.34, name: zh ? "生成與結果" : "Generating & result", detail: zh ? "選擇與頻率被吸收進生成動畫；可以先回到首頁，完成後直接「立即聆聽」。" : "Choices and the frequency are drawn into the generation animation; the user can go back Home, then Listen now when it's ready." },
+    { t: 42.14, name: zh ? "聆聽、返回與紀錄" : "Listen, return & history", detail: zh ? "播放控制；收合後首頁切換為聆聽中並保留進度（額度 2/3），再從底部導覽進入聆聽紀錄。" : "Playback controls; after collapsing, Home switches to Listening and keeps progress (quota 2/3), then the bottom navigation opens history." },
   ];
 }

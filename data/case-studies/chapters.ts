@@ -30,14 +30,14 @@ export const CASE_SYSTEM_CHAPTERS: Record<"01" | "02" | "04", CaseChapterDef[]> 
     { no: "07", anchor: "c7", zh: "反思", en: "Reflection", nemuZh: "最後，是這三個專案的反思。", nemuEn: "Finally, a reflection on all three." },
   ],
   "04": [
-    { no: "00", anchor: "ov", zh: "專案總覽", en: "Case Overview", nemuZh: "這是 CH04 的案例。可以先操作 App 原型，或往下閱讀。", nemuEn: "This is CH04. Try the app prototype first, or keep reading." },
-    { no: "01", anchor: "c1", zh: "挑戰與角色", en: "The Challenge & My Role", nemuZh: "我接手時產品已經可以運作，任務是把它整理成一致的體驗。", nemuEn: "The product already worked when I joined. My job was to make it one coherent experience." },
-    { no: "02", anchor: "c2", zh: "從長表單到引導式輸入", en: "From Long Form to Guided Input", nemuZh: "一張長問卷，被拆成一次只問一件事的分步流程。", nemuEn: "One long form, split into steps that ask one thing at a time." },
-    { no: "03", anchor: "c3", zh: "狀態導向的產品設計", en: "Designing a State-aware Product", nemuZh: "這段處理等待、失敗與返回，不只是成功流程。", nemuEn: "This part covers waiting, failure and returning, not just the happy path." },
-    { no: "04", anchor: "c4", zh: "串連產品旅程", en: "Connecting the Product Journey", nemuZh: "從個人資料到再次返回，串成一條連續流程。", nemuEn: "From profile to coming back again, connected as one flow." },
-    { no: "05", anchor: "c5", zh: "可重用系統與行動限制", en: "Reusable System & Mobile Constraints", nemuZh: "重複出現的互動，被整理成可重用的規則。", nemuEn: "Repeated interactions, turned into reusable rules." },
-    { no: "06", anchor: "c6", zh: "交付成果", en: "Delivery", nemuZh: "這段整理了這次重新設計完成的內容。", nemuEn: "What this redesign delivered." },
+    // CASE04 five-section structure (Angela, 2026-10-12): 00–04, exact ZH/EN labels.
+    { no: "00", anchor: "ov", zh: "專案總覽", en: "Project Overview", nemuZh: "這是 LABO65 的案例。可以先操作 App 互動原型，或往下閱讀。", nemuEn: "This is the LABO65 case. Try the interactive app prototype first, or keep reading." },
+    { no: "01", anchor: "c1", zh: "設計挑戰", en: "The Challenge", nemuZh: "我接手時產品已經可以運作，問題是體驗沒有串起來。", nemuEn: "The product already worked when I joined; the experience didn't hold together." },
+    { no: "02", anchor: "c2", zh: "我的角色與方法", en: "My Role & Approach", nemuZh: "這段說明我主導的部分，以及和誰一起完成。", nemuEn: "What I led, and who I worked with." },
+    { no: "03", anchor: "c3", zh: "關鍵設計決策", en: "Key Design Decisions", nemuZh: "三個關鍵決策：引導式輸入、狀態導向首頁、連續的產品旅程。", nemuEn: "Three key decisions: guided input, a state-aware Home, one connected journey." },
+    { no: "04", anchor: "c4", zh: "設計成果", en: "Outcome", nemuZh: "最後是實際交付的內容，以及目前的狀態。", nemuEn: "Finally, what was delivered and where it stands." },
   ],
+
 };
 
 /** Shared Nemu lines (§6): after the last chapter, and the directory prompt. */

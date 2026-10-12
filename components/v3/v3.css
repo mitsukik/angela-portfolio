@@ -3417,57 +3417,38 @@ html[data-v2-lang-fade="out"] .cv3-fade {
   cursor: pointer;
 }
 
-/* CASE04 §02 Problem → Decision → After — named exception: the decision
-   column (neutral hairline, no before/after tone), the two "after" phones side
-   by side, and a single column below 1024px so the three steps keep their
-   reading order. Panels reuse .cv3-compare. */
-.cv3-grid.case04-compare {
-  align-items: stretch;
+/* CASE04 named exceptions (five-section structure, 2026-10-12) — layout only;
+   cards, kickers, type and tones are the shared roles.
+   §01: the three challenges stack beside the single "before" image.
+   §02: the led / collaborated lists. §04: the closing takeaway's spacing. */
+.cv3-grid.case04-challenge {
+  align-items: start;
 }
 
-.case04-decision {
-  border: 1px solid var(--v3-line);
-  justify-content: center;
-}
-
-.case04-decision .cv3-h3 {
-  margin: 0;
-}
-
-.case04-decision-list {
+.case04-challenge-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  min-width: 0;
+}
+
+.case04-bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   margin: 0;
   padding: 0 0 0 1.1em;
   list-style: disc;
 }
 
-.case04-decision-list > li::marker {
+.case04-bullets > li::marker {
   color: var(--v3-lime);
 }
 
-.case04-after-phones {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.case04-after-phones .cv3-module {
-  margin-top: 0;
-}
-
-@media (max-width: 1023px) {
-  .cv3-grid.case04-compare {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-/* CASE04 §03 recovery phones — named exception: secondary to the State
-   Explorer above them, so the three screens sit narrower than the shared
-   phone column (only max-width differs). */
-.case04-recovery-phones .cv3-phone-col .cv3-module {
-  max-width: 200px;
+.case04-takeaway {
+  margin: 32px 0 0;
+  max-width: 34em;
+  text-wrap: balance;
 }
 
 /* CASE04 §03 phones: same column rhythm as the cards above */

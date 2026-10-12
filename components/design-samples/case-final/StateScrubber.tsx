@@ -31,12 +31,16 @@ export function StateScrubber({
   states,
   aspect,
   footnote,
+  mobileStageFirst = false,
 }: {
   label: string;
   states: ScrubberState[];
   /** CSS aspect-ratio of the evidence frame, e.g. "1284 / 2755". */
   aspect: string;
   footnote?: string;
+  /** Phones: show the screen above the list (long lists would push it below the fold).
+   * Visual order only — the tablist stays first in the DOM. */
+  mobileStageFirst?: boolean;
 }) {
   const [active, setActive] = useState(0);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -101,7 +105,7 @@ export function StateScrubber({
         role="tabpanel"
         id={`${baseId}-panel`}
         aria-labelledby={`${baseId}-tab-${active}`}
-        className="state-scrubber-stage mx-auto w-full max-w-[17rem] md:col-start-2 md:row-span-2 md:row-start-1 md:max-w-none"
+        className={`state-scrubber-stage mx-auto w-full max-w-[17rem] md:col-start-2 md:row-span-2 md:row-start-1 md:max-w-none${mobileStageFirst ? " max-md:order-first" : ""}`}
       >
         <div className="relative w-full" style={{ aspectRatio: aspect }}>
           {states.map((state, index) => (

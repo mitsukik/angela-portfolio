@@ -31,7 +31,7 @@ const NEXT_DESCRIPTION: Partial<Record<CaseNo, Partial<Record<Locale, string>>>>
 /** The case's primary hero CTA (§5) — the Remote's third option. Original destinations only. */
 const PRIMARY_CTA: Partial<Record<CaseNo, { href: string; label: Record<Locale, string> }>> = {
   "01": { href: "https://case01-admin.vercel.app/", label: { zh: "操作後台原型", en: "Open Admin Prototype" } },
-  "04": { href: "https://labo65-app.vercel.app/", label: { zh: "操作 App 原型", en: "Open App Prototype" } },
+  "04": { href: "https://labo65-app.vercel.app/auth/login", label: { zh: "操作 App 互動原型", en: "Try the Interactive App Prototype" } },
 };
 
 const V3_ARTICLES: Partial<Record<CaseNo, (p: { locale: Locale; project: Project }) => ReactNode>> = {

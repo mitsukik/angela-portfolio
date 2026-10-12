@@ -3333,6 +3333,34 @@ html[data-v2-lang-fade="out"] .cv3-fade {
   align-items: flex-start;
 }
 
+/* CASE04 §04 journey recording (Case04Journey.tsx) — named exception: only the
+   device bezel around the recording (same proportions as the captured V2 stills:
+   10px bezel, 54px outer radius on a 420px device) and the seek bar's accent.
+   Rows reuse .state-scrubber-*; the control reuses VideoEvidence's button. */
+.case04-journey-device {
+  padding: 2.4%;
+  border-radius: 12.8% / 6%;
+  background: #0a0b0d;
+  box-shadow: 0 0 0 1px #2a2c30 inset;
+}
+
+.case04-journey-screen {
+  overflow: hidden;
+  border-radius: 11% / 5.2%;
+  background: #040e15;
+}
+
+.case04-journey-start:focus-visible {
+  outline: 2px solid var(--v3-lime);
+  outline-offset: -4px;
+}
+
+.case04-journey-range {
+  height: 44px;
+  accent-color: var(--v3-lime);
+  cursor: pointer;
+}
+
 /* CASE04 §03 phones: same column rhythm as the cards above */
 .cv3-state-phones .cv3-phone-col .cv3-module {
   margin-top: 0;

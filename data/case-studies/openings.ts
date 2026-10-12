@@ -97,6 +97,7 @@ export const CASE_OPENINGS: Record<"01" | "02" | "04", Record<Locale, CaseOpenin
       ],
       infoRows: [
         { label: "角色", value: "UI/UX Designer" },
+        { label: "公司", value: "鈁象數位行銷顧問有限公司" },
         { label: "團隊", value: "PM · Full-stack Engineer · UI/UX Designer" },
         { label: "平台", value: "Android 優先（iOS 共用核心方向）" },
         { label: "週期", value: "約 1–2 個月" },
@@ -105,10 +106,13 @@ export const CASE_OPENINGS: Record<"01" | "02" | "04", Record<Locale, CaseOpenin
       ],
       // Approved narrow confidentiality exceptions (see production
       // CaseStudyPrototype.tsx): these outbound hrefs carry the real product
-      // name; all portfolio copy stays anonymized.
+      // name; all portfolio copy stays anonymized. The employer's company
+      // name (公司 row) is approved for public display (2026-10-12); the
+      // product name is not. The App prototype opens at its login screen
+      // (the V2 build pre-fills the demo account).
       links: [
         { href: "https://staging-app.labo65.com/", label: "查看 Web Staging Build ↗" },
-        { href: "https://labo65-app.vercel.app/", label: "操作 App 原型 ↗" },
+        { href: "https://labo65-app.vercel.app/auth/login", label: "操作 App 互動原型 ↗" },
         { href: "https://labo65-landing.vercel.app/", label: "查看 Landing Page 原型 ↗" },
       ],
     },
@@ -122,6 +126,7 @@ export const CASE_OPENINGS: Record<"01" | "02" | "04", Record<Locale, CaseOpenin
       ],
       infoRows: [
         { label: "Role", value: "UI/UX Designer" },
+        { label: "Company", value: "鈁象數位行銷顧問有限公司" },
         { label: "Team", value: "PM · Full-stack Engineer · UI/UX Designer" },
         { label: "Platform", value: "Android-first (shared core direction with iOS)" },
         { label: "Timeline", value: "Approx. 1–2 months" },
@@ -130,7 +135,7 @@ export const CASE_OPENINGS: Record<"01" | "02" | "04", Record<Locale, CaseOpenin
       ],
       links: [
         { href: "https://staging-app.labo65.com/", label: "View Web Staging Build ↗" },
-        { href: "https://labo65-app.vercel.app/", label: "Open App Prototype ↗" },
+        { href: "https://labo65-app.vercel.app/auth/login", label: "Try the Interactive App Prototype ↗" },
         { href: "https://labo65-landing.vercel.app/", label: "View Landing Page Prototype ↗" },
       ],
     },

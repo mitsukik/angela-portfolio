@@ -160,14 +160,16 @@ export function ComposedEvidence({
  * instruction ("keep the existing 3-phone Hero visual").
  */
 /** The three-phone hero composition alone (CASE System V3 hero bezel). */
-export function CaseFourHeroPhones({ locale }: { locale: Locale }) {
+type HeroPhoneAssets = { generating: EvidenceAsset; home: EvidenceAsset; listening: EvidenceAsset };
+
+export function CaseFourHeroPhones({ locale, assets }: { locale: Locale; /** Screens for the three slots (CASE04 V3 passes the current V2 captures). */ assets?: HeroPhoneAssets }) {
   const zhHant = locale === "zh";
   return (
       <Reveal className="block">
         <div className="grid grid-cols-2 items-end gap-5 md:grid-cols-12 md:gap-6 lg:gap-8">
           <PhoneEvidence
             className="col-span-1 row-start-2 md:col-span-3 md:col-start-2 md:row-start-1 md:translate-y-10"
-            asset={{
+            asset={assets?.generating ?? {
               src: "/images/case04/case04-generating-v2.webp",
               alt: "Generating state for a mobile wellness product",
             }}
@@ -177,7 +179,7 @@ export function CaseFourHeroPhones({ locale }: { locale: Locale }) {
           <PhoneEvidence
             className="relative z-[1] col-span-2 row-start-1 mx-auto w-full max-w-[300px] md:col-span-4 md:col-start-5 md:max-w-none"
             frameClassName="shadow-[0_28px_80px_rgb(0_0_0/0.32)]"
-            asset={{
+            asset={assets?.home ?? {
               src: "/images/case04/case04-hero-home-v5.webp",
               alt: "Home screen of a mobile wellness product, with brand identity and personalization-mechanism details removed",
             }}
@@ -186,7 +188,7 @@ export function CaseFourHeroPhones({ locale }: { locale: Locale }) {
           />
           <PhoneEvidence
             className="col-span-1 row-start-2 md:col-span-3 md:col-start-9 md:row-start-1 md:translate-y-16"
-            asset={{
+            asset={assets?.listening ?? {
               src: "/images/case04/case04-player.webp",
               alt: "Listening player for a mobile wellness product",
             }}

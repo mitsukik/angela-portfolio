@@ -6,7 +6,10 @@ import type { Project } from "@/data/projects";
 import { CASE_OPENINGS } from "@/data/case-studies/openings";
 import { CASE_SYSTEM_CHAPTERS, chapterEyebrow } from "@/data/case-studies/chapters";
 import { CaseFourHeroPhones, ComposedEvidence, PhoneEvidence } from "@/components/design-samples/case-final/CaseFourFinalContent";
+import { StateScrubber } from "@/components/design-samples/case-final/StateScrubber";
 import { CaseHeroCta, type CaseHeroCtaItem } from "../CaseHeroCta";
+import { Case04Journey } from "./Case04Journey";
+import { CASE04_V2, CASE04_V2_ASPECT, homeStates, inputPatterns, journeyChapters, systemPatterns } from "./case04Media";
 import {
   CaseCard,
 
@@ -30,18 +33,26 @@ import {
  * recovery states use the spec's State cards (number · title · body · lime
  * protection tag) with their three screens as media-3 phones — the same
  * three states, copy and images the V2 State Scrubber stepped through.
+ *
+ * Evidence V2 (2026-10-12): every screen is a capture of the LABO65 V2
+ * prototype (live build, real states via its own screen list, see
+ * case04Media.ts); the V1 screenshots are archived. §03 Home states and
+ * §02 / §05 patterns use the existing StateScrubber; §04 adds the recorded
+ * journey (Case04Journey). Confidentiality rules unchanged: captures remove
+ * the brand mark, quota badge, chakra / frequency and energy-structure
+ * content, and generate step 04 is withheld.
  */
 
 const CH = CASE_SYSTEM_CHAPTERS["04"];
 const IMG = "/images/case04";
-const VERSION = "case04-v1";
+const VERSION = "case04-v2";
 
 export function Case04Article({ locale, project }: { locale: Locale; project: Project }) {
   const zh = locale === "zh";
   const o = CASE_OPENINGS["04"][locale];
   const eb = (i: number) => chapterEyebrow(CH[i], locale);
   const links = o.links ?? [];
-  const isApp = (l: { href: string }) => l.href === "https://labo65-app.vercel.app/";
+  const isApp = (l: { href: string }) => l.href === "https://labo65-app.vercel.app/auth/login";
   // §5: primary = App prototype; secondary = Web Staging Build, Landing Page prototype (original order).
   const ctas: CaseHeroCtaItem[] = [...links.filter(isApp), ...links.filter((l) => !isApp(l))];
   // §2 #2: Web / App are status values (lime).
@@ -54,14 +65,14 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
 
   const states = zh
     ? [
-        { name: "生成中，可離開此頁", detail: "生成期間可以離開畫面，之後再從對應狀態返回，不必停在會卡住整個畫面的載入畫面。", protects: "不必停留等待", src: `${IMG}/case04-generating-v2.webp`, alt: "生成今日聲景中的畫面，提示使用者可以先離開、稍後再返回" },
-        { name: "生成失敗，答案已保留", detail: "生成失敗或網路中斷時，原先已完成的輸入會保留，使用者可以直接重試或稍後再試，不需要重新走完整段問卷。", protects: "保護：已完成的輸入", src: `${IMG}/case04-generation-failed-v2.webp`, alt: "生成失敗狀態，問卷答案已保留，並提供重試與稍後再試的操作" },
-        { name: "播放錯誤，進度已保留", detail: "「你的聲景與播放進度不會被刪除」——播放中斷時保留聲景與聆聽進度，並提供重試。", protects: "保護：聆聽進度", src: `${IMG}/case04-playback-error.webp`, alt: "播放錯誤狀態，聲景與播放進度已保留，並提供重試操作" },
+        { name: "生成中，可離開此頁", detail: "生成期間可以離開畫面，之後再從對應狀態返回，不必停在會卡住整個畫面的載入畫面。", protects: "不必停留等待", src: CASE04_V2.recovery.generating.src, alt: "生成今日聲景中的畫面，提示使用者可以先離開、稍後再返回" },
+        { name: "生成失敗，答案已保留", detail: "生成失敗或網路中斷時，原先已完成的輸入會保留，使用者可以直接重試或稍後再試，不需要重新走完整段問卷。", protects: "保護：已完成的輸入", src: CASE04_V2.recovery.failed.src, alt: "生成失敗狀態，問卷答案已保留，並提供重試與稍後再試的操作" },
+        { name: "播放錯誤，進度已保留", detail: "「你的聲景與播放進度不會被刪除」——播放中斷時保留聲景與聆聽進度，並提供重試。", protects: "保護：聆聽進度", src: CASE04_V2.recovery.playback.src, alt: "播放錯誤狀態，聲景與播放進度已保留，並提供重試操作" },
       ]
     : [
-        { name: "Generating — safe to leave", detail: "Users can leave while generation continues and return later through the appropriate state, instead of waiting on a blocking loading screen.", protects: "No blocking wait", src: `${IMG}/case04-generating-v2.webp`, alt: "Generating today's soundscape with guidance that the user can leave and return" },
-        { name: "Failed — answers preserved", detail: "If generation fails or connectivity is interrupted, previously entered information is preserved so the user can retry instead of restarting the questionnaire.", protects: "Protects: input effort", src: `${IMG}/case04-generation-failed-v2.webp`, alt: "Generation failed state; the user's questionnaire answers have been preserved, with retry and defer actions" },
-        { name: "Playback error — progress preserved", detail: "“Your soundscape and playback progress won't be deleted.” The soundscape and listening progress survive the error, with a retry action.", protects: "Protects: listening progress", src: `${IMG}/case04-playback-error.webp`, alt: "Playback error state; the soundscape and playback progress are preserved, with a retry action" },
+        { name: "Generating — safe to leave", detail: "Users can leave while generation continues and return later through the appropriate state, instead of waiting on a blocking loading screen.", protects: "No blocking wait", src: CASE04_V2.recovery.generating.src, alt: CASE04_V2.recovery.generating.alt },
+        { name: "Failed — answers preserved", detail: "If generation fails or connectivity is interrupted, previously entered information is preserved so the user can retry instead of restarting the questionnaire.", protects: "Protects: input effort", src: CASE04_V2.recovery.failed.src, alt: CASE04_V2.recovery.failed.alt },
+        { name: "Playback error — progress preserved", detail: "“Your soundscape and playback progress won't be deleted.” The soundscape and listening progress survive the error, with a retry action.", protects: "Protects: listening progress", src: CASE04_V2.recovery.playback.src, alt: CASE04_V2.recovery.playback.alt },
       ];
 
   return (
@@ -78,13 +89,18 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
       >
         {o.summary.map((p) => <p key={p} className="cv3-summary">{p}</p>)}
         <CaseMetadata rows={meta} />
-        <CaseHeroCta items={ctas} />
+        <CaseHeroCta
+          items={ctas}
+          note={zh
+            ? "互動原型以模擬資料運作：登入、聲景生成與下載皆為模擬，播放使用示意音檔，未連接正式後端。"
+            : "The interactive prototype runs on simulated data: sign-in, soundscape generation and downloads are simulated, playback uses a placeholder track, and it is not connected to a production backend."}
+        />
       </CaseHero>
 
       <CaseMedia frame="hero" heroFirst caption={zh ? "畫面反映目前開發階段，介面與細節可能持續調整。" : "Screens reflect the current development stage; interface and details may continue to change."}>
         <CaseOriginalModule locale={locale} version={VERSION}>
           <div className="cv3-hero-phones">
-            <CaseFourHeroPhones locale={locale} />
+            <CaseFourHeroPhones locale={locale} assets={CASE04_V2.hero} />
           </div>
         </CaseOriginalModule>
       </CaseMedia>
@@ -146,9 +162,9 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
             <CaseOriginalModule locale={locale} version={VERSION}>
               <ComposedEvidence
                 matted
-                asset={{ src: `${IMG}/case04-questionnaire-after-overview-v2.webp`, alt: "Guided daily questionnaire shown as a contact sheet overview, one panel per step" }}
-                aspectClassName="aspect-[1340/1932] max-h-[520px]"
-                caption={zh ? "拆成多個階段，每一步只問一件事，並用明確的進度取代不確定要填多久的長表單。" : "Split into staged steps, each asking one thing, with explicit progress replacing a long form of uncertain length."}
+                asset={CASE04_V2.stepsOverview}
+                aspectClassName="aspect-[1896/2620] max-h-[520px]"
+                caption={zh ? "拆成多個階段，每一步只問一件事，並用明確的進度取代不確定要填多久的長表單。（第 4 步涉及個人化機制，未公開。）" : "Split into staged steps, each asking one thing, with explicit progress replacing a long form of uncertain length. (Step 04 involves the personalization mechanism and is not shown.)"}
               />
             </CaseOriginalModule>
           </div>
@@ -158,20 +174,15 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
             ? "重點不只是把一張長表單拆成數個畫面，而是讓不同類型的輸入有更合適的操作方式，同時維持整段流程在導覽與選取狀態上的一致性。"
             : "Rather than treating every input as the same type of control, the redesign uses more appropriate interaction models for different kinds of decisions while keeping navigation and selected states consistent throughout the flow."}
         </p>
-        <div className="cv3-grid" data-variant="media-3" data-phones="true">
-          <div className="cv3-phone-col">
-            <p className="cv3-card-kicker cv3-kicker-accent">{zh ? "滑桿＋視覺狀態指示" : "SLIDER + VISUAL STATE INDICATOR"}</p>
-            {phone(`${IMG}/case04-guided-step02-slider.webp`, "A step in the guided daily flow: a slider with a reactive visual state indicator, plus specific emotion choices", zh ? "滑桿選擇" : "Slider choice")}
-          </div>
-          <div className="cv3-phone-col">
-            <p className="cv3-card-kicker cv3-kicker-accent">{zh ? "環狀選擇" : "RADIAL SELECTION"}</p>
-            {phone(`${IMG}/case04-guided-step03-radial.webp`, "A step in the guided daily flow: a radial constellation picker for desired outcomes", zh ? "環狀選擇" : "Radial choice")}
-          </div>
-          <div className="cv3-phone-col">
-            <p className="cv3-card-kicker">{zh ? "場景卡片" : "SCENE CARDS"}</p>
-            {phone(`${IMG}/case04-guided-scene.webp`, "A step in the guided daily flow: a swipeable image-card carousel for choosing a listening scene", zh ? "場景選擇" : "Scene choice")}
-          </div>
-        </div>
+        <p className="cv3-card-kicker">{zh ? "依問題選擇的輸入方式" : "INPUT PATTERNS, CHOSEN PER QUESTION"}</p>
+        <CaseOriginalModule locale={locale} version={VERSION}>
+          <StateScrubber
+            label={zh ? "引導式輸入的互動方式" : "Guided input interaction patterns"}
+            states={inputPatterns(locale)}
+            aspect={CASE04_V2_ASPECT}
+            mobileStageFirst
+          />
+        </CaseOriginalModule>
       </CaseSection>
 
       {/* 03 — Designing a State-aware Product: State cards ×3 + media-3 phones · media-4 Home states */}
@@ -209,12 +220,15 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
             ? "首頁也依照同一套狀態邏輯重新整理。主要內容與 CTA 會依使用者目前所在階段改變，而不是把所有功能以相同權重一起呈現。"
             : "Home was redesigned around the same state model. Its primary content and action change according to where the user currently is in the experience rather than presenting every function with equal priority."}
         </p>
-        <div className="cv3-grid" data-variant="media-4">
-          {phone(`${IMG}/case04-home-guest.webp`, "Guest Home state, brand identity masked", zh ? "訪客" : "Guest")}
-          {phone(`${IMG}/case04-home-ready-v5.webp`, "Home state with today's soundscape ready to start, brand identity and personalization-mechanism details removed", zh ? "尚未開始" : "Ready")}
-          {phone(`${IMG}/case04-home-listening.webp`, "Home state while today's soundscape is playing, with playback progress and a pause action, brand identity and personalization-mechanism details removed", zh ? "聆聽中" : "Listening")}
-          {phone(`${IMG}/case04-home-completed.webp`, "Home state after today's soundscape has finished playing, with a replay action, brand identity and personalization-mechanism details removed", zh ? "已完成" : "Completed")}
-        </div>
+        <p className="cv3-card-kicker">{zh ? "同一個首頁，六種狀態" : "ONE HOME, SIX STATES"}</p>
+        <CaseOriginalModule locale={locale} version={VERSION}>
+          <StateScrubber
+            label={zh ? "首頁狀態" : "Home states"}
+            states={homeStates(locale)}
+            aspect={CASE04_V2_ASPECT}
+            mobileStageFirst
+          />
+        </CaseOriginalModule>
       </CaseSection>
 
       {/* 04 — Connecting the Product Journey: 6-step flow chips + generation sub-flow · media-2 phones */}
@@ -246,10 +260,29 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
         <p className="cv3-caption">
           {zh ? "把輸入、生成、恢復、聆聽到再次使用串成完整流程。" : "A state-aware product journey connecting guided input, asynchronous generation, recovery, listening and return use."}
         </p>
+        <p className="cv3-card-kicker cv3-kicker-accent">{zh ? "實際操作錄影・從首頁到聆聽紀錄" : "RECORDED WALKTHROUGH · HOME TO HISTORY"}</p>
+        <CaseOriginalModule locale={locale} version={VERSION}>
+          <Case04Journey
+            src={CASE04_V2.journey.src}
+            poster={CASE04_V2.journey.poster}
+            duration={CASE04_V2.journey.duration}
+            chapters={journeyChapters(locale)}
+            label={zh ? "操作錄影章節" : "Walkthrough chapters"}
+            videoLabel={zh
+              ? "V2 互動原型的實際操作錄影（無聲）：從首頁開始生成今日聲景，完成引導式輸入、等待生成、開始聆聽，再回到首頁與聆聽紀錄。"
+              : "Silent screen recording of the V2 interactive prototype: starting from Home, completing guided input, waiting for generation, listening, then returning to Home and history."}
+            zh={zh}
+          />
+        </CaseOriginalModule>
+        <p className="cv3-caption">
+          {zh
+            ? "V2 互動原型的實際操作錄影，以原速呈現；第 4 步涉及個人化機制，已剪除。登入、生成與下載皆為模擬，品牌識別與個人化機制細節已移除。"
+            : "A real-time recording of the V2 interactive prototype; step 04 involves the personalization mechanism and is cut. Sign-in, generation and downloads are simulated; brand identity and personalization-mechanism details are removed."}
+        </p>
         <p className="cv3-card-kicker">{zh ? "輔助畫面・聆聽與歷史紀錄" : "SUPPORTING EVIDENCE · PLAYER & HISTORY"}</p>
         <div className="cv3-grid cv3-phones-narrow" data-variant="media-2">
-          {phone(`${IMG}/case04-player.webp`, "Player for listening to a generated soundscape", zh ? "聆聽" : "Listen")}
-          {phone(`${IMG}/case04-history-v2.webp`, "Listening history showing recent activity and per-track summaries", zh ? "歷史紀錄" : "History")}
+          {phone(CASE04_V2.player.src, CASE04_V2.player.alt, zh ? "聆聽" : "Listen")}
+          {phone(CASE04_V2.history.src, CASE04_V2.history.alt, zh ? "歷史紀錄" : "History")}
         </div>
       </CaseSection>
 
@@ -272,10 +305,19 @@ export function Case04Article({ locale, project }: { locale: Locale; project: Pr
         />
         <p className="cv3-card-kicker">{zh ? "共用步驟進度模式" : "SHARED STEP-PROGRESS PATTERN"}</p>
         <div className="cv3-grid cv3-phones-narrow" data-variant="media-2">
-          {phone(`${IMG}/case04-profile-birthdate-v2.webp`, "Profile setup step 1 of 4, showing a step-progress indicator", zh ? "個人資料設定（1/4）" : "Profile setup (1/4)")}
-          {phone(`${IMG}/case04-guided-step01-categories.webp`, "Daily questionnaire, showing the same step-progress indicator pattern", zh ? "每日問卷" : "Daily questionnaire")}
+          {phone(CASE04_V2.stepProgress.profile.src, CASE04_V2.stepProgress.profile.alt, zh ? "個人資料設定（1/4）" : "Profile setup (1/4)")}
+          {phone(CASE04_V2.stepProgress.daily.src, CASE04_V2.stepProgress.daily.alt, zh ? "每日問卷" : "Daily questionnaire")}
         </div>
         <p className="cv3-caption">{zh ? "不同流程沿用同一套步驟進度模式。" : "Different flows reuse the same step-progress pattern."}</p>
+        <p className="cv3-card-kicker">{zh ? "共用的回饋、載入與恢復模式" : "SHARED FEEDBACK, LOADING & RECOVERY PATTERNS"}</p>
+        <CaseOriginalModule locale={locale} version={VERSION}>
+          <StateScrubber
+            label={zh ? "共用的回饋、載入與恢復模式" : "Shared feedback, loading and recovery patterns"}
+            states={systemPatterns(locale)}
+            aspect={CASE04_V2_ASPECT}
+            mobileStageFirst
+          />
+        </CaseOriginalModule>
         <p className="cv3-card-kicker">{zh ? "關鍵取捨" : "KEY TRADE-OFFS"}</p>
         <CaseContentGrid variant="cards-3" as="ol">
           {(zh

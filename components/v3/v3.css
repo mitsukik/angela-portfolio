@@ -3529,13 +3529,15 @@ html[data-v2-lang-fade="out"] .cv3-fade {
     font-size: 14px;
   }
 
-  /* Card and timeline descriptions */
+  /* Card and timeline descriptions. Calibration (2026-10-12, Codex review):
+     card prose = the body size (CASE04 challenge / role / outcome cards,
+     CASE02 role cards); timeline notes one step below body. */
   .cv3 .cv3-card-s .cv3-p {
-    font-size: 16px;
+    font-size: var(--cv3-body);
   }
 
   .cv3 .cv3-pipe-note {
-    font-size: 15px;
+    font-size: 16px;
   }
 
   .cv3 .cv3-flow-text {
@@ -3560,8 +3562,17 @@ html[data-v2-lang-fade="out"] .cv3-fade {
     line-height: 1.6;
   }
 
-  /* CASE01 presentation tab notes */
-  .cv3 .case01-tab-note {
+  /* Descriptions that carry UX reasoning inside case modules:
+     CASE01 presentation tab notes; CASE06 flow steps and the notes beside
+     its recordings (cf-body + Tailwind text-[15px]); CASE05 state
+     definitions under the 4-up state screens (narrow ≤15rem columns, so one
+     step only). Labels, legends and drawn diagram text are not included. */
+  .cv3 .case01-tab-note,
+  .cv3 .cf-body.text-\[15px\] {
+    font-size: 16px;
+  }
+
+  .cv3 li > p.cf-body.text-\[14px\] {
     font-size: 15px;
   }
 

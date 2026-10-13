@@ -160,7 +160,7 @@ export const CASE_CHAPTERS: Record<"01" | "02" | "04", CaseChapterSource[]> = {
     { no: "02", label: { zh: "設計方法", en: "The Approach" }, title: { zh: "先建立產品邏輯，再進入介面設計", en: "From business rules to product structure" } },
     { no: "03", label: { zh: "系統設計", en: "Designing the System" }, title: { zh: "讓複雜的營運規則變得容易理解", en: "Making complex operations understandable" } },
     { no: "04", label: { zh: "從設計到交付", en: "From Design to Delivery" }, title: { zh: "從主要設計完成，一路支援到產品交付", en: "Supporting the product through implementation" } },
-    { no: "05", label: { zh: "成果", en: "Outcome" }, title: { zh: "完成可運作的產品，而不是概念作品", en: "A working product, without fabricated metrics" } },
+    { no: "05", label: { zh: "成果", en: "Outcome" }, title: { zh: "完成可運作的產品，而不是概念作品", en: "Delivered: a working multi-role system" } },
   ],
   "02": [
     { no: "02", label: { zh: "總覽", en: "Overview" }, title: { zh: "三個網站，三種不同的商業情境。", en: "Three websites. Three different business contexts." } },

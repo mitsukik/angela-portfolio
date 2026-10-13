@@ -1818,6 +1818,20 @@ html[data-v2-lang-fade="out"] .cv3-fade {
   font-size: 13px;
 }
 
+/* Channel row in the Nemu card (compact / mobile / Reading Mode): the last
+   row, pinned to the card's bottom edge while the chapter list scrolls.
+   Options scrolled into view (e.g. by keyboard focus) stop above it. */
+.cv3-card {
+  scroll-padding-bottom: 68px;
+}
+
+.cv3-card .cv3-chnav {
+  position: sticky;
+  bottom: -12px;
+  margin-bottom: -12px;
+  box-shadow: inset 0 0 0 1px rgba(244, 241, 234, 0.06), 0 -12px 12px -2px var(--v3-surface), 0 12px 0 0 var(--v3-surface);
+}
+
 .cv3-dock {
   display: none;
   position: fixed;

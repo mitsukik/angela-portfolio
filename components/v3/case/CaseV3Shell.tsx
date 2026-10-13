@@ -664,6 +664,23 @@ export function CaseV3Shell({
   const prevDescription = (zh ? previousProject.description : previousProject.descriptionEn).join(zh ? "" : " ");
   const nextDescription = nextDescriptionOverride ?? (zh ? nextProject.description : nextProject.descriptionEn).join(zh ? "" : " ");
 
+  // Channel row (INDEX Remote's integrated 上一台 · CH · 下一台): previous / next CASE
+  // in channel order, wrapping CH01 ↔ CH07. Desktop: the last control row on the Remote
+  // screen (below the actions). Compact / mobile / Reading Mode: the last row of the Nemu card.
+  const channelRow = (
+    <nav className="cv3-chnav" aria-label={ui.chNav}>
+      <Link href={caseHref(previousProject)} className="cv3-chnav-btn" data-dir="prev" aria-label={`${ui.chPrevAria} · CH ${previousChannelNo} ${v3Title(previousProject, locale)}`} onClick={onLinkPress}>
+        <span aria-hidden="true" className="cv3-chnav-glyph">←</span>
+        {ui.chPrev}
+      </Link>
+      <span className="cv3-chnav-now" lang="en">CH {channelNo}</span>
+      <Link href={caseHref(nextProject)} className="cv3-chnav-btn" data-dir="next" aria-label={`${ui.chNextAria} · CH ${nextChannelNo} ${v3Title(nextProject, locale)}`} onClick={onLinkPress}>
+        {ui.chNext}
+        <span aria-hidden="true" className="cv3-chnav-glyph">→</span>
+      </Link>
+    </nav>
+  );
+
   return (
     <div className="v3 cv3" data-reading={reading ? "true" : "false"} data-short-open={shortOpen ? "true" : undefined} lang={zh ? "zh-Hant" : "en"}>
       <SkipLink locale={locale} />
@@ -705,21 +722,7 @@ export function CaseV3Shell({
                       <ul className="cv3-opts">{deskOpts.map((o) => <OptItem key={o.key} o={o} onPress={onLinkPress} onAction={onAction} />)}</ul>
                     </div>
                     <span aria-hidden="true" className="cv3-opts-more" data-on={optsScroll ? "true" : undefined}>⌄</span>
-                    {/* Channel row (INDEX Remote's integrated 上一台 · CH · 下一台): the last
-                        control row on the screen, below the actions; previous / next CASE in
-                        channel order, wrapping CH01 ↔ CH07. The option list above scrolls on
-                        short screens, so this row never covers an option. */}
-                    <nav className="cv3-chnav" aria-label={ui.chNav}>
-                      <Link href={caseHref(previousProject)} className="cv3-chnav-btn" data-dir="prev" aria-label={`${ui.chPrevAria} · CH ${previousChannelNo} ${v3Title(previousProject, locale)}`} onClick={onLinkPress}>
-                        <span aria-hidden="true" className="cv3-chnav-glyph">←</span>
-                        {ui.chPrev}
-                      </Link>
-                      <span className="cv3-chnav-now" lang="en">CH {channelNo}</span>
-                      <Link href={caseHref(nextProject)} className="cv3-chnav-btn" data-dir="next" aria-label={`${ui.chNextAria} · CH ${nextChannelNo} ${v3Title(nextProject, locale)}`} onClick={onLinkPress}>
-                        {ui.chNext}
-                        <span aria-hidden="true" className="cv3-chnav-glyph">→</span>
-                      </Link>
-                    </nav>
+                    {channelRow}
                   </div>
                 </div>
                 <div className="cv3-remote-foot">
@@ -813,6 +816,7 @@ export function CaseV3Shell({
                 <Typer key={msgKey} text={cs.line} reduce={reduce} className="v3-type-card" />
               </div>
               <ul className="cv3-opts">{cardOpts.map((o) => <OptItem key={o.key} o={o} onPress={onLinkPress} onAction={onAction} />)}</ul>
+              {channelRow}
             </div>
           ) : null}
         </>

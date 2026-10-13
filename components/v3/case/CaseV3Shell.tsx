@@ -193,7 +193,7 @@ export function CaseV3Shell({
   const [bubbleHover, setBubbleHover] = useState(false);
 
   const progressRef = useRef<HTMLDivElement>(null);
-  const remoteOptsRef = useRef<HTMLUListElement>(null);
+  const remoteScrollRef = useRef<HTMLDivElement>(null);
   const [optsScroll, setOptsScroll] = useState(false);
   const [optsOverflow, setOptsOverflow] = useState(false);
   const articleRef = useRef<HTMLElement>(null);
@@ -560,13 +560,13 @@ export function CaseV3Shell({
   // Every menu opens at its first row (the first chapter is always fully
   // visible; the active row is marked, never auto-scrolled into the middle).
   useLayoutEffect(() => {
-    const el = remoteOptsRef.current;
+    const el = remoteScrollRef.current;
     if (el) el.scrollTop = 0;
   }, [menu]);
 
-  // Mark the Remote option list when it overflows (fade cue + chevron).
+  // Mark the Remote screen's scroll area (message + options) when it overflows (fade cue + chevron).
   useEffect(() => {
-    const el = remoteOptsRef.current;
+    const el = remoteScrollRef.current;
     if (!el) return;
     const check = () => {
       const over = el.scrollHeight > el.clientHeight + 1;
@@ -576,6 +576,8 @@ export function CaseV3Shell({
     check();
     const ro = new ResizeObserver(check);
     ro.observe(el);
+    // The area keeps its size while its content changes (typed message, labels).
+    for (const child of Array.from(el.children)) ro.observe(child);
     el.addEventListener("scroll", check, { passive: true });
     return () => {
       ro.disconnect();
@@ -695,11 +697,13 @@ export function CaseV3Shell({
                       <span>{ctxL}</span>
                       <span lang="en">{ctxR}</span>
                     </div>
-                    <div className="cv3-msg" aria-live="polite">
-                      {remoteOn ? <Typer key={msgKey} text={msgText} reduce={reduce} className="v3-type-remote" /> : null}
+                    <div ref={remoteScrollRef} className="cv3-screen-scroll" data-scrolls={optsScroll ? "true" : undefined} data-overflow={optsOverflow ? "true" : undefined} data-lenis-prevent>
+                      <div className="cv3-msg" aria-live="polite">
+                        {remoteOn ? <Typer key={msgKey} text={msgText} reduce={reduce} className="v3-type-remote" /> : null}
+                      </div>
+                      <div className="cv3-spacer" />
+                      <ul className="cv3-opts">{deskOpts.map((o) => <OptItem key={o.key} o={o} onPress={onLinkPress} onAction={onAction} />)}</ul>
                     </div>
-                    <div className="cv3-spacer" />
-                    <ul ref={remoteOptsRef} className="cv3-opts" data-scrolls={optsScroll ? "true" : undefined} data-overflow={optsOverflow ? "true" : undefined} data-lenis-prevent>{deskOpts.map((o) => <OptItem key={o.key} o={o} onPress={onLinkPress} onAction={onAction} />)}</ul>
                     <span aria-hidden="true" className="cv3-opts-more" data-on={optsScroll ? "true" : undefined}>⌄</span>
                     {/* Channel row (INDEX Remote's integrated 上一台 · CH · 下一台): the last
                         control row on the screen, below the actions; previous / next CASE in

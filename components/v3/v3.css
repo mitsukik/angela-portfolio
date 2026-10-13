@@ -1317,27 +1317,49 @@ html[data-v2-lang-fade="out"] .cv3-fade {
   mask-image: linear-gradient(180deg, #000 calc(100% - 30px), transparent);
 }
 
-/* With the channel row on the screen, the message keeps its height; only the
-   option list shrinks and scrolls. Below 800px tall the message is limited to
-   two lines (as below 720px), so the primary actions keep their room. */
-.cv3-remote .cv3-screen .cv3-msg {
-  flex-shrink: 0;
+/* Desktop Remote screen: the message and the options share ONE scroll area
+   (.cv3-screen-scroll) between the fixed context label and the fixed channel
+   row, so on short screens the full message is always readable (never cut)
+   and every option is reachable, without a nested scroller. The fade cue and
+   chevron mark more content below, as before. */
+.cv3-remote .cv3-screen-scroll {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(244, 241, 234, 0.25) transparent;
+  margin: -4px -4px 0;
+  padding: 4px 4px 10px;
+  scroll-padding: 8px 0 14px;
 }
 
-@media (min-width: 1200px) and (max-height: 799px) {
-  /* Two lines of the Remote type (16px / 1.65; 14px / 1.6 below 720px). The
-     typed message is a stacked grid, so line-clamp cannot apply: cap the box. */
-  .cv3 .cv3-remote .cv3-msg {
-    min-height: 0;
-    max-height: calc(2 * 16px * 1.65);
-    overflow: hidden;
-  }
+.cv3-remote .cv3-screen-scroll[data-scrolls="true"] {
+  mask-image: linear-gradient(180deg, #000 calc(100% - 30px), transparent);
 }
 
-@media (min-width: 1200px) and (max-height: 719px) {
-  .cv3 .cv3-remote .cv3-msg {
-    max-height: calc(2 * 14px * 1.6);
-  }
+.cv3-remote .cv3-screen-scroll[data-overflow="true"] {
+  padding-right: 10px;
+}
+
+.cv3 .cv3-remote .cv3-screen-scroll .cv3-msg {
+  flex: none;
+  max-height: none;
+  overflow: visible;
+  display: block;
+  -webkit-line-clamp: none;
+  line-clamp: none;
+}
+
+.cv3 .cv3-remote .cv3-screen-scroll .cv3-opts {
+  flex: none;
+  overflow: visible;
+  margin: 0;
+  padding: 0;
+  mask-image: none;
 }
 
 /* Channel row — the INDEX Remote's integrated 上一台 · CH · 下一台 row, as the

@@ -2362,6 +2362,23 @@ html[data-v2-lang-fade="out"] .cv3-fade {
   height: 100%;
 }
 
+/* Laptop TV layout (F-01, components/v3/laptopTv.ts): when the board canvas
+   is taller than the viewport the stage scrolls with the page instead of
+   being a fixed viewport layer (height set inline). */
+.v3-index-stage[data-tv-scroll="page"] {
+  position: absolute;
+  bottom: auto;
+}
+
+/* INDEX / ABOUT board header links: the hit area fills the header row height
+   (≥ 42 CSS px at the smallest board scale) without changing the visible link
+   or its focus outline. */
+.v3-index-board .v3-navfx--gen::after {
+  content: "";
+  position: absolute;
+  inset: -14px -6px;
+}
+
 /* ---------------------------------------------------------------------
  * Page Transition 01 (global): the page stage + CRT overlay.
  * ------------------------------------------------------------------- */

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, type MouseEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent } from "react";
 import type { Locale } from "@/data/locale";
 import type { V3Channel } from "@/data/v3/channels";
 import strings from "@/data/v3/index-strings.json";
@@ -9,6 +9,8 @@ import { resumeUrl } from "@/data/contact";
 import { captureLanguageSwitch } from "@/components/site/navigationIntent";
 import { finishLanguageFade, LANG_FADE_MS, startLanguageFade } from "@/components/home-v2/languageFade";
 import { attachNemuMotion } from "../nemu/nemuMotion";
+import { laptopTv } from "../laptopTv";
+import { useTvPageScroll } from "../useTvPageScroll";
 import IndexV3Desktop from "../dc/IndexV3Desktop";
 import IndexV3Mobile from "../dc/IndexV3Mobile";
 
@@ -16,7 +18,8 @@ import IndexV3Mobile from "../dc/IndexV3Mobile";
  * INDEX V3 — mounts the approved designs exactly as the connected
  * prototype does (Portfolio V3 Connected.dc.html):
  * - desktop + tablet landscape (≥1024): the 1920×1080 INDEX artboard,
- *   uniformly scaled to fit the viewport and centred (prototype `crop`);
+ *   scaled to fit and centred (prototype `crop`) down to a readable scale,
+ *   below which the Laptop TV layout adapts the board (../laptopTv.ts);
  * - tablet portrait + mobile (<1024): IndexV3MobileScreen with vw/vh.
  * Hero → Channels, the original CRT channel switch, tabs, keyboard and
  * Nemu all run inside the compiled components unchanged.
@@ -33,6 +36,7 @@ export function IndexV3Page({ locale, channels, chMax }: { locale: Locale; chann
   const router = useRouter();
   const [mode, setMode] = useState<Mode | null>(null);
   const [startIn, setStartIn] = useState<"home" | "channels">("home");
+  const stageRef = useRef<HTMLDivElement>(null);
   const zh = locale === "zh";
   const prefix = zh ? "" : "/en";
   const switchHref = zh ? "/en" : "/";
@@ -94,10 +98,11 @@ export function IndexV3Page({ locale, channels, chMax }: { locale: Locale; chann
     enSeg: zh ? SEG_OFF_M : SEG_ON_M,
   };
 
-  const k = mode?.kind === "desk" ? Math.min(mode.w / 1920, mode.h / 1080) : 1;
+  const tv = mode?.kind === "desk" ? laptopTv(mode.w, mode.h, "index", locale) : null;
+  useTvPageScroll(stageRef, !!tv?.pageScroll);
 
   return (
-    <div className="v3 v3-index cv3-fade" data-lenis-prevent>
+    <div className="v3 v3-index cv3-fade" data-lenis-prevent style={tv?.pageScroll ? { minHeight: tv.h * tv.k } : undefined}>
       {/* Crawlable / screen-reader summary (the TV UI is canvas-like). */}
       <div className="v3-sr">
         <h1>{zh ? "Angela Yu — 作品集" : "Angela Yu — Portfolio"}</h1>
@@ -117,13 +122,14 @@ export function IndexV3Page({ locale, channels, chMax }: { locale: Locale; chann
           </>
         ) : null}
       </div>
-      {mode?.kind === "desk" ? (
-        <div className="v3-index-stage">
+      {mode?.kind === "desk" && tv ? (
+        <div ref={stageRef} className="v3-index-stage" data-tv-scroll={tv.pageScroll ? "page" : undefined} style={tv.pageScroll ? { height: tv.h * tv.k } : undefined}>
           <div
             className="v3-index-board"
-            style={{ transform: `scale(${k})`, left: (mode.w - 1920 * k) / 2, top: (mode.h - 1080 * k) / 2 }}
+            data-tv-mode={tv.mode}
+            style={{ ...tv.vars, width: tv.w, height: tv.h, transform: `scale(${tv.k})`, left: (mode.w - tv.w * tv.k) / 2, top: tv.pageScroll ? 0 : (mode.h - tv.h * tv.k) / 2 } as CSSProperties}
           >
-            <IndexV3Desktop key={`d-${startIn}`} {...shared} />
+            <IndexV3Desktop key={`d-${startIn}`} {...shared} dock={tv.dock} />
           </div>
         </div>
       ) : null}

@@ -23,11 +23,6 @@ import { Case02Article } from "../case02/Case02Article";
 
 type CaseNo = "01" | "02" | "04";
 
-/** Production's case-specific Next Case blurb (CaseStudyPrototype: CASE01 EN only, verbatim). */
-const NEXT_DESCRIPTION: Partial<Record<CaseNo, Partial<Record<Locale, string>>>> = {
-  "01": { en: "Bringing brand positioning, content structure, and visual design together to create a clear, consistent digital experience." },
-};
-
 /** The case's primary hero CTA (§5) — the Remote's third option. Original destinations only. */
 const PRIMARY_CTA: Partial<Record<CaseNo, { href: string; label: Record<Locale, string> }>> = {
   "01": { href: "https://case01-admin.vercel.app/", label: { zh: "操作後台原型", en: "Open Admin Prototype" } },
@@ -70,7 +65,6 @@ export function CaseOriginalPage({ caseNo, locale }: { caseNo: CaseNo; locale: L
         previousProject={v3Neighbours(project).previous}
         nextProject={v3Neighbours(project).next}
         publishedCount={v3Sequence().length}
-        nextDescriptionOverride={NEXT_DESCRIPTION[caseNo]?.[locale]}
       >
         {v3 ? v3({ locale, project }) : <CaseOriginalArticle caseNo={caseNo} locale={locale} project={project} chapterIds={chapters.map((c) => c.id)} />}
       </CaseV3Shell>

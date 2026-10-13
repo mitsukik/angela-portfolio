@@ -154,7 +154,18 @@ class Logic extends DCLogic {
   };
   rel(el, root) { let x = 0, y = 0; while (el && el !== root) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; } return { x, y }; }
   componentDidUpdate() { if (this._lang !== this.state.lang) { this._lang = this.state.lang; this.bioP = -1; } }
+  dockSet = open => {
+    if (!!this.state.dockOpen === open) return;
+    this.setState({ dockOpen: open }, () => {
+      const r = this.board.current; if (!r) return;
+      if (open) { const pn = r.querySelector('#v3-remote'), a = r.querySelector('aside'); if (pn && a && (pn.getBoundingClientRect().top < 0 || a.getBoundingClientRect().bottom > innerHeight)) window.scrollBy(0, pn.getBoundingClientRect().top < 0 ? pn.getBoundingClientRect().top - 8 : a.getBoundingClientRect().bottom - innerHeight + 8); const f = r.querySelector('#v3-remote a, #v3-remote button'); if (f) f.focus({ preventScroll: true }); }
+      else if (r.contains(document.activeElement) || document.activeElement === document.body) { const d = r.querySelector('[data-tv="dock"]'); if (d) d.focus({ preventScroll: true }); }
+    });
+  };
+  dockKey = e => { if (e.key === 'Escape' && this.state.dockOpen) { e.stopPropagation(); this.dockSet(false); } };
+  dockAway = e => { if (!this.state.dockOpen) return; const a = this.board.current && this.board.current.querySelector('aside'); if (a && !a.contains(e.target)) this.dockSet(false); };
   componentDidMount() {
+    document.addEventListener('keydown', this.dockKey, true); document.addEventListener('pointerdown', this.dockAway, true);
     this.reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
     this.bioT0 = performance.now(); this.countUp();
@@ -195,6 +206,7 @@ class Logic extends DCLogic {
     this.setState({ lb: false }, () => { if (!this.lbOn && this.tiltRef.current) this.tiltRef.current.focus({ preventScroll: true }); });
   };
   componentWillUnmount() {
+    document.removeEventListener('keydown', this.dockKey, true); document.removeEventListener('pointerdown', this.dockAway, true);
     (this.inerted || []).forEach(n => { n.inert = false; });
     cancelAnimationFrame(this.raf); clearInterval(this.autoT); this.Tm.forEach(clearTimeout);
     ['blinkT', 'sleepT', 'swT', 'hapT', 'toastT', 'lockT', 'lt'].forEach(k => clearTimeout(this[k]));
@@ -369,7 +381,7 @@ class Logic extends DCLogic {
       msgMin, spacerDisp,
       board: this.board, scroller: this.scroller, screen: this.screen, bioRef: this.bioRef, graphRef: this.graphRef, stageRef: this.stageRef, tiltRef: this.tiltRef, lbRef: this.lbRef, lbCloseRef: this.lbCloseRef,
       t, fadeOp: s.fading ? 0 : 1,
-      brandL: s.lang === 'en' ? 'Back to Home' : '返回首頁', zhActive: s.lang === 'zh' ? 'true' : 'false', enActive: s.lang === 'en' ? 'true' : 'false', toggleLang: (e) => { this.props.onSwitchLang && this.props.onSwitchLang(e); },
+      brandL: s.lang === 'en' ? 'Back to Home' : '返回首頁', zhActive: s.lang === 'zh' ? 'true' : 'false', enActive: s.lang === 'en' ? 'true' : 'false', panelDisp: this.props.dock && !s.dockOpen ? 'none' : 'flex', dockExp: s.dockOpen ? 'true' : 'false', dockToggle: () => this.dockSet(!s.dockOpen), dockL: s.lang === 'en' ? (s.dockOpen ? 'Close Nemu remote' : 'Open Nemu remote') : (s.dockOpen ? '關閉 Nemu 遙控器' : '打開 Nemu 遙控器'), toggleLang: (e) => { this.props.onSwitchLang && this.props.onSwitchLang(e); },
       zhBg: s.lang === 'zh' ? 'var(--v3-lime)' : 'transparent', zhFg: s.lang === 'zh' ? 'var(--v3-on-lime)' : 'rgba(244,241,234,.6)', enBg: s.lang === 'en' ? 'var(--v3-lime)' : 'transparent', enFg: s.lang === 'en' ? 'var(--v3-on-lime)' : 'rgba(244,241,234,.6)',
       onScroll: e => {
         const y = e.currentTarget.scrollTop;
@@ -441,15 +453,15 @@ class Logic extends DCLogic {
 
 const DEFAULTS = {"startChapter": "1", "autoplay": true};
 
-const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:relative;width:1920px;height:1080px;flex:none;background:#0b0c0e;overflow:hidden;border-radius:6px;box-shadow:0 0 0 1px rgba(244,241,234,.1)") },
-      h("div", { "ref": r(v, "scroller"), "onScroll": r(v, "onScroll"), style: css("position:absolute;inset:0;overflow-y:auto;scrollbar-width:none") },
-        h("div", { style: css("height:3680px") },
-          h("div", { style: css("position:sticky;top:0;height:1080px;display:flex;flex-direction:column;overflow:hidden") },
-            h("div", { "aria-hidden": "false", style: css("position:absolute;left:0;right:0;bottom:14px;display:flex;justify-content:center;pointer-events:none;font:500 10px var(--v3-mono);letter-spacing:.2em;color:rgba(244,241,234,.38)") },
+const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:relative;width:var(--tv-w,1920px);height:var(--tv-h,1080px);flex:none;background:#0b0c0e;overflow:hidden;border-radius:6px;box-shadow:0 0 0 1px rgba(244,241,234,.1)") },
+      h("div", { "ref": r(v, "scroller"), "onScroll": r(v, "onScroll"), "data-tv": "scroller", style: css("position:absolute;inset:0;overflow-y:auto;scrollbar-width:none") },
+        h("div", { style: css("height:calc(var(--tv-h,1080px) + 2600px)") },
+          h("div", { style: css("position:sticky;top:0;height:var(--tv-h,1080px);display:flex;flex-direction:column;overflow:hidden") },
+            h("div", { "aria-hidden": "false", style: css("position:absolute;left:0;right:0;bottom:var(--tv-foot-b,14px);display:flex;justify-content:center;pointer-events:none;font:500 10px var(--v3-mono);letter-spacing:.2em;color:rgba(244,241,234,.38)") },
               "© ANGELA YU 2026"),
             h("div", { style: css("position:absolute;inset:0;pointer-events:none;background:radial-gradient(1100px 640px at 43% 50%,rgba(244,241,234,.045),transparent 70%),radial-gradient(520px 420px at 87% 52%,rgba(169,139,240,.035),transparent 70%)") }),
-            h("div", { style: css("position:absolute;left:162px;width:1240px;top:912px;height:110px;pointer-events:none;background:radial-gradient(50% 50% at 50% 0%,rgba(244,241,234,.07),transparent 72%)") }),
-            h("header", { style: css("position:relative;height:72px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 162px;border-bottom:1px solid rgba(244,241,234,.07)") },
+            h("div", { style: css("position:absolute;left:var(--tv-glow-l,162px);width:var(--tv-col,1240px);top:var(--tv-glow-t,912px);height:110px;pointer-events:none;background:radial-gradient(50% 50% at 50% 0%,rgba(244,241,234,.07),transparent 72%)") }),
+            h("header", { style: css("position:relative;height:var(--tv-hdr-h,72px);flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 var(--tv-pad,162px);border-bottom:1px solid rgba(244,241,234,.07)") },
               h("a", { "className": "v3-navfx-brand", "href": r(v, "homeHref"), "aria-label": r(v, "brandL"), style: css("display:flex;gap:14px;align-items:center;color:#f4f1ea") },
                 h("span", { "className": "v3-navfx-led", style: css("width:10px;height:10px;border-radius:3px;background:#d4f04a;animation:dcaboutv3des_abBreath 1.8s ease-in-out infinite") }),
                 h("span", { "className": "v3-navfx-name", style: css("font:700 15px var(--v3-mono);letter-spacing:.22em") },
@@ -475,9 +487,9 @@ const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:rela
                       "中"),
                     h("span", { "data-active": r(v, "enActive"), style: css(("border-radius:999px;padding:4px 10px;background:" + s(r(v, "enBg")) + ";color:" + s(r(v, "enFg")) + ";transition:background .25s,color .25s")) },
                       "EN"))))),
-            h("main", { style: css("position:relative;flex:1;min-height:0;display:flex;gap:56px;justify-content:center;align-items:flex-start;padding-top:28px") },
-              h("div", { style: css(("width:1240px;flex:none;display:flex;flex-direction:column;gap:16px;opacity:" + s(r(v, "fadeOp")) + ";transition:opacity .18s")) },
-                h("div", { style: css("height:48px;display:flex;justify-content:space-between;align-items:center;font:500 13px var(--v3-mono);letter-spacing:.16em;color:rgba(244,241,234,.5)") },
+            h("main", { style: css("position:relative;flex:1;min-height:0;display:flex;gap:var(--tv-gap,56px);justify-content:var(--tv-jc,center);align-items:flex-start;padding-top:var(--tv-pt,28px);padding-left:var(--tv-pl,0px)") },
+              h("div", { style: css(("width:var(--tv-col,1240px);flex:none;display:flex;flex-direction:column;gap:var(--tv-colgap,16px);opacity:" + s(r(v, "fadeOp")) + ";transition:opacity .18s")) },
+                h("div", { style: css("height:var(--tv-tabs-h,48px);display:flex;justify-content:space-between;align-items:center;font:500 13px var(--v3-mono);letter-spacing:.16em;color:rgba(244,241,234,.5)") },
                   h("span", null,
                     h(F, null, t(r(v, "t.aboutLbl")))),
                   h("span", { style: css("display:flex;gap:16px;align-items:center") },
@@ -490,9 +502,9 @@ const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:rela
                     h("span", { style: css("width:24px;height:1px;background:rgba(244,241,234,.25)") }),
                     h("span", { style: css("font-family:var(--v3-sans);letter-spacing:.04em;font-size:15px;color:#f4f1ea") },
                       h(F, null, t(r(v, "chName")))))),
-                h("div", { style: css("position:relative;height:740px;padding:16px 16px 0;border-radius:30px;background:linear-gradient(180deg,#222329 0%,#18191d 6%,#131418 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -1px 0 rgba(0,0,0,.6),0 0 0 1px #050506,0 8px 0 -1px #0d0e11,0 70px 120px -50px #000") },
-                  h("div", { style: css("height:680px;padding:6px;border-radius:21px;background:#060708;box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),inset 0 4px 12px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.06)") },
-                    h("div", { "role": "region", "aria-label": r(v, "t.regionAria"), "ref": r(v, "screen"), "onMouseMove": r(v, "spotMove"), style: css("position:relative;height:668px;border-radius:15px;overflow:hidden;background:radial-gradient(1000px 700px at 16% 14%,#1c1d23,#0c0d10 66%)") },
+                h("div", { style: css("position:relative;height:var(--tv-tv-h,740px);padding:16px 16px 0;border-radius:30px;background:linear-gradient(180deg,#222329 0%,#18191d 6%,#131418 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -1px 0 rgba(0,0,0,.6),0 0 0 1px #050506,0 8px 0 -1px #0d0e11,0 70px 120px -50px #000") },
+                  h("div", { style: css("height:var(--tv-scr-h,680px);padding:6px;border-radius:21px;background:#060708;box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),inset 0 4px 12px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.06)") },
+                    h("div", { "role": "region", "aria-label": r(v, "t.regionAria"), "ref": r(v, "screen"), "onMouseMove": r(v, "spotMove"), style: css("position:relative;height:var(--tv-in-h,668px);border-radius:15px;overflow:hidden;background:radial-gradient(1000px 700px at 16% 14%,#1c1d23,#0c0d10 66%)") },
                       h("div", { "aria-hidden": "true", style: css(("position:absolute;inset:0;pointer-events:none;opacity:" + s(r(v, "spotOp")) + ";transition:opacity .4s;background-image:linear-gradient(rgba(244,241,234,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(244,241,234,.05) 1px,transparent 1px);background-size:56px 56px")) }),
                       h("div", { "aria-hidden": "true", style: css(("position:absolute;inset:0;pointer-events:none;opacity:" + s(r(v, "spotOp")) + ";transition:opacity .4s;background:radial-gradient(460px circle at var(--mx,28%) var(--my,40%),rgba(169,139,240,.16),transparent 65%)")) }),
                       h("div", { "aria-hidden": "true", style: css(("position:absolute;inset:0;pointer-events:none;background:#f4f1ea;opacity:" + s(r(v, "creamOp")) + ";transition:opacity .35s")) }),
@@ -512,7 +524,7 @@ const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:rela
                           h("div", { style: css("display:flex;flex-direction:column;gap:22px") },
                             h("span", { style: css("display:flex;gap:10px;align-items:center;font:500 13px var(--v3-mono);letter-spacing:.18em;color:#d4f04a") },
                               h(F, null, t(r(v, "t.eyebrow")))),
-                            h("h1", { style: css("margin:0;font:900 46px/1.22 var(--v3-sans);letter-spacing:-.01em;text-wrap:balance") },
+                            h("h1", { style: css("margin:0;font:900 var(--tv-h1,46px)/1.22 var(--v3-sans);letter-spacing:-.01em;text-wrap:balance") },
                               h(F, null, t(r(v, "t.h1a"))),
                               h("span", { style: css("color:#a98bf0;white-space:nowrap;box-shadow:inset 0 -.12em 0 rgba(212,240,74,.85)") },
                                 h(F, null, t(r(v, "t.h1b")))),
@@ -744,8 +756,8 @@ const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:rela
                         h(F, null, t(r(v, "g.l")))))); } })),
                   h("div", { style: css(("position:absolute;left:" + s(r(v, "gLeft")) + ";top:0;width:16.6667%;padding:0 5px;transition:left .55s cubic-bezier(.7,0,.2,1);pointer-events:none")) },
                     h("div", { style: css("height:3px;border-radius:2px;background:#d4f04a;box-shadow:0 0 12px rgba(212,240,74,.55)") })))),
-              h("aside", { "aria-label": r(v, "t.nemuAria"), style: css(("position:relative;width:300px;height:804px;flex:none;transform:" + s(r(v, "remoteTf")) + ";transition:transform .25s cubic-bezier(.2,.9,.3,1.6)")) },
-                h("div", { style: css("position:absolute;left:0;right:0;top:156px;height:648px;border-radius:40px 40px 38px 38px;background:linear-gradient(180deg,#222329 0%,#18191d 6%,#131418 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -1px 0 rgba(0,0,0,.6),0 0 0 1px #050506,0 8px 0 -1px #0d0e11,0 60px 110px -50px #000;padding:24px 16px 14px;display:flex;flex-direction:column;gap:12px") },
+              h("aside", { "aria-label": r(v, "t.nemuAria"), style: css(("position:var(--tv-aside-pos,relative);right:var(--tv-aside-r,auto);bottom:var(--tv-aside-b,auto);z-index:var(--tv-aside-z,auto);width:var(--tv-aside-w,300px);height:var(--tv-aside-h,804px);flex:none;transform:" + s(r(v, "remoteTf")) + ";transition:transform .25s cubic-bezier(.2,.9,.3,1.6)")) },
+                h("div", { "id": "v3-remote", "data-tv": "panel", style: css(("display:" + s(r(v, "panelDisp")) + ";position:absolute;left:var(--tv-panel-l,0px);right:0;top:var(--tv-panel-t,156px);height:var(--tv-panel-h,648px);border-radius:40px 40px 38px 38px;background:linear-gradient(180deg,#222329 0%,#18191d 6%,#131418 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -1px 0 rgba(0,0,0,.6),0 0 0 1px #050506,0 8px 0 -1px #0d0e11,0 60px 110px -50px #000;padding:24px 16px 14px;flex-direction:column;gap:12px")) },
                   h("div", { "aria-hidden": "true", style: css(("position:absolute;left:50%;top:-16px;width:128px;height:26px;margin-left:-64px;border-radius:50%;background:radial-gradient(ellipse at 50% 50%,rgba(0,0,0,.7),transparent 70%);filter:blur(5px);animation:" + s(r(v, "shadeAnim")) + "")) }),
                   h("div", { "aria-hidden": "true", style: css("position:absolute;left:50%;top:-1px;width:88px;height:2px;margin-left:-44px;border-radius:1px;background:linear-gradient(90deg,transparent,rgba(175,203,255,.7),transparent);box-shadow:0 0 10px rgba(175,203,255,.45)") }),
                   h("div", { style: css("height:26px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 6px") },
@@ -795,7 +807,7 @@ const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:rela
                     h("span", { "aria-hidden": "true", style: css("width:84px;height:22px;border-radius:11px;background:radial-gradient(circle,rgba(0,0,0,.85) 1.3px,transparent 1.7px) 0 0/7px 7px,#17181c;box-shadow:inset 0 1px 2px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.04)") }),
                     h("span", { style: css("font:500 11px var(--v3-mono);letter-spacing:.16em;color:rgba(244,241,234,.4)") },
                       "← → · 1–6"))),
-                h("div", { style: css(("position:absolute;left:50%;top:-30px;width:202px;height:202px;margin-left:-101px;z-index:2;animation:" + s(r(v, "floatAnim")) + "")) },
+                h("div", { style: css(("position:absolute;left:50%;top:var(--tv-head-t,-30px);width:202px;height:202px;margin-left:-101px;z-index:2;scale:var(--tv-head-s,1);animation:" + s(r(v, "floatAnim")) + "")) },
                   h("div", { style: css(("position:absolute;inset:0;transform:" + s(r(v, "face.head")) + ";transform-origin:50% 80%;transition:transform .6s cubic-bezier(.2,.7,.2,1)")) },
                     h("img", { "src": "/v3/nemu-master-head-v4.webp", "alt": "", "draggable": "false", style: css("position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 16px 16px rgba(0,0,0,.5))") }),
                     h("div", { "aria-hidden": "true", style: css("position:absolute;left:29px;top:53px;width:110px;height:82px;border-radius:20px;overflow:hidden;mix-blend-mode:screen;transform:perspective(320px) rotateY(16deg) rotateZ(-3deg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px") },
@@ -804,7 +816,8 @@ const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:rela
                         h("span", { style: css(("width:" + s(r(v, "face.eyeW")) + ";height:" + s(r(v, "face.eyeH")) + ";border-radius:" + s(r(v, "face.eyeR")) + ";background:" + s(r(v, "face.eyeBg")) + ";border-top:" + s(r(v, "face.eyeBt")) + ";border-bottom:" + s(r(v, "face.eyeBb")) + ";box-shadow:" + s(r(v, "face.eyeSh")) + ";transition:height .16s cubic-bezier(.4,0,.2,1),width .3s cubic-bezier(.2,.7,.2,1),border-radius .3s,box-shadow .3s")) })),
                       h("span", { style: css(("width:" + s(r(v, "face.mW")) + ";height:" + s(r(v, "face.mH")) + ";border-bottom:2px solid #F8F8FB;border-radius:" + s(r(v, "face.mR")) + ";opacity:" + s(r(v, "face.mOp")) + ";transform:" + s(r(v, "face.eyeTf")) + ";transition:width .3s,height .3s,opacity .2s,transform .45s cubic-bezier(.2,.7,.2,1)")) }),
                       h("div", { style: css(("position:absolute;left:10px;right:10px;top:50%;height:6px;margin-top:-3px;border-radius:3px;background:linear-gradient(90deg,transparent,#AFCBFF,#ffffff,#AFCBFF,transparent);box-shadow:0 0 10px rgba(175,203,255,.9);opacity:" + s(r(v, "face.barOp")) + ";transition:opacity .12s")) })),
-                    h(F, null, "\n", t(r(v, "zzz")), "\n")))))))),
+                    h(F, null, "\n", t(r(v, "zzz")), "\n"))),
+                h("button", { "type": "button", "data-tv": "dock", "onClick": r(v, "dockToggle"), "aria-expanded": r(v, "dockExp"), "aria-controls": "v3-remote", "aria-label": r(v, "dockL"), style: css("display:var(--tv-dock,none);position:absolute;left:0;right:0;bottom:0;height:var(--tv-aside-h,804px);z-index:3;padding:0;border:0;border-radius:50%;background:transparent;cursor:pointer") })))))),
       h("div", { "ref": r(v, "lbRef"), "role": "dialog", "aria-modal": "true", "aria-label": r(v, "t.artAlt"), "onClick": r(v, "closeArt"), style: css(("position:absolute;inset:0;z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(5,5,6,.9);backdrop-filter:blur(6px);opacity:" + s(r(v, "lbOp")) + ";pointer-events:" + s(r(v, "lbPE")) + ";visibility:" + s(r(v, "lbVis")) + ";transition:opacity .3s,visibility 0s linear " + s(r(v, "lbVisDelay")) + ";cursor:zoom-out")) },
         h("img", { "src": "/images/about/about-personalwork01.png", "alt": r(v, "t.artAlt"), style: css(("max-height:880px;max-width:1400px;border-radius:10px;transform:" + s(r(v, "lbScale")) + ";transition:transform .45s cubic-bezier(.2,.7,.2,1);box-shadow:0 40px 100px rgba(0,0,0,.6)")) }),
         h("button", { "ref": r(v, "lbCloseRef"), "type": "button", style: css("border:0;background:none;padding:0;cursor:pointer;font:500 12px var(--v3-mono);letter-spacing:.16em;color:rgba(244,241,234,.6)") },

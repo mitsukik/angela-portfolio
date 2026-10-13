@@ -109,7 +109,18 @@ class Logic extends DCLogic {
     }, 60);
   };
   flushQueued = () => { const q = this.queued; this.queued = null; if (q && q !== this.state.no) this.zap(q); };
+  dockSet = open => {
+    if (!!this.state.dockOpen === open) return;
+    this.setState({ dockOpen: open }, () => {
+      const r = this.board.current; if (!r) return;
+      if (open) { const pn = r.querySelector('#v3-remote'), a = r.querySelector('aside'); if (pn && a && (pn.getBoundingClientRect().top < 0 || a.getBoundingClientRect().bottom > innerHeight)) window.scrollBy(0, pn.getBoundingClientRect().top < 0 ? pn.getBoundingClientRect().top - 8 : a.getBoundingClientRect().bottom - innerHeight + 8); const f = r.querySelector('#v3-remote a, #v3-remote button'); if (f) f.focus({ preventScroll: true }); }
+      else if (r.contains(document.activeElement) || document.activeElement === document.body) { const d = r.querySelector('[data-tv="dock"]'); if (d) d.focus({ preventScroll: true }); }
+    });
+  };
+  dockKey = e => { if (e.key === 'Escape' && this.state.dockOpen) { e.stopPropagation(); this.dockSet(false); } };
+  dockAway = e => { if (!this.state.dockOpen) return; const a = this.board.current && this.board.current.querySelector('aside'); if (a && !a.contains(e.target)) this.dockSet(false); };
   componentDidMount() {
+    document.addEventListener('keydown', this.dockKey, true); document.addEventListener('pointerdown', this.dockAway, true);
     this.reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.tick(); this.clockT = setInterval(this.tick, 30000);
     if ((this.props.startIn ?? 'home') === 'channels') {
@@ -139,6 +150,7 @@ class Logic extends DCLogic {
     this.wake();
   }
   componentWillUnmount() {
+    document.removeEventListener('keydown', this.dockKey, true); document.removeEventListener('pointerdown', this.dockAway, true);
     cancelAnimationFrame(this.raf); this.clear(); clearTimeout(this.blinkT); clearInterval(this.clockT); clearTimeout(this.sleepT); clearTimeout(this.toastT);
     window.removeEventListener('keydown', this.onKey);
     const b = this.board.current; if (b) { b.removeEventListener('pointermove', this.onAct); b.removeEventListener('wheel', this.onAct); }
@@ -202,7 +214,7 @@ class Logic extends DCLogic {
     return {
       board: this.board, scroller: this.scroller, noise: this.noise, progRef: this.progRef,
       onScroll: e => { const y = e.currentTarget.scrollTop, p = this.progRef.current; if (p) p.style.transform = `scaleX(${Math.min(1, y / 260)})`; const c = this.state.mode === 'ch'; if (!c && y > 260) this.enterCh(); else if (c && y < 140) this.enterHome(); },
-      showHome: () => this.scrollTo(0), brandHome: e => { if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); this.scrollTo(0); }, showCh: () => this.scrollTo(99999),
+      panelDisp: this.props.dock && !s.dockOpen ? 'none' : 'flex', dockExp: s.dockOpen ? 'true' : 'false', dockToggle: () => this.dockSet(!s.dockOpen), dockL: this.props.lang === 'en' ? (s.dockOpen ? 'Close Nemu remote' : 'Open Nemu remote') : (s.dockOpen ? '關閉 Nemu 遙控器' : '打開 Nemu 遙控器'), showHome: () => this.scrollTo(0), brandHome: e => { if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); this.scrollTo(0); }, showCh: () => this.scrollTo(99999),
       swHomeBg: ch ? 'transparent' : INK, swHomeFg: ch ? INK : '#0d0e11', swChBg: ch ? INK : 'transparent', swChFg: ch ? '#0d0e11' : INK,
       copyEmail: () => this.copy(),
       emailLabel: s.copyOk ? this.props.L.copied : s.copyFail ? this.props.L.copyFailedShort : this.props.L.copyEmail,
@@ -249,15 +261,15 @@ class Logic extends DCLogic {
 
 const DEFAULTS = {"startIn": "home", "crtEffect": true};
 
-const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:relative;width:1920px;height:1080px;flex:none;background:#0b0c0e;overflow:hidden;border-radius:6px;box-shadow:0 0 0 1px rgba(244,241,234,.1)") },
-      h("div", { "ref": r(v, "scroller"), "onScroll": r(v, "onScroll"), style: css("position:absolute;inset:0;overflow-y:auto;scrollbar-width:none") },
-        h("div", { style: css("height:1560px") },
-          h("div", { style: css("position:sticky;top:0;height:1080px;display:flex;flex-direction:column;overflow:hidden") },
-            h("div", { "aria-hidden": "false", style: css("position:absolute;left:0;right:0;bottom:14px;display:flex;justify-content:center;pointer-events:none;font:500 10px var(--v3-mono);letter-spacing:.2em;color:rgba(244,241,234,.38)") },
+const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:relative;width:var(--tv-w,1920px);height:var(--tv-h,1080px);flex:none;background:#0b0c0e;overflow:hidden;border-radius:6px;box-shadow:0 0 0 1px rgba(244,241,234,.1)") },
+      h("div", { "ref": r(v, "scroller"), "onScroll": r(v, "onScroll"), "data-tv": "scroller", style: css("position:absolute;inset:0;overflow-y:auto;scrollbar-width:none") },
+        h("div", { style: css("height:calc(var(--tv-h,1080px) + 480px)") },
+          h("div", { style: css("position:sticky;top:0;height:var(--tv-h,1080px);display:flex;flex-direction:column;overflow:hidden") },
+            h("div", { "aria-hidden": "false", style: css("position:absolute;left:0;right:0;bottom:var(--tv-foot-b,14px);display:flex;justify-content:center;pointer-events:none;font:500 10px var(--v3-mono);letter-spacing:.2em;color:rgba(244,241,234,.38)") },
               "© ANGELA YU 2026"),
             h("div", { style: css("position:absolute;inset:0;pointer-events:none;background:radial-gradient(1100px 640px at 43% 50%,rgba(244,241,234,.045),transparent 70%),radial-gradient(520px 420px at 87% 52%,rgba(169,139,240,.035),transparent 70%)") }),
-            h("div", { style: css("position:absolute;left:162px;width:1240px;top:912px;height:110px;pointer-events:none;background:radial-gradient(50% 50% at 50% 0%,rgba(244,241,234,.07),transparent 72%)") }),
-            h("header", { style: css("position:relative;height:72px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 162px;border-bottom:1px solid rgba(244,241,234,.07)") },
+            h("div", { style: css("position:absolute;left:var(--tv-glow-l,162px);width:var(--tv-col,1240px);top:var(--tv-glow-t,912px);height:110px;pointer-events:none;background:radial-gradient(50% 50% at 50% 0%,rgba(244,241,234,.07),transparent 72%)") }),
+            h("header", { style: css("position:relative;height:var(--tv-hdr-h,72px);flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 var(--tv-pad,162px);border-bottom:1px solid rgba(244,241,234,.07)") },
               h("a", { "className": "v3-navfx-brand", "href": r(v, "homeHref"), "onClick": r(v, "brandHome"), "aria-label": r(v, "L.brandHome"), style: css("display:flex;gap:14px;align-items:center;color:#f4f1ea") },
                 h("span", { "className": "v3-navfx-led", style: css("width:10px;height:10px;border-radius:3px;background:#d4f04a;animation:dcindexv3des_abBreath 1.8s ease-in-out infinite") }),
                 h("span", { "className": "v3-navfx-name", style: css("font:700 15px var(--v3-mono);letter-spacing:.22em;color:#f4f1ea") },
@@ -283,9 +295,9 @@ const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:rela
                     "中"),
                   h("span", { "data-active": r(v, "enActive"), style: css(r(v, "enSegD")) },
                     "EN")))),
-            h("main", { style: css("position:relative;flex:1;min-height:0;display:flex;gap:56px;justify-content:center;align-items:flex-start;padding-top:28px") },
-              h("div", { style: css("width:1240px;flex:none;display:flex;flex-direction:column;gap:16px") },
-                h("div", { style: css("height:48px;display:grid") },
+            h("main", { style: css("position:relative;flex:1;min-height:0;display:flex;gap:var(--tv-gap,56px);justify-content:var(--tv-jc,center);align-items:flex-start;padding-top:var(--tv-pt,28px);padding-left:var(--tv-pl,0px)") },
+              h("div", { style: css("width:var(--tv-col,1240px);flex:none;display:flex;flex-direction:column;gap:var(--tv-colgap,16px)") },
+                h("div", { style: css("height:var(--tv-tabs-h,48px);display:grid") },
                   h("div", { style: css(("grid-area:1/1;display:flex;justify-content:space-between;align-items:center;opacity:" + s(r(v, "chOp")) + ";visibility:" + s(r(v, "chVis")) + ";transition:opacity .28s")) },
                     h("div", { "role": "tablist", "aria-label": r(v, "L.categories"), style: css("display:flex;gap:2px;padding:4px;border-radius:999px;background:#0f1013;box-shadow:inset 0 1px 3px rgba(0,0,0,.8),0 0 0 1px rgba(244,241,234,.07),0 1px 0 rgba(255,255,255,.03)") },
                       h(F, null, (Array.isArray(r(v, "cats")) ? r(v, "cats") : []).map((it, i) => { const v0 = v; { const v = { ...v0, "k": it, $index: i };
@@ -308,9 +320,9 @@ const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:rela
                       "NOW SHOWING ",
                       h("span", { style: css("color:#f4f1ea") },
                         "ANGELA'S PORTFOLIO")))),
-                h("div", { style: css("position:relative;height:740px;padding:16px 16px 0;border-radius:30px;background:linear-gradient(180deg,#222329 0%,#18191d 6%,#131418 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -1px 0 rgba(0,0,0,.6),0 0 0 1px #050506,0 8px 0 -1px #0d0e11,0 70px 120px -50px #000") },
-                  h("div", { style: css("height:680px;padding:6px;border-radius:21px;background:#060708;box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),inset 0 4px 12px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.06)") },
-                    h("div", { "role": "region", "aria-label": r(v, "L.channelPreview"), style: css("position:relative;height:668px;border-radius:15px;overflow:hidden;background:#050506") },
+                h("div", { style: css("position:relative;height:var(--tv-tv-h,740px);padding:16px 16px 0;border-radius:30px;background:linear-gradient(180deg,#222329 0%,#18191d 6%,#131418 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -1px 0 rgba(0,0,0,.6),0 0 0 1px #050506,0 8px 0 -1px #0d0e11,0 70px 120px -50px #000") },
+                  h("div", { style: css("height:var(--tv-scr-h,680px);padding:6px;border-radius:21px;background:#060708;box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),inset 0 4px 12px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.06)") },
+                    h("div", { "role": "region", "aria-label": r(v, "L.channelPreview"), style: css("position:relative;height:var(--tv-in-h,668px);border-radius:15px;overflow:hidden;background:#050506") },
                       h("div", { style: css(("position:absolute;inset:0;transform:" + s(r(v, "fx.tf")) + ";filter:" + s(r(v, "fx.fl")) + ";transition:" + s(r(v, "fx.tr")) + "")) },
                         h("div", { style: css(("position:absolute;inset:0;background:" + s(r(v, "cur.bg")) + ";transform:" + s(r(v, "fx.zoom")) + ";transition:transform 6s linear")) }),
                         (r(v, "cur.ph") ? h(F, null,
@@ -345,7 +357,7 @@ const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:rela
                             h("span", { style: css(("flex:none;font:500 14px var(--v3-mono);color:rgba(244,241,234,.6);border:1px dashed rgba(244,241,234,.32);padding:18px 22px;border-radius:999px;opacity:" + s(r(v, "in4.op")) + ";transition:" + s(r(v, "in4.tr")) + "")) },
                               "[ 案例連結待確認 ]")) : null)),
                         h("div", { "inert": r(v, "heroInert"), "data-v3-layer": "home", style: css(("position:absolute;inset:0;background:radial-gradient(1000px 700px at 16% 14%,#1c1d23,#0c0d10 66%);opacity:" + s(r(v, "heroOp")) + ";pointer-events:" + s(r(v, "heroPE")) + ";transition:opacity .28s")) },
-                          h("div", { style: css(("position:absolute;inset:0;padding:34px 56px 34px;display:flex;flex-direction:column;transform:" + s(r(v, "heroTf")) + ";transition:transform .32s cubic-bezier(.2,.7,.2,1)")) },
+                          h("div", { style: css(("position:absolute;inset:0;padding:var(--tv-hero-pad,34px 56px 34px);display:flex;flex-direction:column;transform:" + s(r(v, "heroTf")) + ";transition:transform .32s cubic-bezier(.2,.7,.2,1)")) },
                             h("div", { style: css("display:flex;justify-content:space-between;align-items:center;padding-bottom:16px;border-bottom:1px solid rgba(244,241,234,.12);font:500 12px var(--v3-mono);letter-spacing:.18em;color:rgba(244,241,234,.55)") },
                               h("span", { style: css("display:flex;gap:20px;align-items:center") },
                                 h("span", { style: css("display:flex;gap:8px;align-items:center;color:#0d0e11;background:#d4f04a;padding:5px 10px 5px 9px;border-radius:4px") },
@@ -357,11 +369,11 @@ const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:rela
                                   "HOME")),
                               h("span", null,
                                 h(F, null, "TAICHUNG, TW · ", t(r(v, "clock")), " GMT+8"))),
-                            h("div", { style: css("flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 404px;gap:64px;align-items:end;padding:28px 0 30px") },
+                            h("div", { style: css("flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) var(--tv-hero-r,404px);gap:64px;align-items:end;padding:var(--tv-hero-gp,28px 0 30px)") },
                               h("div", { style: css("display:flex;flex-direction:column;gap:22px") },
                                 h("span", { style: css("font:500 14px var(--v3-mono);letter-spacing:.18em;color:#d4f04a") },
                                   "UI/UX DESIGNER"),
-                                h("h1", { style: css("margin:0;font:900 136px/.84 var(--v3-display),sans-serif;letter-spacing:-.03em;color:#f4f1ea") },
+                                h("h1", { "data-tv": "mark", style: css("margin:0;font:900 var(--tv-mark,136px)/.84 var(--v3-display),sans-serif;letter-spacing:-.03em;color:#f4f1ea") },
                                   "ANGELA",
                                   h("br", null),
                                   h("span", { style: css("color:#a98bf0") },
@@ -458,8 +470,8 @@ const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:rela
                           h(F, null, "CH", t(r(v, "u.ch"))))); } }))),
                     h("span", { style: css("margin-left:auto;font:400 14px var(--v3-sans);color:rgba(244,241,234,.5)") },
                       h(F, null, t(r(v, "L.scrollHint"))))))),
-              h("aside", { "aria-label": r(v, "L.guide"), style: css(("position:relative;width:300px;height:804px;flex:none;transform:" + s(r(v, "remoteTf")) + ";transition:transform .25s cubic-bezier(.2,.9,.3,1.6)")) },
-                h("div", { style: css("position:absolute;left:0;right:0;top:156px;height:648px;border-radius:40px 40px 38px 38px;background:linear-gradient(180deg,#222329 0%,#18191d 6%,#131418 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -1px 0 rgba(0,0,0,.6),0 0 0 1px #050506,0 8px 0 -1px #0d0e11,0 60px 110px -50px #000;padding:24px 16px 14px;display:flex;flex-direction:column;gap:12px") },
+              h("aside", { "aria-label": r(v, "L.guide"), style: css(("position:var(--tv-aside-pos,relative);right:var(--tv-aside-r,auto);bottom:var(--tv-aside-b,auto);z-index:var(--tv-aside-z,auto);width:var(--tv-aside-w,300px);height:var(--tv-aside-h,804px);flex:none;transform:" + s(r(v, "remoteTf")) + ";transition:transform .25s cubic-bezier(.2,.9,.3,1.6)")) },
+                h("div", { "id": "v3-remote", "data-tv": "panel", style: css(("display:" + s(r(v, "panelDisp")) + ";position:absolute;left:var(--tv-panel-l,0px);right:0;top:var(--tv-panel-t,156px);height:var(--tv-panel-h,648px);border-radius:40px 40px 38px 38px;background:linear-gradient(180deg,#222329 0%,#18191d 6%,#131418 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -1px 0 rgba(0,0,0,.6),0 0 0 1px #050506,0 8px 0 -1px #0d0e11,0 60px 110px -50px #000;padding:24px 16px 14px;flex-direction:column;gap:12px")) },
                   h("div", { "aria-hidden": "true", style: css(("position:absolute;left:50%;top:-16px;width:128px;height:26px;margin-left:-64px;border-radius:50%;background:radial-gradient(ellipse at 50% 50%,rgba(0,0,0,.7),transparent 70%);filter:blur(5px);animation:" + s(r(v, "shadeAnim")) + "")) }),
                   h("div", { "aria-hidden": "true", style: css("position:absolute;left:50%;top:-1px;width:88px;height:2px;margin-left:-44px;border-radius:1px;background:linear-gradient(90deg,transparent,rgba(175,203,255,.7),transparent);box-shadow:0 0 10px rgba(175,203,255,.45)") }),
                   h("div", { style: css("height:26px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 6px") },
@@ -509,7 +521,7 @@ const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:rela
                     h("span", { "aria-hidden": "true", style: css("width:84px;height:22px;border-radius:11px;background:radial-gradient(circle,rgba(0,0,0,.85) 1.3px,transparent 1.7px) 0 0/7px 7px,#17181c;box-shadow:inset 0 1px 2px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.04)") }),
                     h("span", { style: css("font:500 11px var(--v3-mono);letter-spacing:.16em;color:rgba(244,241,234,.4)") },
                       h(F, null, "← → · 1–", t(r(v, "chMaxDigit")))))),
-                h("div", { style: css(("position:absolute;left:50%;top:-30px;width:202px;height:202px;margin-left:-101px;z-index:2;animation:" + s(r(v, "floatAnim")) + "")) },
+                h("div", { style: css(("position:absolute;left:50%;top:var(--tv-head-t,-30px);width:202px;height:202px;margin-left:-101px;z-index:2;scale:var(--tv-head-s,1);animation:" + s(r(v, "floatAnim")) + "")) },
                   h("div", { style: css(("position:absolute;inset:0;transform:" + s(r(v, "face.head")) + ";transform-origin:50% 80%;transition:transform .6s cubic-bezier(.2,.7,.2,1)")) },
                     h("img", { "src": "/v3/nemu-master-head-v4.webp", "alt": "", "draggable": "false", style: css("position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 16px 16px rgba(0,0,0,.5))") }),
                     h("div", { "aria-hidden": "true", style: css("position:absolute;left:29px;top:53px;width:110px;height:82px;border-radius:20px;overflow:hidden;mix-blend-mode:screen;transform:perspective(320px) rotateY(16deg) rotateZ(-3deg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px") },
@@ -518,6 +530,7 @@ const render = (v) => h("div", { "ref": r(v, "board"), style: css("position:rela
                         h("span", { style: css(("width:" + s(r(v, "face.eyeW")) + ";height:" + s(r(v, "face.eye2H")) + ";border-radius:" + s(r(v, "face.eyeR")) + ";background:" + s(r(v, "face.eyeBg")) + ";border-top:" + s(r(v, "face.eyeBt")) + ";border-bottom:" + s(r(v, "face.eyeBb")) + ";box-shadow:" + s(r(v, "face.eyeSh")) + ";transition:height .16s cubic-bezier(.4,0,.2,1),width .3s cubic-bezier(.2,.7,.2,1),border-radius .3s,box-shadow .3s")) })),
                       h("span", { style: css(("width:" + s(r(v, "face.mW")) + ";height:" + s(r(v, "face.mH")) + ";border-bottom:2px solid #F8F8FB;border-radius:" + s(r(v, "face.mR")) + ";opacity:" + s(r(v, "face.mOp")) + ";transform:" + s(r(v, "face.eyeTf")) + ";transition:width .3s,height .3s,opacity .2s,transform .45s cubic-bezier(.2,.7,.2,1)")) }),
                       h("div", { style: css(("position:absolute;left:10px;right:10px;top:50%;height:6px;margin-top:-3px;border-radius:3px;background:linear-gradient(90deg,transparent,#AFCBFF,#ffffff,#AFCBFF,transparent);box-shadow:0 0 10px rgba(175,203,255,.9);opacity:" + s(r(v, "face.barOp")) + ";transition:opacity .12s")) })),
-                    h(F, null, "\n", t(r(v, "zzz")), "\n")))))))));
+                    h(F, null, "\n", t(r(v, "zzz")), "\n"))),
+                h("button", { "type": "button", "data-tv": "dock", "onClick": r(v, "dockToggle"), "aria-expanded": r(v, "dockExp"), "aria-controls": "v3-remote", "aria-label": r(v, "dockL"), style: css("display:var(--tv-dock,none);position:absolute;left:0;right:0;bottom:0;height:var(--tv-aside-h,804px);z-index:3;padding:0;border:0;border-radius:50%;background:transparent;cursor:pointer") })))))));
 
 export default dcComponent(Logic, render, "IndexV3Desktop", DEFAULTS, "dcindexv3des-root");

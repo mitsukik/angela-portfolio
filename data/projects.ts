@@ -308,7 +308,7 @@ export const projects: Project[] = [
       },
       outcome: {
         heading: "OUTCOME",
-        title: "A working product, without fabricated metrics",
+        title: "Delivered: a working multi-role system",
         body: "The project resulted in a working frontend and backend system and was delivered to the Client.\n\nThe Client later changed its business strategy, so the product did not formally enter commercial operation. This case does not claim post-launch KPIs.",
       },
     },

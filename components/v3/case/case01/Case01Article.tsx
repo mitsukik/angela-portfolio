@@ -250,7 +250,7 @@ export function Case01Article({ locale, project }: { locale: Locale; project: Pr
       <CaseSection id={CH[5].anchor}>
         <CaseSectionHeader
           eyebrow={eb(5)}
-          title={zh ? "完成可運作的產品，而不是概念作品" : "A working product, without fabricated metrics"}
+          title={zh ? "完成可運作的產品，而不是概念作品" : "Delivered: a working multi-role system"}
           paragraphs={zh ? [
             "最終完成可運作的 Consumer 前台與管理後台系統，並交付客戶。",
             "當年的工程實作亦留下可操作 Demo，並曾供 PM 與客戶確認需求與產品行為。",

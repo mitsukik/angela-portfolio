@@ -233,7 +233,7 @@ export function CaseOneFinalContent({ register, locale }: { register: RegisterSe
     <Section index={4} register={register}>
       <ReadingSection
         label={zh ? "05 — Outcome" : "05 — OUTCOME"}
-        title={zh ? "完成可運作的產品，而不是概念作品" : "A working product, without fabricated metrics"}
+        title={zh ? "完成可運作的產品，而不是概念作品" : "Delivered: a working multi-role system"}
         paragraphs={zh ? [
           "最終完成可運作的 Consumer 前台與管理後台系統，並交付 Client。",
           "當年的工程實作亦留下可操作 Demo，並曾供 PM 與 Client 確認需求與產品行為。",

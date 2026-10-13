@@ -701,6 +701,21 @@ export function CaseV3Shell({
                     <div className="cv3-spacer" />
                     <ul ref={remoteOptsRef} className="cv3-opts" data-scrolls={optsScroll ? "true" : undefined} data-overflow={optsOverflow ? "true" : undefined} data-lenis-prevent>{deskOpts.map((o) => <OptItem key={o.key} o={o} onPress={onLinkPress} onAction={onAction} />)}</ul>
                     <span aria-hidden="true" className="cv3-opts-more" data-on={optsScroll ? "true" : undefined}>⌄</span>
+                    {/* Channel row (INDEX Remote's integrated 上一台 · CH · 下一台): the last
+                        control row on the screen, below the actions; previous / next CASE in
+                        channel order, wrapping CH01 ↔ CH07. The option list above scrolls on
+                        short screens, so this row never covers an option. */}
+                    <nav className="cv3-chnav" aria-label={ui.chNav}>
+                      <Link href={caseHref(previousProject)} className="cv3-chnav-btn" data-dir="prev" aria-label={`${ui.chPrevAria} · CH ${previousChannelNo} ${v3Title(previousProject, locale)}`} onClick={onLinkPress}>
+                        <span aria-hidden="true" className="cv3-chnav-glyph">←</span>
+                        {ui.chPrev}
+                      </Link>
+                      <span className="cv3-chnav-now" lang="en">CH {channelNo}</span>
+                      <Link href={caseHref(nextProject)} className="cv3-chnav-btn" data-dir="next" aria-label={`${ui.chNextAria} · CH ${nextChannelNo} ${v3Title(nextProject, locale)}`} onClick={onLinkPress}>
+                        {ui.chNext}
+                        <span aria-hidden="true" className="cv3-chnav-glyph">→</span>
+                      </Link>
+                    </nav>
                   </div>
                 </div>
                 <div className="cv3-remote-foot">
@@ -711,19 +726,6 @@ export function CaseV3Shell({
                 </div>
               </div>
               <div className="cv3-remote-head">{!mounted || remoteOn ? <NemuHead expression={expression} /> : null}</div>
-              {/* Channel bar (INDEX channel switch language): previous / next CASE in
-                  channel order, wrapping CH01 ↔ CH07; centre = this page's channel. */}
-              <nav className="cv3-chnav" aria-label={ui.chNav}>
-                <Link href={caseHref(previousProject)} className="cv3-chnav-btn" data-dir="prev" aria-label={`${ui.chPrevAria} · CH ${previousChannelNo} ${v3Title(previousProject, locale)}`} onClick={onLinkPress}>
-                  <span aria-hidden="true" className="cv3-chnav-glyph">←</span>
-                  {ui.chPrev}
-                </Link>
-                <span className="cv3-chnav-now" lang="en">CH {channelNo}</span>
-                <Link href={caseHref(nextProject)} className="cv3-chnav-btn" data-dir="next" aria-label={`${ui.chNextAria} · CH ${nextChannelNo} ${v3Title(nextProject, locale)}`} onClick={onLinkPress}>
-                  {ui.chNext}
-                  <span aria-hidden="true" className="cv3-chnav-glyph">→</span>
-                </Link>
-              </nav>
             </aside>
           </div>
 

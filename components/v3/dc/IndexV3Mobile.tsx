@@ -35,7 +35,7 @@ class Logic extends DCLogic {
   cases = (this.props.channels || []).map(c => ({ ...c,
     bg: c.pub ? `url(${c.img || '/images/home/case' + c.no + '-home-visual.webp'}) ${c.pos || 'center'}/cover no-repeat, #15161b` : 'repeating-linear-gradient(135deg,#17181d 0 14px,#1d1e24 14px 28px)',
     bgPhone: c.pub ? `url(${c.img || '/images/home/case' + c.no + '-home-visual.webp'}) ${c.mpos || c.pos || 'center'}/${c.msize || 'cover'} no-repeat, #15161b` : '',
-    url: c.pub ? `${this.props.prefix || ''}/design-samples/case-final-${c.no}` : '' }));
+    url: c.pub ? `${this.props.prefix || ''}/work/ch-${c.ch}` : '' }));
   tabs = [{ k: 'all', l: this.props.L.tabAll }, { k: 'sys', l: this.props.L.tabSys }, { k: 'com', l: this.props.L.tabCom }, { k: 'mob', l: this.props.L.tabMob }, { k: 'web', l: this.props.L.tabWeb }];
   match = (c, k) => k === 'all' || c.k.includes(k);
   list = () => this.cases.filter(c => this.match(c, this.state.tab));

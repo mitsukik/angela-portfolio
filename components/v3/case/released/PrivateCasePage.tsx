@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { Locale } from "@/data/locale";
+import { caseHref } from "@/data/v3/channel-routes";
 import { v3Neighbours, v3Sequence, v3Slot } from "@/data/v3/sequence";
 import { CASE03_NAV_LABELS, CASE03_NEMU } from "@/data/case-studies/case03";
 import { CASE_SYSTEM_NEMU } from "@/data/case-studies/chapters";
@@ -15,7 +16,7 @@ import { CASE06_SOURCE } from "./case06/data";
 import { CASE07_SOURCE } from "./case07/data";
 
 /*
- * CASE05–07 in the V3 CASE frame (routes app/[en/]design-samples/case-final-05…07).
+ * CASE05–07 in the V3 CASE frame (routes app/[en/]work/[slug], /work/ch-04…06).
  *
  * Content: verified data serialized verbatim from the original case source;
  * visual modules are the original case files (import paths only); assets are
@@ -52,7 +53,6 @@ export function PrivateCasePage({ caseNo, locale }: { caseNo: PrivateNo; locale:
       ? { id: "ov", no: "00", label: CASE03_NAV_LABELS[locale].ov, line: CASE03_NEMU[locale].ov.replace("CH03", ch) }
       : { id: c.id, no: c.no, label: v3Labels(caseNo, locale)[c.no] ?? bare(c.label), line: c.line },
   );
-  const base = `/design-samples/case-final-${caseNo}`;
   return (
     <div>
       <CaseV3Shell
@@ -61,7 +61,7 @@ export function PrivateCasePage({ caseNo, locale }: { caseNo: PrivateNo; locale:
         channelNo={v3Slot(caseNo)}
         previousChannelNo={v3Slot(previous.number)}
         nextChannelNo={v3Slot(next.number)}
-        switchHref={locale === "zh" ? `/en${base}` : base}
+        switchHref={caseHref(caseNo, locale === "zh" ? "en" : "zh")}
         chapters={chapters}
         moreLine={CASE_SYSTEM_NEMU[locale].more}
         askLine={CASE_SYSTEM_NEMU[locale].toc}

@@ -23,7 +23,7 @@ function pagePath(locale: Locale, page: Page): string {
 // pair under /en (see app/en/design-samples/case-final-0N) — same
 // convention as Home and About, just added later once the Case route
 // itself gained real locale-aware content (CaseStudyPrototype.tsx).
-const BILINGUAL_ZH_PATH = /^(\/|\/about|\/design-samples\/case-final-0[1-4])$/;
+const BILINGUAL_ZH_PATH = /^(\/|\/about|\/work\/ch-0[1-7])$/;
 
 /**
  * Bug fix history: the language switch originally derived its target

@@ -112,7 +112,7 @@ export function IndexV3Page({ locale, channels, chMax }: { locale: Locale; chann
             <ul>
               {channels.map((c) => (
                 <li key={c.no}>
-                  <a href={`${prefix}/design-samples/case-final-${c.no}`}>{`CH ${c.ch} · ${c.t}`}</a>
+                  <a href={`${prefix}/work/ch-${c.ch}`}>{`CH ${c.ch} · ${c.t}`}</a>
                 </li>
               ))}
               <li>

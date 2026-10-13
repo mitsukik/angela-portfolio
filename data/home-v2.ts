@@ -3,6 +3,7 @@ import { closingBody, contactLabels, resumeUrl } from "./contact";
 import { heroContent, type HeroSegment } from "./home";
 import type { Locale } from "./locale";
 import { projects } from "./projects";
+import { caseHref as publicCaseHref } from "./v3/channel-routes";
 
 /**
  * Home V2 view-model. Every fact below is READ from the existing sources
@@ -113,8 +114,7 @@ const UI: Record<Locale, Ui> = {
   },
 };
 
-const caseHref = (locale: Locale, number: string) =>
-  `${locale === "en" ? "/en" : ""}/design-samples/case-final-${number}`;
+const caseHref = (locale: Locale, number: string) => publicCaseHref(number, locale);
 
 function buildWork(locale: Locale): HomeWorkItem[] {
   return projects.map((project) => {

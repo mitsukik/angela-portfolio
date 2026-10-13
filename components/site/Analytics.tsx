@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import { usePathname } from "next/navigation";
 import { CONSENT_REGIONS, GA_HOSTS, GA_MEASUREMENT_ID } from "@/data/analytics";
+import { caseNoForChannelSlug } from "@/data/v3/channel-routes";
 import { RESUME_URL_EN, RESUME_URL_ZH } from "@/data/contact";
 
 /*
@@ -30,7 +31,8 @@ declare global {
 }
 
 const RESUMES = new Set([RESUME_URL_ZH, RESUME_URL_EN]);
-const CASE_PATH = /^(?:\/en)?\/design-samples\/case-final-(\d{2})\/?$/;
+const CASE_PATH = /^(?:\/en)?\/work\/(ch-\d{2})\/?$/;
+const caseId = (slug: string) => { const no = caseNoForChannelSlug(slug); return no ? `CASE${no}` : undefined; };
 
 const lang = (path: string) => (path === "/en" || path.startsWith("/en/") ? "en" : "zh");
 const pageType = (path: string) => {
@@ -42,7 +44,7 @@ const pageType = (path: string) => {
 };
 const caseOf = (path: string) => {
   const m = path.match(CASE_PATH);
-  return m ? `CASE${m[1]}` : undefined;
+  return m ? caseId(m[1]) : undefined;
 };
 const area = (el: Element) =>
   el.closest("#contact") ? "contact" : el.closest(".cv3-navcard, .cv3-more-all") ? "prev_next" : el.closest("header, nav") ? "header" : "page";
@@ -118,7 +120,8 @@ export function Analytics() {
         }
         if (url.origin === window.location.origin) {
           const m = url.pathname.match(CASE_PATH);
-          if (m && url.pathname !== window.location.pathname) send("case_open", { case_id: `CASE${m[1]}`, link_location: area(a) });
+          const id = m ? caseId(m[1]) : undefined;
+          if (id && url.pathname !== window.location.pathname) send("case_open", { case_id: id, link_location: area(a) });
           return;
         }
         if (url.protocol === "http:" || url.protocol === "https:") {

@@ -1,17 +1,13 @@
 import type { MetadataRoute } from "next";
 import { SITE_ORIGIN } from "@/data/site-seo";
+import { caseHref } from "@/data/v3/channel-routes";
+import { CASE_DISPLAY_ORDER } from "@/data/v3/order";
 
 const PUBLIC_ROUTE_PAIRS = [
   { zh: "/", en: "/en" },
   { zh: "/about", en: "/en/about" },
-  { zh: "/design-samples/case-final-01", en: "/en/design-samples/case-final-01" },
-  { zh: "/design-samples/case-final-02", en: "/en/design-samples/case-final-02" },
-  { zh: "/design-samples/case-final-03", en: "/en/design-samples/case-final-03" },
-  { zh: "/design-samples/case-final-04", en: "/en/design-samples/case-final-04" },
-  { zh: "/design-samples/case-final-05", en: "/en/design-samples/case-final-05" },
-  { zh: "/design-samples/case-final-06", en: "/en/design-samples/case-final-06" },
-  { zh: "/design-samples/case-final-07", en: "/en/design-samples/case-final-07" },
-] as const;
+  ...CASE_DISPLAY_ORDER.map((no) => ({ zh: caseHref(no, "zh"), en: caseHref(no, "en") })),
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return PUBLIC_ROUTE_PAIRS.flatMap(({ zh, en }) => {

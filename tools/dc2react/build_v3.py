@@ -189,7 +189,7 @@ def patch_index(src, mobile):
         logic = sub_exact(logic, "heroInert: ch, chInert: !ch,", "tvBg: Number(this.props.vw) < 600 && cur.bgPhone ? cur.bgPhone : cur.bg, heroInert: ch, chInert: !ch,", count=1)
         tpl = sub_exact(tpl, '<div style="position:absolute;inset:0;background:{{ cur.bg }};transform:{{ fx.zoom }};', '<div style="position:absolute;inset:0;background:{{ tvBg }};transform:{{ fx.zoom }};', count=1)
     logic = sub_exact(logic, "`https://angela-portfolio-phi.vercel.app/design-samples/case-final-${c.no}`",
-                      "`${this.props.prefix || ''}/design-samples/case-final-${c.no}`")
+                      "`${this.props.prefix || ''}/work/ch-${c.ch}`")
     logic = sub_exact(logic, "resume = 'https://drive.google.com/uc?export=download&id=1um1vszVCmhPuvDMM7QBVRdW07BnYY1s8';",
                       "resume = this.props.resumeHref;")
     logic = sub_exact(logic, "'About Page v2.dc.html'", "this.props.aboutHref", must=False)

@@ -276,14 +276,14 @@ export function CaseStudyPrototype({
               { label: "角色", value: "UI/UX Designer · Frontend Implementation" },
               { label: "團隊", value: "SA · Backend Engineer · UI/UX Designer" },
               { label: "平台", value: "Web · Internal Operations System" },
-              { label: "專案期間", value: "2023 — 2024" },
+              { label: "專案期間", value: "2023" },
               { label: "狀態", value: "已部署並投入實際使用" },
             ]
           : [
               { label: "Role", value: "UI/UX Designer · Frontend Implementation" },
               { label: "Team", value: "SA · Backend Engineer · UI/UX Designer" },
               { label: "Platform", value: "Web · Internal Operations System" },
-              { label: "Timeline", value: "2023 — 2024" },
+              { label: "Timeline", value: "2023" },
               { label: "Status", value: "Deployed · In Production Use" },
             ]
         : isCaseFourV1

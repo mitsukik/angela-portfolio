@@ -1097,11 +1097,14 @@ html[data-v2-lang-fade="out"] .cv3-fade {
 }
 
 .cv3-remote {
+  /* Room for the channel bar under the Remote body (.cv3-chnav). */
+  --cv3-chnav-h: 44px;
+  --cv3-chnav-gap: 10px;
   position: sticky;
   top: 96px;
   align-self: flex-start;
   width: 300px;
-  height: min(804px, calc(100vh - 120px));
+  height: min(calc(804px + var(--cv3-chnav-h) + var(--cv3-chnav-gap)), calc(100vh - 120px));
   flex: none;
   margin-top: 24px;
   transform-origin: 70% 100%;
@@ -1117,7 +1120,7 @@ html[data-v2-lang-fade="out"] .cv3-fade {
   left: 0;
   right: 0;
   top: 156px;
-  bottom: 0;
+  bottom: calc(var(--cv3-chnav-h) + var(--cv3-chnav-gap));
   border-radius: 40px 40px 38px 38px;
   background: linear-gradient(180deg, #222329 0%, #18191d 6%, #131418 100%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), inset 0 -1px 0 rgba(0, 0, 0, 0.6), 0 0 0 1px #050506, 0 8px 0 -1px #0d0e11, 0 60px 110px -50px #000;
@@ -1487,6 +1490,100 @@ html[data-v2-lang-fade="out"] .cv3-fade {
   margin-left: -101px;
   z-index: 2;
   animation: v3Float 3.6s ease-in-out infinite;
+}
+
+/* Remote channel bar — the INDEX channel switch (上一台 · CH · 下一台) under
+   the Remote body: previous / next CASE in channel order, current channel
+   in the INDEX readout. Same surfaces and interaction states as the Remote. */
+.cv3-chnav {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--cv3-chnav-h);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 14px;
+  border: 1px solid rgba(244, 241, 234, 0.12);
+  background: linear-gradient(180deg, #1c1d22 0%, #131418 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 0 1px #050506, 0 18px 40px -24px #000;
+}
+
+.v3 .cv3-chnav-btn {
+  height: 100%;
+  min-width: 0;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  color: var(--v3-ink);
+  font: 500 13px var(--v3-sans);
+  white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.12s;
+}
+
+.cv3-chnav-glyph {
+  font: 500 12px var(--v3-mono);
+  opacity: 0.85;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .v3 .cv3-chnav-btn:hover {
+    background: rgba(244, 241, 234, 0.065);
+    border-color: rgba(212, 240, 74, 0.55);
+    color: var(--v3-lime);
+  }
+}
+
+.v3 .cv3-chnav-btn:focus-visible {
+  outline: 2px solid rgba(212, 240, 74, 0.85);
+  outline-offset: 0;
+}
+
+.cv3-chnav-btn:active {
+  transform: scale(0.97);
+}
+
+.cv3-chnav-now {
+  min-width: 62px;
+  padding: 4px 9px;
+  border-radius: 6px;
+  background: #0a0b0d;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.05);
+  color: var(--v3-lime);
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.12em;
+  text-align: center;
+}
+
+/* Desktops under 980px tall (the full Remote + bar needs 858 + 120px): room for
+   the bar comes from the column offset (84px; Nemu stays clear of the header) and
+   the Remote's existing short-height spacing (as below 720px), so the Remote keeps
+   the space it has today. */
+@media (min-width: 1200px) and (max-height: 979px) {
+  .cv3 .cv3-remote {
+    --cv3-chnav-h: 40px;
+    --cv3-chnav-gap: 8px;
+    top: 84px;
+    margin-top: 0;
+    height: calc(100vh - 92px);
+  }
+  .cv3 .cv3-remote-body {
+    padding: 14px;
+    gap: 10px;
+  }
+  .cv3 .cv3-screen {
+    gap: 10px;
+    padding: 12px;
+  }
+  .cv3 .cv3-msg {
+    min-height: 0;
+  }
 }
 
 /* ---------------------------------------------------------------------
@@ -2290,9 +2387,15 @@ html[data-v2-lang-fade="out"] .cv3-fade {
   }
   .cv3 .cv3-screen .cv3-opts {
     flex: 1 1 auto;
+    gap: 4px;
   }
   .cv3 .cv3-remote .cv3-opt {
-    min-height: 42px;
+    min-height: 40px;
+  }
+  /* Channel bar: 36px and a 2px gap here, so the Remote keeps today's space. */
+  .cv3 .cv3-remote {
+    --cv3-chnav-h: 36px;
+    --cv3-chnav-gap: 2px;
   }
 }
 

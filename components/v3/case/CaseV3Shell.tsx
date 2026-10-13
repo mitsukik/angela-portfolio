@@ -711,6 +711,19 @@ export function CaseV3Shell({
                 </div>
               </div>
               <div className="cv3-remote-head">{!mounted || remoteOn ? <NemuHead expression={expression} /> : null}</div>
+              {/* Channel bar (INDEX channel switch language): previous / next CASE in
+                  channel order, wrapping CH01 ↔ CH07; centre = this page's channel. */}
+              <nav className="cv3-chnav" aria-label={ui.chNav}>
+                <Link href={caseHref(previousProject)} className="cv3-chnav-btn" data-dir="prev" aria-label={`${ui.chPrevAria} · CH ${previousChannelNo} ${v3Title(previousProject, locale)}`} onClick={onLinkPress}>
+                  <span aria-hidden="true" className="cv3-chnav-glyph">←</span>
+                  {ui.chPrev}
+                </Link>
+                <span className="cv3-chnav-now" lang="en">CH {channelNo}</span>
+                <Link href={caseHref(nextProject)} className="cv3-chnav-btn" data-dir="next" aria-label={`${ui.chNextAria} · CH ${nextChannelNo} ${v3Title(nextProject, locale)}`} onClick={onLinkPress}>
+                  {ui.chNext}
+                  <span aria-hidden="true" className="cv3-chnav-glyph">→</span>
+                </Link>
+              </nav>
             </aside>
           </div>
 

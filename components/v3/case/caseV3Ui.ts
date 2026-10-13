@@ -27,6 +27,11 @@ export const CASE_V3_UI: Record<Locale, {
   closeChat: string;
   closeX: string;
   guide: string;
+  chNav: string;
+  chPrev: string;
+  chNext: string;
+  chPrevAria: string;
+  chNextAria: string;
 }> = {
   zh: {
     nextSection: "下一段",
@@ -49,6 +54,12 @@ export const CASE_V3_UI: Record<Locale, {
     closeChat: "關閉 Nemu 對話",
     closeX: "關閉對話",
     guide: "Nemu 導覽小幫手",
+    // Remote channel bar: same wording as the INDEX channel switch (上一台 / 下一台).
+    chNav: "頻道切換",
+    chPrev: "上一台",
+    chNext: "下一台",
+    chPrevAria: "上一台",
+    chNextAria: "下一台",
   },
   en: {
     nextSection: "Next section",
@@ -71,6 +82,11 @@ export const CASE_V3_UI: Record<Locale, {
     closeChat: "Close Nemu conversation",
     closeX: "Close conversation",
     guide: "Nemu guide",
+    chNav: "Channel navigation",
+    chPrev: "Previous",
+    chNext: "Next",
+    chPrevAria: "Previous channel",
+    chNextAria: "Next channel",
   },
 };
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { CaseChannelContext } from "./CaseChannel";
 import type { Locale } from "@/data/locale";
+import { caseHref } from "@/data/v3/channel-routes";
 import type { Project } from "@/data/projects";
 import { SkipLink } from "@/components/site/SkipLink";
 import { getLenisInstance } from "@/components/site/lenisInstance";
@@ -162,7 +163,7 @@ export function CaseV3Shell({
   );
   const prefix = zh ? "" : "/en";
   const allChannelsHref = `${prefix || "/"}#selected-work`;
-  const caseHref = (p: Project) => `${prefix}/design-samples/case-final-${p.number}`;
+  const caseLink = (p: Project) => caseHref(p.number, locale);
 
   const mode = useMode();
   const reduce = useReducedMotion();
@@ -640,7 +641,7 @@ export function CaseV3Shell({
     reactHappy();
   };
 
-  const nextCaseOpt: Opt = { key: "next-case", label: `${ui.next} · CH${nextChannelNo}`, glyph: "→", primary: true, href: caseHref(nextProject) };
+  const nextCaseOpt: Opt = { key: "next-case", label: `${ui.next} · CH${nextChannelNo}`, glyph: "→", primary: true, href: caseLink(nextProject) };
   const lastChapter = nextChapter.id === cs.id;
   const deskOpts: Opt[] =
     menu === "toc"
@@ -669,12 +670,12 @@ export function CaseV3Shell({
   // screen (below the actions). Compact / mobile / Reading Mode: the last row of the Nemu card.
   const channelRow = (
     <nav className="cv3-chnav" aria-label={ui.chNav}>
-      <Link href={caseHref(previousProject)} className="cv3-chnav-btn" data-dir="prev" aria-label={`${ui.chPrevAria} · CH ${previousChannelNo} ${v3Title(previousProject, locale)}`} onClick={onLinkPress}>
+      <Link href={caseLink(previousProject)} className="cv3-chnav-btn" data-dir="prev" aria-label={`${ui.chPrevAria} · CH ${previousChannelNo} ${v3Title(previousProject, locale)}`} onClick={onLinkPress}>
         <span aria-hidden="true" className="cv3-chnav-glyph">←</span>
         {ui.chPrev}
       </Link>
       <span className="cv3-chnav-now" lang="en">CH {channelNo}</span>
-      <Link href={caseHref(nextProject)} className="cv3-chnav-btn" data-dir="next" aria-label={`${ui.chNextAria} · CH ${nextChannelNo} ${v3Title(nextProject, locale)}`} onClick={onLinkPress}>
+      <Link href={caseLink(nextProject)} className="cv3-chnav-btn" data-dir="next" aria-label={`${ui.chNextAria} · CH ${nextChannelNo} ${v3Title(nextProject, locale)}`} onClick={onLinkPress}>
         {ui.chNext}
         <span aria-hidden="true" className="cv3-chnav-glyph">→</span>
       </Link>
@@ -739,7 +740,7 @@ export function CaseV3Shell({
           {/* CaseBottomNavigation (CASE_SYSTEM.md §2 #9): Previous · All channels ·
               Next with its hook — three single-link cards, titles = INDEX. */}
           <nav data-sec="more" tabIndex={-1} aria-label={ui.more} className="cv3-more">
-            <CaseTransitionLink href={caseHref(previousProject)} className="cv3-more-card cv3-navcard cv3-more-prev" data-dir="prev">
+            <CaseTransitionLink href={caseLink(previousProject)} className="cv3-more-card cv3-navcard cv3-more-prev" data-dir="prev">
               <span className="cv3-more-kicker">
                 <span><span aria-hidden="true" className="cv3-navcard-arrow">←</span> {ui.previous} · CH {previousChannelNo}</span>
               </span>
@@ -750,7 +751,7 @@ export function CaseV3Shell({
               <span className="cv3-more-kicker" lang="en">CH 01–{pad2(publishedCount)}</span>
               <span className="cv3-more-title">{ui.allChannels}</span>
             </Link>
-            <CaseTransitionLink href={caseHref(nextProject)} className="cv3-more-card cv3-navcard cv3-next" data-dir="next">
+            <CaseTransitionLink href={caseLink(nextProject)} className="cv3-more-card cv3-navcard cv3-next" data-dir="next">
               <span className="cv3-more-kicker">
                 <span>{ui.next} · CH {nextChannelNo}</span>
                 <span aria-hidden="true" className="cv3-navcard-arrow">→</span>

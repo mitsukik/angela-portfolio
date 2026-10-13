@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { Locale } from "./locale";
+import { caseHref } from "./v3/channel-routes";
 import { legacyCases } from "@/components/v3/case/released/legacy-cases";
 
 export const SITE_ORIGIN = "https://angela-portfolio-phi.vercel.app";
@@ -13,8 +14,8 @@ const RELEASED_CASE_SEO = Object.fromEntries(
     .map((c) => [
       `case${c.number}`,
       {
-        zh: { path: `/design-samples/case-final-${c.number}`, title: `${c.title.zh}｜${c.category.zh}${/UX$/.test(c.category.zh) ? " 設計案例" : " UX/UI 案例"}`, description: c.description.zh, imageAlt: c.title.zh },
-        en: { path: `/en/design-samples/case-final-${c.number}`, title: `${c.title.en} | UX/UI Case Study`, description: c.description.en, imageAlt: c.title.en },
+        zh: { path: caseHref(c.number, "zh"), title: `${c.title.zh}｜${c.category.zh}${/UX$/.test(c.category.zh) ? " 設計案例" : " UX/UI 案例"}`, description: c.description.zh, imageAlt: c.title.zh },
+        en: { path: caseHref(c.number, "en"), title: `${c.title.en} | UX/UI Case Study`, description: c.description.en, imageAlt: c.title.en },
         image: c.navImage ?? c.image?.src ?? DEFAULT_OG_IMAGE,
         type: "article",
       },
@@ -56,13 +57,13 @@ const PUBLIC_PAGES = {
   },
   case01: {
     zh: {
-      path: "/design-samples/case-final-01",
+      path: caseHref("01", "zh"),
       title: "跨境寄賣與直播電商平台｜複雜系統設計案例",
       description: "將多角色營運需求整理成清楚的電商產品架構、工作流程、狀態設計與介面，並與工程團隊合作交付。",
       imageAlt: "跨境寄賣與直播電商平台的作品集案例視覺",
     },
     en: {
-      path: "/en/design-samples/case-final-01",
+      path: caseHref("01", "en"),
       title: "Cross-Border Commerce Platform | Complex Systems Case Study",
       description: "A multi-role commerce platform case study covering product architecture, workflows, state design, interfaces, and collaboration through delivery.",
       imageAlt: "Portfolio case study visual for a cross-border commerce platform",
@@ -72,13 +73,13 @@ const PUBLIC_PAGES = {
   },
   case02: {
     zh: {
-      path: "/design-samples/case-final-02",
+      path: caseHref("02", "zh"),
       title: "企業品牌網站設計｜響應式 UX/UI 案例",
       description: "以清楚的內容架構與一致的品牌呈現，完成三個響應式商業網站，涵蓋 UX/UI 設計與前端實作。",
       imageAlt: "三個響應式品牌網站的案例視覺",
     },
     en: {
-      path: "/en/design-samples/case-final-02",
+      path: caseHref("02", "en"),
       title: "Corporate Websites | Responsive UX/UI Case Study",
       description: "Three live commercial websites shaped around clear content, consistent brand expression, responsive UX/UI, and front-end implementation.",
       imageAlt: "Case study visual showing three responsive brand websites",
@@ -88,13 +89,13 @@ const PUBLIC_PAGES = {
   },
   case03: {
     zh: {
-      path: "/design-samples/case-final-03",
+      path: caseHref("03", "zh"),
       title: "製造營運系統｜複雜系統 UX/UI 案例",
       description: "整理工廠現場與管理端的設備狀態、營運資料與日常操作流程，設計支援實際導入的系統體驗。",
       imageAlt: "製造營運系統的儀表板與工業平板介面案例視覺",
     },
     en: {
-      path: "/en/design-samples/case-final-03",
+      path: caseHref("03", "en"),
       title: "Manufacturing Operations System | UX/UI Case Study",
       description: "A manufacturing operations system connecting device status, operational data, and daily workflows across desktop and industrial tablet interfaces.",
       imageAlt: "Case study visual showing a manufacturing dashboard and industrial tablet interface",
@@ -104,13 +105,13 @@ const PUBLIC_PAGES = {
   },
   case04: {
     zh: {
-      path: "/design-samples/case-final-04",
+      path: caseHref("04", "zh"),
       title: "行動療癒產品｜行動產品 UX/UI 設計案例",
       description: "重整既有行動產品的使用流程、互動狀態與恢復方式，建立更連貫的產品體驗。",
       imageAlt: "LABO65 行動療癒產品的案例視覺",
     },
     en: {
-      path: "/en/design-samples/case-final-04",
+      path: caseHref("04", "en"),
       title: "Mobile Wellness Product | UX/UI Case Study",
       description: "Restructuring an existing mobile product’s user flows, interaction states, and recovery paths into a more connected experience.",
       imageAlt: "Case study visual for the LABO65 mobile wellness product",

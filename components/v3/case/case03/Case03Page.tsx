@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Locale } from "@/data/locale";
 import { getProjectBySlug } from "@/data/projects";
+import { caseHref } from "@/data/v3/channel-routes";
 import { v3Neighbours, v3Sequence, v3Slot } from "@/data/v3/sequence";
 import { CASE03_NAV_LABELS, CASE03_NEMU, CASE03_PROTOTYPE_URL, type Case03ChapterId } from "@/data/case-studies/case03";
 import { CaseV3Shell, type CaseV3Chapter } from "../CaseV3Shell";
@@ -27,7 +28,7 @@ export function Case03Page({ locale }: { locale: Locale }) {
         channelNo={v3Slot(project.number)}
         previousChannelNo={v3Slot(v3Neighbours(project).previous.number)}
         nextChannelNo={v3Slot(v3Neighbours(project).next.number)}
-        switchHref={locale === "zh" ? "/en/design-samples/case-final-03" : "/design-samples/case-final-03"}
+        switchHref={caseHref(project.number, locale === "zh" ? "en" : "zh")}
         chapters={chapters}
         moreLine={CASE03_NEMU[locale].more}
         prototypeHref={CASE03_PROTOTYPE_URL}

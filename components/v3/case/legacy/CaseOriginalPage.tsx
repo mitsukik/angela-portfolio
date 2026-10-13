@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import type { Locale } from "@/data/locale";
 import { projects, type Project } from "@/data/projects";
+import { caseHref } from "@/data/v3/channel-routes";
 import { v3Neighbours, v3Sequence, v3Slot } from "@/data/v3/sequence";
 import { CASE_CHAPTERS } from "@/data/case-studies/openings";
 import { CASE_SYSTEM_CHAPTERS, CASE_SYSTEM_NEMU } from "@/data/case-studies/chapters";
@@ -45,7 +46,6 @@ export function CaseOriginalPage({ caseNo, locale }: { caseNo: CaseNo; locale: L
         { id: "ov", no: "00", label: CASE03_NAV_LABELS[locale].ov, line: CASE03_NEMU[locale].ov.replace("CH03", `CH${caseNo}`) },
         ...CASE_CHAPTERS[caseNo].map((c, i) => ({ id: `s${i + 1}`, no: c.no, label: c.label[locale], line: c.title[locale] })),
       ];
-  const base = `/design-samples/case-final-${caseNo}`;
   const cta = PRIMARY_CTA[caseNo];
   return (
     <div>
@@ -55,7 +55,7 @@ export function CaseOriginalPage({ caseNo, locale }: { caseNo: CaseNo; locale: L
         channelNo={v3Slot(caseNo)}
         previousChannelNo={v3Slot(v3Neighbours(project).previous.number)}
         nextChannelNo={v3Slot(v3Neighbours(project).next.number)}
-        switchHref={locale === "zh" ? `/en${base}` : base}
+        switchHref={caseHref(caseNo, locale === "zh" ? "en" : "zh")}
         chapters={chapters}
         moreLine={v3 ? CASE_SYSTEM_NEMU[locale].more : CASE03_NEMU[locale].more}
         askLine={v3 ? CASE_SYSTEM_NEMU[locale].toc : undefined}

@@ -22,6 +22,7 @@ import { CaseOneProductPreview } from "./CaseOnePresentation";
 import { CaseTwoFinalContent, CaseTwoHeroEvidence } from "./CaseTwoFinalContent";
 import { CaseThreeDemoLinks, CaseThreeFinalContent, CaseThreeHeroEvidence } from "./CaseThreeFinalContent";
 import { CaseFourFinalContent, CaseFourHeroEvidence } from "./CaseFourFinalContent";
+import { caseHref } from "@/data/v3/channel-routes";
 
 /**
  * Section body copy is authored as either a pre-split string[] (Complex
@@ -730,7 +731,7 @@ export function CaseStudyPrototype({
         <div className="border-t border-b cf-rule px-6 py-16 md:px-10 md:py-24 lg:px-14">
           <div className="mx-auto grid max-w-[1520px] gap-12 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-16">
             <CaseTransitionLink
-              href={zhHant ? `/design-samples/case-final-${previousProject.number}` : `/en/design-samples/case-final-${previousProject.number}`}
+              href={caseHref(previousProject.number, zhHant ? "zh" : "en")}
               className="case-link case-prev group inline-flex flex-col items-start gap-3 self-start"
             >
               <span className="cf-meta cf-dim label-mono inline-flex items-center gap-2">
@@ -750,7 +751,7 @@ export function CaseStudyPrototype({
                 </h2>
                 {nextDescriptionDisplay && <p className="cf-dim body-tc mt-4">{nextDescriptionDisplay}</p>}
                 <CaseTransitionLink
-                  href={zhHant ? `/design-samples/case-final-${nextProject.number}` : `/en/design-samples/case-final-${nextProject.number}`}
+                  href={caseHref(nextProject.number, zhHant ? "zh" : "en")}
                   className="case-next-cta mt-8 inline-flex items-center gap-3 pb-2 label-mono cf-heading"
                 >
                   <span className="case-next-label">{zhHant ? "查看案例" : "View case study"}</span>

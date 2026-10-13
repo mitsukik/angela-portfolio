@@ -58,7 +58,7 @@ class Logic extends DCLogic {
       artAlt: '個人插畫作品',
       contactP: '正在尋找能一起處理複雜問題的團隊。如果你的產品需要有人把混亂的流程整理成清楚的體驗，歡迎聊聊。',
       resume: '下載履歷 ↓', toWork: '看作品頻道 →', copied: '已複製 ✓', home: '← 回首頁',
-      resumeUrl: 'https://drive.google.com/uc?export=download&id=1um1vszVCmhPuvDMM7QBVRdW07BnYY1s8',
+      resumeUrl: 'https://drive.google.com/uc?export=download&id=1qU0JarjEK5c4j96xdYTzQLbBgSqNyTW1',
       secs: ['介紹', '背景', '我的專長', '工作方式', '技能 / 工具', '產品設計之外', '聯絡'],
       greet: '這裡是 Angela 的介紹。想先看哪一段？', goTo: s => `帶你到「${s}」。`, copiedMsg: 'Email 已複製到剪貼簿。', top: '回到頂部', explore: '看作品頻道',
       skills: [
@@ -86,7 +86,7 @@ class Logic extends DCLogic {
       artAlt: 'Personal illustration artwork',
       contactP: "Looking for a team that tackles complex problems together. If your product needs someone to turn messy workflows into a clear experience, let's talk.",
       resume: 'Download résumé ↓', toWork: 'Explore work →', copied: 'Copied ✓', home: '← HOME',
-      resumeUrl: 'https://drive.google.com/uc?export=download&id=1QYBxpqwk4jBXRLlWesG4J78O4CsP-bVZ',
+      resumeUrl: 'https://drive.google.com/uc?export=download&id=1GsoTGRVHxICDiuPU9BoLhUZGijYGUUwZ',
       secs: ['Intro', 'Background', 'What I Do', 'How I Work', 'Skills / Tools', 'Beyond Product Design', 'Contact'],
       greet: "This is Angela's story. Where would you like to start?", goTo: s => `Taking you to “${s}”.`, copiedMsg: 'Email copied to clipboard.', top: 'Back to top', explore: 'Explore work',
       skills: [

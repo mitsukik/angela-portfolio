@@ -1,8 +1,8 @@
 import type { Locale } from "./locale";
 
 export const CONTACT_EMAIL = "angelayyu.cu@gmail.com";
-export const RESUME_URL_EN = "https://drive.google.com/uc?export=download&id=1QYBxpqwk4jBXRLlWesG4J78O4CsP-bVZ";
-export const RESUME_URL_ZH = "https://drive.google.com/uc?export=download&id=1um1vszVCmhPuvDMM7QBVRdW07BnYY1s8";
+export const RESUME_URL_EN = "https://drive.google.com/uc?export=download&id=1GsoTGRVHxICDiuPU9BoLhUZGijYGUUwZ";
+export const RESUME_URL_ZH = "https://drive.google.com/uc?export=download&id=1qU0JarjEK5c4j96xdYTzQLbBgSqNyTW1";
 
 export const resumeUrl = (locale: Locale) => (locale === "zh" ? RESUME_URL_ZH : RESUME_URL_EN);
 

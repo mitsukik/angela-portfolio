@@ -474,9 +474,11 @@ def main():
     from runpy import run_path
     laptop = run_path(str(Path(__file__).with_name("laptop_tv.py")))
     laptop_index, laptop_about = laptop["laptop_index"], laptop["laptop_about"]
+    # wheel / trackpad channel switching on the desktop board (prototype 2026-11-03)
+    wheel_index = run_path(str(Path(__file__).with_name("wheel_channels.py")))["wheel_index"]
     idx = drop_senior((REF / "Index V3.dc.html").read_text(), "Index V3")
     mob = drop_senior((REF / "IndexV3MobileScreen.dc.html").read_text(), "IndexV3MobileScreen")
-    for name, src, rid in (("IndexV3Desktop", laptop_index(patch_index(idx, False)), "2a"), ("IndexV3Mobile", patch_index(mob, True), None)):
+    for name, src, rid in (("IndexV3Desktop", wheel_index(laptop_index(patch_index(idx, False))), "2a"), ("IndexV3Mobile", patch_index(mob, True), None)):
         left = compile_one(name, src, rid)
         print(f"  {name}: ZH literals left (must be language-neutral or unreachable): {left}")
     about_desk = drop_senior((REF / "About V3 Desktop TV.dc.html").read_text(), "About V3 Desktop TV")

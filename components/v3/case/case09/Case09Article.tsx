@@ -140,7 +140,7 @@ export function Case09Article({ locale }: { locale: Locale }) {
   const searchStage: CaseStageItem[] = zh
     ? [
         loop("district", "行政區", "從台中各行政區開始：選定區域，再輸入社區、路名等關鍵字。", "官網首頁快速搜尋：展開行政區選單、選擇西屯區，再輸入關鍵字"),
-        loop("advanced", "進階搜尋", "勾選售金與格局，符合條件的物件數量即時更新。", "進階搜尋頁：勾選 2000萬-3000萬與 3房，物件數量由 1718 筆更新為 69 筆，再捲動到結果"),
+        loop("advanced", "進階搜尋", "勾選售價與格局，符合條件的物件數量即時更新。", "進階搜尋頁：勾選 2000萬-3000萬與 3房，物件數量由 1718 筆更新為 69 筆，再捲動到結果"),
         loop("map", "地圖搜尋", "地圖依行政區聚合物件，點選區域即放大並更新物件列表。", "地圖搜尋頁：點選台中市聚合標記展開各行政區，再點選西屯區放大，右側物件列表隨之更新"),
       ]
     : [
@@ -178,7 +178,7 @@ export function Case09Article({ locale }: { locale: Locale }) {
         category={CASE09_CATALOG.category[locale]}
         period={CASE09_CATALOG.year}
         label={eb(0)}
-        title={zh ? "房仲官網與找屋 App" : "Real Estate Website & Home-Search App"}
+        title={zh ? "不動產官網與找屋 App" : "Real Estate Website & Home-Search App"}
         lead={(zh
           ? ["把大量物件資訊，", "整理成跨平台一致、好搜尋、好比較的找屋體驗。"]
           : ["Turning a large volume of listings", "into one consistent, searchable, comparable home search."]

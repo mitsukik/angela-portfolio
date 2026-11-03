@@ -8,7 +8,7 @@
  * (CH01…) is the position among the cases that are actually published, so a
  * build without CASE05–07 shows CASE01/03/04/02 as CH01–04 with no gap.
  */
-export const CASE_DISPLAY_ORDER = ["01", "03", "04", "05", "06", "07", "02"] as const;
+export const CASE_DISPLAY_ORDER = ["01", "03", "04", "05", "06", "07", "02", "09"] as const;
 
 const rank = (no: string) => {
   const i = (CASE_DISPLAY_ORDER as readonly string[]).indexOf(no);

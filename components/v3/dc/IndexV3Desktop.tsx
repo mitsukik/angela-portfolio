@@ -84,6 +84,7 @@ class Logic extends DCLogic {
   enterCh = () => {
     if (this.state.mode === 'ch') return;
     this.handoff('ch');
+    this.chAt = performance.now();
     this.press();
     this.setState(s => ({ mode: 'ch', menu: 'main', phase: s.phase === 'on' ? 'pre' : s.phase, sweepK: s.sweepK + 1 }));
     this.later(120, () => { if (this.state.phase === 'pre') this.setState({ phase: 'on' }); });
@@ -107,6 +108,18 @@ class Logic extends DCLogic {
       const el = document.querySelector(mode === 'ch' ? '[data-v3-focus="ch"]' : '[data-v3-layer="home"] a, [data-v3-layer="home"] button');
       if (el) el.focus({ preventScroll: true });
     }, 60);
+  };
+  wheelCh = e => {
+    if (e.ctrlKey || !e.deltaY || Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+    const now = e.timeStamp, fresh = now - (this.wheelAt ?? -Infinity) >= 220;
+    this.wheelAt = now;
+    if (fresh) {
+      const d = e.deltaY > 0 ? 1 : -1, l = this.list(), i = l.findIndex(c => c.no === this.state.no);
+      const page = d > 0 && window.scrollY < document.documentElement.scrollHeight - window.innerHeight - 1;
+      this.wheelHold = this.state.mode === 'ch' && !page && i >= 0 && !(d < 0 && i === 0);
+      if (this.wheelHold && !this.busy && now - (this.chAt ?? -Infinity) >= 700 && l[i + d]) this.step(d);
+    }
+    if (this.wheelHold) e.preventDefault();
   };
   flushQueued = () => { const q = this.queued; this.queued = null; if (q && q !== this.state.no) this.zap(q); };
   dockSet = open => {
@@ -144,6 +157,7 @@ class Logic extends DCLogic {
       else if (/^[1-8]$/.test(e.key) && this.cases.some(x => +x.ch === +e.key)) { const c = this.cases.find(x => +x.ch === +e.key); this.press(); if (!this.match(c, this.state.tab)) this.setState({ tab: 'all' }); this.zap(c.no); }
     };
     window.addEventListener('keydown', this.onKey);
+    this.wheelEl = this.scroller.current; if (this.wheelEl) this.wheelEl.addEventListener('wheel', this.wheelCh, { passive: false });
     const blinkLoop = () => { this.blinkT = setTimeout(() => { if (!this.state.sleep) { this.setState({ blink: true }); setTimeout(() => this.setState({ blink: false }), 170); } blinkLoop(); }, 3000 + Math.random() * 3000); }; blinkLoop();
     this.onAct = () => { const n = Date.now(); if (this.state.sleep || n - (this.lastAct || 0) > 1000) { this.lastAct = n; this.wake(); } };
     const b = this.board.current; if (b) { b.addEventListener('pointermove', this.onAct); b.addEventListener('wheel', this.onAct, { passive: true }); }
@@ -153,6 +167,7 @@ class Logic extends DCLogic {
     document.removeEventListener('keydown', this.dockKey, true); document.removeEventListener('pointerdown', this.dockAway, true);
     cancelAnimationFrame(this.raf); this.clear(); clearTimeout(this.blinkT); clearInterval(this.clockT); clearTimeout(this.sleepT); clearTimeout(this.toastT);
     window.removeEventListener('keydown', this.onKey);
+    if (this.wheelEl) this.wheelEl.removeEventListener('wheel', this.wheelCh);
     const b = this.board.current; if (b) { b.removeEventListener('pointermove', this.onAct); b.removeEventListener('wheel', this.onAct); }
   }
   renderVals() {

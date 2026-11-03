@@ -1735,6 +1735,27 @@ html[data-v2-lang-fade="out"] .cv3-fade {
   }
 }
 
+/* Phones (<768): a smaller head tucked into the corner so it covers less of
+   the text column while reading (72 → 52px; 202px artwork × 0.257). The
+   footer's 128px bottom clearance already keeps page-end content reachable;
+   tablet and desktop are unchanged. */
+@media (max-width: 767px) {
+  .cv3-fhead-shade {
+    right: 14px;
+    bottom: calc(4px + env(safe-area-inset-bottom));
+    width: 40px;
+  }
+  .cv3-fhead {
+    right: 8px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    width: 52px;
+    height: 52px;
+  }
+  .cv3-fhead-scale {
+    transform: scale(0.257);
+  }
+}
+
 .cv3-card {
   position: fixed;
   right: 32px;
@@ -2810,6 +2831,177 @@ html[data-v2-lang-fade="out"] .cv3-fade {
   text-align: center;
 }
 
+/* CaseStageSelector (system/CaseStageSelector.tsx): tabs over one stage of
+   real-interface loops. Tabs are quiet cells (mono index + label); the
+   active one gets a faint tint, full ink and a lime underline. The stage is
+   a .cv3-media frame; panels cross-fade (instant under reduced motion). */
+.cv3-stage-figure {
+  gap: 12px;
+}
+
+.cv3-stage-tabs {
+  display: grid;
+  grid-template-columns: repeat(var(--cv3-stage-n, 3), minmax(0, 1fr));
+  border-top: 1px solid var(--v3-line-3);
+}
+
+.cv3-stage-tab {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  min-height: 44px;
+  padding: 12px 14px 14px;
+  border: 0;
+  border-bottom: 1px solid var(--v3-line-3);
+  background: none;
+  color: var(--v3-ink-55);
+  font: 500 15px / 1.4 var(--v3-sans);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cv3-stage-tab + .cv3-stage-tab {
+  border-left: 1px solid var(--v3-line-3);
+}
+
+.cv3-stage-tab::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--v3-lime);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.cv3-stage-tab-n {
+  font: 500 11px var(--v3-mono);
+  letter-spacing: 0.14em;
+  color: var(--v3-ink-45);
+}
+
+.cv3-stage-tab[aria-selected="true"] {
+  background: rgba(244, 241, 234, 0.05);
+  color: var(--v3-ink);
+}
+
+.cv3-stage-tab[aria-selected="true"] .cv3-stage-tab-n {
+  color: var(--v3-lime);
+}
+
+.cv3-stage-tab[aria-selected="true"]::after {
+  transform: scaleX(1);
+}
+
+@media (hover: hover) {
+  .cv3-stage-tab[aria-selected="false"]:hover {
+    background: rgba(244, 241, 234, 0.025);
+    color: var(--v3-ink-82);
+  }
+}
+
+.cv3-stage-tab:focus-visible {
+  outline: 2px solid var(--v3-lime);
+  outline-offset: -2px;
+}
+
+.cv3-stage {
+  background: var(--v3-media-bg);
+}
+
+.cv3-stage-panel {
+  position: absolute;
+  inset: 0;
+}
+
+.cv3-stage-panel[data-active="false"] {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.cv3-stage-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Silent illustrations: never show iOS's native start-playback overlay. */
+.cv3-stage video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+/* Play/pause (WCAG 2.2.2): 44px hit area, 28px disc, quiet until hover/focus,
+   fully visible while paused. */
+.cv3-stage-toggle {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--v3-ink);
+  cursor: pointer;
+}
+
+.cv3-stage-toggle > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(11, 12, 14, 0.66);
+  opacity: 0.6;
+}
+
+.cv3-stage:hover .cv3-stage-toggle > span,
+.cv3-stage-toggle:focus-visible > span,
+.cv3-stage-toggle[data-paused="true"] > span {
+  opacity: 1;
+}
+
+.cv3-stage-toggle:focus-visible {
+  outline: 2px solid var(--v3-lime);
+  outline-offset: -4px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cv3-stage-tab {
+    transition: background-color var(--motion-duration-micro) var(--motion-ease-editorial), color var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+  .cv3-stage-tab::after {
+    transition: transform var(--motion-duration-discrete) var(--motion-ease-editorial);
+  }
+  .cv3-stage-panel {
+    transition: opacity var(--motion-duration-micro) var(--motion-ease-editorial), visibility 0s linear var(--motion-duration-micro);
+  }
+  .cv3-stage-panel[data-active="true"] {
+    transition-delay: 0s;
+  }
+  .cv3-stage-toggle > span {
+    transition: opacity var(--motion-duration-micro) var(--motion-ease-editorial);
+  }
+}
+
+@media (max-width: 767px) {
+  .cv3-stage-tab {
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 10px 12px;
+    font-size: 14px;
+  }
+}
+
 .cv3-pipe-note {
   font: 400 13px / 1.6 var(--v3-sans);
   color: var(--v3-ink-60);
@@ -3223,6 +3415,11 @@ html[data-v2-lang-fade="out"] .cv3-fade {
   height: 2px;
   border-radius: 1px;
   background: var(--v3-ink-50);
+}
+
+/* Not applicable (e.g. responsive design for a native App): dashed ring. */
+.cv3-mark[data-value="NA"] .cv3-mark-glyph {
+  border: 1.5px dashed var(--v3-ink-45);
 }
 
 .cv3-mark-text {

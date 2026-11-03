@@ -27,6 +27,7 @@ const CHANNEL_TABS: Record<string, string[]> = {
   "05": ["sys"],
   "06": ["com", "mob"],
   "07": ["mob"],
+  "09": ["web", "mob"],
 };
 
 /**

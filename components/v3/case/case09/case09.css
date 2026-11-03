@@ -1,0 +1,52 @@
+/*
+ * CASE09 (CH08) named exceptions — composition only. Every type, colour,
+ * spacing and radius role comes from components/v3/v3.css.
+ */
+
+/* Hero: one desktop screen + three App screens in the shared CASE02 tile
+   roles. Desktop 3.5fr ≈ the phones' height; phones drop to a row of three. */
+.cv3-grid.case09-hero-media {
+  grid-template-columns: minmax(0, 3.5fr) repeat(3, minmax(0, 1fr));
+  align-items: end;
+}
+
+@media (max-width: 767px) {
+  .cv3-grid.case09-hero-media {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .cv3-grid.case09-hero-media > .cv3-home-item:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* 05: desktop + mobile web + App; on phones the desktop spans the row and
+   the two phone screens sit side by side. */
+@media (max-width: 767px) {
+  .cv3-grid.case09-compare[data-variant="compare"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .cv3-grid.case09-compare > .cv3-home-item:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* 03D: the six App features as a two/three-column list of the shared steps. */
+.cv3-steps.case09-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  column-gap: 20px;
+}
+
+/* 04: process card head — the large lime step numeral (no prototype images exist). */
+.case09-process-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 96px;
+}
+
+.case09-process-no {
+  font: 900 clamp(40px, 3.6vw, 56px) / 1 var(--v3-display);
+  color: var(--v3-lime);
+}

@@ -120,6 +120,22 @@ const PUBLIC_PAGES = {
     type: "article",
   },
   ...RELEASED_CASE_SEO,
+  case09: {
+    zh: {
+      path: caseHref("09", "zh"),
+      title: "不動產官網與找屋 App｜跨平台 UX/UI 案例",
+      description: "為台中在地房仲設計官網與 App，把大量物件資訊整理成跨平台一致、好搜尋、好比較的找屋體驗。",
+      imageAlt: "遠見房屋官網首頁與找屋 App 的案例視覺",
+    },
+    en: {
+      path: caseHref("09", "en"),
+      title: "Real Estate Website & Home-Search App | Cross-Platform UX/UI Case Study",
+      description: "A website and App for a Taichung real estate agency, organizing a large volume of listings into a consistent, searchable home-search experience.",
+      imageAlt: "Case study visual for the Foresight Realtors website and home-search App",
+    },
+    image: "/images/case09/evidence/foresight-home-desktop.webp",
+    type: "article",
+  },
 } as const;
 
 export type PublicSeoPage = keyof typeof PUBLIC_PAGES;

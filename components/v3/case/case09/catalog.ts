@@ -6,7 +6,7 @@ import type { CatalogCase } from "@/data/v3/catalog-types";
  * Content source: ch-08-foresight-plan.md (confirmed with Angela). The EN
  * strings are draft translations of the approved ZH — no added facts —
  * pending Angela's review. Metadata follows the CASE05–07 convention
- * (Role + Platform, no status).
+ * (Role + Platform + Status; Status is the INDEX TV badge).
  */
 const EVIDENCE = "/images/case09/evidence";
 
@@ -25,10 +25,12 @@ export const CASE09_CATALOG: CatalogCase = {
     zh: [
       { label: "角色", value: "UI/UX Front-end Designer" },
       { label: "平台", value: "Web · iOS / Android App" },
+      { label: "狀態", value: "官網與 App 已上線" },
     ],
     en: [
       { label: "Role", value: "UI/UX Front-end Designer" },
       { label: "Platform", value: "Web · iOS / Android App" },
+      { label: "Status", value: "Website & App Live" },
     ],
   },
   image: { src: `${EVIDENCE}/foresight-home-desktop.webp`, crop: "50% 40%" },
